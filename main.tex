@@ -1,0 +1,34 @@
+% !TeX spellcheck = de_CH
+\documentclass{article}
+\include{packages}
+\include{layout}
+\addbibresource{references.bib}
+
+\include{glossarentries}
+\makeglossaries
+
+\begin{document}
+
+\include{titlepage}
+\include{chapters/1_abstract}
+\tableofcontents
+\include{chapters/2_einleitung}
+%blobs erklären
+
+\pagebreak
+\addcontentsline{toc}{section}{Glossar}
+\printglossaries
+
+\pagebreak
+\addcontentsline{toc}{section}{\listfigurename}
+\listoffigures
+\addcontentsline{toc}{section}{\listtablename}
+\listoftables
+
+\pagebreak
+\addcontentsline{toc}{section}{\bibliographyname}
+\printbibliography[title={\bibliographyname}]
+
+\include{attachement/1_attachement}
+
+\end{document}
