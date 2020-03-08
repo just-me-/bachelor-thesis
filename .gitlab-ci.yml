@@ -1,12 +1,29 @@
-# This file is a template, and might need editing before it works on your project.
-# use docker image with latex preinstalled
-# since there is no official latex image, use https://github.com/blang/latex-docker
-# possible alternative: https://github.com/natlownes/docker-latex
-image: blang/latex
+variables:
+  BUILD_IMAGE: $CI_REGISTRY_IMAGE/dafny-ba
 
-build:
+stages:
+  - prebuild
+  - build
+
+build_docker:
+  stage: prebuild
+  image: docker:latest
+  only:
+    refs:
+      - master
+    changes:
+      - Dockerfile
+      - .gitlab-ci.yml
   script:
-    - latexmk -pdf main.tex
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build --tag $BUILD_IMAGE:latest - < Dockerfile
+    - docker push $BUILD_IMAGE:latest
+
+build_pdf:
+  stage: build
+  image: $BUILD_IMAGE:latest
   artifacts:
     paths:
-      - "*.pdf"
+      - main.pdf
+  script:
+    - latexmk -pdf main.tex
