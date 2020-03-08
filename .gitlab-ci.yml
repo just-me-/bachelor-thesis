@@ -26,4 +26,4 @@ build_pdf:
     paths:
       - main.pdf
   script:
-    - latexmk -pdf main.tex
+    - tectonic main.tex
