@@ -4,15 +4,19 @@
 \include{layout}
 \addbibresource{references.bib}
 
+\newcommand{\Csharp}{%
+  {\settoheight{\dimen0}{C}C\kern-.05em \resizebox{!}{\dimen0}{\raisebox{\depth}{\#}}}}
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
+
 \include{glossarentries}
 \makeglossaries
 
 \begin{document}
 
 \include{titlepage}
+\tableofcontents
 \include{chapters/0_cheat_sheet} % TMP - remove me!
 \include{chapters/1_abstract}
-\tableofcontents
 \include{chapters/2_einleitung}
 
 \pagebreak

@@ -1,23 +1,35 @@
 \section{Cheat Sheet (TMP)}
-Dieses CheatSheet wird später wieder entfernt. \\
+Dieses CheatSheet wird später wieder entfernt.
 
-Neuer Absatz.
+Hier ist Text. \\
 
-Neue Zeile.
+Jetzt ist Text nach so nem Doppelslashteil.
+
+Neuer Absatz. \linebreak
+Neue Zeile. \bigskip
+Hehe, wo bin ich?
 
 \subsection{Untertitel}
 \subsubsection{Das ist die tiefste Titelebene}
-\begin{figure}[!h]
+Ich bin Text. 
+\begin{figure}[H]
     \centering
     \includegraphics[width=100mm]{images/musterBild.png}
     \caption{My caption}
     \label{fig:bsp}
 \end{figure}
-Nachfolgend ein Bild.
-vgl Abbildung \ref{fig:bsp}
+Davor ein Bild. \\
+Mehr dazu in Abbildung \ref{fig:bsp}.
 
 \subsection{Quellen}
 Und das wäre ein zweiter Absatz \cite{good}.
+
+Wie einer auf 20min sagte:\cite{20min}
+\begin{quote}
+Immer mehr europäische Länder verhängen im Kampf gegen das Virus eine Ausgangssperre. 
+\end{quote}
+
+Beachten sie die Fussnote \footnote{Ich bin die Fussnote}
 
 \subsection{Aufzählung}
 \begin{itemize}
@@ -25,10 +37,20 @@ Und das wäre ein zweiter Absatz \cite{good}.
     \item Zweitens
 \end{itemize}
 
+\begin{enumerate}
+    \item Erstens
+    \item Zweitens
+\end{enumerate}
+
+\begin{description}
+    \item Erstens
+    \item Zweitens
+\end{description}
+
 \subsection{Tabelle}
 \begin{figure}[!h]
     \centering
-  \begin{tabular}{||c c c c||}
+  \begin{tabular}{| c | c | c | c |}
     \hline
     Col1 & Col2 & Col2 & Col3 \\ [0.5ex]
     \hline\hline
@@ -43,11 +65,18 @@ Und das wäre ein zweiter Absatz \cite{good}.
     5 & 88 & 788 & 6344 \\ [1ex]
     \hline
   \end{tabular}
-
+  \label{tab:tabbsp}
   \caption{My table}
 \end{figure}
+Das war also Tablle \ref{tab:tabbsp}.
 
 \subsection{Code}
-\begin{verbatim}
-your code example
-\end{verbatim}
+Fogelnd Code in \Csharp
+\lstset{style=sharpc}
+\begin{lstlisting}[caption={My Caption}, captionpos=b, label={lst:codebsp}]
+        public void SendInformation(string msg)
+        {
+            SendMessage("INFO", msg);
+        }
+\end{lstlisting}
+Da wär jetzt so code, siehe Listing \ref{lst:codebsp}
