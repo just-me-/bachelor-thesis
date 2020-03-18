@@ -13,22 +13,21 @@
 
 \begin{document}
 
-\include{titlepage}
-\tableofcontents
 \include{chapters/0_cheat_sheet} % TMP - remove me!
+\include{titlepage}
 \include{chapters/1_abstract}
+\tableofcontents
 \include{chapters/2_einleitung}
 
-\pagebreak
 \addcontentsline{toc}{section}{Glossar}
 \printglossaries
-
 \pagebreak
-\addcontentsline{toc}{section}{\listfigurename}
 \listoffigures
-
-\pagebreak
+\listoftables
+\addcontentsline{toc}{section}{\lstlistlistingname}
+\lstlistoflistings
 \addcontentsline{toc}{section}{\bibliographyname}
+\pagebreak
 \printbibliography[title={\bibliographyname}]
 
 \include{attachement/1_attachement}
