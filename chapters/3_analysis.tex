@@ -1,0 +1,46 @@
+\section{Analysis}
+% ...
+
+\subsection{Continuous Integration (CI)}
+Continuous integration is a verry important part for code quality improvement and colaboration.
+Unfortunately, the CI process in our student research project extended to almost the entire semester \cite{sa}. \\
+
+According to our project plan, we wanted to work on open points regarding the CI initially and have completed the theme accordingly for the remaining duration of the bachelor thesis.
+
+\subsubsection{Initial Situation}
+We achieved in our client CI that code was analyzed with SonarQube and the build failed if it contained TypeScript errors \cite{sa}.
+We did not achieve it within reasonable time headless integration test \cite{sa}. \\
+
+On the server side we reached the build process as well as the dafny tests and our own unit tests \cite{sa}.
+Automated integration tests and code analysis by SonarQube remained outstanding \cite{sa}.
+
+\subsubsection{Aimed Solution}
+According to our research, a major problem was that the scanner for sonarqube does not support any other languages besides C\# \cite{sonar-supports-only-one-language}.
+This means that in addition to C\# in a project, TypeScript (for the client) cannot be analyzed simultaneously.
+Furthermore there are also single Java files in Dafny project.
+This also led to conflicts in the Sonar analysis in our student research project \cite{sa}. \\
+
+As a simple solution we decided to separate the client (VSCode plugin) and server (Dafny Language Server) into two separate git repositories.
+This not only simplifies the CI process but also ensures a generally better and clearer separation. \\
+
+As a result, the client could still be easily analyzed with the previous Sonar scanner.
+For the Language Server in C\# a special Sonar scannerfor MSBuild had to be used, which publishes the analysis in a separate SonarCloud project \cite{dev}.
+Beside the code from our Lanugae server the whole Dafny project code is now analyzed by sonar.
+This can be very helpful for code reviews. \\
+
+The only downside is that the code coverage is not analyzed.
+For .NET OpenCover is a very common tool for code coverage analysis.
+Unfortunately, it only works on windows and not on our linux CI server \cite{opencover}.
+Other tools that works with mono Support .NET Core but not Framework.
+During our research we came across monocov \cite{monocov}. This tool would support mono for .NET Framework. Unfortunately this project was archived and has not been supported for almost 10 years \cite{monocov}.
+
+Since we would not gain much added value with sonar code coverage, we decided not to pursue this approach any further. The coverage information is provided by the locally installed IDEs anyway. 
+\\
+
+For an easier testability of the CI, we now also used local docker. This allows us to test CI customizations efficiently. See the developer documentation for more details \cite{dev}. \\
+
+The headless integration tests were a bit more tricky.
+In consultation with our supervisor, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
+
+\subsubsection{2do - Kapitelaufteilung komisch}
+Ich hab hier jetzt in der Analyse auch schon die Lösung vorabgegriffen. Sollen wir das splitten? Bricht das nicht den Lesefluss? Evt besprechen.
