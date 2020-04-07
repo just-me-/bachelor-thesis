@@ -1,4 +1,4 @@
-\geometry{top=2 cm,left=2.5cm,right=2.5cm,bottom=2cm}
+\geometry{top=3 cm,left=2.5cm,right=2.5cm,bottom=2.5cm}
 
 % set noindent globally
 \setlength\parindent{0pt}
@@ -6,3 +6,15 @@
 % Rename headings of lists
 \newcommand{\bibliographyname}{References}
 \renewcommand{\contentsname}{Table of Contents}
+
+% Own commands
+\newcommand{\Csharp}{%
+  {\settoheight{\dimen0}{C}C\kern-.05em \resizebox{!}{\dimen0}{\raisebox{\depth}{\#}}}}
+\lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\leftmark}
+\lhead{\includegraphics[height=0.5cm]{images/logo_google.png} \hspace{5pt} Dafny Language Server Redesign}
+\cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
