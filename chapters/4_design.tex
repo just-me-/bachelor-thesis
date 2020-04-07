@@ -1,1 +1,24 @@
 \section{Design}
+
+\subsection{Client}
+
+
+Client Then
+Auf den ersten blick wirkt die anordnung sehr übersichtlich.
+die einzelnen komponenten sind jedoch sehr umfangreich und es gibt wenig kappselung der zuständigkeitsbereiche. dadurch wurde auch noch viel dead code nicht erkannt und noch nicht in der studienarbeit entfernt. ausserdem waren sehr viele membervariablen public und es gab diverse zugriffe kreuz weg
+
+Client now
+
+neu haben wir die zustätndigkeit von componenten minimiert. deshalb hat es neu sehr viele komponenten und untergruppierungen, dies hilft aber bei der trennung der zuständigkeit ungemein und erleichtert andern programmierern den einstieg.
+ausserdem wurde so der code grundsätzlich minimiert und dead code entfernt.
+"Any" wurde vollständig typisiert.
+Man erkennt, dass nur noch compile und counterexample als serverzugriffe vorhanden sind. alle andern features wurden rein durch das LSP protokoll ohne zustäzliche client logik als stütze implementiert.
+
+Nur public methoden
+Es gibt nur private member variaben; dhaer sind keine gelistet
+Konstrukturen weggelassen.
+Inhalt von Typeinterfaces und Stringressources zur übersicht weggelassen
+
+Diese aufteilung hat gewisse abhängigkeiten nach oben, was nicht schön ist.
+dennoch haben wir uns zu dieser gruppierung entschieden,
+damit die serverzugriffsfunktionalität gekapselt ist.

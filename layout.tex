@@ -12,9 +12,12 @@
   {\settoheight{\dimen0}{C}C\kern-.05em \resizebox{!}{\dimen0}{\raisebox{\depth}{\#}}}}
 \lstdefinestyle{sharpc}{language=[Sharp]C, frame=lr, rulecolor=\color{blue!80!black}}
 
+% Reduce image path
+\graphicspath{{images/}}
+
 % Header and footer
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{\leftmark}
-\lhead{\includegraphics[height=0.8cm]{images/logo_ba.png}}
+\lhead{\includegraphics[height=0.8cm]{logo_ba}}
 \cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
