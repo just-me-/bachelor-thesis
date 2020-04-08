@@ -1,24 +1,103 @@
 \section{Design}
+This chapter contains discussions of fundamental design decisions.
+It is primarily divided into client and server architecture.
 
 \subsection{Client}
+The client part of our bachelor thesis includes the VSCode plugin written in TypeScript.
+It starts the Language Server and establishes a connection via LSP.\\
+
+Since most of the logic should be kept in the IDE independent Language Server,
+we have made it our goal to keep the client logic to a minimum.
+This allows to implement a later plugin for another IDE with as little effort as possible. \\
+
+In the following we will discuss how we achieved this lightweight,
+and how and why we decided to split the components in the client part like we did.
+
+\subsubsection{Initial Situation}
+Already in our term project we made revisions on the client.
+We have connected our new Language Server and greatly reduced the unnecessary logic.
+The following figure \ref{fig:client_then} gives an impression of the architecture.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{client_then}
+    \caption{Client Architecture - Term Project}
+    \label{fig:client_then}
+\end{figure}
+
+In this simplified representation, the client architecture appears very tidy.
+Unfortunately, the individual components are very large,
+almost all members are public and this leads to high coupling and deep cohesion.
+Furthermore, there are many helper classes that are not grouped into sub-packages.
+This makes it difficult for other programmers to get into the project. Furthermore,
+it was difficult to eliminate all dead code due to the non-transparent dependencies. \\
+
+Because of these problems we decided to redesign the client itself from scratch.
+
+\subsubsection{New Architecture}
+To achieve the goal of a more manageable architecture and to reduce coupling, we have implemented the following measures.
+As a first step, we aimed to divide all areas of responsibility into separate components.
+We grouped the components into packages as you can see in figure \ref{fig:client_now_packages}.
+These packages are discussed in the following sections. \\
+
+Additionally we detached all logic from the extension class (the main component).
+This resulted in the root directory containing only a lightweight program entry point
+and the rest of the logic was split between the created packages. \\
+
+As a little extra, each component contains code documentation to help other developers get started quickly. This is also helpful because they are displayed as hover tooltips.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6cm]{client_now_packages}
+    \caption{Client Architecture - New Packages}
+    \label{fig:client_now_packages}
+\end{figure}
+
+{\bf Extension} \textendash{}
+This component is the aforementioned "main" of the plugin and serves as an entry point. The contained code has been minimized. Only one server is instantiated and started. The logic is located entirely in the server package. \\
+
+{\bf Server} \textendash{}
+The server package contains the basic triggering of the Language Server and the connection setup. In addition, all server requests, which extend the LSP by own functions, are sent to the server via this package. \\
+
+{\bf TypeInterfaces} \textendash{}
+In our new architecture we do not use the "any" type. We decide all types, in particular the types created specifically for additional functions such as results for counter examples. \\
+
+{\bf UI} \textendash{}
+The UI is responsible for all visual displays. Especially VSCode commands and context menu additions. Core components like the status bar are also included in this package. \\
+
+{\bf LocalExecutionHelper} \textendash{}
+This package contains small logic extensions like the execution of compiled dafny files. The UI package accesses this package. \\
+
+{\bf StringRessources} \textendash{}
+All text strings and command definitions are defined in this package. This package is used by the UI package. \\
+
+In the following chapters the individual components and their contents are described in more detail.
+
+\subsubsection{Components}
+In the following figure \ref{fig:client_now_classes}, the components within the packages are also shown for a more detailed view. The contents of type interfaces and string resources have been omitted for clarity. \\
+
+It can be seen that only compile and counterexample exist as server accesses. All other features were implemented purely through the LSP protocol without additional client logic as support. This server-side implementation via LSP is a great enrichment. For future plugin developments for other IDEs the effort is automatically eliminated.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8cm]{client_now_classes}
+    \caption{Client Architecture - Components}
+    \label{fig:client_now_classes}
+\end{figure}
 
 
-Client Then
-Auf den ersten blick wirkt die anordnung sehr übersichtlich.
-die einzelnen komponenten sind jedoch sehr umfangreich und es gibt wenig kappselung der zuständigkeitsbereiche. dadurch wurde auch noch viel dead code nicht erkannt und noch nicht in der studienarbeit entfernt. ausserdem waren sehr viele membervariablen public und es gab diverse zugriffe kreuz weg
+Figure \ref{fig:client_now_methods} shows the public methods for the components.
+All instance variables were set to private. Constructors were not included for simplicity. The contents of type interfaces and string resources were also omitted for clarity
 
-Client now
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=16.5cm]{client_now_methods}
+    \caption{Client Architecture - Components and Public Methods}
+    \label{fig:client_now_methods}
+\end{figure}
 
-neu haben wir die zustätndigkeit von componenten minimiert. deshalb hat es neu sehr viele komponenten und untergruppierungen, dies hilft aber bei der trennung der zuständigkeit ungemein und erleichtert andern programmierern den einstieg.
-ausserdem wurde so der code grundsätzlich minimiert und dead code entfernt.
-"Any" wurde vollständig typisiert.
-Man erkennt, dass nur noch compile und counterexample als serverzugriffe vorhanden sind. alle andern features wurden rein durch das LSP protokoll ohne zustäzliche client logik als stütze implementiert.
-
-Nur public methoden
-Es gibt nur private member variaben; dhaer sind keine gelistet
-Konstrukturen weggelassen.
-Inhalt von Typeinterfaces und Stringressources zur übersicht weggelassen
-
-Diese aufteilung hat gewisse abhängigkeiten nach oben, was nicht schön ist.
-dennoch haben wir uns zu dieser gruppierung entschieden,
-damit die serverzugriffsfunktionalität gekapselt ist.
+There is also a compromise that we have made.
+This distribution has certain upward dependencies, which is not perfect.
+The UI package accesses the server requests to be exact.
+Nevertheless, we have decided on this grouping,
+so that the server access functionality is encapsulated.
