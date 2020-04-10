@@ -101,3 +101,43 @@ This distribution has certain upward dependencies, which is not perfect.
 The UI package accesses the server requests to be exact.
 Nevertheless, we have decided on this grouping,
 so that the server access functionality is encapsulated.
+
+\subsubsection{Logic}
+The logic contained in the client has been reduced to a minimum.
+This mainly with the goal of making porting to other IDEs as easy as possible.
+This subchapter describes in rough outlines the logic still contained in the client and its benefits.  \\
+
+{\bf Server Connection} \textendash{}
+Starting the Language Server and send API requests. In addition, the client has a simple logic that
+certain server requests (such as updating the counter example) are sent a maximum of twice per second. \\
+
+{\bf Execute Compiled Dafny Files} \textendash{}
+The execution of compiled Dafny files is relatively simple. One distinguishes whether the execution
+of .exe files should be done with mono (on macOS and Linux operating systems) or not. \\
+
+{\bf Notifications} \textendash{}
+The client allows the Language Server to send certain messages which are displayed directly to the user as a popup.
+These include the types information, warning and error.
+The corresponding logic on the client side includes the registration of the interception on the server
+and the corresponding method calls of the VSCode API to display the messages. \\
+
+{\bf Commands} \textendash{}
+To enable the user to actively use features (such as compile),
+the corresponding method calls must be linked to the UI.
+We have three primary links for this: Supplementing the context menu (right-click),
+shortcuts and entering commands via the VSCode command line. \\
+
+{\bf Statusbar} \textendash{}
+The information content for the Statusbar is delivered completely by the Language Server.
+The client only takes care of the user friendly display with icons and help texts.
+Therefore certain event listeners must be registered, which react to the server requests.
+Furthermore the received information is buffered for each Dafny file.
+This allows the user to switch seamlessly between Dafny files in VSCode
+without having the server to send the status bar information
+(like the number of errors in the Dafny file) each time.  \\
+
+{\bf Counter Example} \textendash{}
+The Counter Example has a similar buffer as the Statusbar.
+For each dafny file in the workspace a buffer stores if the user wants to see the Counter Example.
+This way the Counter Example is hidden when the user switches to another file
+and automatically shown again when switching back to the previous Dafny file. 
