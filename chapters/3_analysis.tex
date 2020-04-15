@@ -21,7 +21,7 @@ Dafny code can be organized with modules. A module can be compared to a namespac
     \item The user imports the module in opened state: \texttt{import opened Helpers}. Now the user is eligible to skip the namespace identifier and can just write \texttt{addOne(5)}.
 \end{itemize}
 
-Importing a module in opened state may cause naming clashes. This is allowed, but in this case, the locally defined item has always priority over the imported item. For example, in listing \ref{lst:moduleShadowing}, the assert statemtn is violated, since the overwritten \texttt{addOne} has priority. \cite{functionVSMethod} 
+Importing a module in opened state may cause naming clashes. This is allowed, but in this case, the locally defined item has always priority over the imported item. For example, in listing \ref{lst:moduleShadowing}, the assert statemtn is violated, since the overwritten \texttt{addOne} has priority. \cite{functionVSMethod}
 
 \begin{lstlisting}[caption={Naming Clash}, captionpos=b, label={lst:moduleShadowing}]
     module Helpers {
@@ -33,7 +33,7 @@ Importing a module in opened state may cause naming clashes. This is allowed, bu
         n + 2
     }
 
-    import opened Helpers  
+    import opened Helpers
     method m3() {
         assert addOne(5) == 6; //violated
     }
@@ -47,7 +47,7 @@ Dafny has two types of methods, or functions respectively. For a programmer used
 \begin{itemize}
 \item A method is what a programmer from \Csharp or C++ may be used to. A sequence of code, accepting some parameters at the beginning and returning some values at the end. It can be a class member or be in global space.
 \item A function is more like a mathematical function. It takes an input and returns a single value. The function may consist of only one expression. For example, consider listing \ref{lst:function}. Further, functions are not compiled and may only be used in specification context. That is, in contracts or assert statements to proof logical correctness. \cite{functionVSMethod}.
-\item The Function Method is just both at once. It also contains of a single expression with a single return, but is also compiled and thus also available in regular context. \cite{functionVSMethod} 
+\item The Function Method is just both at once. It also contains of a single expression with a single return, but is also compiled and thus also available in regular context. \cite{functionVSMethod}
 \end{itemize}
 
 \begin{lstlisting}[caption={Function}, captionpos=b, label={lst:function}]
@@ -100,7 +100,7 @@ Consider the following code snippet. It defines a class with a member variable \
     class A {
         constructor () { a := 2; }
         var a: int
-        method m() 
+        method m()
         modifies this
         {
             print a;           // 2
@@ -159,7 +159,7 @@ Rename -> Get all usages with position.
 Code Lens -> Get all usages
 
 
-    
+
 
 
 
@@ -204,13 +204,27 @@ Unfortunately, it only works on windows and not on our linux CI server \cite{ope
 Other tools that works with mono Support .NET Core but not Framework.
 During our research we came across monocov \cite{monocov}. This tool would support mono for .NET Framework. Unfortunately this project was archived and has not been supported for almost 10 years \cite{monocov}.
 
-Since we would not gain much added value with sonar code coverage, we decided not to pursue this approach any further. The coverage information is provided by the locally installed IDEs anyway. 
+Since we would not gain much added value with sonar code coverage, we decided not to pursue this approach any further. The coverage information is provided by the locally installed IDEs anyway.
 \\
 
 For an easier testability of the CI, we now also used local docker. This allows us to test CI customizations efficiently. See the developer documentation for more details \cite{dev}. \\
 
 The headless integration tests were a bit more tricky.
 In consultation with our supervisor, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
+
+\subsubsection{Docker}
+As mentioned in the previous chapter, we rely on Docker.
+The simplicity of Docker Container allows us a comfortable way to integrate the building and testing process into our CI.
+
+Furthermore, the lightweight virtualization is ideally suited to run and debug our Linux CI environment
+locally and platform-independently (through the Docker Client) in case of problems. \\
+
+Furthermore we can easily realize the priciple "Cattle, not a pet" with docker.
+Instead of having certain package dependencies that need to be updated continuously (pet), we use a "build, throw away, rebuild" procedure (cattle). So we don't have to worry about security patches and the like. We simply install the latest versions when we create a docker. \\
+
+Excluded from this are of course specific versions such as Node, Z3, Go, Boogie and Sonar.
+There the version to be installed is explicitly specified, since version changes there
+can have essential impairments of the Language Server's function. See the developer documentation for more details \cite{dev}. \\
 
 \subsubsection{2do - Kapitelaufteilung komisch}
 Ich hab hier jetzt in der Analyse auch schon die Lösung vorabgegriffen. Sollen wir das splitten? Bricht das nicht den Lesefluss? Evt besprechen.
