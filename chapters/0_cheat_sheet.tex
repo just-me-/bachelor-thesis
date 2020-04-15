@@ -1,13 +1,13 @@
 \section{Cheat Sheet (TMP)}
 Dieses CheatSheet wird später wieder entfernt.
 
-Hier ist Text. \\
+Hier ist Text auf einer neuen Zeile. \\
 
-Jetzt ist Text nach so nem Doppelslashteil.
+Jetzt ist Text mit einer Zeile Zwischending.
 
-Neuer Absatz. \linebreak
+Wegen dem rechten Linebreak füllt diese Zeile den ganzen horizontalen Raum. Nach dem Linebreak \linebreak  kommt eine neue Zeile.
 Neue Zeile. \bigskip
-Hehe, wo bin ich?
+Bigskip scheint einfach eine neue Zeile zu sein.
 
 \subsection{Untertitel}
 \subsubsection{Das ist die tiefste Titelebene}
@@ -29,7 +29,7 @@ Wie einer auf 20min sagte:\cite{dev}
 Immer mehr europäische Länder verhängen im Kampf gegen das Virus eine Ausgangssperre.
 \end{quote}
 
-Beachten sie die Fussnote \footnote{Ich bin die Fussnote}
+Beachten sie die Fussnote\footnote{Ich bin die Fussnote}
 
 \subsection{Aufzählung}
 \begin{itemize}
@@ -79,4 +79,12 @@ Fogelnd Code in \Csharp
             SendMessage("INFO", msg);
         }
 \end{lstlisting}
-Da wär jetzt so code, siehe Listing \ref{lst:codebsp}
+
+\lstset{style=dafny}
+\begin{lstlisting}[caption={My Caption}, captionpos=b, label={lst:codebsp2}]
+        DafnyCode() {}
+\end{lstlisting}
+Da wär jetzt so code, siehe Listing \ref{lst:codebsp2}.
+
+The user needs to write \texttt{this} in front o fthe variable \texttt{myVariable}.
+
