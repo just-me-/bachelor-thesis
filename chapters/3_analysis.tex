@@ -1,22 +1,8 @@
 \section{Analysis}
 \subsection{Dafny Language Features}
-With regard to the symbol table, the Dafny language had to be studied more in detail. For example, shadowing means that a class method redefines a variable that was already defined as a class member. This means that two variables with the same name exist. The local variable can be accessed via its name, but to access the class member, the programmer needs to write a 'this' in front of the variable name. The example is illustrated in listing \ref{lst:shadowing}.\\
-To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide\cite{dafnyReferenceManual}.
+With regard to the symbol table, the Dafny language had to be studied more in detail. For example, overloading describes the existence of multiple methods with the same name, but different signatures. This is obviously highly relevant for the construction of a symbol table.
+To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide \cite{dafnyReferenceManual}. This chapter provides the reader with the most relevant concepts in regard to the symbol table. Of cousre, Dafny offers much more language features.
 
-\lstset{style=dafny}
-\begin{lstlisting}[caption={Shadowing Example}, captionpos=b, label={lst:shadowing}]
-class A {
-    var a: int
-    constructor () { a:= 2; }
-    method m() 
-    modifies this
-    {
-        var a: string := "hello";
-        print      "a = ",      a, "\n";    // "hello"
-        print "this.a = ", this.a, "\n";    // 2
-    }
-}
-\end{lstlisting}
 
 \subsubsection{Modules}
 Dafny code can be organized with modules. A module can be compared to a namespace in \Csharp or C++. Modules can also be nested. To use a class, method or variable defined in another module, the user has three options. Imagine a method \texttt{addOne} defined in a module \texttt{Helpers}.
@@ -35,7 +21,7 @@ Dafny code can be organized with modules. A module can be compared to a namespac
     \item The user imports the module in opened state: \texttt{import opened Helpers}. Now the user is eligible to skip the namespace identifier and can just write \texttt{addOne(5)}.
 \end{itemize}
 
-Importing a module in opened state may cause naming clashes. This is allowed, but in this case, the locally defined item has always priority over the imported item. For example, in listing \ref{lst:moduleShadowing}, the assert statemtn is violated, since the overwritten \texttt{addOne} has priority.
+Importing a module in opened state may cause naming clashes. This is allowed, but in this case, the locally defined item has always priority over the imported item. For example, in listing \ref{lst:moduleShadowing}, the assert statemtn is violated, since the overwritten \texttt{addOne} has priority. \cite{functionVSMethod} 
 
 \begin{lstlisting}[caption={Naming Clash}, captionpos=b, label={lst:moduleShadowing}]
     module Helpers {
@@ -61,7 +47,7 @@ Dafny has two types of methods, or functions respectively. For a programmer used
 \begin{itemize}
 \item A method is what a programmer from \Csharp or C++ may be used to. A sequence of code, accepting some parameters at the beginning and returning some values at the end. It can be a class member or be in global space.
 \item A function is more like a mathematical function. It takes an input and returns a single value. The function may consist of only one expression. For example, consider listing \ref{lst:function}. Further, functions are not compiled and may only be used in specification context. That is, in contracts or assert statements to proof logical correctness. \cite{functionVSMethod}.
-\item The Function Method is just both at once. It also contains of a single expression with a single return, but is also compiled and thus also available in regular context.
+\item The Function Method is just both at once. It also contains of a single expression with a single return, but is also compiled and thus also available in regular context. \cite{functionVSMethod} 
 \end{itemize}
 
 \begin{lstlisting}[caption={Function}, captionpos=b, label={lst:function}]
@@ -71,11 +57,11 @@ Dafny has two types of methods, or functions respectively. For a programmer used
     }
 \end{lstlisting}
 
-Further concepts include the following:
+Further concepts include:
 \begin{itemize}
 \item A predicate is just a function returning a bool value.
 \item An inductive predicate is a predicate calling itself.
-\item A lemma is a mathematical fact. It can be called whenever Dafny cannot prove something on its own. By calling the lemma, the user tells Dafny a fact it can use for its proof. An example can be found in listing \ref{lst:lemma}
+\item A lemma is a mathematical fact. It can be called whenever Dafny cannot prove something on its own. By calling the lemma, the user tells Dafny a fact it can use for its proof. An example can be found in listing \ref{lst:lemma}. \cite{dafnyReferenceManual}
 \end{itemize}
 
 \begin{lstlisting}[caption={Lemma}, captionpos=b, label={lst:lemma}]
@@ -85,7 +71,61 @@ lemma ProovingMultiplication(c: int, m: int)
 \end{lstlisting}
 
 \subsubsection{Hiding}
-Bla.
+Hiding is when a derived class redefines a member variable of the base class. Dafny supports inheritance with traits. A trait is basically an abstract class. While the trait can define a class variable, any class deriving from it is not allowed to redefine that class variable. Consider the following example. The commented code line would cause an error. \cite{dafnyReferenceManual}
+
+\begin{lstlisting}[caption={Hiding}, captionpos=b, label={lst:hiding}]
+trait Base {
+    var a: int
+}
+
+class Sub extends Base {
+    constructor() {}
+    //var a: int          //Error
+}
+\end{lstlisting}
+
+This means that we do not have to consider this issue any further with regard to our symbol table.
+
+\subsubsection{Overloading}
+Overloading means defining the same method with a different signature. This is, with different parameters. Dafny prohibits this language concept to be able to uniquely identify each method by its name. \cite{dafnyReferenceManual}
+This means, that whitin each module, each method name is unique.
+
+\subsubsection{Shadowing}
+
+Shadowing means that a class method redefines a variable that was already defined as a class member. This means that two variables with the same name exist. The local variable can be accessed via its name, but to access the class member, the programmer needs to write a \code{this} in front of the variable name. One can even go further and redefine a local variable in a nasted blockscope.\\
+
+Consider the following code snippet. It defines a class with a member variable \code{a}. It is initialized with value 2 in the class constructor. In method \code{m}, the variable \code{a} is first of all printed. This will print 2, since the class variable is the only one we are aware of. Next, a variable with the same name is redefined. The class variable is now shadowed by the local variable. Printing a will now print the local variable. To access the class variable, the this-locator is necessary.
+
+\begin{lstlisting}[caption={Complex Shadowing Example}, captionpos=b, label={lst:shadowing}]
+    class A {
+        constructor () { a := 2; }
+        var a: int
+        method m() 
+        modifies this
+        {
+            print a;           // 2
+            var a: string := "hello";
+            print a;           // hello
+            print this.a;      // 2
+            {
+                print a;       // hello
+                var a: bool := true;
+                print a;       // true
+                print this.a;  // 2
+            }
+        }
+    }
+\end{lstlisting}
+
+Next, a nested scope is opened. Printing a at first will still yield the local variable. However, in the nested scope, we can redefine a again, shadowing the own local variable. Further calls of a will then print the boolean variable. \texttt{this.a} will still yield 2, even in the nested scope.\\
+
+This behaviour can be summarized with the following three rules:
+\begin{itemize}
+    \item If the variable was defined locally before its usage, the local definition is significant.
+    \item If the variable was not defined locally before its usage, the parent scope is significant.
+    \item If a class member is called via the \texttt{this} identifier, the class member is significant.
+\end{itemize}
+
 
 
     
