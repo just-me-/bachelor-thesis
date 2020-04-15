@@ -1,5 +1,104 @@
 \section{Analysis}
-% ...
+\subsection{Dafny Language Features}
+With regard to the symbol table, the Dafny language had to be studied more in detail. For example, shadowing means that a class method redefines a variable that was already defined as a class member. This means that two variables with the same name exist. The local variable can be accessed via its name, but to access the class member, the programmer needs to write a 'this' in front of the variable name. The example is illustrated in listing \ref{lst:shadowing}.\\
+To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide\cite{dafnyReferenceManual}.
+
+\lstset{style=dafny}
+\begin{lstlisting}[caption={Shadowing Example}, captionpos=b, label={lst:shadowing}]
+class A {
+    var a: int
+    constructor () { a:= 2; }
+    method m() 
+    modifies this
+    {
+        var a: string := "hello";
+        print      "a = ",      a, "\n";    // "hello"
+        print "this.a = ", this.a, "\n";    // 2
+    }
+}
+\end{lstlisting}
+
+\subsubsection{Modules}
+Dafny code can be organized with modules. A module can be compared to a namespace in \Csharp or C++. Modules can also be nested. To use a class, method or variable defined in another module, the user has three options. Imagine a method \texttt{addOne} defined in a module \texttt{Helpers}.
+
+\begin{lstlisting}[caption={Module Example}, captionpos=b, label={lst:shadowing}]
+    module Helpers {
+        function method addOne(n: nat): nat {
+            n + 1
+        }
+    }
+\end{lstlisting}
+
+\begin{itemize}
+    \item The user writes the Module name explicitly in front of the method he wants to call, \linebreak namely \texttt{Helpers.addOne(5)}.
+    \item The user imports the module, for example with \texttt{import H = Helpers}. Afterwards, he may type \texttt{H.addOne(5)}.
+    \item The user imports the module in opened state: \texttt{import opened Helpers}. Now the user is eligible to skip the namespace identifier and can just write \texttt{addOne(5)}.
+\end{itemize}
+
+Importing a module in opened state may cause naming clashes. This is allowed, but in this case, the locally defined item has always priority over the imported item. For example, in listing \ref{lst:moduleShadowing}, the assert statemtn is violated, since the overwritten \texttt{addOne} has priority.
+
+\begin{lstlisting}[caption={Naming Clash}, captionpos=b, label={lst:moduleShadowing}]
+    module Helpers {
+        function method addOne(n: nat): nat {
+            n + 1
+        }
+    }
+    function addOne(n: nat): nat {
+        n + 2
+    }
+
+    import opened Helpers  
+    method m3() {
+        assert addOne(5) == 6; //violated
+    }
+
+\end{lstlisting}
+
+To import a module defined in another file, the user has to import the file using the command \texttt{include "myFile.dfy"}. This includes all content of the included file into the current file.
+
+\subsubsection{Functions vs. Methods}
+Dafny has two types of methods, or functions respectively. For a programmer used to \Csharp or C++, this concept may be confusing at first, but is very simple:
+\begin{itemize}
+\item A method is what a programmer from \Csharp or C++ may be used to. A sequence of code, accepting some parameters at the beginning and returning some values at the end. It can be a class member or be in global space.
+\item A function is more like a mathematical function. It takes an input and returns a single value. The function may consist of only one expression. For example, consider listing \ref{lst:function}. Further, functions are not compiled and may only be used in specification context. That is, in contracts or assert statements to proof logical correctness. \cite{functionVSMethod}.
+\item The Function Method is just both at once. It also contains of a single expression with a single return, but is also compiled and thus also available in regular context.
+\end{itemize}
+
+\begin{lstlisting}[caption={Function}, captionpos=b, label={lst:function}]
+    function method minFunctionMethod(a:int, b:int):int
+    {
+        if a<b then a else b
+    }
+\end{lstlisting}
+
+Further concepts include the following:
+\begin{itemize}
+\item A predicate is just a function returning a bool value.
+\item An inductive predicate is a predicate calling itself.
+\item A lemma is a mathematical fact. It can be called whenever Dafny cannot prove something on its own. By calling the lemma, the user tells Dafny a fact it can use for its proof. An example can be found in listing \ref{lst:lemma}
+\end{itemize}
+
+\begin{lstlisting}[caption={Lemma}, captionpos=b, label={lst:lemma}]
+lemma ProovingMultiplication(c: int, m: int)
+    ensures c*m == m + (c-1)*m
+{}
+\end{lstlisting}
+
+\subsubsection{Hiding}
+Bla.
+
+
+    
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \subsection{Continuous Integration (CI)}
 Continuous integration is a verry important part for code quality improvement and colaboration.
