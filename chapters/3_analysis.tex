@@ -159,14 +159,38 @@ Rename -> Get all usages with position.
 Code Lens -> Get all usages
 
 
+The DafnyAst.cs is a File from Dafny, that is huge.
+Eleven thousand lines of code and a large number of classes.
+This is so extensive that even our IDE Visual Studio struggles with it and crashed on autocompletions. \\
 
+Since this file and its contained classes will have to be extended by single methods
+to implement a correct Visitor Pattern for our Symbol Table, we considered if we want to refactor the whole file.  \\
 
+Splitting the file into individual class files and dividing it into a separate package would provide a mutch better overview.
+From our point of view, the following advantages are particularly evident:
+\begin{itemize}
+    \item Clearer separation
+    \item Better overview
+    \item Better IDE performance
+    \item As a result, less error-prone coding
+\end{itemize}
 
+However, there would also be individual disadvantages:
+\begin{itemize}
+    \item Time-consuming
+    \item Inconsistent. All other files would still be in the same style. Refactoring should then be extended
+    \item The maintainers of Dafny maybe do not want a refactored style at all, because they are used to the current style
+    \item By swapping out all lines of code, the top level of the githistory would be disturbed for git blame
+\end{itemize}
 
+We decided not to carry out a refactoring.
+It would be very time consuming and we would have to refactor all the other files of Dafny for the unit.
 
-
-
-
+We simply do not have the time for this in our bachelor thesis,
+because we would like to improve and refactor our code continuously.
+Especially with the new symbol table, structures in our code part are changing.
+We would like to have enough time for this and that is the priority we set.
+To refactor the code of Dafny itself is one of the possible outlooks of this work.
 
 %%%%%%%%%%%%%%%%%%%%%%%
 
