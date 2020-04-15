@@ -126,6 +126,26 @@ This behaviour can be summarized with the following three rules:
     \item If a class member is called via the \texttt{this} identifier, the class member is significant.
 \end{itemize}
 
+Regarding the implementation, the definition of a symbol could be found using the following method. Prerequisite is though, the scope.AllSymbols returns only those symbols that are defined so far.
+
+\lstset{style=sharpc}
+\begin{lstlisting}[caption={Finding Symbol Definition}, captionpos=b, label={lst:findsymbol}]
+private Symbol FindDeclaration(Symbol target, Symbol scope)
+{
+    foreach (Symbol s in scope.AllSymbols)
+    {
+        if (s.Name == target.Name && s.IsDeclaration)
+        {
+            return s;
+        }
+    }
+    if (scope.Parent != null)
+    {
+        return FindDeclaration(target, scope.Parent);
+    }
+}
+\end{lstlisting}
+
 
 
     
