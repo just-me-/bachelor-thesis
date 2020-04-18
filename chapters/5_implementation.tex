@@ -1,1 +1,16 @@
 \section{Implementation}
+
+\subsection{Symbol Table}
+
+\subsubsection{Feature Support}
+Since we have object information (and not just strings anymore) with our self-written symbol table,
+the whole position to string parsing was dropped. \\
+
+In our old version we had to find out from the current cursor position which word in the code could be meant.
+Then we iterated over the whole symbol table and checked if there was a symbol with the same string as name.
+The first match was looked at as a meant symbol. \\
+
+Our new design eliminates all of this effort and avoidable assumptions.
+We access the currently marked symbol directly via the position data.
+String comparisons and corresponding string extractions are completely eliminated.
+This leads to better performance and above all to reliable symbol references.
