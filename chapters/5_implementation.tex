@@ -1,1 +1,36 @@
 \section{Implementation}
+
+\subsection{Symbol Table}
+
+\subsubsection{Feature Support}
+Since we have object information (and not just strings anymore) with our self-written symbol table,
+the whole position to string parsing was dropped. \\
+
+In our old version we had to find out from the current cursor position which word in the code could be meant.
+Then we iterated over the whole symbol table and checked if there was a symbol with the same string as name.
+The first match was looked at as a meant symbol. \\
+
+Our new design eliminates all of this effort and avoidable assumptions.
+We access the currently marked symbol directly via the position data.
+String comparisons and corresponding string extractions are completely eliminated.
+This leads to better performance and above all to reliable symbol references.
+
+\subsubsection{Code Review}
+Fabians Feedback aus der SA... neues Review. "Tu Gutes und sprich davon".
+
+\subsection{Client Code Review}
+Fedback Fabian und Thomas. Interface für Koopelung, weniger Kommentar, mehr Interfaces. Besseres Naming für Variablen. Mehr Interfaces.
+Beschreiben wie es nun neu aussehen wird.
+
+\subsection{Mono Support for macOS and Linux}
+Eines der Kernzeiele war es, Support für mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
+Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono für den Support auf Linux und macOS brauchen.
+(warum in der SA; plficht wegen dafny core. was ist mono)
+
+Leider funktionierts nicht.
+Anssätze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
+github issues: allgemein probleme mit lunux/mac weil primär auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle) 
+
+\cite{sa}
+\cite{mono-slack}
+\cite{mono-git}
