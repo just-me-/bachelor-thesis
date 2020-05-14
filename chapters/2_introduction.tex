@@ -1,15 +1,128 @@
-\section{Introduction}
-2do: iwo den Satz "Zielgruppe die HSR Studenten" einbauen. "Messbarkeit von Erfolg."
+\section{Management Summary and Introduction}
+In this chapter, the technologies touched by this bachelor thesis are explained to provide the reader with the necessary context. Afterwards the motivation and the goals of the thesis are stated in more detail.
 
-\subsection{Problem Domain}
+\subsection{Dafny}
+\intnote{copy pasta oben, das mit lemma is neu}\\
+Dafny is a compiled language that targets \Csharp which can prove formal correctness.\cite{dafnyWiki} Dafny bases on the language “Boogie”, which uses the Z3 automated theorem prover for discharging proof obligations.\cite{dafnyWiki} That means, that a programmer can define a precondition - a fact that is just given at the start of the code. The postcondition on the other hand is a statement that must be true after the code has been executed. The postcondition is also defined by the programmer. In other words, under a given premise, the code will manipulate data only thus far, so that also the postcondition will be satisfied. Dafny will formally proof this. If it is not guaranteed that the postcondition holds, an error is stated.\\
 
-\subsection{Relevance}
+The following code snippet shows an example. The value a is given, but it is required to be positive. This is the precondition. In the method body, the variable b is assigned the negative of a. Thus, we ensure, that b must be negative, which is the postcondition.
+\lstset{style=dafny}
+\begin{lstlisting}[caption={Simple Dafny Example}, captionpos=b, label={lst:simpleDafnyExample}]
+method demo(a: int) returns (b: int)
+requires a > 0
+ensures b < 0
+{
+b := -a;
+}
+\end{lstlisting}
+This example is of course trivial. In a real project, correctness is not that obvious. But with Dafny, a programmer can be sure if his or her program is correct. Since the proof is done with formal, mathematical methods, the correctness is guaranteed.\\
+
+\intnote{Abschjnitt wirklich needed?}If Dafny is unable to perform a proof, the user can assist by creating lemmas. Lemmas are mathematical statements. For example, a lemma could be that a factorial number is never zero. If we define a simple function \code{Factorial}, and afterwards devide through the result of \code{Factorial}, Dafny will state that this might be a division by zero. But if we assert, that a factorial number can never be zero, verification can be compelted successfully. 
+\lstset{style=dafny}
+\begin{lstlisting}[caption={Lemmas}, captionpos=b, label={lst:lemma}]
+
+function Factorial(n: nat): nat
+{
+    if n == 0 then 1 else n * Fact(n-1)
+}
+
+lemma FactorialIsPositive(n: nat)
+ensures Fact(n) != 0
+{}
+
+function Foo(n: nat): float
+{
+    FactorialIsPositive(n);
+    100 / Fact(n)
+}
+\end{lstlisting}
+
+\subsection{Initial Solution}
+In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a plugin for Visual Studio Code
+was created to support Dafny.\cite{ba} The plugin was particularly appreciated by the "HSR Correctness Lab"\cite{correctnessLab} to make coding in Dafny easier. The preexisting solution used a proprietary JSON-interface to communicate with the Dafny server. Dafny's verification results were directly parsed by Dafny's console output. Thus, functionality was limited to what Dafny printed onto the console.\\
+In the preceding semester project\cite{sa}, the language server was integrated into the Dafny backend. Thus, any functionality was directly accessible and the proprietary JSON-interface, as well as console parsing could be omitted. All features had to be reimplemented to satisfy the new architectural layout.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{02_oldBAvsSA.png}
+    \caption{Architecture before (left) and after (right) the preceding term project}
+    \label{fig:oldBAvsSA}
+\end{figure}
+
+\intnote{alles neu ab hier}
+\subsection{Feature Set}
+An integrated development environment (IDE) can offer numerous featuers - the options are nearly unlimited. Influenced by the preexisting thesis, the following features were subject to this bachelor thesis:
 \begin{itemize}
-    \item ...
-    \item ...
+    \item Syntax highlighting
+    \item Verification, highlighting of errors
+    \item Compilation
+    \item Show Counter Example
+    \item Code Lens
+    \item Auto Completion
+    \item Renaming
+    \item Hover Information
 \end{itemize}
 
-\subsection{Outlook}
-Das ist ein Absatz \cite{ba}. \\
+Aside the latter two, all features were already implemented within the preceding term project. However, many of them contained some flaws which are further stated in the corresponding essay \cite{sa}.
 
-Und das wäre ein zweiter Absatz. \cite{ba}
+
+\subsection{Goals}
+This bachelor thesis includes two major objectives. In the first segment of the project, the preexisting features taht do not depend on the symbol table shall be improved. Also, leftovers of the preceding term project should be completed. This included:
+\begin{itemize}
+    \item CI: Install quality measures
+    \item CI: Implement integration tests
+    \item Counter Example: Simplify representation
+    \item Verification: Use a workspace buffer to store the verification results
+    \item Verification: Display warnings as well, not only errors.
+    \item Compilation: Finish Dafny integration, use buffered verification results
+\end{itemize}
+Afterwards, a symbol table had to be implemented. During Dafny's compilation process, an abstract syntax tree (AST) is generated though, but it does not contain all information that was required for our feature set. For example:
+\begin{itemize}
+    \item to go to a symbol's definition, every name segment should know about where it's declared
+    \item to provide proper auto complete suggestions, all available declarations in a scope have to be known
+    \item to rename a symbol, all occurences of a symbol must be stored
+    \item to display code lens, all usages of a declaration must be noted
+\end{itemize}
+Thus, a symbol talbe containing all of this information had to be implemented.
+
+\subsection{Results}
+Without exception, all of the preexisting features could be improved.
+
+The dafny verification process follows now a clear strucutre. First, the Dafny lexer is called. Then, the Dafny resolver performs semantic checks. Then, the Dafny program is translated into Boogie programs which are then logically verified. Any errors during this process are collected and properly displayed to the user. Intermediary compilation results are stored for later reuse. Previously, only logical errors were displayed. Warnings or Informations were not displayed at all.
+
+Compilation will use the precompiled result and is much faster by now. The user can easily enter custom compilation arguments within the Visual Studio Code client. The representation of counter examples is now less cryptic and easier to read.\\
+
+By using the visitor pattern, the Dafny AST could be traversed. While navigating through it, a symbol table is built in the form of a tree. Each symbol is a tree node and stores it's child nodes during visitation. Aside child-parent relationships, symbol usages are counted too, as well as declarations are resolved. Thus, every occuring name segment in the Dafny code contains the following information:
+\begin{itemize}
+    \item Which symbol is my parent? For example, this could be a method body or a while loop, or just a block scope introduced by \code{\string{$\ddots$\string}}
+    \item If I am a declartion, where am i used?
+    \item If I am not a declaration, where am i declared?
+    \item If I contain a body, which symbols are declared within my body?
+    \item If I contain a body, which symbols occur at all within my body? This is, declarations and usages.
+\end{itemize}
+Thus, a feature like goto defintion can just call the information about the declaring symbol and the cursor can jump to it. Thus, compared to the preexisting features, the following improvements could be acheived:
+\begin{itemize}
+    \item Goto Definition works now with respect to scopes and will not just jump to the first name match. 
+    \item Auto completion works with respect to scopes and will also guess whetever the user is interested in a class, for example after a \code{new}.
+    \item Code Lens no longer trivially counts name matches. Instead it shows correct usage counts and previews can be displayed.
+\end{itemize}
+
+ 
+
+\subsection{Outlook}
+While the quality of the features, as well as the general code quality could be massively improved, the funcationality of the project could be improved even further. Ideas include:
+\begin{itemize}
+    \item Automatic generation of contracts
+    \item Debugging
+    \item Create clients for other IDE's.
+\end{itemize}
+Aside the widening of the feature range, it is definitely necessary to complete the visitor, which currently only traverses the most important AST node. This was due to the limited time frame of the bachelor thesis. Nevertheless, the plugin is of a nice quality and may be deployed into the VSCode market place. Thus, future students can work with it and make their first steps in the Dafny programming language using our plugin.
+
+
+
+
+
+
+
+
+\intnote{2do: iwo den Satz "Zielgruppe die HSR Studenten" einbauen. "Messbarkeit von Erfolg." habs ams chluss kurz aber nja, evtl noch etwas deutlich iwo.}

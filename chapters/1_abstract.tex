@@ -1,4 +1,6 @@
 \section{Abstract}
+\intnote{(Abschnitt 1-2 teilweise übernommen)}\\
+
 Dafny is a formal programming language to proof a program's correctness with preconditions, postconditions, loop invariants and loop variants. In a preceding bachelor thesis, a plugin for Visual Studio Code had been implemented to access Dafny-specific static analysis features. For example, if Dafny cannot prove a postcondition, the code will be highlighted and a counter example is shown. Furthermore, it provides access to code compilation, auto completion suggestions and various automated refactorings.\\
 
 The plugin communicates with a language server, using Microsoft's language server protocol, which standardizes communication between an integrated development environment (IDE) and a language server.  The language server itself used to access the Dafny library, which features the backend of the Dafny language analysis, through a proprietary JSON-interface. In a preceding semester project, the language server was integrated into the Dafny backend to make the JSON-interface obsolete.\\
@@ -6,7 +8,7 @@ The plugin communicates with a language server, using Microsoft's language serve
 This bachelor thesis is a direct continuation of the preceding term project. It had two major goals:
 \begin{itemize}
     \item Improvement of previously implemented features in usability, stability and reliability.
-    \item Implementation of a symbol table.
+    \item Implementation of a symbol table to facilitate the development of navigational features.
 \end{itemize}
 The symbol table was required to contain information about each name segment in the code. It should allow direct access to a name segment's declaration, information about its scope and a small usage statistic.
 
