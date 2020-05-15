@@ -75,7 +75,7 @@ To work with the language server protocol, a proper LSP implementation was requi
 \intnote{rewritten}
 Mr. Martin Björkström published a comprehensible tutorial about Omnisharp's language server protocol implementation. The tutorial provides the user with all the required knowledge to set up a language server in \Csharp. Besides the setup of the server, it also illustrated how to create message handlers, for example for auto completions or document synchronization.
 
-\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lsphandler}]
+\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspbasichandler}]
 public class AutoCompletion : ICompletionHandler
 {
     public Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
@@ -83,9 +83,9 @@ public class AutoCompletion : ICompletionHandler
         throw new NotImplementedException();
     }
 }
-\endlisting
+\end{lstlisting}
 
-Listing \ref{lst:lsphandler} illustrates that the user simply has to implement an interface provided by Omnisharp. Within the \code{request} parameter, all required information is passed to the handler. For auto completion, this is the file and the cursor position and some context information, how the auto completion event was triggered. The task of the langauge server is now to figure proper suggestions and return them in the form of a \code{CompletionList}.\\
+Listing \ref{lst:lspbasichandler} illustrates that the user simply has to implement an interface provided by Omnisharp. Within the \code{request} parameter, all required information is passed to the handler. For auto completion, this is the file and the cursor position and some context information, how the auto completion event was triggered. The task of the langauge server is now to figure proper suggestions and return them in the form of a \code{CompletionList}.\\
 
 Since OmniSharp is open source, we could find all available interfaces and thus all available handlers in their git repository \cite{omnisharpgit}. This collection is very helpful to perceive LSP's possibilities.
 
@@ -97,12 +97,12 @@ The server can simply register custom handlers, too. The following three items h
     \item Name of the message, e.g. "counterExample"
     \item Parameter type, e.g. "CounterExampleParams"
     \item Response type, e.g. "CounterExampleResults"
-\end{itemize}}
+\end{itemize}
 
 
 The parameter and response types can be custom classes and allow for maximal flexibility. The following code skeleton demonstrates how a custom request handler can be implemented:
 
-\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lsphandler}]
+\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspcustomhandler}]
 public class CounterExampleParams : IRequest<CounterExampleResults> { [\dots] }
 public class CounterExampleResults { [\dots] }
 
@@ -117,14 +117,8 @@ public class MyHandler : ICounterExampleHandler
         return r;
     }
 }
-\endlisting
+\end{lstlisting}
 
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%% neu
 
 
 \subsection{Dafny Language Features}
@@ -136,7 +130,7 @@ To be aware of which such concepts are supported - or prohibited - by Dafny, we 
 \subsubsection{Modules}
 Dafny code can be organized by modules. A module can be compared to a namespace in \Csharp or C++. Modules can also be nested. To use a class, method or variable defined in another module, the user has three options. Imagine a method \code{addOne} defined in a module \code{Helpers}.
 
-\begin{lstlisting}[language=dafny, caption={Module Example}, captionpos=b, label={lst:shadowing}]
+\begin{lstlisting}[language=dafny, caption={Module Example}, captionpos=b, label={lst:addOneMethod}]
     module Helpers {
         function method addOne(n: nat): nat {
             n + 1
@@ -190,10 +184,10 @@ Further concepts include:
 \begin{itemize}
 \item A predicate is just a function returning a bool value.
 \item An inductive predicate is a predicate calling itself.
-\item A lemma is a mathematical fact. It can be called whenever Dafny cannot prove something on its own. By calling the lemma, the user tells Dafny a fact it can use for its proof. An example can be found in listing \ref{lst:lemma}. \cite{dafnyReferenceManual}
+\item A lemma is a mathematical fact. It can be called whenever Dafny cannot prove something on its own. By calling the lemma, the user tells Dafny a fact it can use for its proof. An example can be found in listing \ref{lst:lemma_example}. \cite{dafnyReferenceManual}
 \end{itemize}
 
-\begin{lstlisting}[caption={Lemma}, captionpos=b, label={lst:lemma}]
+\begin{lstlisting}[caption={Lemma}, captionpos=b, label={lst:lemma_example}]
 lemma ProovingMultiplication(c: int, m: int)
     ensures c*m == m + (c-1)*m
 {}
@@ -225,25 +219,25 @@ Shadowing means that a class method redefines a variable that was already define
 
 Consider the following code snippet. It defines a class with a member variable \code{a}. It is initialized with value 2 in the class constructor. In method \code{m}, the variable \code{a} is first of all printed. This will print 2, since the class variable is the only one we are aware of. Next, a variable with the same name is redefined. The class variable is now shadowed by the local variable. Printing a will now print the local variable. To access the class variable, the this-locator is necessary.
 
-\begin{lstlisting}[caption={Complex Shadowing Example}, captionpos=b, label={lst:shadowing}]
-    class A {
-        constructor () { a := 2; }
-        var a: int
-        method m()
-        modifies this
+\begin{lstlisting}[language = dafny, caption={Complex Shadowing Example}, captionpos=b, label={lst:shadowing}]
+class A {
+    constructor () { a := 2; }
+    var a: int
+    method m()
+    modifies this
+    {
+        print a;           // 2
+        var a: string := "hello";
+        print a;           // hello
+        print this.a;      // 2
         {
-            print a;           // 2
-            var a: string := "hello";
-            print a;           // hello
-            print this.a;      // 2
-            {
-                print a;       // hello
-                var a: bool := true;
-                print a;       // true
-                print this.a;  // 2
-            }
+            print a;       // hello
+            var a: bool := true;
+            print a;       // true
+            print this.a;  // 2
         }
     }
+}
 \end{lstlisting}
 
 Next, a nested scope is opened. Printing a at first will still yield the local variable. However, in the nested scope, we can redefine a again, shadowing the own local variable. Further calls of a will then print the boolean variable. \code{this.a} will still yield 2, even in the nested scope.\\
@@ -293,7 +287,7 @@ The tree segment for this snippet would contain of the while-Statement as the ro
     \centering
     \includegraphics[width=\textwidth]{03_tree.png}
     \caption{Communication Benefit of LSP}
-    \label{fig:lspcommunication}
+    \label{fig:tree_for_example}
 \end{figure}
 
 Often, the AST doesn not contain information about the type of symbols. This is where the symbol table comes into play. The symbol table contains that information and is connected to the AST, for example by the use of a dictionary. This way, it could be stored that the name segment 'i' is of type int. The two concepts are strongly coupled.
@@ -332,7 +326,7 @@ To be able to implement our feature set, the following requirements must be full
 In an optimal case, Dafny's own implementation of its symbol table and AST would already contain all of this information. Unfortunately, this was not the case. The following screenshot shows all available properties and fields of a name segment. A name segment is just any occurence of an identifier, for example of a variable or of a method.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{03_namesegmentfields.png}
+    \includegraphics[scale=1]{03_namesegmentfields.png}
     \caption{Properties and Fields of a NameSegment Expression}
     \label{fig:namesegment}
 \end{figure}
@@ -344,7 +338,7 @@ A better example may be on a higher level. Let's have a look at the class \code{
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{03_method.png}
+    \includegraphics[scale=1]{03_method.png}
     \caption{Properties and Fields of a Method}
     \label{fig:method}
 \end{figure}
@@ -429,7 +423,7 @@ The following declarations were analyzed:
 
 
 
-\subsubsection{Dafny AST Implementation}
+\subsection{Dafny AST Implementation}
 During analysis of the Dafny AST, it was noticed that the file \code{DafnyAst.cs} is huge. It contains eleven thousand lines of code and a large number of classes. This is so extensive that even Visual Studio struggles with it and crashed occasionally on performing autocompletions.\\
 
 Since this file and its contained classes will have to be extended by \code{Accept}-methods

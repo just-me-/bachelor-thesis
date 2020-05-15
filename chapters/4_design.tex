@@ -163,7 +163,7 @@ Unlike in the preceding semester thesis, integration tests could be implemented 
 \subsubsection{Dafny Test Files}
 Integration Tests usually run directly on \code{dfy} sourcefiles. Those testfiles need to be referenced from within the test. To keep the references organized, a dedicated project \code{TestCommons} was created. Each test project has access to these common items. Every testfile is provided as a static variable and can thus be easily referenced.
 
-\begin{lstlisting}[language=csharp, caption={Test File Reference}, captionpos=b, label={lst:fileRef}]
+\begin{lstlisting}[language=csharp, caption={Test File Reference}, captionpos=b, label={lst:semiExpectedCodeThing}]
 public static readonly string cp_semiexpected = CreateTestfilePath("compile/semi_expected_error.dfy");
 \end{lstlisting}
 The class providing these references will also check, if the test file actually exists, so that \code{FileNotFoundErrors} can be excluded.
@@ -173,7 +173,7 @@ Many tests return results in complex data structures, such as \code{CounterExamp
 To be able to easily compare the results against an expectation, a converter was written to translate the complex data structure into a simple list of strings. For example, each counter example will be converted into a unique string, containing all information about the counter example. All counter examples together are assembled within a list of strings. This way, they can be easily compared against each other.\\
 Since not only counter examples, but also other data structures such as \code{Diagnostic} were converted into lists of strings, the converters were held generic as far as possible. The following listing shows how this was realized. The method takes a enumerable of type T as an argument, and a converter which converts type T into a string. Each item in the enumerable is then selected in the converted variant.
 
-\begin{lstlisting}[caption={Generic Method to Convert an IEnumerable}, captionpos=b, label={lst:fileRef}]
+\begin{lstlisting}[caption={Generic Method to Convert an IEnumerable}, captionpos=b, label={lst:genericconverter}]
 private static List<string> GenericToStringList<T>(this IEnumerable<T> source, Func<T, string> converter)
 {
     return source?.Select(converter).ToList();
@@ -182,7 +182,7 @@ private static List<string> GenericToStringList<T>(this IEnumerable<T> source, F
 
 Calling the above method for counter examples are made as follows. A list of counter examples is handed as the argument, and a \code{Func<CounterExample, string> ToCustomString} is handed as the converter. The converter is also shown in the following code segment. Not that it is defined as an extension method.
 
-\begin{lstlisting}[language=csharp, caption={Converting CounterExamples to strings}, captionpos=b, label={lst:fileRef}]
+\begin{lstlisting}[language=csharp, caption={Converting CounterExamples to strings}, captionpos=b, label={lst:converterCEToString}]
 public static List<string> ToStringList(this List<CounterExample> source)
 {
     return GenericToStringList(source, ToCustomString);
