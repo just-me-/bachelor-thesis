@@ -128,14 +128,15 @@ public class MyHandler : ICounterExampleHandler
 
 
 \subsection{Dafny Language Features}
-With regard to the symbol table, the Dafny language had to be studied more in detail. For example, overloading describes the existence of multiple methods with the same name, but different signatures. This is obviously highly relevant for the construction of a symbol table.
-To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide \cite{dafnyReferenceManual}. This chapter provides the reader with the most relevant concepts in regard to the symbol table. Of cousre, Dafny offers much more language features.
+With regard to the symbol table, the Dafny language had to be studied more in detail. For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes. This is highly relevant for the construction of a symbol table.
+
+To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide \cite{dafnyReferenceManual}. This chapter provides the reader with the most relevant concepts with regard to the symbol table. 
 
 
 \subsubsection{Modules}
-Dafny code can be organized with modules. A module can be compared to a namespace in \Csharp or C++. Modules can also be nested. To use a class, method or variable defined in another module, the user has three options. Imagine a method \texttt{addOne} defined in a module \texttt{Helpers}.
+Dafny code can be organized by modules. A module can be compared to a namespace in \Csharp or C++. Modules can also be nested. To use a class, method or variable defined in another module, the user has three options. Imagine a method \code{addOne} defined in a module \code{Helpers}.
 
-\begin{lstlisting}[caption={Module Example}, captionpos=b, label={lst:shadowing}]
+\begin{lstlisting}[language=dafny, caption={Module Example}, captionpos=b, label={lst:shadowing}]
     module Helpers {
         function method addOne(n: nat): nat {
             n + 1
@@ -144,14 +145,14 @@ Dafny code can be organized with modules. A module can be compared to a namespac
 \end{lstlisting}
 
 \begin{itemize}
-    \item The user writes the Module name explicitly in front of the method he wants to call, \linebreak namely \texttt{Helpers.addOne(5)}.
-    \item The user imports the module, for example with \texttt{import H = Helpers}. Afterwards, he may type \texttt{H.addOne(5)}.
-    \item The user imports the module in opened state: \texttt{import opened Helpers}. Now the user is eligible to skip the namespace identifier and can just write \texttt{addOne(5)}.
+    \item The user writes the module name explicitly in front of the method he wants to call, \linebreak namely \code{Helpers.addOne(5)}.
+    \item The user imports the module, for example with \code{import H = Helpers}. Afterwards, he may type \code{H.addOne(5)}.
+    \item The user imports the module in opened state: \code{import opened Helpers}. Now the user is eligible to skip the namespace identifier and can just write \code{addOne(5)}.
 \end{itemize}
 
-Importing a module in opened state may cause naming clashes. This is allowed, but in this case, the locally defined item has always priority over the imported item. For example, in listing \ref{lst:moduleShadowing}, the assert statemtn is violated, since the overwritten \texttt{addOne} has priority. \cite{functionVSMethod}
+Importing a module in opened state may cause naming clashes. This is allowed, but in this case, the locally defined item has always priority over the imported one. For example, in listing \ref{lst:moduleShadowing}, the assert statement is violated, since the overwritten \code{addOne} has priority. \cite{functionVSMethod}
 
-\begin{lstlisting}[caption={Naming Clash}, captionpos=b, label={lst:moduleShadowing}]
+\begin{lstlisting}[language = dafny, caption={Naming Clash}, captionpos=b, label={lst:moduleShadowing}]
     module Helpers {
         function method addOne(n: nat): nat {
             n + 1
@@ -168,9 +169,9 @@ Importing a module in opened state may cause naming clashes. This is allowed, bu
 
 \end{lstlisting}
 
-To import a module defined in another file, the user has to import the file using the command \texttt{include "myFile.dfy"}. This includes all content of the included file into the current file.
+To import a module defined in another file, the user has to import the file using the command \code{include "myFile.dfy"}. This includes all content of the included file into the current file.
 
-\subsubsection{Functions vs. Methods}
+\subsubsection{Functions and Methods}
 Dafny has two types of methods, or functions respectively. For a programmer used to \Csharp or C++, this concept may be confusing at first, but is very simple:
 \begin{itemize}
 \item A method is what a programmer from \Csharp or C++ may be used to. A sequence of code, accepting some parameters at the beginning and returning some values at the end. It can be a class member or be in global space.
@@ -212,10 +213,10 @@ class Sub extends Base {
 }
 \end{lstlisting}
 
-This means that we do not have to consider this issue any further with regard to our symbol table.
+This means that this issue does not have to be considered any further with regard to the symbol table.
 
 \subsubsection{Overloading}
-Overloading means defining the same method with a different signature. This is, with different parameters. Dafny prohibits this language concept to be able to uniquely identify each method by its name. \cite{dafnyReferenceManual}
+Overloading means defining the same method with a different signature. This is, with different parameters. Dafny prohibits this language concept to be able to uniquely identify each method by its name \cite{dafnyReferenceManual}.
 This means, that whitin each module, each method name is unique.
 
 \subsubsection{Shadowing}
@@ -245,13 +246,13 @@ Consider the following code snippet. It defines a class with a member variable \
     }
 \end{lstlisting}
 
-Next, a nested scope is opened. Printing a at first will still yield the local variable. However, in the nested scope, we can redefine a again, shadowing the own local variable. Further calls of a will then print the boolean variable. \texttt{this.a} will still yield 2, even in the nested scope.\\
+Next, a nested scope is opened. Printing a at first will still yield the local variable. However, in the nested scope, we can redefine a again, shadowing the own local variable. Further calls of a will then print the boolean variable. \code{this.a} will still yield 2, even in the nested scope.\\
 
 This behaviour can be summarized with the following three rules:
 \begin{itemize}
     \item If the variable was defined locally before its usage, the local definition is significant.
     \item If the variable was not defined locally before its usage, the parent scope is significant.
-    \item If a class member is called via the \texttt{this} identifier, the class member is significant.
+    \item If a class member is called via the \code{this} identifier, the class member is significant.
 \end{itemize}
 
 Regarding the implementation, the definition of a symbol could be found using the following method. Prerequisite is though, the scope.AllSymbols returns only those symbols that are defined so far.
@@ -277,22 +278,92 @@ private Symbol FindDeclaration(Symbol target, Symbol scope)
 The code above would basically already resolve the \textit{GoTo Definition} problem.
 
 \subsection{Symbol Table}
-Was ist eine Symbol tAble?
-Inwiefern modifiezeren wir das?
-Dafny hta keine, drum selber bauen.
+The parser of a compiler works with two major concepts. One of them is the abstract syntax tree (AST), the other is the symbol table. The AST is a tree, that contains information about the scope of symbols. Consider the following code snippet.
 
-Was erwarten wir von der Symbol table?
-Goto Def -> Wo ist die Deklaration?
-Rename -> Get all usages with position.
-Code Lens -> Get all usages
+\begin{lstlisting}[language=csharp, caption={AST Demo Snippet}, captionpos=b, label={lst:astsnipped}]
+while(i<5) {
+    i = i + 1;
+}
+\end{lstlisting}
+
+The tree segment for this snippet would contain of the while-Statement as the root node. It then has two branches, one for the condition, and one for the body. The body itself consists of a list of expressions. In the above example, there is only one expression, namely an assignemnt. The assignment has again a left and a right side. The right side is a binary expression, with the +-operator. Left of the plus is a name segment, and on the right hand side a literal expression.\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{03_tree.png}
+    \caption{Communication Benefit of LSP}
+    \label{fig:lspcommunication}
+\end{figure}
+
+Often, the AST doesn not contain information about the type of symbols. This is where the symbol table comes into play. The symbol table contains that information and is connected to the AST, for example by the use of a dictionary. This way, it could be stored that the name segment 'i' is of type int.
+
+\subsubsection{Requirements for the symbol table}
+To be able to implement our feature set, the following requirements must be fullfilled by the symbol table.
+\begin{itemize}
+    \item Cursor Position
+    \begin{itemize}
+        \item Which name segment is at the cursor's position?
+    \end{itemize}
+
+    \item Goto Definition
+        \begin{itemize}
+            \item Where is the a symbol declared?
+        \end{itemize}
+
+    \item Code Lense
+        \begin{itemize}
+            \item How often, and where, is a declaration used?
+        \end{itemize}
+
+    \item Rename
+        \begin{itemize}
+            \item What are all occurences of a symbol?
+        \end{itemize}
+    
+    \item Autocompletion
+        \begin{itemize}
+            \item Which declarations are available in a scope?
+        \end{itemize}
+\end{itemize}
+
+
+\subsubsection{Dafny Symbols}
+In an optimal case, Dafny's own implementation of its symbol table and AST would already contain all of this information. Unfortunately, this was not the case. The following screenshot shows all available properties and fields of a name segment. A name segment is just any occurence of an identifier, for example of a variable or of a method.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{03_namesegmentfields.png}
+    \caption{Properties and Fields of a NameSegment Expression}
+    \label{fig:namesegment}
+\end{figure}
+While \code{ResolvedExpression} looks like an interesting property, it just points to itself in a regular case, not to the declaration or such. Thus, if a name segment is encountered, for example as the right hand side of an assignment, the name segment does not contain any information about its origin.\\
+
+
+
+A better example may be on a higher level. Let's have a look at the class \code{method}. It contains properties and methods for it's body, but not exactly which name segments are declared inside that body. While it has a property \code{EnclosingModule}, it is not stated in what class that method is defined. The property \code{CompileName} contains information about the enclosing class, but only as a string and is thus of limited use. Also, there is no way to know where that method is used, which was a prerequisite for the code lens feature.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{03_method.png}
+    \caption{Properties and Fields of a Method}
+    \label{fig:method}
+\end{figure}
+
+Thus, it was decided to implement an own symbol table.
+%%%%
+
+
+
+
 
 
 ==> Gedanken zum Updaten sind wichtig. Evt ned alles implementieren aber dokumentieren.... Effizienz. Ned alles neu Builden
 wenn in einem File nur ein Zeichen geändert wird auf einer Linie etc. ==> Ausblick.
 
 Und Testing in einem grossen Dafny Project wär evt auch noch ganz nice... ein paar Performance-Tests und so?
-Und die dann mit dem Plugin aus der Studienarbeit vergleichen? Und dem alten-alten Plugin? Käme bestimmt jut an. 
+Und die dann mit dem Plugin aus der Studienarbeit vergleichen? Und dem alten-alten Plugin? Käme bestimmt jut an.
 
+
+\subsubsection{Dafny AST Immplementation}
 The DafnyAst.cs is a File from Dafny, that is huge.
 Eleven thousand lines of code and a large number of classes.
 This is so extensive that even our IDE Visual Studio struggles with it and crashed on autocompletions. \\
