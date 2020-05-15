@@ -454,75 +454,55 @@ It was decided not to carry out a refactoring. It would be very time consuming a
 
 
 \subsection{Continuous Integration (CI)}
-Continuous integration is a verry important part for code quality improvement and colaboration.
-Unfortunately, the CI process in our student research project extended to almost the entire semester \cite{sa}. \\
+Continuous integration is a very important part for code quality and colaboration.
+Unfortunately, setting up the CI process in the preceding project\cite{sa} took almost until the end of the project stage.
 
-According to our project plan, we wanted to work on open points regarding the CI initially and have completed the theme accordingly for the remaining duration of the bachelor thesis.
+According to our project plan, we wanted to resolve all CI-issues at the beginning of the bachelor thesis, so that we can then profit by a supportive workflow.
 
 \subsubsection{Initial Situation}
-We achieved in our client CI that code was analyzed with SonarQube and the build failed if it contained TypeScript errors \cite{sa}.
-We did not achieve it within reasonable time headless integration test \cite{sa}. \\
+On the client side, code was analyzed with SonarQube. If the code contained TypeScript errors, the build failed \cite{sa}. The end-to-end tests, provided by the preceding bachelor thesis\cite{ba} could not be integrated until the end of the project, due to their heavy dependencies.\\
 
-On the server side we reached the build process as well as the dafny tests and our own unit tests \cite{sa}.
-Automated integration tests and code analysis by SonarQube remained outstanding \cite{sa}.
+On the server side, the project was automatically built by the CI server. Our own unit tests, as well as tests provided by Dafny could as well be automatically exectued. Integration testing and code analysis by SonarQube remained pending \cite{sa}.
 
-\subsubsection{Aimed Solution}
-According to our research, a major problem was that the scanner for sonarqube does not support any other languages besides C\# \cite{sonar-supports-only-one-language}.
-This means that in addition to C\# in a project, TypeScript (for the client) cannot be analyzed simultaneously.
-Furthermore there are also single Java files in Dafny project.
-This also led to conflicts in the Sonar analysis in our student research project \cite{sa}. \\
+\subsubsection{Targeted Solution}
+According to our research, a major problem was that the scanner for SonarQube can only analyze one language at a time. \cite{sonar-supports-only-one-language}. This means, that the TypeScript code in the client and the \Csharp code in the server cannot be analyzed simultaneously.
+Furthermore, in the preexisting Dafny project, there are also single Java files. This led to further conflicts in the Sonar analysis \cite{sa}. \\
 
-As a simple solution we decided to separate the client (VSCode plugin) and server (Dafny Language Server) into two separate git repositories.
+As a simple solution, we decided to separate the client (VSCode plugin) and server (Dafny Language Server) into two separate git repositories.
 This not only simplifies the CI process but also ensures a generally better and clearer separation. \\
 
 As a result, the client could still be easily analyzed with the previous Sonar scanner.
-For the Language Server in C\# a special Sonar scannerfor MSBuild had to be used, which publishes the analysis in a separate SonarCloud project \cite{dev}.
-Beside the code from our Lanugae server the whole Dafny project code is now analyzed by sonar.
-This can be very helpful for code reviews. \\
+Regarding the server, a special Sonar scanner for MSBuild had to be installed, which publishes the analysis in a dedicated SonarCloud project \cite{dev}. The available statistics are very helpful for code reviews. \\
 
-The only downside is that the code coverage is not analyzed.
-For .NET OpenCover is a very common tool for code coverage analysis.
-Unfortunately, it only works on windows and not on our linux CI server \cite{opencover}.
-Other tools that works with mono Support .NET Core but not Framework.
-During our research we came across monocov \cite{monocov}. This tool would support mono for .NET Framework. Unfortunately this project was archived and has not been supported for almost 10 years \cite{monocov}.
+The only downside is that the code coverage is not analyzed. Searching for an alternative, \textit{OpenCover} was found as a very common tool for code coverage analysis in \Csharp. Unfortunately, it only runs under Windows  \cite{opencover}. The CI server bases on Linux, though.
+During our research we came across monocov \cite{monocov}. This tool would run under Linux and analyze .NET Framework projects. Unfortunately this project was archived and has not been supported for almost 10 years \cite{monocov}.
 
-Since we would not gain much added value with sonar code coverage, we decided not to pursue this approach any further. The coverage information is provided by the locally installed IDEs anyway.
-\\
+Since we would not gain much value with sonar code coverage, we decided not to pursue this approach any further. The coverage information is provided by the locally installed IDEs anyway.\\
 
-For an easier testability of the CI, we now also used local docker. This allows us to test CI customizations efficiently. See the developer documentation for more details \cite{dev}. \\
-
-The headless integration tests were a bit more tricky.
+The end-to-end tests base on a lot of dependencies, such as a headless instance of Visual Studio Code.
 In consultation with our supervisor, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
 
 \subsubsection{Docker}
-As mentioned in the previous chapter, we rely on Docker.
-The simplicity of Docker Container allows us a comfortable way to integrate the building and testing process into our CI.
+The CI server bases on a Docker distribution. Docker's lightweight virtualization is ideally suited to run the CI environment.
 
-Furthermore, the lightweight virtualization is ideally suited to run and debug our Linux CI environment
-locally and platform-independently (through the Docker Client) in case of problems. \\
+For an easier testability of the CI, we also installed Docker locally. This allowed us to resolve CI issues locally and platform-independently (through the Docker Client) in case of problems. See the developer documentation for more details \cite{dev}. \\
 
-Furthermore we can easily realize the priciple "Cattle, not a pet" with docker.
-Instead of having certain package dependencies that need to be updated continuously (pet), we use a "build, throw away, rebuild" procedure (cattle). So we don't have to worry about security patches and the like. We simply install the latest versions when we create a docker. \\
+Docker also realizes the priciple "Cattle, not pets" with docker. \intnote{hier noch irgend eine cite adden wo das prinzip definiert wird... hab nur grad stackoverflow gefunden, was zitierfähiges wäre nett. sonst wirkt es fast etwas kindisch/verpsielt fürü eine BA.}
+Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used. This way, the dependent packages will always be up to date and security patches and the like are automatically deployed. \\
 
-Excluded from this are of course specific versions such as Node, Z3, Go, Boogie and Sonar.
-There the version to be installed is explicitly specified, since version changes there
-can have essential impairments of the Language Server's function. See the developer documentation for more details \cite{dev}. \\
+Excluded from this principle are Node, Z3, Go, Boogie and Sonar. All of these have to be installed in specific release versions within the CI server. This is, since Dafny relies on specific deployments of these products. See the developer documentation for more details \cite{dev}. \\
+\intnote{wtf ist go, und node und sonar ist doch egal werlche version oder?}
 
 \subsubsection{2do - Kapitelaufteilung komisch}
 Ich hab hier jetzt in der Analyse auch schon die Lösung vorabgegriffen. Sollen wir das splitten? Bricht das nicht den Lesefluss? Evt besprechen.
+ja es is iwie komisch. auch unten habenw ir ja noch testing und blabla... kann man evtl so ein CI Kapitel vlt sogar machen? grml.
 
 
 
+\subsection{notizen von marcel}
 
-
-
-
-
-
-
-
-==> Gedanken zum Updaten sind wichtig. Evt ned alles implementieren aber dokumentieren.... Effizienz. Ned alles neu Builden
-wenn in einem File nur ein Zeichen geändert wird auf einer Linie etc. ==> Ausblick.
+$\rightarrow$ Gedanken zum Updaten sind wichtig. Evt ned alles implementieren aber dokumentieren.... Effizienz. Ned alles neu Builden
+wenn in einem File nur ein Zeichen geändert wird auf einer Linie etc. $\rightarrow$ Ausblick.
 
 Und Testing in einem grossen Dafny Project wär evt auch noch ganz nice... ein paar Performance-Tests und so?
 Und die dann mit dem Plugin aus der Studienarbeit vergleichen? Und dem alten-alten Plugin? Käme bestimmt jut an.
