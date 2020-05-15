@@ -1,7 +1,9 @@
 \section{Management Summary and Introduction}
+\label{section:introduction}
 In this chapter, the technologies touched by this bachelor thesis are explained to provide the reader with the necessary context. Afterwards the motivation and the goals of the thesis are stated in more detail.
 
 \subsection{Dafny}
+\label{section:introduction:dafny}
 \intnote{copy pasta oben, das mit lemma is neu}\\
 Dafny is a compiled language that targets \Csharp which can prove formal correctness.\cite{dafnyWiki} Dafny bases on the language “Boogie”, which uses the Z3 automated theorem prover for discharging proof obligations.\cite{dafnyWiki} That means, that a programmer can define a precondition - a fact that is just given at the start of the code. The postcondition on the other hand is a statement that must be true after the code has been executed. The postcondition is also defined by the programmer. In other words, under a given premise, the code will manipulate data only thus far, so that also the postcondition will be satisfied. Dafny will formally proof this. If it is not guaranteed that the postcondition holds, an error is stated.\\
 
@@ -38,6 +40,7 @@ function Foo(n: nat): float
 \end{lstlisting}
 
 \subsection{Initial Solution}
+\label{section:introduction:initialsolution}
 In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a plugin for Visual Studio Code
 was created to support Dafny.\cite{ba} The plugin was particularly appreciated by the "HSR Correctness Lab"\cite{correctnessLab} to make coding in Dafny easier. The preexisting solution used a proprietary JSON-interface to communicate with the Dafny server. Dafny's verification results were directly parsed by Dafny's console output. Thus, functionality was limited to what Dafny printed onto the console.\\
 In the preceding semester project\cite{sa}, the language server was integrated into the Dafny backend. Thus, any functionality was directly accessible and the proprietary JSON-interface, as well as console parsing could be omitted. All features had to be reimplemented to satisfy the new architectural layout.
@@ -126,3 +129,4 @@ Aside the widening of the feature range, it is definitely necessary to complete 
 
 
 \intnote{2do: iwo den Satz "Zielgruppe die HSR Studenten" einbauen. "Messbarkeit von Erfolg." habs ams chluss kurz aber nja, evtl noch etwas deutlich iwo.}
+\intnote{2do: allfeatures in one bild? hat da snoch platz überhaupt xD}
