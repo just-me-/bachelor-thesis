@@ -35,8 +35,9 @@ The basic concept of the lsp is, that the IDE tells the language server what the
 \subsubsection{Message Example}
 The following message is a \code{textDocument/publishDiagnostics} notification as it appears in the example above. It states that on line 4, from character 12 to 17, there is an assertion violation.\\
 
+
+\begin{lstlisting}[language=json, caption={LSP Message Example}, captionpos=b, label={lst:lspjsonmsg}]
 [12:45:29 DBG] Read response body 
-\begin{lstlisting}[language=json, caption={Module Example}, captionpos=b, label={lst:shadowing}]
 { 
    "jsonrpc":"2.0",
    "method":"textDocument/publishDiagnostics",
@@ -56,13 +57,67 @@ The following message is a \code{textDocument/publishDiagnostics} notification a
             },
             "severity":1,
             "code":0,
-            "source":"file:///D:/[...]/fail1.dfy",
+            "source":"file:///D[\dots]/fail1.dfy",
             "message":"assertion violation"
          }
       ]
    }
 }
 \end{lstlisting}
+
+\subsection{OmniSharp}
+\label{section:analysis:omnisharp}
+To work with the language server protocol, a proper LSP implementation was required. OmniSharp offers support for \Csharp \cite{langserverdotorg}. It could be simply installed as a NuGet package. OmniSharp also offers a language server client that can be used for testing.
+
+\subsubsection{Basic OmniSharp Usage}
+\intnote{rewritten}
+Mr. Martin Björkström published a comprehensible tutorial about Omnisharp's language server protocol implementation. The tutorial provides the user with all the required knowledge to set up a language server in \Csharp. Besides the setup of the server, it also illustrated how to create message handlers, for example for auto completions or document synchronization.
+
+\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lsphandler}]
+public class AutoCompletion : ICompletionHandler
+{
+    public Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+}
+\endlisting
+
+Listing \ref{lst:lsphandler} illustrates that the user simply has to implement an interface provided by Omnisharp. Within the \code{request} parameter, all required information is passed to the handler. For auto completion, this is the file and the cursor position and some context information, how the auto completion event was triggered. The task of the langauge server is now to figure proper suggestions and return them in the form of a \code{CompletionList}.\\
+
+Since OmniSharp is open source, we could find all available interfaces and thus all available handlers in their git repository \cite{omnisharpgit}. This collection is very helpful to perceive LSP's possibilities.
+
+\subsubsection{Custom LSP Messages}
+The current problem domain does not only require premade LSP messages like auto completions or diagnostics, but also custom requests such as \code{counterexample}, which is Dafny-specific. Such a message is not natively supported by the language server protocol. Since no example or documentation could be found on custom messages, Martin Bj\"orkstr\"om was contacted in the OmniSharp Slack channel \cite{omnisharpslack}. Mr. Bj\"orkstr\"om and his team were able to provide the solution for this issue.\\
+
+The server can simply register custom handlers, too. The following three items have to be specified:
+\begin{itemize}
+    \item Name of the message, e.g. "counterExample"
+    \item Parameter type, e.g. "CounterExampleParams"
+    \item Response type, e.g. "CounterExampleResults"
+\end{itemize}}
+
+
+The parameter and response types can be custom classes and allow for maximal flexibility. The following code skeleton demonstrates how a custom request handler can be implemented:
+
+\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lsphandler}]
+public class CounterExampleParams : IRequest<CounterExampleResults> { [\dots] }
+public class CounterExampleResults { [\dots] }
+
+[Serial, Method("counterExample")]
+public interface ICounterExampleHandler : IJsonRpcRequestHandler<CounterExampleParams, CounterExampleResults> { }
+
+public class MyHandler : ICounterExampleHandler
+{
+    public async Task<CounterExampleResults> Handle(CounterExampleParams request, CancellationToken c)
+    {
+        CounterExampleResults r = await DoSomething(request);
+        return r;
+    }
+}
+\endlisting
+
+
 
 
 
