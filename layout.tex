@@ -11,21 +11,49 @@
 \newcommand{\Csharp}{%
   {\settoheight{\dimen0}{C}C\kern-.05em \resizebox{!}{\dimen0}{\raisebox{\depth}{\#}}}} % writes a nice C#
   
-\lstdefinestyle{sharpc}{language=[Sharp]C,
-    frame=lr,
-    rulecolor=\color{blue!80!black},
-    belowskip=3em,
-    aboveskip=2em,
-    basicstyle=\footnotesize\ttfamily,
-    breaklines=true}
 
-\lstdefinestyle{dafny}{
-    frame=lr,
-    rulecolor=\color{green!80!black},
-    belowskip=3em,
-    aboveskip=2em,
-    basicstyle=\footnotesize\ttfamily,
-    breaklines=true}
+
+    \lstdefinelanguage{csharp}{
+      basicstyle=\normalfont\ttfamily,
+      numbers=left,
+      numberstyle=\scriptsize,
+      stepnumber=1,
+      numbersep=8pt,
+      showstringspaces=false,
+      breaklines=true,
+      frame=lines,
+      belowskip=3em,
+      aboveskip=2em,
+      backgroundcolor=\color{white}
+  }
+
+    \lstdefinelanguage{dafny}{
+      basicstyle=\normalfont\ttfamily,
+      numbers=left,
+      numberstyle=\scriptsize,
+      stepnumber=1,
+      numbersep=8pt,
+      showstringspaces=false,
+      breaklines=true,
+      frame=lines,
+      belowskip=3em,
+      aboveskip=2em,
+      backgroundcolor=\color{white}
+  }
+
+\lstdefinelanguage{json}{
+      basicstyle=\normalfont\ttfamily,
+      numbers=left,
+      numberstyle=\scriptsize,
+      stepnumber=1,
+      numbersep=8pt,
+      showstringspaces=false,
+      breaklines=true,
+      frame=lines,
+      belowskip=3em,
+      aboveskip=2em,
+      backgroundcolor=\color{white}
+  }
 
 \newcommand{\code}[1]{\texttt{#1}}
 % Reduce image path

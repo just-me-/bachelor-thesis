@@ -32,7 +32,37 @@ The basic concept of the lsp is, that the IDE tells the language server what the
     \label{fig:lspmsgexample}
 \end{figure}
 
+\subsubsection{Message Example}
+The following message is a \code{textDocument/publishDiagnostics} notification as it appears in the example above. It states that on line 4, from character 12 to 17, there is an assertion violation.\\
 
+[12:45:29 DBG] Read response body 
+\begin{lstlisting}[language=json, caption={Module Example}, captionpos=b, label={lst:shadowing}]
+{ 
+   "jsonrpc":"2.0",
+   "method":"textDocument/publishDiagnostics",
+   "params":{ 
+      "uri":"file:///D:/[...]/fail1.dfy",
+      "diagnostics":[ 
+         { 
+            "range":{ 
+               "start":{ 
+                  "line":4,
+                  "character":12
+               },
+               "end":{ 
+                  "line":4,
+                  "character":17
+               }
+            },
+            "severity":1,
+            "code":0,
+            "source":"file:///D:/[...]/fail1.dfy",
+            "message":"assertion violation"
+         }
+      ]
+   }
+}
+\end{lstlisting}
 
 
 
@@ -169,8 +199,8 @@ This behaviour can be summarized with the following three rules:
 
 Regarding the implementation, the definition of a symbol could be found using the following method. Prerequisite is though, the scope.AllSymbols returns only those symbols that are defined so far.
 
-\lstset{style=sharpc}
-\begin{lstlisting}[caption={Finding Symbol Definition}, captionpos=b, label={lst:findsymbol}]
+
+\begin{lstlisting}[language=csharp, caption={Finding Symbol Definition}, captionpos=b, label={lst:findsymbol}]
 private Symbol FindDeclaration(Symbol target, Symbol scope)
 {
     foreach (Symbol s in scope.AllSymbols)

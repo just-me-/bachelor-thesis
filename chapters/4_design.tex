@@ -162,8 +162,8 @@ Unlike in the preceding semester thesis, integration tests could be implemented 
 
 \subsubsection{Dafny Test Files}
 Integration Tests usually run directly on \code{dfy} sourcefiles. Those testfiles need to be referenced from within the test. To keep the references organized, a dedicated project \code{TestCommons} was created. Each test project has access to these common items. Every testfile is provided as a static variable and can thus be easily referenced.
-\lstset{style=sharpc}
-\begin{lstlisting}[caption={Test File Reference}, captionpos=b, label={lst:fileRef}]
+
+\begin{lstlisting}[language=csharp, caption={Test File Reference}, captionpos=b, label={lst:fileRef}]
 public static readonly string cp_semiexpected = CreateTestfilePath("compile/semi_expected_error.dfy");
 \end{lstlisting}
 The class providing these references will also check, if the test file actually exists, so that \code{FileNotFoundErrors} can be excluded.
@@ -182,7 +182,7 @@ private static List<string> GenericToStringList<T>(this IEnumerable<T> source, F
 
 Calling the above method for counter examples are made as follows. A list of counter examples is handed as the argument, and a \code{Func<CounterExample, string> ToCustomString} is handed as the converter. The converter is also shown in the following code segment. Not that it is defined as an extension method.
 
-\begin{lstlisting}[caption={Converting CounterExamples to strings}, captionpos=b, label={lst:fileRef}]
+\begin{lstlisting}[language=csharp, caption={Converting CounterExamples to strings}, captionpos=b, label={lst:fileRef}]
 public static List<string> ToStringList(this List<CounterExample> source)
 {
     return GenericToStringList(source, ToCustomString);
@@ -202,7 +202,7 @@ public static string ToCustomString(this CounterExample ce)
 
 Comparison of the results and the expectation is now very simple. The expectation can just be written by hand as follows:
 
-\begin{lstlisting}[caption={Expectation}, captionpos=b, label={lst:testexpectation}]
+\begin{lstlisting}[language=csharp, caption={Expectation}, captionpos=b, label={lst:testexpectation}]
 List<string> expecation = new List<string>()
 {
     "L3 C19: in1 = 2446; ",
@@ -217,7 +217,7 @@ Since every integration test starts the client and the server at first, as well 
 It was considered if the \code{IntegrationTestBase} class should directly contain a class member\linebreak \code{T TestResults} to store the test results, as well as a method \code{SendRequest} and \code{VerifyResults}. While storing the test results could have been realized, this was not possible for the methods \code{SendRequest} and \code{VerifyResults}. The problem is, that these methods have different signatures from test case to test case. A compilation requests has differnt parameters (such as compilation arguments), than a goto-defintion request (which as a position as a parameter).\\
 Instead, it was decided to create a second base class for each test case. For testing compilation, this class is named \code{CompileBase} as an example. It inherits from the \code{IntegrationTestBase} class and provides the member \code{CompilerResults}, as well as two methods \code{RunCompilaton(string file, string[] args)} and \code{VerifyResults(string expectation)}. One can now easily see the dedicated paramter list.\\
 The test class itself inherits from its case-specific base class. The tests itself are very simple. For example, if we want to test if the compiler reports a missing semicolon, we could create a testclass \code{public class SyntaxErrors : CompileBase}. Note that we inherit from hour case-specific base class. Thus, the methods \code{RunCompilation} and\code{Verify} are at our dispoal. That means, that hour test is as simple as follows:
-\begin{lstlisting}[caption={Sample Test for Missing Semicolon}, captionpos=b, label={lst:demoTest}]
+\begin{lstlisting}[language=csharp, caption={Sample Test for Missing Semicolon}, captionpos=b, label={lst:demoTest}]
 [Test]
 public void FailureSyntaxErrorSemiExpected()
 {

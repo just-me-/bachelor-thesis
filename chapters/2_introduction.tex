@@ -8,8 +8,7 @@ In this chapter, the technologies touched by this bachelor thesis are explained 
 Dafny is a compiled language that targets \Csharp which can prove formal correctness.\cite{dafnyWiki} Dafny bases on the language “Boogie”, which uses the Z3 automated theorem prover for discharging proof obligations.\cite{dafnyWiki} That means, that a programmer can define a precondition - a fact that is just given at the start of the code. The postcondition on the other hand is a statement that must be true after the code has been executed. The postcondition is also defined by the programmer. In other words, under a given premise, the code will manipulate data only thus far, so that also the postcondition will be satisfied. Dafny will formally proof this. If it is not guaranteed that the postcondition holds, an error is stated.\\
 
 The following code snippet shows an example. The value a is given, but it is required to be positive. This is the precondition. In the method body, the variable b is assigned the negative of a. Thus, we ensure, that b must be negative, which is the postcondition.
-\lstset{style=dafny}
-\begin{lstlisting}[caption={Simple Dafny Example}, captionpos=b, label={lst:simpleDafnyExample}]
+\begin{lstlisting}[language=dafny, caption={Simple Dafny Example}, captionpos=b, label={lst:simpleDafnyExample}]
 method demo(a: int) returns (b: int)
 requires a > 0
 ensures b < 0
@@ -20,8 +19,7 @@ b := -a;
 This example is of course trivial. In a real project, correctness is not that obvious. But with Dafny, a programmer can be sure if his or her program is correct. Since the proof is done with formal, mathematical methods, the correctness is guaranteed.\\
 
 \intnote{Abschjnitt wirklich needed?}If Dafny is unable to perform a proof, the user can assist by creating lemmas. Lemmas are mathematical statements. For example, a lemma could be that a factorial number is never zero. If we define a simple function \code{Factorial}, and afterwards devide through the result of \code{Factorial}, Dafny will state that this might be a division by zero. But if we assert, that a factorial number can never be zero, verification can be compelted successfully. 
-\lstset{style=dafny}
-\begin{lstlisting}[caption={Lemmas}, captionpos=b, label={lst:lemma}]
+\begin{lstlisting}[language=dafny, caption={Lemmas}, captionpos=b, label={lst:lemma}]
 
 function Factorial(n: nat): nat
 {
