@@ -1,4 +1,45 @@
 \section{Analysis}
+\label{section:analysis}
+Since this thesis is a direct sequel of the preceding semester thesis, work could be directly continued. However, to provide the reader with a comprehensive knowledge base about Dafny and the language server protocol, some chapters out of the semester thesis will be repeated in the following subsections. To be able to create the symbol table, more detailled research about Dafny's language feature and its AST element had to be done, which is also described in this chapter.
+
+\subsection{Language Server Protocol}
+\label{section:analysis:lsp}
+The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{dafnyWiki}. In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{dafnyWiki}. The goal of the LSP is to untie the dependency of an IDE with its programming language. That means, that once a language server is available, the user is free in the choice of his IDE, as long as it offers a client instance that is able to communicate with the server. The user can then use a variety of features, as long as the language server offers them. Those features can for example be auto completions, hover information, or go to definition. Custom message types, for example compile or counterExample can also be added to the LSP. \cite{dafnyWiki}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{03_lspcommunication.png}
+    \caption{Communication Benefit of LSP}
+    \label{fig:lspcommunication}
+\end{figure}
+A big advantage of this is that the IDE specific plugin can be kept very simple. The relevant information is delivered by the language server, which is IDE and language independent. Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates these benefits. \cite{lspextensionguide}
+
+\subsubsection{Message Types}
+The LSP supports three types of messages.
+\begin{itemize}
+    \item Notification: One-way message, for example for a console log or a window notification.
+    \item Request: A message that expects a response.
+    \item Response: The response to a request.
+\end{itemize}
+Each message type can be sent from both sides.
+
+\subsubsection{Communication Example}
+The basic concept of the lsp is, that the IDE tells the language server what the user is doing. These messages are pretty simple, namely \code{textdocument/didOpen} or \code{textDocument/didChange}. The language server on the other hand can now verify the opened or changed document and test it for errors. If errors are found, the server can send a \code{textDocument/publishDiagnostics} notification back to the client. The client may now underline the erroneous code range in red. \cite{lspspec}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{03_lspmsgexample.png}
+    \caption{Example Communication}
+    \label{fig:lspmsgexample}
+\end{figure}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%% neu
+
+
 \subsection{Dafny Language Features}
 With regard to the symbol table, the Dafny language had to be studied more in detail. For example, overloading describes the existence of multiple methods with the same name, but different signatures. This is obviously highly relevant for the construction of a symbol table.
 To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide \cite{dafnyReferenceManual}. This chapter provides the reader with the most relevant concepts in regard to the symbol table. Of cousre, Dafny offers much more language features.
