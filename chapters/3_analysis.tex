@@ -506,3 +506,14 @@ wenn in einem File nur ein Zeichen geändert wird auf einer Linie etc. $\rightar
 
 Und Testing in einem grossen Dafny Project wär evt auch noch ganz nice... ein paar Performance-Tests und so?
 Und die dann mit dem Plugin aus der Studienarbeit vergleichen? Und dem alten-alten Plugin? Käme bestimmt jut an.
+
+
+\subsection{notizen von tom}
+gleich nachm schreiben, was mir onch so durch den kopf geht:
+\begin{itemize}
+    \item Visitor Pattern braucht auch olaf und guido nicht jeden tag. Kommen die draus? Wäre nicht ein schema-bildchen noch gut, aka 'kuck hier links, der accept sagt wo ich durch muss, udn kuck hier rechts, der visitor sagt was getan wird. oder irgend sowas, ka.
+    \item expression list und co total random... halt brutal unvollständig etc pp. erklären, warum das unvollständig ist.
+    \item SymbolTable, AST, connected, blabla... ist das gut genug? Corbat hat sehr viel Ahnung davon und mein Halbwissen ist da ein bisschen gefährlich, das gibt dann ja total schelchten eindruck.
+    \item Lanague Feautres: am anfang noch spezifisch schreiben, dass wir jetzt nur auf den shit eingehen, der für symboltable relevant ist, aka wo könnten doppelte namen vorkommen.
+    \item Ist der flow eig klar? wir müssen ne symbolt able machen, $\Rightarrow$ was hat n dafny da überhaupt so, $\Rightarrow$ wie machen wir es, $\Rightarrow$ visitor is gut für sowas $\Rightarrow$ muss dies und das visitien.
+\end{itemize}
