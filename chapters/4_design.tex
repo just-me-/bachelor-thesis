@@ -154,13 +154,15 @@ For custom types, such as \code{CounterExampleResults}, we have defined separate
 
 \intnote{<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do}
 
-\intnote{ist nicht einiges schon implementation?}
+\intnote{ist nicht einiges schon implementation? evtl besser schreiben: "Wir haben entschieden, die komponeenten so und so aufzuteilen, wenn wir es dann implementeiren. statt: "wir haben es so und so implemntiert"}
 
- \subsection{Server}
+\intnote{Mir ist aufgefallen, dass die Information zum teil doppelt kommt: erst beim intro 'wir machen ejtzt interfaces statt any zu verwenden. dann 'jetzt kommt allesnochmal im detail', dann kommt 'wir haben statt any interfaces verwendet' nict sicher ob das aber schlimm ist oder nur mir auffällt, ein intro zu haben ist ja legitim.}
 
+\subsection{Server}
+hmm evtl besser warten bis fertig refactored?
 
 \subsection{Integration Tests}
-Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's Language Server Client \cite{omnisharpClient}. Each test starts a language server and a language client, then they connect to each other. Now, the client can send supported requests, for example "get me the counter examples for file ../test.dfy". The result can be directly parsed into our \code{CounterExampleResults} datastructure and be compared to the expectation. Thus, tests can be written easily and are very meaningful and highly relevant.
+Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's language server client \cite{omnisharpClient}. Each test starts a language server and a language client, then they connect to each other. Now, the client can send supported requests, for example "get me the counter examples for file ../test.dfy". The result can be directly parsed into our \code{CounterExampleResults} datastructure and be compared to the expectation. Thus, tests can be written easily and are very meaningful and highly relevant.
 
 \subsubsection{Dafny Test Files}
 Integration Tests usually run directly on \code{dfy} sourcefiles. Those testfiles need to be referenced from within the test. To keep the references organized, a dedicated project \code{TestCommons} was created. Each test project has access to these common items. Every testfile is provided as a static variable and can thus be easily referenced.
@@ -175,7 +177,7 @@ Many tests return results in complex data structures, such as \code{CounterExamp
 To be able to easily compare the results against an expectation, a converter was written to translate the complex data structure into a simple list of strings. For example, each counter example will be converted into a unique string, containing all information about the counter example. All counter examples together are assembled within a list of strings. This way, they can be easily compared against each other.\\
 Since not only counter examples, but also other data structures such as \code{Diagnostic} were converted into lists of strings, the converters were held generic as far as possible. The following listing shows how this was realized. The method takes a enumerable of type T as an argument, and a converter which converts type T into a string. Each item in the enumerable is then selected in the converted variant.
 
-\begin{lstlisting}[caption={Generic Method to Convert an IEnumerable}, captionpos=b, label={lst:genericconverter}]
+\begin{lstlisting}[language=csharp, caption={Generic Method to Convert an IEnumerable}, captionpos=b, label={lst:genericconverter}]
 private static List<string> GenericToStringList<T>(this IEnumerable<T> source, Func<T, string> converter)
 {
     return source?.Select(converter).ToList();
@@ -219,6 +221,7 @@ Since every integration test starts the client and the server at first, as well 
 It was considered if the \code{IntegrationTestBase} class should directly contain a class member\linebreak \code{T TestResults} to store the test results, as well as a method \code{SendRequest} and \code{VerifyResults}. While storing the test results could have been realized, this was not possible for the methods \code{SendRequest} and \code{VerifyResults}. The problem is, that these methods have different signatures from test case to test case. A compilation requests has differnt parameters (such as compilation arguments), than a goto-defintion request (which as a position as a parameter).\\
 Instead, it was decided to create a second base class for each test case. For testing compilation, this class is named \code{CompileBase} as an example. It inherits from the \code{IntegrationTestBase} class and provides the member \code{CompilerResults}, as well as two methods \code{RunCompilaton(string file, string[] args)} and \code{VerifyResults(string expectation)}. One can now easily see the dedicated paramter list.\\
 The test class itself inherits from its case-specific base class. The tests itself are very simple. For example, if we want to test if the compiler reports a missing semicolon, we could create a testclass \code{public class SyntaxErrors : CompileBase}. Note that we inherit from hour case-specific base class. Thus, the methods \code{RunCompilation} and\code{Verify} are at our dispoal. That means, that hour test is as simple as follows:
+
 \begin{lstlisting}[language=csharp, caption={Sample Test for Missing Semicolon}, captionpos=b, label={lst:demoTest}]
 [Test]
 public void FailureSyntaxErrorSemiExpected()
@@ -227,6 +230,8 @@ public void FailureSyntaxErrorSemiExpected()
     VerifyResults("Semicolon expected in line 7.");
 }
 \end{lstlisting}
+
+
 As you can see, the test contains only of two lines of code. The first handing in the test file, the second one definind our expectations. By the way, the boolean values represent if there were errors and if an executable was generated.\\
 The same applies for test about counter examples, goto definition and other use cases. Thus, the integration test architecture could be created in a way so that the creation of tests is extremely simple and user friendly. The code can be kept very clean and contains no duplicated code. Tests can easily be organized into classes \textendash{} considering compilation this could for example be the separation into logical errors, syntax errors, wrong file types and such.
 
