@@ -42,8 +42,6 @@ and the rest of the logic was split between the created packages. \\
 
 As a little extra, each component contains code documentation to help other developers to get started quickly. This is also helpful because they are displayed as hover tooltips.
 
-\intnote{hier aufpassen dass man nicht schon in die implementation reinläuft}
-
 
 {\bf Extension} \textendash{}
 This component is the aforementioned \code{main} of the plugin and serves as an entry point. The contained code has been minimized. Only one server is instantiated and started. The logic is located entirely in the server package. \\
@@ -148,32 +146,154 @@ For custom types, such as \code{CounterExampleResults}, we have defined separate
 
 \intnote{<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do --> würde ich dann deifnitiv bei implementaiton machen, nicht hier. oder?}
 
-\intnote{ist nicht einiges schon implementation? evtl besser (so als grundidee) formulieren: "Wir haben entschieden, die komponeenten so und so aufzuteilen. statt: "wir haben es so und so implemntiert"}
-
 \intnote{Mir ist aufgefallen, dass die Information zum teil doppelt kommt: erst beim intro 'wir machen ejtzt interfaces statt any zu verwenden. dann 'jetzt kommt allesnochmal im detail', dann kommt 'wir haben statt any interfaces verwendet' nict sicher ob das aber schlimm ist oder nur mir auffällt, ein intro zu haben ist ja legitim.}
 
 \subsection{Server}
-The server's task is to offer a language server that is able to reply to a client's request. Omnisharp offers a simple static method to launch such a server. As launch options, all supported handler classes can be passed. Listing \ref{lst:serverstart} shows a simplified example with two handlers for text document changes and renaming.
+The server's responsibility is to offer a language server that is able to reply to a client's request. Omnisharp offers a simple static method to launch such a server. As launch options, all supported handler classes can be passed. Listing \ref{lst:serverstart} shows a simplified example with two handlers for text document changes and renaming.
 
 \begin{lstlisting}[language=csharp, caption={Language Server Initialization}, captionpos=b, label={lst:serverstart}]
 LanguageServer.From(options => options
     .WithHandler<TextDocumentSyncTaskHandler>()
     .WithHandler<RenameTaskHandler>()
-    \cdots
+    ...
 );
 \end{lstlisting}
 
+The handlers themselves will have to implement a specific interface by Omnisharp, for example \code{IRenameHandler}. These interfaces demand a \code{Handle} method with the proper arguments and results. This is the basic workflow of a language server implementation. The actual challenge is formed by the implementation of the \code{Handle} methods.
 
-The handlers themselves will have to implement an according interface by Omnisharp, for example \code{IRenameHandler}. This interfaces demands a \code{Handle} method with the proper arguments and results. This is the basic workflow of a language server implementation. The actual challenge is formed by the implementation of the \code{Handle} methods.
-
-Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server implementation. Be aware that this illustration is highly simplified.
+Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server implementation. Be aware that this illustration is highly simplified for a better understanding.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=6cm]{serverdesign/01_basic_idea}
+    \includegraphics[width=10cm]{serverdesign/01_basic_idea}
     \caption{Basic Server Concept}
     \label{fig:server_basic_idea}
 \end{figure}
+
+The system under development will not evaluate Dafny code itself. Instead, requests are just forwarded to Dafny. Such requests could for example be:
+\begin{itemize}
+    \item Verify the Dafny code
+    \item Provide a counter example
+    \item Compile the code
+\end{itemize}
+
+Other functionality is not directly implemented by Dafny, for example the option to jump to a definition of a symbol. Thus, the already discussed symbol table will be required this functionality.
+
+The following subchapter provide a step-by-step overview of the design decisions taken for this project.
+
+\subsubsection{Dafny Translation Unit}
+This component is responsible to access Dafny's backend. The core class in this package is the \code{DafnyTranslationUnit}. It receives a \code{PhysicalFile} in the constructor. The class \code{PhysicalFile} just represents a file on the user's filesystem and will be discussed in the next chapter. The only public method \code{Verify} will start the Dafny verification process based on this file. As a result, the process will yield a list of errors, warnings and informations, but also a precompiled \textit{dafnyProgram} and a precompiled \textit{boogieProgram} for later reuse. All of this information is stored in the \code{TranslationResults} wrapper class.
+
+Since \code{TranslationResults} and \code{PhysicalFile} are used on multiple parts of the code, these classes were place within a \code{Commons} package.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{serverdesign/02_DTU.png}
+    \caption{Dafny Translation Unit}
+    \label{fig:server_dtu}
+\end{figure}
+
+Excluded from the figure are some converter methods, that convert \code{Diagnstoics}, such as warnings and errors, to a einheitlich format. Dafny and Boogie report their errors in different ways and different formats, which made their collecting actually relatively complex. To counterfeight that, simple converter extensions were written to unify any occuring errors.
+
+\intnote{eben hier noch einfügen wie das jetzt mit der ST ist}
+
+
+\subsubsection{Workspace Manager}
+A Dafny project consists out of .dfy files. Thus, it was evident to create a class \code{PhysicalFile}. It just has two properties, an URI and the file content. Since the user is editing the code, it also provides an \code{Update} method.
+
+To be able to provide all the necessary functionality, there is more information associated with a single file:
+\begin{itemize}
+    \item Is the file valid?
+    \item Does ist contain errors?
+    \item What does the compiled Dafny und Boogie program look like?
+    \item What symbols occur in the file? \intnote{ST diskutieren}
+\end{itemize}
+
+\intnote{internen noch auflsöen ob symbol table pro workspace oder pro file}
+
+Thus, a class \code{FileRepository} was created. It contains a \code{PhysicalFile}, but also all of the requested information in the list above. For that, a wrapper \code{TranslationResults} was created, containing information about errors and compiled items. Symboltable?
+
+To request information about a file, or to update a file, a WorkspaceManager was created. It contains a dictionary, linking a file identificator (an URI) to a \code{FileRepository}. It offers a method to update a file, but also to get information about a file.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{serverdesign/03_workspace.png}
+    \caption{Workspace Component}
+    \label{fig:server_workspace}
+\end{figure}
+
+Whenever a change is triggered, the \code{Update} method of the \code{WorkspaceManager} can be called to apply them. The manager will forward the call towards the \code{FileRepository}, which will adjust the \code{PhysicalFile}, but also generate new \code{TranslationResults} and \textit{a new symbol table!!} by invoking the Dafny Access package. Any changes are then stored in its \code{Buffer} property.
+
+Inside the code, the reader will find many more methods than shown in figure \ref{fig:server_workspace}. The \code{PhysicalFile} will contain a variety of 'helper'-methods, such as getting the length of a specific line and such. These do not play a central role and are not further discussed. Any \code{Update} method is further generic and available for incremental text changes sent by the client, but also for full text mode.
+
+\subsubsection{SymbolTableManager}
+Creating, managing and navigating through the symbol table is a highly complex process. Thus, it was decided to create an own package for it. The symbol table is built based on a \code{dafnyProgram}. This has the advantage, that any included files (but only as much as necessary) are directly included within the dafnyProgram. Furthermore, the \code{dafnyProgram} is available from the \code{WorkspaceManager} for every file.
+
+This component contains of three classes:
+\begin{itemize}
+    \item SymbolInformation, a class containing just data about a symbol. 
+    \item Navigator, a class to navigate through the symbol table.
+    \item Manager, the class that generates the symbol table.
+\end{itemize}
+
+The \code{SymbolInformation} class is supposed to contain any necessary data about every symbol. In which file is it? On what line, on what column? What is it's parent, what children are in the body of the symbol? This is just how they were discussed in chapter \ref{chapter:keineahnungTODO}. 
+
+The \code{Navigator} is responsible to navigate through the symbol table. Since every symbol is supposed to know about its parent and children, it is legit to speak about a symbol tree. One task could be to naviagte upwards, starting from a symbol dep inside the tree. This way, all available declarations could be retrieved. Another task is to navigate from top to bottom, for example to locate a specific symbol. As a global access point, there is a root symbol. Thus, every top-down search task can be started from that root symbol.
+
+The \code{Manager} is responsible to build the table. It will already make use of the navigator, namely to locate declarations of symbols.
+
+All three components are highly coupled. The dependencies are not drawn in the following figure.
+
+\intnote{noch ergänzen dass navigator von nem symbol asu was macht aber der manager immer über die ganze table geht falls wir das nicht mehr ändern}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{serverdesign/04_symboltable.png}
+    \caption{SymbolTable Component}
+    \label{fig:server_st}
+\end{figure}
+
+
+
+\intnote{ps: waraum heisst eig alles manager xD?}
+
+\subsubsection {Core (HandlerServices) / Provider}
+The core package contains the actual logic. There is one class for each feature, for example \code{RenameProvider} or \code{DiagnsoticsProvider}. The provider is called by the handler. This way, any Omnisharp duties, such as registration of capabilities is separated by the actual core logic. The necessary parameters are forwarded from the handler to the provider. Most often, this is the \code{FileRepository}, which the handler requested from the WorkspaceManager. This way, the provider has access to all precompiled results, including the symbol table. Each provider implements a specific interface, so that fakes can easily be created for testing.
+
+
+\subsubsection{Ressources}
+String ressources, such as error messages, were extracted to a specific ressource package. This way, they are easy to maintain and adjustable at a central place.
+
+\subsubsection{Tools}
+Some tasks require specific components. For example, there is one class reading the launch arguments to set up some options. Another class reads configurable reserved Dafny keywords. All these auxiliary classes were collected within the \code{Tools} package.
+
+\subsubsection{Overview}
+%Language Server->Handler:textdocument/rename
+%Handler->Provider:Forwarding request
+%Provider->WorkspaceManager:Requesting FileRepository
+%WorkspaceManager->Provider:Delivering FileRepository
+%Provider->Provider:Calculate Result
+%Provider->Handler:Deliver Result
+%Handler->Language Server: Forward Result
+For a regular request, the language server calls the proper handler to process the request. The handler will then retrieve the filerepository from the WorkspaceManager and extract the necessary information. This information is forwarded to the provider, which calculates the result and returns it.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{serverdesign/05_overview.png}
+    \caption{Overview}
+    \label{fig:server_overview}
+\end{figure}
+
+
+However, if an update is triggered, the workflow is slightly different. The handler will now actually request the WorkspaceManager to update a file, which will trigger the whole verification process and recalculate the symbol table, if possible. At the end, the handler retrieves the updated FileRepository. Again, the handler woudl forward the repository to a provider of his choice. In the case of an update, the VerificationProvider, which sends Diagnsotics to the Client would to be invoked.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{serverdesign/06_update.png}
+    \caption{Updating a File}
+    \label{fig:server_update}
+\end{figure}
+
 
 Plan Kapitelablauf:
 \begin{enumerate}
