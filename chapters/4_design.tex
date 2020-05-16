@@ -3,20 +3,16 @@ This chapter contains discussions of fundamental design decisions.
 It is primarily divided into client and server architecture.
 
 \subsection{Client}
-The client part of our bachelor thesis includes the VSCode plugin written in TypeScript.
-It starts the Language Server and establishes a connection via LSP.\\
+The client consists of the VSCode plugin written in TypeScript. It establishes a connection to the server using the language server protocol.\\
 
-Since most of the logic should be kept in the IDE independent Language Server,
-we have made it our goal to keep the client logic to a minimum.
-This allows to implement a later plugin for another IDE with as little effort as possible. \\
+The client is supposed to be very simple and only responsible for UI tasks, while as much logic as possible should be implemented on the server side. This allows to implement support for another IDE with as little effort as possible. \\
 
-In the following we will discuss how we achieved this lightweight,
-and how and why we decided to split the components in the client part like we did.
+In the following it is discussed how this lightweight design of the client has been achieved.
+Furthermore, the splitting into components is also explained.
 
 \subsubsection{Initial Situation}
-Already in our term project we made revisions on the client.
-We have connected our new Language Server and greatly reduced the unnecessary logic.
-The following figure \ref{fig:client_then} gives an impression of the architecture.
+The client, taken over from the preexisting bachelor thesis by M. Schaden and R. Krucher \cite{ba}, was already refactored in the preceding term project. Aside establishing a connection to the new language server, a lot of dead code was removed and logic was moved to the server.
+Figure \ref{fig:client_then} gives an impression of the architecture at the beginning of this bachelor thesis..
 
 \begin{figure}[H]
     \centering
@@ -26,25 +22,27 @@ The following figure \ref{fig:client_then} gives an impression of the architectu
 \end{figure}
 
 In this simplified representation, the client architecture appears very tidy.
-Unfortunately, the individual components are very large,
-almost all members are public and this leads to high coupling and deep cohesion.
-Furthermore, there are many helper classes that are not grouped into sub-packages.
-This makes it difficult for other programmers to get into the project. Furthermore,
-it was difficult to eliminate all dead code due to the non-transparent dependencies. \\
+However, the individual components were very large.
+Almost all members were public. This led to high coupling and low cohesion.
+Furthermore, there were various helper classes which were not grouped into sub-packages.
+That made it difficult to maintain the code. Furthermore,
+it was difficult to identify all dead code due to the non-transparent dependencies. \\
 
-Because of these problems we decided to redesign the client itself from scratch.
+Because of these problems it was decided to redesign the client itself from scratch.
 
 \subsubsection{New Architecture}
-To achieve the goal of a more manageable architecture and to reduce coupling, we have implemented the following measures.
-As a first step, we aimed to divide all areas of responsibility into separate components.
-We grouped the components into packages as you can see in figure \ref{fig:client_now_packages}.
+To achieve the goal of a more manageable architecture and to reduce coupling, the following measures were targeted:
+As a first step, all areas of responsibility were divided into separate components.
+The components were grouped into packages as you can see in figure \ref{fig:client_now_packages}.
 These packages are discussed in the following sections. \\
 
-Additionally we detached all logic from the extension class (the main component).
+Additionally, all logic was detached from the extension class (the main component).
 This resulted in the root directory containing only a lightweight program entry point
 and the rest of the logic was split between the created packages. \\
 
-As a little extra, each component contains code documentation to help other developers get started quickly. This is also helpful because they are displayed as hover tooltips.
+As a little extra, each component contains code documentation to help other developers to get started quickly. This is also helpful because they are displayed as hover tooltips.
+
+\intnote{hier aufpassen dass man nicht schon in die implementation reinläuft}
 
 \begin{figure}[H]
     \centering
@@ -54,29 +52,27 @@ As a little extra, each component contains code documentation to help other deve
 \end{figure}
 
 {\bf Extension} \textendash{}
-This component is the aforementioned "main" of the plugin and serves as an entry point. The contained code has been minimized. Only one server is instantiated and started. The logic is located entirely in the server package. \\
+This component is the aforementioned \code{main} of the plugin and serves as an entry point. The contained code has been minimized. Only one server is instantiated and started. The logic is located entirely in the server package. \\
 
 {\bf Server} \textendash{}
-The server package contains the basic triggering of the Language Server and the connection setup. In addition, all server requests, which extend the LSP by own functions, are sent to the server via this package. \\
+The server package contains the basic triggering \intnote{was ist 'triggering a server?' starten? msg senden? aktivieren?} of the language server and the connection setup. In addition, all server requests, which extend the LSP by own functions, are sent to the server via this package. \\
 
 {\bf TypeInterfaces} \textendash{}
-In our new architecture we do not use the "any" type. We decide all types, in particular the types created specifically for additional functions such as results for counter examples. \\
+In the new architecture, no \code{any} type should be used anymore. All types, in particular the types created specifically for additional functions such as \code{CounterExampleResults}, were defined by interfaces. \\
 
 {\bf UI} \textendash{}
-The UI is responsible for all visual displays. Especially VSCode commands and context menu additions. Core components like the status bar are also included in this package. \\
+The UI is responsible for all visual displays, especially VSCode commands and context menu additions. Core components like the status bar are also included in this package. \\
 
 {\bf LocalExecutionHelper} \textendash{}
-This package contains small logic extensions like the execution of compiled dafny files. The UI package accesses this package. \\
+This package contains small logic extensions like the execution of compiled Dafny files. The UI package accesses this package. \\
 
 {\bf StringRessources} \textendash{}
-All text strings and command definitions are defined in this package. This package is used by the UI package. \\
+All string resources and command identifiers are defined in this package. It is used by the UI package. \\
 
 In the following chapters the individual components and their contents are described in more detail.
 
 \subsubsection{Components}
-In the following figure \ref{fig:client_now_classes}, the components within the packages are also shown for a more detailed view. The contents of type interfaces and string resources have been omitted for clarity. \\
-
-It can be seen that only compile and counterexample exist as server accesses. All other features were implemented purely through the LSP protocol without additional client logic as support. This server-side implementation via LSP is a great enrichment. For future plugin developments for other IDEs the effort is automatically eliminated.
+Figure \ref{fig:client_now_classes} shows a more detailed view of the client, including the components within the packages. The contents of type interfaces and string resources have been omitted for clarity. \\
 
 \begin{figure}[H]
     \centering
@@ -85,9 +81,7 @@ It can be seen that only compile and counterexample exist as server accesses. Al
     \label{fig:client_now_classes}
 \end{figure}
 
-
-Figure \ref{fig:client_now_methods} shows the public methods for the components.
-All instance variables were set to private. Constructors were not included for simplicity. The contents of type interfaces and string resources were also omitted for clarity
+It can be seen that only \textit{compile} and \textit{counterexample} exist as dedicated server access classes. All other features, such as \textit{code lens} or \textit{auto completion} are natively supported by the LSP. This means that no additional client logic is necessary to support these features. If VSCode receives a \textit{auto completion respone}, the lsp standard defines how VSCode has to handle it - namely displaying the completion suggestions and insert the text which the user selects. This server-side oriented implementation via the LSP is a great enrichment. For future plugin developments for other IDEs, the effort is minimal.
 
 \begin{figure}[H]
     \centering
@@ -96,66 +90,74 @@ All instance variables were set to private. Constructors were not included for s
     \label{fig:client_now_methods}
 \end{figure}
 
-There is also a compromise that we have made.
-This distribution has certain upward dependencies, which is not perfect.
+Figure \ref{fig:client_now_methods} shows the public methods of each of the components. Only these are accessbile, all instance variables were set to private visibility. Constructors were not included for simplicity. The contents of type interfaces and string resources were also omitted for clarity.
+
+
+This distribution has a certain upward dependencies, which is not perfect.
 The UI package accesses the server requests to be exact.
 Nevertheless, we have decided on this grouping,
 so that the server access functionality is encapsulated.
 
 \subsubsection{Logic}
-The logic contained in the client has been reduced to a minimum.
-This mainly with the goal of making porting to other IDEs as easy as possible.
-This subchapter describes in rough outlines the logic still contained in the client and its benefits.  \\
+As said in the introduction, the logic contained in the client has been reduced to a minimum.
+This has the advantage, that porting the client to other IDEs is as easy as possible.
+This subchapter describes where and why the client still contains logic.\\
 
 {\bf Server Connection} \textendash{}
-Starting the Language Server and send API requests. In addition, the client has a simple logic that
-certain server requests (such as updating the counter example) are sent a maximum of twice per second. \\
+Starting the language server and send API requests. In addition, the client has a simple logic that
+certain server requests (such as updating the counter example) are sent at most twice per second. \\
 
 {\bf Execute Compiled Dafny Files} \textendash{}
 The execution of compiled Dafny files is relatively simple. One distinguishes whether the execution
 of .exe files should be done with mono (on macOS and Linux operating systems) or not. \\
 
 {\bf Notifications} \textendash{}
-The client allows the Language Server to send certain messages which are displayed directly to the user as a popup.
-These include the types information, warning and error.
-The corresponding logic on the client side includes the registration of the interception on the server
-and the corresponding method calls of the VSCode API to display the messages. \\
+The client is able to receive notification messages from the server.
+These notifications are split into three severity levels:
+\begin{itemize}
+    \item information
+    \item warning
+    \item error
+\end{itemize}
+The corresponding logic in the client receives these messages and calls the VSCode API to display a popup message. \\
 
 {\bf Commands} \textendash{}
 To enable the user to actively use features (such as compile),
-the corresponding method calls must be linked to the UI.
-We have three primary links for this: Supplementing the context menu (right-click),
-shortcuts and entering commands via the VSCode command line. \\
+the corresponding method calls must be linked to the VSCode UI.
+There are three primary links for this:
+\begin{itemize}
+    \item Supplementing the context menu (right-click)
+    \item keyboard shortcuts
+    \item entering commands via the VSCode command line.
+\end{itemize}
 
 {\bf Statusbar} \textendash{}
-The information content for the Statusbar is delivered completely by the Language Server.
-The client only takes care of the user friendly display with icons and help texts.
-Therefore certain event listeners must be registered, which react to the server requests.
-Furthermore the received information is buffered for each Dafny file.
+The information content for the statusbar is delivered entirely by the server.
+The client only takes care of the presentation.
+Therefore, certain event listeners must be registered, which react to the server requests.
+Furthermore, the received information is buffered for each Dafny file.
 This allows the user to switch seamlessly between Dafny files in VSCode
 without having the server to send the status bar information
 (like the number of errors in the Dafny file) each time.  \\
 
 {\bf Counter Example} \textendash{}
-The Counter Example has a similar buffer as the Statusbar.
-For each dafny file in the workspace a buffer stores if the user wants to see the Counter Example.
-This way the Counter Example is hidden when the user switches to another file
-and automatically shown again when switching back to the previous Dafny file.
+The counter example has a similar buffer as the statusbar.
+For each Dafny file in the workspace, a buffer stores whether the user wants to see the counter example.
+This way the counter example is hidden when the user switches to another file
+and automatically shown again when switching back to the original Dafny file.
 
 \subsubsection{Types in TypeScript}
-As already mentioned in the previous chapters, Any types were largely supplemented by the dedicated type.
-The specified data types for variables in Typescript define which value types can be assigned to the variable. \\
+As already mentioned in the previous chapters, \code{any} types were largely supplemented by dedicated type interfaces. This prevents type changes of variables as known in pure JavaScript. Typed code is accordingly less error-prone - especially for unconscious typecastings. \\
 
-This prevents type changes of variables as known in pure Java Script.
-Typed code is accordingly less error-prone - especially for unconscious typecastings. \\
+There are individual built-in datatypes like \code{number}, \code{boolean} and \code{string} \cite{ts-types}.
+For custom types, such as \code{CounterExampleResults}, we have defined separate interfaces.
 
-There are individual Built-In Data Types like Number, Boolean and String \cite{ts-types}.
-For this purpose we have defined separate interfaces for each of our own types.
-With an interface we make a promise for a data type what kind of content will be contained.
-For each separate type of non-standard LSP features (such as Compile and Counter Example),
-server request arguments and server responses as results are defined as interfaces \cite{ts-interface}.
+\intnote{<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do}
 
-<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do
+\intnote{ist nicht einiges schon implementation?}
+
+ \subsection{Server}
+
 
 \subsection{Integration Tests}
 Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's Language Server Client \cite{omnisharpClient}. Each test starts a language server and a language client, then they connect to each other. Now, the client can send supported requests, for example "get me the counter examples for file ../test.dfy". The result can be directly parsed into our \code{CounterExampleResults} datastructure and be compared to the expectation. Thus, tests can be written easily and are very meaningful and highly relevant.
