@@ -44,12 +44,6 @@ As a little extra, each component contains code documentation to help other deve
 
 \intnote{hier aufpassen dass man nicht schon in die implementation reinläuft}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=6cm]{client_now_packages}
-    \caption{Client Architecture - New Packages}
-    \label{fig:client_now_packages}
-\end{figure}
 
 {\bf Extension} \textendash{}
 This component is the aforementioned \code{main} of the plugin and serves as an entry point. The contained code has been minimized. Only one server is instantiated and started. The logic is located entirely in the server package. \\
@@ -152,14 +146,45 @@ As already mentioned in the previous chapters, \code{any} types were largely sup
 There are individual built-in datatypes like \code{number}, \code{boolean} and \code{string} \cite{ts-types}.
 For custom types, such as \code{CounterExampleResults}, we have defined separate interfaces.
 
-\intnote{<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do}
+\intnote{<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do --> würde ich dann deifnitiv bei implementaiton machen, nicht hier. oder?}
 
-\intnote{ist nicht einiges schon implementation? evtl besser schreiben: "Wir haben entschieden, die komponeenten so und so aufzuteilen, wenn wir es dann implementeiren. statt: "wir haben es so und so implemntiert"}
+\intnote{ist nicht einiges schon implementation? evtl besser (so als grundidee) formulieren: "Wir haben entschieden, die komponeenten so und so aufzuteilen. statt: "wir haben es so und so implemntiert"}
 
 \intnote{Mir ist aufgefallen, dass die Information zum teil doppelt kommt: erst beim intro 'wir machen ejtzt interfaces statt any zu verwenden. dann 'jetzt kommt allesnochmal im detail', dann kommt 'wir haben statt any interfaces verwendet' nict sicher ob das aber schlimm ist oder nur mir auffällt, ein intro zu haben ist ja legitim.}
 
 \subsection{Server}
-hmm evtl besser warten bis fertig refactored?
+The server's task is to offer a language server that is able to reply to a client's request. Omnisharp offers a simple static method to launch such a server. As launch options, all supported handler classes can be passed. Listing \ref{lst:serverstart} shows a simplified example with two handlers for text document changes and renaming.
+
+\begin{lstlisting}[language=csharp, caption={Language Server Initialization}, captionpos=b, label={lst:serverstart}]
+LanguageServer.From(options => options
+    .WithHandler<TextDocumentSyncTaskHandler>()
+    .WithHandler<RenameTaskHandler>()
+    \cdots
+);
+\end{lstlisting}
+
+
+The handlers themselves will have to implement an according interface by Omnisharp, for example \code{IRenameHandler}. This interfaces demands a \code{Handle} method with the proper arguments and results. This is the basic workflow of a language server implementation. The actual challenge is formed by the implementation of the \code{Handle} methods.
+
+Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server implementation. Be aware that this illustration is highly simplified.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6cm]{serverdesign/01_basic_idea}
+    \caption{Basic Server Concept}
+    \label{fig:server_basic_idea}
+\end{figure}
+
+Plan Kapitelablauf:
+\begin{enumerate}
+    \item Aside the basic layout, we also needed to store some inforamtion for files. Also -> Workspace Manager
+    \item Dann Workspafce MAanager ansich erklären, isoliert. schaut dann voll aufgeräumt aus.
+    \item Evtl schon sagen, dass Workspace als singleton service injected wird und somit immer bei alles handlern available ist. (was man überigens mit msg sender auch tun könnte, das wär noch fancy aber wieder aufwand.)
+    \item Dann brauchen iwr Dafny Access -> Translation Ding Zeugs da sagen. (evtl sgoar tzuerst?)
+    \item Die eigentliche Core Logic wurde dann in die HAndler Services ausgelart (NAME BESSER!!). also handler -> handlerSErvice, welcher dann die iegentliche logic durchbuttert. service somit isoliert testbar mimi interface blabla. itnerace müsste man noch machen hust hsut. ok. dfas lohnt sich wohl aber dnek ich. (notenmässig)
+    \item resx als krimskrams
+    \item config und msg sender und wordsprovider als 'library' layer. den besser auch noch renamen.
+\end{enumerate}
 
 \subsection{Integration Tests}
 Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's language server client \cite{omnisharpClient}. Each test starts a language server and a language client, then they connect to each other. Now, the client can send supported requests, for example "get me the counter examples for file ../test.dfy". The result can be directly parsed into our \code{CounterExampleResults} datastructure and be compared to the expectation. Thus, tests can be written easily and are very meaningful and highly relevant.
