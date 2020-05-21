@@ -29,7 +29,7 @@ The basic concept of the lsp is, that the IDE tells the language server what the
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{03_lspmsgexample.png}
+    \includegraphics[width=\textwidth/2]{03_lspmsgexample.png}
     \caption{Example Communication}
     \label{fig:lspmsgexample}
 \end{figure}
@@ -39,20 +39,20 @@ The following message is a \code{textDocument/publishDiagnostics} notification a
 
 
 \begin{lstlisting}[language=json, caption={LSP Message Example}, captionpos=b, label={lst:lspjsonmsg}]
-[12:45:29 DBG] Read response body 
-{ 
+[12:45:29 DBG] Read response body
+{
    "jsonrpc":"2.0",
    "method":"textDocument/publishDiagnostics",
-   "params":{ 
+   "params":{
       "uri":"file:///D:/[...]/fail1.dfy",
-      "diagnostics":[ 
-         { 
-            "range":{ 
-               "start":{ 
+      "diagnostics":[
+         {
+            "range":{
+               "start":{
                   "line":4,
                   "character":12
                },
-               "end":{ 
+               "end":{
                   "line":4,
                   "character":17
                }
@@ -124,7 +124,7 @@ public class MyHandler : ICounterExampleHandler
 \subsection{Dafny Language Features}
 With regard to the symbol table, the Dafny language had to be studied more in detail. For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes. This is highly relevant for the construction of a symbol table.
 
-To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide \cite{dafnyReferenceManual}. This chapter provides the reader with the most relevant concepts with regard to the symbol table. 
+To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide \cite{dafnyReferenceManual}. This chapter provides the reader with the most relevant concepts with regard to the symbol table.
 
 
 \subsubsection{Modules}
@@ -314,7 +314,7 @@ To be able to implement our feature set, the following requirements must be full
         \begin{itemize}
             \item What are all occurences of a symbol?
         \end{itemize}
-    
+
     \item Autocompletion
         \begin{itemize}
             \item Which declarations are available in a scope?

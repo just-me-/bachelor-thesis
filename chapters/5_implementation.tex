@@ -19,8 +19,39 @@ This leads to better performance and above all to reliable symbol references.
 Fabians Feedback aus der SA... neues Review. "Tu Gutes und sprich davon".
 
 \subsection{Client Code Review}
-Fedback Fabian und Thomas. Interface für Koopelung, weniger Kommentar, mehr Interfaces. Besseres Naming für Variablen. Mehr Interfaces.
-Beschreiben wie es nun neu aussehen wird.
+After a joint code review together with our advisors, individual optimisation potential was identified.
+This subchapter describes the associated core improvements to the architecture. \\
+
+Although interfaces were used for the individualized types,
+the individual core components did not use their own interfaces.
+To reduce the coupling, isolated modules were formed in a comprehensive refactoring process.
+The modules now no longer program on the class implementations, but against the interface. \\
+
+For this purpose one importable module with the name "\_<Directory>Modules" was created for each directory.
+The following figure \ref{fig:client_2nd_refactoring} shows which interfaces with which methods the individual modules offer to the outside world. In addition, the dependencies among each other are shown.
+For simplicity, the contents of "stringRessources" and "typeInterfaces" have been omitted. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{client_2nd_refactoring.png}
+    \caption{Second Major Client Refactoring}
+    \label{fig:client_2nd_refactoring}
+\end{figure}
+
+At first glance, the architecture appears much tidier.
+The dependencies are now nicely drawn through from top to bottom under the modules.
+The methods have been simplified and the number of parameters reduced significantly.
+Component names have been renamed in a more understandable way. \\
+
+However, it is now also noticeable that there are considerably more dependencies on "stringRessources".
+While in the previous version only the module "ui" used the string resources, almost all modules now use the moduel "StringRessources".
+
+This has the following reason: the task of "stringRessources" was until now a centralization of all UI strings. \glsadd{UI}
+In th joint code review, it was found that it would make sense to no longer set default values within the independent modules,
+but rather in a central location. This should make it easier for future developers of the plugin to adjust values. \\
+
+The same principle was applied with resources on the server side for default values there.
+(This is discussed in more detail in chapter XXXXX).
 
 \subsection{Runtime Analysis of the Essential Server Components}
 \subsubsection{Generation of the Symbol Table}
