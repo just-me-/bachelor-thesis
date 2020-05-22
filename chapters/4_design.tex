@@ -269,11 +269,7 @@ All three components are highly coupled. The dependencies are not drawn in the f
     \label{fig:server_st}
 \end{figure}
 
-
-
-\intnote{ps: waraum heisst eig alles manager xD?}
-
-\subsubsection {Core (HandlerServices) / Provider}
+\subsubsection {Core}
 The core package contains the actual logic. There is one class for each feature, for example \code{RenameProvider} or \code{DiagnsoticsProvider}. The provider is called by the handler. This way, any Omnisharp duties, such as registration of capabilities is separated by the actual core logic. The necessary parameters are forwarded from the handler to the provider. Most often, this is the \code{FileRepository}, which the handler requested from the WorkspaceManager. This way, the provider has access to all precompiled results, including the symbol table. Each provider implements a specific interface, so that fakes can easily be created for testing.
 
 
@@ -323,6 +319,7 @@ Plan Kapitelablauf:
 \end{enumerate}
 
 \subsection{Integration Tests}
+\label{chapter:designTests}
 Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's language server client \cite{omnisharpClient}. Each test starts a language server and a language client, then they connect to each other. Now, the client can send supported requests, for example "get me the counter examples for file ../test.dfy". The result can be directly parsed into our \code{CounterExampleResults} datastructure and be compared to the expectation. Thus, tests can be written easily and are very meaningful and highly relevant.
 
 \subsubsection{Dafny Test Files}

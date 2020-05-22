@@ -94,9 +94,6 @@ This is a typical structure of handler. It requests the injected workspace manag
 
 Some handlers take additional actions, such as awaiting the result of the provider, and then sending user feedback according to the outcome. This way, the message sending service does not have to be passed downwards to the core logic component.
 
-\subsubsection{Core}
-Eigentliche logik. implementiert interface. Die Features ev einzln druch, msus man fast, hat ja vieles interessantes, z.b. so diagnostic conversion (wobie xcdas bei dafny access is)
-
 \subsubsection{Workspace}
 The workspace is a component representing any opened files by the client. Thus, it naturally consists only of a single property. This is a dictionary, mapping a file-location to an internal file-representation:
 
@@ -316,7 +313,84 @@ Note that this navigation can be executed very fast.
 The manager is a rather simple component and can be used as an access point for the user of the symbol table. It is constructed by handing over a root symbol of a fully generated symbol table. It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}. That method will then just create a navigator and use the (maybe rather complex navigator) to provide the user with the desired result. 
 
 
+\subsubsection{Core}
+In this package, the actual task of providing results for the server is done. Often, not much code is necessary, since the symbol table provides all necessary information. In this subchapter, a few features are explained more in detail.
 
+\textbf{Goto Definition}\\
+Goto Definition is a very simple feature once the symbol table is created. As parameters, it receives a location in a file. All this provider does, is ask the \code{SymbolTaleManger} what symbol is at that position, jumps to the declaration of that symbol, and converts the declaration position to the proper response format.
+
+To provide a better usabilty, it does a few further checks, such as checking if the symbol already was a definition or if no result could be found at all. The results are stored in an \code{Outcome} property, which the handler can use to send proper client feedback.
+
+\begin{lstlisting}[language=csharp, caption={Providing Goto Definition}, captionpos=b, label={lst:gotoCore}]
+public LocationOrLocationLinks GetDefinitionLocation(Uri uri, int line, int col)
+{
+   List<LocationOrLocationLink> links = new List<LocationOrLocationLink>();
+   var symbol = _manager.GetSymbolByPosition(uri, line, col);
+   if (symbol == null)
+   {
+       Outcome = DefinitionsOutcome.NotFound;
+       return new LocationOrLocationLinks();
+   }
+   if (symbol.IsDeclaration)
+   {
+       Outcome = DefinitionsOutcome.WasAlreadyDefintion;
+   }
+   var originSymbol = symbol.DeclarationOrigin;
+   Position position = new Position((long)originSymbol.Line - 1, (long)originSymbol.ColumnStart - 1);
+   Range range = new Range { Start = position, End = position };
+   var location = new Location { Uri = originSymbol.FileUri, Range = range };
+   links.Add(new LocationOrLocationLink(location));
+   Outcome = DefinitionsOutcome.Success;
+   return new LocationOrLocationLinks(links);
+}
+\end{lstlisting}
+
+\textbf{DiagnosticProvider}
+This component is called everytime a document is updated. It accepts a \code{FileRepository} as an argument. Within the repository, the translation results are stored, including the diagnostics. This component will read the diagnostic, convert them to an LSP-suitable format, add usability information, and finally send the result back to the client.
+
+\intnote{}
+
+\textbf{HoverProvider}
+This component ist very simple. It just requests the \code{SymbolTableManager} to provide the symbol at the hover location. The hover location is passed as an argument within the request. Afterwards, basic information about the symbol is assembled and returned. That information includes \begin{itemize}
+    \item A quick summary, including the name and the location
+    \item Symbol Kind
+    \item Symbol Type
+    \item Parent Symbol
+    \item Declaration Origin
+\end{itemize}
+
+\textbf{RenameProvider}
+Rename is another feature that profits strongly by the symbol table. Again the feature requests the symbol at the cursor. Afterwards, it jumps to it's declaration. The declaration has all usages of the symbol stored, and thus, all occurences are known. The provider will now just assemble a \code{WorkspaceEdit} and return it. The \code{WorkspaceEdit} contains the new name and as well all \code{Range}s, where the name has to be applied.
+
+Additionally, the rename provider performs a few checks, if the new name is valid. The checks are
+\begin{itemize}
+    \item Name must not start with and underscore
+    \item Name must not eb a reserved word, such as 'method'
+    \item Name must not contain any other then alphanumerical dinger or underscores
+\end{itemize}
+
+The last check is stronger than it needs to be, but since special characters are extremely uncommon in programming, it is well suitable. It was mainly implemented to prohibit brackets in names.
+
+
+Eigentliche logik. implementiert interface. Die Features ev einzln druch, msus man fast, hat ja vieles interessantes, z.b. so diagnostic conversion (wobie xcdas bei dafny access is)
+
+\textbf{Completion}\\
+
+\textbf{Code Lens}\\
+
+\textbf{Compilation}\\
+Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the FileRepository. This also includes the precompiled \code{DafnyProgram}. The compilation provider will take advantage of that and use the precompiled item, and just hand it forwards to the compiler engine. Prior to the compilation, custom compilation arguments are installed if the user provided any. The process is fully integrated into the DAfny backend by using
+
+\begin{lstlisting}[language=csharp, caption={Calling the Dafny Compiler}, captionpos=b, label={lst:dafnycompiler}]
+DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwriter);
+\end{lstlisting}
+
+The provider will check, if any errors occured and return the outcome within a wrapper class.
+
+\textbf{Counter Example}\\
+This feature bases on the model file, which is generated during verification. The model file is a key-value store generated by Boogie. It contains several states. Each state tracks the content of variables during different stages of the proof. Of interest is primarily the \textit{initial} state, since this one tells how the variables need to be set at the beginning to achieve a counter example.
+
+This provider reads the model file, uses the Boogie backend to convert into a useful format. Afterwards it extracts the initial state from the model. Out of the remaining model, all key-value-pairs containing useful information are extracted, assembled and returned. The component will also transform information into a more human readable format, e.g. $((- 12)) \rightarrow -12$. Furthermore, many values are internal boogie references and cannot be resolved. These just look like \code{T@U!val!12}. Such values are replaced with the text \code{[Object Reference]}.
 %%%%%%%%%%%%%%%folgendes nach results
 
 
@@ -367,10 +441,55 @@ This hash structure enables us to access child symbols with a runtime of O(1). S
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing}
-ich glaub hier kann man unit tests übernehemn.
-intergration kurz neu schreiben
-system test auch nur kurz, mimi, ist weg.
 
+This chapter provides a general overview of the testing. It is split into unit, integration and system tests. To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
+
+\subsubsection{Unit Tests}
+\dots
+\intnote{hmm, net sicher was schreiben}
+
+
+\subsubsection{Integration Tests}
+As described in chapter \ref{chapter:designTests}, a very nice test architecture was builded for integration tests. Each feature could be tested by creating a base class. The base class usually contains one method \code{Run} and another one \code{Verify}. The first one uses the inherited client-server infrastructure, opens a Dafny file, sends the according request, and collects the results. The following example is representative for such a method:
+
+\begin{lstlisting}[language=csharp, caption={Finding a Declaration}, captionpos=b, label={lst:visitorfinddecl}]
+public void Run(string testfile, int lineInEditor, int colInEditor, string newText = "newText")
+{
+    Client.TextDocument.DidOpen(testfile, "dfy");
+    RenameParams p = new RenameParams()
+    {
+        NewName = newText,
+        Position = new Position(lineInEditor-1, colInEditor-1),
+        TextDocument = new TextDocumentIdentifier(new Uri(testfile))
+    };
+    var response = Client.SendRequest<WorkspaceEdit>("textDocument/rename", p, CancellationSource.Token);
+    result = response.Result;
+}
+\end{lstlisting}
+
+The \code{Verify} method will just compare the results against the provided expectation. Often, rather complex data structures with a lot of nested classes come into play. To be able to compare them easily, most of them are just converted to a string representation, which can easily be dealt with. This was done using extension methods located in the \code{TestCommons} project.\\
+
+A test itself is created very easily with all this infrastructure. One simply inherits from the base class, and most tests can be written in just a few lines. For example, a rename test could look like this:
+
+\begin{lstlisting}[language=csharp, caption={Sample Integration Test}, captionpos=b, label={lst:sampleintegrationtest}]
+[Test]
+public void LocalVariableUsage()
+{
+    Run(Files.rn_scope, 9, 17);
+    List<string> expected = new List<string>()
+    {
+        "newText at L7:C12 - L7:C15",
+        "newText at L8:C14 - L8:C17",
+        "newText at L12:C18 - L12:C21",
+        "newText at L20:C14 - L20:C17"
+    };
+    Verify(expected);
+}
+\end{lstlisting}
+
+Note that the test is kept as concise as possible. The tester does not even have to care about the result provided by \code{Run}, since that method will store the result inside a class member and clean it after the test is done.\\
+
+Since all tests base on actual Dafny files, a dedicated subfolder was created to store them. All files can be referenced globally from within the \code{TestCommons} project, where also the base class for all integration tests is located.
 
 \subsection{Code Reviews}
 \intnote{ich glaube es ist nicht gedacht einzelne code reviews zu dokumentieren. das waere ja mehr dann wie ein arbbeitsrapport, aka woche 12: wir haben das code review bearbeitet und dies und das gemacht. eher so bei kapitel design: wir haben entschieden, strings da und da auszulagnern. dies wurde u.a. wegen dem code review so geamcht. dann implementation: hier wurde das so und so implementiert, weil beim code review es so gesagt wurde}
