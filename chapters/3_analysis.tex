@@ -90,6 +90,7 @@ Listing \ref{lst:lspbasichandler} illustrates that the user simply has to implem
 Since OmniSharp is open source, we could find all available interfaces and thus all available handlers in their git repository \cite{omnisharpgit}. This collection is very helpful to perceive LSP's possibilities.
 
 \subsubsection{Custom LSP Messages}
+\label{chapter:customlspmsg}
 The current problem domain does not only require premade LSP messages like auto completions or diagnostics, but also custom requests such as \code{counterexample}, which is Dafny-specific. Such a message is not natively supported by the language server protocol. Since no example or documentation could be found on custom messages, Martin Bj\"orkstr\"om was contacted in the OmniSharp Slack channel \cite{omnisharpslack}. Mr. Bj\"orkstr\"om and his team were able to provide the solution for this issue.\\
 
 The server can simply register custom handlers, too. The following three items have to be specified:
