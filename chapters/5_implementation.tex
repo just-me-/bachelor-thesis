@@ -2,6 +2,8 @@
 
 \subsection{Symbol Table}
 
+
+
 \subsubsection{Feature Support}
 Since we have object information (and not just strings anymore) with our self-written symbol table,
 the whole position to string parsing was dropped. \\
@@ -15,21 +17,67 @@ We access the currently marked symbol directly via the position data.
 String comparisons and corresponding string extractions are completely eliminated.
 This leads to better performance and above all to reliable symbol references.
 
-\subsubsection{Code Review}
+
+\subsubsection{Navigator}
+To use the constructed symbol table, we offer a separate navigation component.
+This navigator has basically two procedures.
+\begin{itemize}
+\item TopDown: Starting from a node, the navigator decides in which childNode the target can be located and recursively searches those, until a best match is found.
+\item BottomUp: Starting from a node, the navigator moves upwards and returns the first, or all, symbols matching a criterion.
+\end{itemize}
+
+For example: TopDown is used especially when searching for symbols at the cursor position.
+The iteration will check for each child node, it the cursor is covered by the symbol body.
+If so, search will continue within that child node.
+If not, that child symbol is not visited.
+This avoids a runtime of O(n) for each search. \intnote{ist schnell einfach schreiben}
+In a dafny file, which was structured very quickly - for example only functions in the highest level - the worst case of O(n) is still reached. \intnote{(das ist nicht richtig...) symbole in der function werden incht visited. ist deutlichs chneller. nur bei der tzarget function geht man rein.}
+
+
+\intnote{2do Bild von nem baum und dann wie es so hoch und runter geht, Beispiel, Visualisierung einbauen für die Laufzeitanalyse.} \\
+
+To enable efficient access to the entry points, we have opted for a key-value data structure. The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
+This hash structure enables us to access child symbols with a runtime of O(1). Since every symbol also has a link to it's parent, navigation in both ways can be done within O(1).
+
+2do hier noch etwas genauer drauf eingehen... visualisieren... hash besser begründen. Naja finds eig gut. steht ja da dass der grund O1 ist.
+
+\subsubsection{Runtime}
+
+\intnote{aufbau runtime}
+\intnote{warum steht schon oben was von O(1) wenn hier runtime kommt?}
+
+The features themselves are primarily based on the symbol table.
+In particular auto completion, go to definition, CodeLens, hover information and rename. \\
+
+Due to the structure of our Symbol table (which is updated after every change in a Dafny file)
+the basic information is provided by references.
+Each symbol carries references to its child simbols, to the parent symbol, to the original declaration and much more information.
+All these references were prepared when the symbol table was created. You can therefore call them immediately (runtime O(1)).  \intnote{Das steh talles schon oben...}
+
+The difficulty lies in finding the "entry symbol".
+
+The navigation component described above is used for this. The system uses the cursor position to find the deepest symbol that encloses the cursor position. This symbol is the entry point. And to find this symbol, the longest runtime is required for the features - apart from the creation of the actual symbol table of course.
+
+
+
+
+\subsection{Code Reviews}
+\intnote{ich glaube es ist nicht gedacht einzelne code reviews zu dokumentieren. das wäre ja mehr dann wie ein arbbeitsrapport, aka woche 12: wir haben das code review bearbeitet und dies und das gemacht. eher so bei kapitel design: wir haben entschieden, strings da und da auszulagnern. dies wurde u.a. wegen dem code review so geamcht. dann implementation: hier wurde das so und so implementiert, weil beim code review es so gesagt wurde}
 Fabians Feedback aus der SA... neues Review. "Tu Gutes und sprich davon".
 
-\subsection{Client Code Review}
+\subsubsection{Client Code Review}
 After a joint code review together with our advisors, individual optimisation potential was identified.
-This subchapter describes the associated core improvements to the architecture. \\
+This subchapter describes the associated improvements to the architecture. \\
 
 Although interfaces were used for the individualized types,
 the individual core components did not use their own interfaces.
-To reduce the coupling, isolated modules were formed in a comprehensive refactoring process.
+To reduce coupling, isolated modules were formed in a comprehensive refactoring process.
 The modules now no longer program on the class implementations, but against the interface. \\
 
-For this purpose one importable module with the name "\_<Directory>Modules" was created for each directory.
-The following figure \ref{fig:client_2nd_refactoring} shows which interfaces with which methods the individual modules offer to the outside world. In addition, the dependencies among each other are shown.
-For simplicity, the contents of "stringRessources" and "typeInterfaces" have been omitted. \\
+For this purpose one importable module with the name \code{_<Directory>Modules} was created for each directory.
+Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
+In addition, the dependencies among each other are shown.
+For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} have been omitted. \\
 
 \begin{figure}[H]
     \centering
@@ -39,60 +87,19 @@ For simplicity, the contents of "stringRessources" and "typeInterfaces" have bee
 \end{figure}
 
 At first glance, the architecture appears much tidier.
-The dependencies are now nicely drawn through from top to bottom under the modules.
-The methods have been simplified and the number of parameters reduced significantly.
-Component names have been renamed in a more understandable way. \\
+The dependencies are now pointing from top to bottom.
+Methods have been simplified and the number of parameters could be reduced significantly.
+Component identifiers have been renamed to be more understandable. \\
 
-However, it is now also noticeable that there are considerably more dependencies on "stringRessources".
-While in the previous version only the module "ui" used the string resources, almost all modules now use the moduel "StringRessources".
+However, it is now also noticeable that there are considerably more dependencies on \code{stringRessources}.
+While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.
 
-This has the following reason: the task of "stringRessources" was until now a centralization of all UI strings. \glsadd{UI}
-In th joint code review, it was found that it would make sense to no longer set default values within the independent modules,
-but rather in a central location. This should make it easier for future developers of the plugin to adjust values. \\
+This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all UI strings. \glsadd{UI}
+In the code review, it was decided that default values should no longer be set within the independent modules,
+but rather at a central location.
+This would make it easier to maintain these values. \\
 
-The same principle was applied with resources on the server side for default values there.
-(This is discussed in more detail in chapter XXXXX).
 
-\subsection{Runtime Analysis of the Essential Server Components}
-\subsubsection{Generation of the Symbol Table}
-Ich glaub beim Aufbau verwendest du nur einmal den Navigator oder? Also n*n Laufzeit?
-
-\subsubsection{Use of the Symbol Table}
-To use the constructed symbol table, we offer a separate navigation component.
-This navigator has basically two visit procedures.
-Once from a symbol in the symbol tree up. And once from the root node of the tree down. \\
-
-The TopDown approach searches down from the entry point and automatically limits the search areas. \\
-
-For example: TopDown is used especially when searching for symbols at certain positions.
-If the iteration encounters a symbol that does not cover the range of the search position,
-the child symbols are not even visited.
-This avoids a runtime of O(n) for each search. In a dafny file, which was structured very quickly - for example only functions in the highest level - the worst case of O(n) is still reached.
-
-2do Bild, Beispiel, Visualisierung einbauen für die Laufzeitanalyse. \\
-
-To enable efficient access to the entry points, we have opted for a key-value data structure. The key is the symbol name corresponding to each symbol. This hash structure enables us to access module symbols as entry points with a runtime of O(1). This was especially necessary because certain default modules are automatically created by Dafny if the programmer does not define his own modules.
-2do hier noch etwas genauer drauf eingehen... visualisieren... hash besser begründen.
-
-The second search approach is ButtomUp.
-The entry point is a symbol.
-Starting from this symbol, the system searches for symbols within the reachable scope of the reference symbol. \\
-
-This approach is used for auto completion, for example.
-Starting from a passed symbol, all symbols are searched in the corresponding available scope.
-
-\subsubsection{Corresponding Duration of the Individual Features}
-The features themselves are primarily based on the symbol table.
-In particular auto completion, go to definition, CodeLens, hover information and rename. \\
-
-Due to the structure of our Symbol table (which is updated after every change in a Dafny file)
-the basic information is provided by references.
-Each symbol carries references to its child simbols, to the parent symbol, to the original declaration and much more information.
-All these references were prepared when the symbol table was created. You can therefore call them immediately (runtime O(1)).
-
-The difficulty lies in finding the "entry symbol".
-
-The navigation component described above is used for this. The system uses the cursor position to find the deepest symbol that encloses the cursor position. This symbol is the entry point. And to find this symbol, the longest runtime is required for the features - apart from the creation of the actual symbol table of course.
 
 \textbf{m}
 \textbf{m}
@@ -101,10 +108,12 @@ The navigation component described above is used for this. The system uses the c
 \textbf{m}
 \textbf{m}
 
-\subsection{Usability Test}
 
 
-\subsection{Mono Support for macOS and Linux}
+\subsection{Usability Test Verschieben nach Kapitel Results}
+
+
+\subsection{Mono Support for macOS and Linux -Kaptitel nicht hier. entweder anaylse oder Result}
 Eines der Kernzeiele war es, Support für mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
 Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono für den Support auf Linux und macOS brauchen.
 (warum in der SA; plficht wegen dafny core. was ist mono)
