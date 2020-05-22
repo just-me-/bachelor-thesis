@@ -13,14 +13,42 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
 
+\subsubsection{Main}
+Program Short and simplified
+booted nur server, registred handlers
 
+\subsubsection{Tools}
+Config, Message sender, reserved words
 
+\subsubsection{Handler}
+Vererbung, splitted nach custom und dingsen, blabla, callen nur service.
+logging wird injected, worksapce wird injected.
+
+\subsubsection{Core}
+Eigentliche logik. implementiert interface. Die Features ev einzln druch, msus man fast, hat ja vieles interessantes, z.b. so diagnostic conversion (wobie xcdas bei dafny access is)
+
+\subsubsection{Workspace}
+Eifnach der KEy Value store
+File REpo hat alles drin, resultat und symbol table shit.
+
+\subsubsection{DafnyAccess}
+Most interesting part...
+DTU called eigetnlich dafny core.
+da den abluaf erklären
+dann so dass die errors collected werden.
+total integrated.
 
 \subsection{Symbol Table}
 
 
 
-\subsubsection{Feature Support}
+\textbf{Feature Support}
+
+Split in creation, manageing, navigation
+Symbol eigenes teil.
+properties aufzeigen
+
+
 Since we have object information (and not just strings anymore) with our self-written symbol table,
 the whole position to string parsing was dropped. \\
 
@@ -34,7 +62,7 @@ String comparisons and corresponding string extractions are completely eliminate
 This leads to better performance and above all to reliable symbol references.
 
 
-\subsubsection{Navigator}
+\textbf{Navigator}
 To use the constructed symbol table, we offer a separate navigation component.
 This navigator has basically two procedures.
 \begin{itemize}
@@ -57,7 +85,7 @@ This hash structure enables us to access child symbols with a runtime of O(1). S
 
 2do hier noch etwas genauer drauf eingehen... visualisieren... hash besser begründen. Naja finds eig gut. steht ja da dass der grund O1 ist.
 
-\subsubsection{Runtime}
+\textbf{Runtime}
 
 \intnote{aufbau runtime}
 \intnote{warum steht schon oben was von O(1) wenn hier runtime kommt?}
@@ -76,6 +104,10 @@ The navigation component described above is used for this. The system uses the c
 
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Testing}
+meh. evtl kann man was übernehemn.  Integration test sind ja eig schon vom design her erledigt. vlt nochwso bissl allgemein mimi viele fälle abgedeckt blabla.
 
 \subsection{Code Reviews}
 \intnote{ich glaube es ist nicht gedacht einzelne code reviews zu dokumentieren. das wäre ja mehr dann wie ein arbbeitsrapport, aka woche 12: wir haben das code review bearbeitet und dies und das gemacht. eher so bei kapitel design: wir haben entschieden, strings da und da auszulagnern. dies wurde u.a. wegen dem code review so geamcht. dann implementation: hier wurde das so und so implementiert, weil beim code review es so gesagt wurde}
