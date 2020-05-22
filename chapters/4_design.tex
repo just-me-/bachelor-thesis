@@ -2,6 +2,14 @@
 This chapter contains discussions of fundamental design decisions.
 It is primarily divided into client and server architecture.
 
+\subsection{Technologies}
+The choice of technologies is determined by external circumstances. The client will be written in TypeScript, since VScode plugins are required to be written in TypeScript \cite{vscodeAPI}. The client will be written in  \Csharp using .NET Framework 4.6.1, since Dafny is already coded in this setup and direct integration is the key goal of the project.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Client}
 The client consists of the VSCode plugin written in TypeScript. It establishes a connection to the server using the language server protocol.\\
 
@@ -148,7 +156,15 @@ For custom types, such as \code{CounterExampleResults}, we have defined separate
 
 \intnote{Mir ist aufgefallen, dass die Information zum teil doppelt kommt: erst beim intro 'wir machen ejtzt interfaces statt any zu verwenden. dann 'jetzt kommt allesnochmal im detail', dann kommt 'wir haben statt any interfaces verwendet' nict sicher ob das aber schlimm ist oder nur mir auffällt, ein intro zu haben ist ja legitim.}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Server}
+\intnote{vlt noch ne übersicht iwo, wie figure 9 SA - hab grad keine übersciht}
 The server's responsibility is to offer a language server that is able to reply to a client's request. Omnisharp offers a simple static method to launch such a server. As launch options, all supported handler classes can be passed. Listing \ref{lst:serverstart} shows a simplified example with two handlers for text document changes and renaming.
 
 \begin{lstlisting}[language=csharp, caption={Language Server Initialization}, captionpos=b, label={lst:serverstart}]
@@ -209,7 +225,7 @@ To be able to provide all the necessary functionality, there is more information
     \item What symbols occur in the file? \intnote{ST diskutieren}
 \end{itemize}
 
-\intnote{internen noch auflsöen ob symbol table pro workspace oder pro file}
+\intnote{internen noch  auflsöen ob symbol table pro workspace oder pro file}
 
 Thus, a class \code{FileRepository} was created. It contains a \code{PhysicalFile}, but also all of the requested information in the list above. For that, a wrapper \code{TranslationResults} was created, containing information about errors and compiled items. Symboltable?
 

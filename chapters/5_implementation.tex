@@ -1,5 +1,21 @@
 \section{Implementation}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Client}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Server}
+
+
+
+
 \subsection{Symbol Table}
 
 
@@ -74,7 +90,7 @@ the individual core components did not use their own interfaces.
 To reduce coupling, isolated modules were formed in a comprehensive refactoring process.
 The modules now no longer program on the class implementations, but against the interface. \\
 
-For this purpose one importable module with the name \code{_<Directory>Modules} was created for each directory.
+For this purpose one importable module with the name \code{\_<Directory>Modules} was created for each directory.
 Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
 In addition, the dependencies among each other are shown.
 For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} have been omitted. \\
