@@ -4,7 +4,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Client}
-
+a
 
 
 
@@ -13,12 +13,53 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
 
-\subsubsection{Main}
-Program Short and simplified
-booted nur server, registred handlers
+
+\subsubsection{Server Launch}
+As done in common practice, the \code{Main} function is kept very short. All it does is launching the language server, which is already handled by another class.
+
+\begin{lstlisting}[language=csharp, caption={Main Function}, captionpos=b, label={lst:main}]
+public static async Task Main(string[] args)
+{
+    DafnyLanguageServer languageServer = new DafnyLanguageServer(args);
+    await languageServer.StartServer();
+}
+\end{lstlisting}
+
+The launch of the server itself is devided into four stages. First, preparational work is done. This happens already in the constructor of the language server. Preparation includes
+\begin{itemize}
+    \item Reading and processing config variables
+    \item Setting up the logging framework
+\end{itemize}
+Secondly, the actual server is launched. The logger will directly be injected and all handlers are registred. In the third stage, once the server is running, a message sending service is instanciated to notify the client about the successful server start and, if any, errors occured during startup. Lastly, the console output stream is redirected to keep the langauge server stream clean.
+
+\begin{lstlisting}[language=csharp, caption={Starting the Language Server}, captionpos=b, label={lst:serverstart}]
+public async Task StartServer()
+{
+    log.Debug(Resources.LoggingMessages.server_starting);
+    server = await LanguageServer.From(options => \dots  );
+    ExecutePostLaunchTasks();
+    await RedirectStreamUntilServerExits();
+    log.Debug(Resources.LoggingMessages.server_closed);
+}
+\end{lstlisting}
 
 \subsubsection{Tools}
-Config, Message sender, reserved words
+Within the tools package, a variety of services can be found that do not necessarily directly correspond to Dafny, but are useful within the language server environment.\\
+
+\textbf{Config Initializer}\\
+\intnote{kann man hier so subsubsubchapter machen? geht das iwie? sons tienfach so lassen oder?}
+This class is called prior to the server launch and initializes a few config settings. The settings are stored within the static class \code{Commons/LanguageServerconfig.cs}. The config initializer will first of all set hard coded default values to avoid any kind of null pointer exceptions. Afterwards, the file \code{Config/LanguageServerConfig.json} is parsed with Newtonsoft's Json.NET library \cite{jsondotnet}. Any available values will be written to the static configuration class. Unkown or illegal values will not be set and errors are added to a error reporter. Finally, the launch arguments are parsed, again overwritting the config settings if applicable or reporting errors otherwise. A simple argument parser was implemented manually. Alternatively, a library could have been used for this task such as \cite{clparser}. The config initalizer is implemented exception safe. This means that it will run to completion and at wrost just provide default values. Errors can later be extracted from the \code{InitializationErrors} property.\\
+
+\textbf{LoggerCreator}\\
+This class simply sets up a Serilog \cite{serilog} logger. For this purpose, it will already read from the static config class \code{Commons/LanguageServerconfig.cs} the information what the minimum loglevel is and where to locate the logfile.\\
+
+\textbf{MessageSenderService}\\
+This is a simple class accepting a \code{ILanguageServer} in the constructor. Afterwards, it provides methods to send notifications to the client. Simliar to logging, methods for each severity level are available, such as \code{public void SendError(string msg)}.\\
+
+\textbf{ReservedWordsProvider}\\
+This is a class reporting simply offering a method returning a set of words, that are not suited for identifiers. This is, for example, 'method', 'class', or 'return'. The class tries to read and parse \code{Config/ReservedDafnyWords.json}, which can be user adjusted in case the Dafny specification changes. If the file cannot be read or has a wrong format, a hard coded default list is used which was taken out from the Dafny Reference Manual \cite{dafnyReferenceManual}.\\
+
+While this component is specifically used solely for the \code{rename}-Feature, it was extracted to be also available at other spots if required for future features.\\
 
 \subsubsection{Handler}
 Vererbung, splitted nach custom und dingsen, blabla, callen nur service.
@@ -34,7 +75,7 @@ File REpo hat alles drin, resultat und symbol table shit.
 \subsubsection{DafnyAccess}
 Most interesting part...
 DTU called eigetnlich dafny core.
-da den abluaf erklären
+da den abluaf erklren
 dann so dass die errors collected werden.
 total integrated.
 
@@ -78,12 +119,12 @@ This avoids a runtime of O(n) for each search. \intnote{ist schnell einfach schr
 In a dafny file, which was structured very quickly - for example only functions in the highest level - the worst case of O(n) is still reached. \intnote{(das ist nicht richtig...) symbole in der function werden incht visited. ist deutlichs chneller. nur bei der tzarget function geht man rein.}
 
 
-\intnote{2do Bild von nem baum und dann wie es so hoch und runter geht, Beispiel, Visualisierung einbauen für die Laufzeitanalyse.} \\
+\intnote{2do Bild von nem baum und dann wie es so hoch und runter geht, Beispiel, Visualisierung einbauen fuer die Laufzeitanalyse.} \\
 
 To enable efficient access to the entry points, we have opted for a key-value data structure. The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
 This hash structure enables us to access child symbols with a runtime of O(1). Since every symbol also has a link to it's parent, navigation in both ways can be done within O(1).
 
-2do hier noch etwas genauer drauf eingehen... visualisieren... hash besser begründen. Naja finds eig gut. steht ja da dass der grund O1 ist.
+2do hier noch etwas genauer drauf eingehen... visualisieren... hash besser begruenden. Naja finds eig gut. steht ja da dass der grund O1 ist.
 
 \textbf{Runtime}
 
@@ -107,10 +148,10 @@ The navigation component described above is used for this. The system uses the c
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing}
-meh. evtl kann man was übernehemn.  Integration test sind ja eig schon vom design her erledigt. vlt nochwso bissl allgemein mimi viele fälle abgedeckt blabla.
+meh. evtl kann man was ubernehemn.  Integration test sind ja eig schon vom design her erledigt. vlt nochwso bissl allgemein mimi viele faelle abgedeckt blabla.
 
 \subsection{Code Reviews}
-\intnote{ich glaube es ist nicht gedacht einzelne code reviews zu dokumentieren. das wäre ja mehr dann wie ein arbbeitsrapport, aka woche 12: wir haben das code review bearbeitet und dies und das gemacht. eher so bei kapitel design: wir haben entschieden, strings da und da auszulagnern. dies wurde u.a. wegen dem code review so geamcht. dann implementation: hier wurde das so und so implementiert, weil beim code review es so gesagt wurde}
+\intnote{ich glaube es ist nicht gedacht einzelne code reviews zu dokumentieren. das waere ja mehr dann wie ein arbbeitsrapport, aka woche 12: wir haben das code review bearbeitet und dies und das gemacht. eher so bei kapitel design: wir haben entschieden, strings da und da auszulagnern. dies wurde u.a. wegen dem code review so geamcht. dann implementation: hier wurde das so und so implementiert, weil beim code review es so gesagt wurde}
 Fabians Feedback aus der SA... neues Review. "Tu Gutes und sprich davon".
 
 \subsubsection{Client Code Review}
@@ -162,13 +203,13 @@ This would make it easier to maintain these values. \\
 
 
 \subsection{Mono Support for macOS and Linux -Kaptitel nicht hier. entweder anaylse oder Result}
-Eines der Kernzeiele war es, Support für mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
-Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono für den Support auf Linux und macOS brauchen.
+Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
+Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
 (warum in der SA; plficht wegen dafny core. was ist mono)
 
 Leider funktionierts nicht.
-Anssätze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
-github issues: allgemein probleme mit lunux/mac weil primär auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle)
+Anssaetze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
+github issues: allgemein probleme mit lunux/mac weil primaer auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle)
 
 \cite{sa}
 \cite{mono-slack}
