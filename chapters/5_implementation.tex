@@ -407,7 +407,7 @@ Rename is another feature that profits strongly by the symbol table. Again the f
 Additionally, the rename provider performs a few checks, if the new name is valid. The checks are
 \begin{itemize}
     \item Name must not start with and underscore
-    \item Name must not eb a reserved word, such as 'method'
+    \item Name must not be a reserved word, such as 'method'
     \item Name must not contain any other then alphanumerical dinger or underscores
 \end{itemize}
 
@@ -418,9 +418,15 @@ Eigentliche logik. implementiert interface. Die Features ev einzln druch, msus m
 
 \textbf{Completion}\\
 todo
+Recht komplex
+Wir supporten drei cases; nennen. Beschreiben.
+Ablauf. Diagramme wie in der SA sind nützlich.
 
 \textbf{Code Lens}\\
 todo
+komplett server seitig nicht übers lsp möglich
+reicht daten für codelens popup an den client wieter; ruft vs code feature auf.
+beide aspekte werden durch integration tests abgedeckt?
 
 \textbf{Compilation}\\
 Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the FileRepository. This also includes the precompiled \code{DafnyProgram}. The compilation provider will take advantage of that and use the precompiled item, and just hand it forwards to the compiler engine. Prior to the compilation, custom compilation arguments are installed if the user provided any. The process is fully integrated into the DAfny backend by using
@@ -485,10 +491,18 @@ This hash structure enables us to access child symbols with a runtime of O(1). S
 This chapter provides a general overview of the testing. It is split into unit, integration and system tests. To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
 
 \subsubsection{Unit Tests}
-todo
-\dots
-\intnote{hmm, net sicher was schreiben}
+Our core logic components all use an interface. When using components, programming is done exclusively against the corresponding interface. \\
 
+This encapsulation of components allows essential core logic to be efficiently covered by unit tests. \\
+
+Due to the fact that our unit tests are run significantly faster than the integration tests, it is very important that unit tests are written.
+Due to the fast run-through they are a very good support in the ongoing development.
+If an error creeps in due to a change, it will be detected immediately by the existing tests.
+If an error needs to be corrected or a function needs to be extended, a Test-Driven-Development approach can be used to work in a goal-oriented manner. \\
+
+In our unit tests, primarily isolated and more complex logic blocks are tested. These are not only covered by a Code Coverage metric, as described in the chapter "Project Management" todo REFERENZ, but we were also busy covering borderline cases by testing. TODO DAS IST NICHT DAS KORREKTE WORT FÜR GRENWERTTESTS(?) \\
+
+Of course the interaction of the components is also tested. This will be discussed in the following chapter regarding integration tests.
 
 \subsubsection{Integration Tests}
 As described in chapter \ref{chapter:designTests}, a very nice test architecture was builded for integration tests. Each feature could be tested by creating a base class. The base class usually contains one method \code{Run} and another one \code{Verify}. The first one uses the inherited client-server infrastructure, opens a Dafny file, sends the according request, and collects the results. The following example is representative for such a method:
@@ -543,7 +557,15 @@ Since all tests base on actual Dafny files, a dedicated subfolder was created to
 \textbf{m}
 
 
-
 \subsection{Usability Test}
 Nein. Das ist Implementation. Bei Implementation Test gemacht; Implementation verbessert.
 todo
+
+Entgegen der ursprünglichen Annahme, nicht "alt und neu" als vergleich testen lassen (fehlende probanden)
+Testing der allgemeinen Benutzbarkeit unserer Features (verständlichkeit, nützlichkeit)
+Testing der VSCOde Universe Integration (VSCOde Benutzer)
+
+Auswertung der Tests; Kernpunkte und Verbesserungsvorschlägather
+Drauf eingehen, welches Feedback umgesetzt wurde, welches nicht, warum, outlooks.
+
+Tests in den Anhang aufnehmen!! Und dann hier entsprechend referenzieren.
