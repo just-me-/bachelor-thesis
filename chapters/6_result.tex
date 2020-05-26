@@ -8,6 +8,16 @@ but on the other hand also the architectural improvements,
 which facilitate further development of the project for other developers.
 
 
+\subsection{Intro}
+hier noch so:
+feature sind über context menü erreichbar
+hotkey einsehbar -> automatisches user learning für faster feature access
+-> user sieht auch, was es alles so gibt
+voll geil.
+advanced shit, wie etwa farbe konfigurierbarkeit, launcha arguments, lo gplacement ist dann im readme.md für die advanced user, sodass der otto normalo SE2 student nicht überflutet wird.
+
+andere feautres laufen einfach so, wie etwa syntax und veri
+
 \subsection{Sntax Highlighting}
 \label{section:result_syntaxhighgliht}
 Syntax highlighting is realized by a given Dafny grammar file.
@@ -18,7 +28,7 @@ The following screenshot shows how syntax highlighting looks inside Visual Studi
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/syntax_highlighting.png}
+    \includegraphics[width=10cm]{results/syntax_highlighting.png}
     \caption{Syntax Highlighting}
     \label{fig:result_syntax_highlight}
 \end{figure}
@@ -63,7 +73,7 @@ The user also has the option to apply custom compilation arguments.
 These can be directly set within VSCode.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/compile_customarg.png}
+    \includegraphics[width=10cm]{results/compile_customarg.png}
     \caption{Custom Compilation Arguments}
     \label{fig:compilation_custom_args}
 \end{figure}
@@ -81,7 +91,7 @@ The current implementation is completely integrated, both, in terms of invocatio
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{results/compile_contextMenu_feedback.png}
+    \includegraphics[width=10cm]{results/compile_contextMenu_feedback.png}
     \caption{Compilation Context Menu and User Feedback}
     \label{fig:compilation_stuff}
 \end{figure}
@@ -106,7 +116,7 @@ The expression \code{((- 23))} is therefore reformated into \code{-23}, making t
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{results/ce_beforeafter.png}
+    \includegraphics[width=10cm]{results/ce_beforeafter.png}
     \caption{Counter Example Representation before (top) and after (bottom)}
     \label{fig:ce_beforeafter}
 \end{figure}
@@ -124,42 +134,114 @@ If the user switches between windows, the counter example state is buffered, so 
 
 
 \subsection{Hover Information}
-Just a little gimmick
-fragt einfach das Backend, wo der Curosr ist, und displayed ein paar infos zum symbol, die direkt von der symbol table kommen.
-macht sonst nix.
-gut für intern auch zum debuggen.
-Feature ist neu.
+Hover information displays a set of information, whenever the user hovers with his mouse cursor over a code symbol.
+The feature itself was very simple to implement, since it basically just asks the newly implemented symbol table engine, what symbol at the cursor position is, and finally displays some information about the symbole.
+It was taken as an exemplary feature, to show off how easy some LSP functionality can now be implemented using the new symbol table.
+Similar to hover information, other features like text hihglighting could be added as well, which is discussed in chapter \ref{section:conclusion}.
+Hover may not provide much useful information to the user, but still can be used for debugging.
+For example, in figure \ref{fig:hover} the user can actually find out, where his symbol \code{field} is declared if he is unsure or what type it has.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics{results/hover.png}
+    \caption{Hover Information Example}
+    \label{fig:hover}
+\end{figure}
 
 \subsection{Goto Definition}
-Simples Feature, fragt einfach das Backend, wo der Curosr ist, und fragt nachher die SymbolTAble, wo das Symbol definiert ist.
-Basiert total auf Symbol Table logic und macht darüber hinaus eigentlich 'nix' spezielles.
-Müsste eigentlich Goto Declaration heissen, wofür es sogar ein Handler gibt vom LSP, aber das haben wir gekonnt immer ignoriert. Aber in der zukunft könnte man da noch diversifizieren.
-oder wir sagen iwie "programmierer sagen immer goto defintion, egal ob def oder decl".
+Goto Definition is also a very simple feature.
+Similar to hover information, it will just ask what symbol is at the cursor's location.
+Then, it will request the symbol table backend to report the declaration of that symbol.
+Finally, the declaration origin location is returned to the lsp and the cursor jumps to it.
+To increase the user experience a bit further, notificaitons are sent to the user if the symbol was already a declaration, or if there is no valid symbol at the cursor posiition.
+\begin{figure}[h]
+    \centering
+    \includegraphics{results/goto.png}
+    \caption{Goto Definition Error Reporting}
+    \label{fig:goto}
+\end{figure}
 
-früher: total dumm, einfach code durchgescannt und erster vorkommnis eines namen-match genommen. Bei mehrfachen Namen war das feature falsch. cursor musste anfangs wort sein.
-schlechte laufzeit auch gehabt.
+\intnote{die msg tut iwie nich xD is aber my bad hab da noch was geändert kürzlich. punkt 2: vscode reported das grad selber bei return null, damüssen wir unsere eigene notification eig net bringen.}
 
-heute:berücksichtigt jegliche art von scope, funzt, kann cursor auch am ende oder mitte vom wort haben. funzt soweit wie die symbol table funzt.
-hier das bild mit den vielen scopes und wo alles gleich heisst.
+Jumps can also be done accross different files.
+If the proper file is not opened, VSCode will just open it inside the workspace.
+It is also possible to go to the defintion of \code{this}-Expressions, which will just jump to the class definition.
+The feature works also accross code that is not within a blockstatement, for example for expressions occuring inside an \code{ensures}-clause.
 
+Compared to the original implementation, goto definition has been significantly improved.
+Prior to this bachelor thesis, the feature just scanned all code for the first name-match and reported it as the definition.
+This did neither work if multiple symbols with the same name occured, nor if the declaration was placed after the first usage in the code.
+Both cases are now handled well by the symbol table generator.
+
+Runtime could also be improved, since the symbol table generator scans for possible declarations scope by scope, and doesn't just iterate over all symbols.
+Last but not least, the cursor had to be at the beginning of a symbol to actually recognize the cursor position at all.
+This has also been improved and the cursor can now be at any spot within a symbol.
+
+Technically, the feature is misnamed.
+A better name would actually be \code{Goto Declaration}, since it jumps to the symbol declaration, not definition.
+LSP would even offer a dedicated handler for \code{textDocument/declaration} \cite{lspspec}.
+\intnote{ich würd das so lassen aebr technisch gesheen müssten wir genau das implementierte interface ändern, der rest ist eh gleiich xD vlt könnte mand as sogar noch schnell machen}
 
 \subsection{Rename}
-Auch dieses Feautre ist neu hinzugegkommen udn wurde durch die Symbol tAble ermöglicht.
-Auch hier gilt -- wo ist der cursor, danach symbol table fragen wo kommt symbol vor,d ann nur noch dsa ganze ding rüber hauen und fertig.
-ist also auch ganz von der table abhängig.
-macht noch ein poaar prüfungen, so reservierte wörter oder ob mit underscore anfängt. reservierte wörder user configurable, hehe. take this.
+Rename is a feature that could only be added, since the symbol table provides all necessary information.
+Just like hover and goto, the feature itself is very simple.
+Again it requests the symbol table at the cursor posiiton from the symbol table.
+Then all occurences of that symbol are demanded and that is already all information needed.
+Finally, a proper LSP response has to be assembled and is sent back to the client.
 
-\subsection{CodeLens}
+We also tried to providee as much user experience as possible for this feature, even if it is relatively simple.
+In particular, this means if there is no renamable symbol at the cursor, the user is informed by a notification.
+The algorithm will also check, if the new symbol name is valid.
+This means, it must not start with an underscore or it must not be any reserved Dafny word.
+Also, we limited the allowed new name to alphanumerical characters, although wild unicode names would be allowed by Dafny.
+
+This could even be driven further. For example, it coul be checked, wheater a symbol with the same new name already exists.
+Functionality for this is already available by the symbol table, since something similar is needed by autocompletion.
+Furthermore, it is currently not checked, if the new symbol name starts with a number, which is prohibited.
+That is also something that could easily be added. \intnote{das sind so one-liner im code... könnten wir echt nochs chnell umsetzen}
+
+Since Dafny reserved words may change in the future, the wordlist is configurable for the enduser by adjusting a config file.
+The process targets more advanced useres and is described in the readme file.
+
+Since the symbol table reports occurences accross imported file as well, the rename feature works fine accross multiple files.
+
+
+
+\subsection{CodeLens} 
 
 \subsection{Automatic Code Completion}
 
 \subsection{Symbol Table}
-In the previous chapter, it was mentioned that many features depend directly on the symbol table and do not contain much logic themselves.
-Thus, the features can only work as far as the symbol table gets built correctly and delivers the information correctly.
-If there is an error within the symbol table, the rename feature won't work accordingly.
+All of the previous features, with the exception of auto completion, do not contain much logic theemselves.
+They just request information from the symbol table and report it back to the client.
+While the features are implemented quite robust, they only work as long as the symbol table provides proper information.
 
-Mimi dass halt viele Sachen nicht in die table reinkommen, dann fängt die table an declarations nicht zu finden, dann wirft sie errors.
-mimi, im rahmen des SE-Kurses reichts aber.
+Whenever the symbol table fails, the underlying features will also produce nonsense.
+Thus, a correct symbol table is very important for a nice functionality.
+
+Dafny is a programming language offering a lot of features.
+Aside common object oriented features, also functional programatic features are present.
+Figuer \ref{fig:DafnyAST} shows all classes occuring inside the Dafny AST.
+The writers are well aware, that the text in this figure is too small to be read.
+The figure should  show how many AST-elements are actually present in Dafny.
+Many of them are not just inheriting from \code{Expression} or \code{Statement}, but from individual base classes.
+Thus, implementing the visitor for all of them would have been too time consuming.
+Since the bachelor thesis has a limited time frame, it was necessary to limit the amount of Dafny language features we support.
+We decided to lay our focus on the Dafny tutorial, which is done within the software engineering at HSR.
+This way, the basic concepts of Dafny are supported.
+However, as soon as the user starts to use more advanced language features, a symbol may be introduced within a scope that is not visited by the visitor.
+If the user is using that symbol later on inside a common method body, the symbol table generator will be unable to locate the symbol's declaration and thus fail.
+An overview of the supported expressions and statements was given in chapter \ref{section:analysis_dafnyASTStuff}.
+
+\intnote{würd hjier nciht schreiben, was genau failed, oder? weil das fägnt schon bei arrays oder listen an. iwo bei implemetnation ahben wir ja geschrieben, was wir analyisert ahebn.}
+
+It is subject of further development, to complete the symbol table.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{results/symboltable_dafnyast.png}
+    \caption{All Dafny AST Classes}
+    \label{fig:dafnyASTOverview}
+\end{figure}
 
 
 
