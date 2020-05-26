@@ -1,4 +1,5 @@
-\section{Result}
+\section{Results}
+\label{section:results}
 \intnote{bei der SA hatte er hier gesagt: was wir unter result hatten ist 'user guide' und was wir unter conclusion hatten war results. wir dürfen hier wohl drum schon kritisch die features ansehen. dann können wir bei conclusion eher so 'es hat spass gmacht und war eine etolle erafhrung mimi fühlsch mi gsürsch mi' - ich glabu das erwartet er eher. und vlt noch so outlook und so bei conclusion - ake 'jetzt ist es einfacher, neue ffeatures hinzuzufügen,w eil die symboletable so geil ist'.}
 In this chapter, the achieved results of our work are described and critically reflected.
 On the one hand, this concerns the features offered by the plugin
@@ -8,40 +9,118 @@ which facilitate further development of the project for other developers.
 
 
 \subsection{Sntax Highlighting}
-Copy PAsten $+/-$
+\label{section:result_syntaxhighgliht}
+Syntax highlighting is realized by a given Dafny grammar file.
+The file contains regex expressions defining the highlights.
+It is provided by Dafny \intnote{link reffen, ich find den link nicht} and could simply be downloaded.
+The feature was already implemented in the preceding term project \cite{sa}, thus no further actions had to be done.
+The following screenshot shows how syntax highlighting looks inside Visual Studio Code.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{results/syntax_highlighting.png}
+    \caption{Syntax Highlighting}
+    \label{fig:result_syntax_highlight}
+\end{figure}
+
+As you can see, keywords like method, returns, requires and ensures are marked in purple.
+Types like int are printed in blue and comments become green. Symbols, such as classes and
+methods, are displayed in a brownish color. Just these simple rules increase the readability
+significantly.
+
 
 \subsection{Verification}
-Jetzt deutlich besser
-Vorher: Einfach dTU der alten arbeiten angezapft, gar nicht recht verstanden.
-Neu: Dafny code mal debugged, was passiert überhauipt, was müssenw ir überhaupt machen?
-So konnten wir easy sagen: Aha, müssen DAfny Options als Defualt setzen, dann lexen, parsen, dingsen, können alles storen, können fehler hier und da rausziehen, aha, so geht das eigentlich.
-Dafny Error wurden total ignoriert, nur parser errors wurden berücksichtigt. jetzt viel geiler.
-Warnings und Information wird auch displayed.
+Verification was already implemented in the preceding project \cite{sa}.
+Previously, the feature held some major flaws.
+It only reporoted logical errors.
+Syntax errors were not reported.
+The code just invoked the preexisting Dafny Translation Unit, taken over by the original project \cite{ba}.
+Errors reported by Dafny were no longer respected.
+Only errors reported by Boogie were be tapped and reported to the user.
 
-feature sehr gut, robust, da direkt dafny angezapft wird. keine flaws.
+Verification was reworked completely in course of this bachelor thesis.
+First of all, Dafny code it self was analyzed to get a better understanding of how Dafny compiles its code and how errors are reported.
+Those errors could finally directly be extracted out of the Dafny error reporting engine.
+Thus, the user is now informed not only about logical errors, but also about syntax errors.
+Furthermore, warnings and information diagnostics are now also reported.
+This is something the original project \cite{ba} did not do and was actually already issued on the official Dafny git repository \cite{dafny_noWarnings}.
+
+The feature directly invokes Dafny's compile engine, thus is quite solid and scales automatically with future Dafny features.
+
+\intnote{Screnshot mit warning... ich krieg kein unreachable code warning hin wtf xD}
 
 \intnote{noch todo im code: Ganzer Block underlined oder immer noch nur das \{? hier noch ergänzen oder 'gekonnt verschweigen'}
 
 \subsection{Compile}
-Nutzt das pre-compiled Teil ausm buffer. sehr effizient. deutlich schneller. nur VSCOde braucht ewig den PowerShell zu launchen.
-Bei fehler oder so aber instant feedback, nicht wie zb bei visual studio, wo man troztz fehler erstmal 10s warten muss bis man di emsg bekommt xD.
-alt: einfach DAfny.exe gelaunched und (console) out geparsed.
-war gar nicht integrated.
-neu: if (status == verified) Dafny.compile(bufferedProgram).
-total fancy.
-Problem: Custom arguments, die vor dem verifien ziehen, werden eigentlich ignoriert. Als möglichkeit einfach dennoch halt Dafny.Main(args) aufrufen, gebufferetes ding incht nutzen. Im Sinne der integration haben wir aber darauf verzichtet. Ist im Git wie das früher war asonstnen;)
+The compile feature is strongly connected to the verification process.
+Prior to compilation, the whole Dafny project has to be verified anyway.
+Thus, since verification yields a precompiled \code{DafnyProgram}, the buffered result can be used to invoke the Dafny compiler.
+This makes the compilation process very snappy and responsive.
+If the code contains errors, the verificaiton process already failed and compilation can instantly be denied.
+However, if the code is fine, the precompiled \code{DafnyProgram} just has to be translated, which can be done relatively fast.
 
+The user also has the option to apply custom compilation arguments.
+These can be directly set within VSCode.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{results/compile_customarg.png}
+    \caption{Custom Compilation Arguments}
+    \label{fig:compilation_custom_args}
+\end{figure}
+
+These are directly handed to the Dafny options parser and are directly applied within the Dafny engine.
+Since compilation uses the precompiled Dafny program, compilation arguments that would actually affect the verification process have no effect.
+This is something that could be resolved by just restarting the verification process if custom arguments were given.
+Unfortunately, due to the hard project deadline, this could not be implemented anymore.
+
+Previously, compilation was implemented so that it just started a subprocess, launching \code{Dafny.exe} with any custom arguments given.
+This solution was obviously not integrated at all.
+To obtain compilation results, the console output of the subprocess was parsed and reported to the user.
+
+The current implementation is completely integrated, both, in terms of invocation and result reporting.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{results/compile_contextMenu_feedback.png}
+    \caption{Compilation Context Menu and User Feedback}
+    \label{fig:compilation_stuff}
+\end{figure}
+
+
+A little flaw of this feature is, that if the user chooses the option to \code{Compile And Run}, while the compilation process finishes very quickly, the actual launch of the executable takes quite some time.
+However, this is nothing in scope of the language server.
+If the executable is launched manually within an other console outside of Visual Studio Code, it also takes quite some time until the program starts.
 
 \subsection{Counter Example}
-Mit model.bvd beschäftigt. Sehr kryptisch, eigenes thema.
-Initial state gefunden, dies schien in einfachen bsp das zu sein, was wir brauchen.
-neu: nur noch initial state angekuckt.
-neu: KRyptischen shit deleted, also alles was so **varX  oder TU!VAl314 -> weg
-neu: kjleines freformating   ((- 23)) to -23
+Providing counter examples was already possible in the previous projects.
+A major flaw was, that the representation of the counter example was quite complex and not intuitively readable.
+Thus, it was a goal to ease the counter example representation.
 
-MArcel: Client, fensterwechsel
+For this, the related \code{model.bvd} file was studied.
+It is a quite cryptic file and getting a full understanding of it would be very complex.
+However, an \code{inital state} was located which seemed exactly that part of information, that the user is intersted in.
+Thus, unlike previous versions, only that \code{initial state} is considered in counter examples.
+Furthermore, any unreadable representations such as \code{**myVar} or \code{TU!Val23} were ommitted.
+To allow the user to catch the information at first sight, obsolete brackets are also removed, and the minus sign is directly moved to the number.
+The expression \code{((- 23))} is therefore reformated into \code{-23}, making the term much more perceiveable.
 
-Deutlich besser jetzt. immer noch etwas weird, weil ständig das modeo.bvd generiert werden muss, und man es vond er HDD lesen muss und so.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{results/ce_beforeafter.png}
+    \caption{Counter Example Representation before (top) and after (bottom)}
+    \label{fig:ce_beforeafter}
+\end{figure}
+
+Figure \ref{fig:ce_beforeafter} shows a comparison of the counter example feature between the initial state and at the end of the project.
+The representation is much cleaner and easier to catch.
+Also note, that more room is given so that is does not have a clumsy effect on the user's eye. \intnote{die HCID Trulla reffen? Mehr raum?}
+
+This feature was also improved on the client side.
+The user has the option to configure the color scheme of the counter example representation, if he does not like the default colors.
+The default colors are chosen with respect to the user's base color theme (dark or light mode).
+The counter example will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
+If the user switches between windows, the counter example state is buffered, so that once the user switches back to the original window, the counter example will be shown again.
+
 
 
 \subsection{Hover Information}
