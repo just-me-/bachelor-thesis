@@ -2,8 +2,6 @@
 \label{section:analysis}
 Since this thesis is a direct sequel of the preceding semester thesis, work could be directly continued. However, to provide the reader with a comprehensive knowledge base about Dafny and the language server protocol, some chapters out of the semester thesis will be repeated in the following subsections. To be able to create the symbol table, more detailled research about Dafny's language feature and its AST element had to be done, which is also described in this chapter.
 
-\intnote{in der sa war hier noch 'wie macht mane in vscode plugin tutorial'... das fänd ich gehört eigentlichs chon auch hier hin, aber es gibt halt keinerlei informaitonen, also hat kein bsp und nix. aka es sagt nicht, was man jetzt wirklich tun muss. wills tdu marcel evtl noch kurz was schreiben aka: man muss ein extension.ts machen, dann muss man da zum language server connecten indem man so und so macht und fertig, lsp macht den rest.}
-
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
 The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{dafnyWiki}. In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{dafnyWiki}. The goal of the LSP is to untie the dependency of an IDE with its programming language. That means, that once a language server is available, the user is free in the choice of his IDE, as long as it offers a client instance that is able to communicate with the server. The user can then use a variety of features, as long as the language server offers them. Those features can for example be auto completions, hover information, or go to definition. Custom message types, for example compile or counterExample can also be added to the LSP. \cite{dafnyWiki}
@@ -67,6 +65,10 @@ The following message is a \code{textDocument/publishDiagnostics} notification a
 }
 \end{lstlisting}
 
+\subsubsection{LSP Standard and Individual Extensions}
+\intnote{Beschreibung von "Default LSP Sachen" und was wir erweitert haben. Olaf Zimmernmann. Verweis auf Kapitel Custom LSP Messages
+}\\
+
 \subsection{OmniSharp}
 \label{section:analysis:omnisharp}
 To work with the language server protocol, a proper LSP implementation was required. OmniSharp offers support for \Csharp \cite{langserverdotorg}. It could be simply installed as a NuGet package. OmniSharp also offers a language server client that can be used for testing.
@@ -121,6 +123,9 @@ public class MyHandler : ICounterExampleHandler
 \end{lstlisting}
 
 
+\subsection{Visual Studio Code Plugin}
+todo. seite 16 SA.
+
 
 \subsection{Dafny Language Features}
 With regard to the symbol table, the Dafny language had to be studied more in detail. For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes. This is highly relevant for the construction of a symbol table.
@@ -129,6 +134,8 @@ To be aware of which such concepts are supported - or prohibited - by Dafny, we 
 
 
 \subsubsection{Modules}
+\intnote{C Sharp hat iwie nie einen Abstand... Latex fix? oben auch backslash dots nicht als drei dots im code snipped.}
+
 Dafny code can be organized by modules. A module can be compared to a namespace in \Csharp or C++. Modules can also be nested. To use a class, method or variable defined in another module, the user has three options. Imagine a method \code{addOne} defined in a module \code{Helpers}.
 
 \begin{lstlisting}[language=dafny, caption={Module Example}, captionpos=b, label={lst:addOneMethod}]
@@ -273,6 +280,11 @@ private Symbol FindDeclaration(Symbol target, Symbol scope)
 
 The code above would basically already resolve the \textit{GoTo Definition} problem.
 
+
+
+\intnote{Corbat: @if und dann if als variable ist kein gültiger indentifiyer in dafny. Noch weitere versprochene doku in der agenda? }\\
+
+
 \subsection{Symbol Table}
 The parser of a compiler works with two major concepts. One of them is the abstract syntax tree (AST), the other is the symbol table. The AST is a tree, that contains information about the scope of symbols. Consider the following code snippet.
 
@@ -325,9 +337,9 @@ To be able to implement our feature set, the following requirements must be full
 
 \subsubsection{Dafny Symbols}
 In an optimal case, Dafny's own implementation of its symbol table and AST would already contain all of this information. Unfortunately, this was not the case. The following screenshot shows all available properties and fields of a name segment. A name segment is just any occurence of an identifier, for example of a variable or of a method.
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{03_namesegmentfields.png}
+    \includegraphics[scale=0.6]{03_namesegmentfields.png}
     \caption{Properties and Fields of a NameSegment Expression}
     \label{fig:namesegment}
 \end{figure}
@@ -335,11 +347,11 @@ While \code{ResolvedExpression} looks like an interesting property, it just poin
 
 
 
-A better example may be on a higher level. Let's have a look at the class \code{method}. It contains properties and methods for it's body, but not exactly which name segments are declared inside that body. While it has a property \code{EnclosingModule}, it is not stated in what class that method is defined. The property \code{CompileName} contains information about the enclosing class, but only as a string and is thus of limited use. Also, there is no way to know where that method is used, which was a prerequisite for the code lens feature.
+A better example may be on a higher level. Let us have a look at the class \code{method}. It contains properties and methods for it's body, but not exactly which name segments are declared inside that body. While it has a property \code{EnclosingModule}, it is not stated in what class that method is defined. The property \code{CompileName} contains information about the enclosing class, but only as a string and is thus of limited use. Also, there is no way to know where that method is used, which was a prerequisite for the code lens feature.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[scale=1]{03_method.png}
+    \includegraphics[scale=0.5]{03_method.png}
     \caption{Properties and Fields of a Method}
     \label{fig:method}
 \end{figure}
@@ -375,6 +387,9 @@ public class Printer : Visitor {
 \end{lstlisting}
 
 \subsection{Dafny Expression and Statement Types}
+\intnote{ISt dieses Kapitel an einer guten Position? Besser nach Danfy Language Features oder so? Ahh. Ne schon richtig hier. "Platsch" einstieg ersetzen durch "was es so gibt, und warum wichtig (beachten für visitor) etc. Analyse von was es für types gibt und warum. einstieg." }\\
+
+
 Dafny is a very versatile language. While it offers common object oriented language features, it also contains formal language features, comparable to more common languages like Haskell. Thus, it contains numerous AST-nodes. The most important ones shall be discussed within this section.\\
 
 Dafny works with three major base clases in its AST. These are
@@ -460,12 +475,14 @@ Unfortunately, setting up the CI process in the preceding project\cite{sa} took 
 
 According to our project plan, we wanted to resolve all CI-issues at the beginning of the bachelor thesis, so that we can then profit by a supportive workflow.
 
+This chapter describes the initial situation, the desired objectives and the targets achieved.
+
 \subsubsection{Initial Situation}
-On the client side, code was analyzed with SonarQube. If the code contained TypeScript errors, the build failed \cite{sa}. The end-to-end tests, provided by the preceding bachelor thesis\cite{ba} could not be integrated until the end of the project, due to their heavy dependencies.\\
+On the client side, code was analyzed with SonarQube durring the CI process. If the code contained TypeScript errors, the build failed \cite{sa}. The end-to-end tests, provided by the preceding bachelor thesis\cite{ba} could not be integrated until the end of the project, due to their heavy dependencies.\\
 
 On the server side, the project was automatically built by the CI server. Our own unit tests, as well as tests provided by Dafny could as well be automatically exectued. Integration testing and code analysis by SonarQube remained pending \cite{sa}.
 
-\subsubsection{Targeted Solution}
+\subsubsection{Targeted Solution - Achieved Solution}
 According to our research, a major problem was that the scanner for SonarQube can only analyze one language at a time. \cite{sonar-supports-only-one-language}. This means, that the TypeScript code in the client and the \Csharp code in the server cannot be analyzed simultaneously.
 Furthermore, in the preexisting Dafny project, there are also single Java files. This led to further conflicts in the Sonar analysis \cite{sa}. \\
 
@@ -498,6 +515,7 @@ Excluded from this principle are Node, Z3, Go, Boogie and Sonar. All of these ha
 Ich hab hier jetzt in der Analyse auch schon die Lösung vorabgegriffen. Sollen wir das splitten? Bricht das nicht den Lesefluss? Evt besprechen.
 ja es is iwie komisch. auch unten habenw ir ja noch testing und blabla... kann man evtl so ein CI Kapitel vlt sogar machen? grml.
 
+todo
 
 
 \subsection{notizen von marcel}

@@ -4,8 +4,45 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Client}
-a
+Das Refactoring bereits hier mitmachen?
+Dann gleich den "ISt zustand" mit dem Refactroing vom Design hier einflieessen lassen.
+ISt für den Leser meine ich weniger verwirrend.
 
+
+
+\subsubsection{Client (Code Review)}
+After a joint code review together with our advisors, individual optimisation potential was identified.
+This subchapter describes the associated improvements to the architecture. \\
+
+Although interfaces were used for the individualized types,
+the individual core components did not use their own interfaces.
+To reduce coupling, isolated modules were formed in a comprehensive refactoring process.
+The modules now no longer program on the class implementations, but against the interface. \\
+
+For this purpose one importable module with the name \code{\_<Directory>Modules} was created for each directory.
+Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
+In addition, the dependencies among each other are shown.
+For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} have been omitted. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{client_2nd_refactoring.png}
+    \caption{Second Major Client Refactoring}
+    \label{fig:client_2nd_refactoring}
+\end{figure}
+
+At first glance, the architecture appears much tidier.
+The dependencies are now pointing from top to bottom.
+Methods have been simplified and the number of parameters could be reduced significantly.
+Component identifiers have been renamed to be more understandable. \\
+
+However, it is now also noticeable that there are considerably more dependencies on \code{stringRessources}.
+While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.
+
+This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all UI strings. \glsadd{UI}
+In the code review, it was decided that default values should no longer be set within the independent modules,
+but rather at a central location.
+This would make it easier to maintain these values. \\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,6 +200,7 @@ private void SetUpDafnyOptions()
 
 \subsection{Symbol Table}
 This package provides four components:
+\intnote{Ich finde diese Aufzählungen haben wenig Aussage. Zusätzlich noch ein Klassendiagramm mässiges Bild mit Typ. Im Text noch beschreiben "was das ist/tut". todo}\\
 \begin{itemize}
     \item Symbol Information
     \item Symbol Table Generation
@@ -229,7 +267,7 @@ public override void Accept(Visitor v)
     foreach (var ens in this.Ens)
     {
       ens.Accept(v);
-    }        
+    }
     foreach (var stmt in this.Body.Body)
     {
       stmt.Accept(v);
@@ -270,9 +308,9 @@ public override void Visit(Method o)
 
 The \code{CreateSymbol} method will set all properties accordingly. That means, a symbol that can have children will be initialized with a list for children, while a symbol that cannot have children will just have a null entry there. Note that the scope of the visitor is set to the method for future visitations.
 
-The second visitor will also visit declarations, but no longer create a symbol for them. Instead, just the proper scope will be set. The second visitor will now also visit method bodies. Within the body, it will encounter local variables. These were not caught by the first visistor, but this is ok, since local variables are not accessible before they weren't declared.  Furthermore, symbol usages such as method calls or variable usages are now encountered. The visitor now has the responsibility, to create proper symbols for these. Since these are symbol usages, it is not sufficient to just create a symbol and attach it to the parent scope. The following additional tasks have ot be done:
+The second visitor will also visit declarations, but no longer create a symbol for them. Instead, just the proper scope will be set. The second visitor will now also visit method bodies. Within the body, it will encounter local variables. These were not caught by the first visistor, but this is ok, since local variables are not accessible before they weren't declared.  Furthermore, symbol usages such as method calls or variable usages are now encountered. The visitor now has the responsibility, to create proper symbols for these. Since these are symbol usages, it is not sufficient to just create a symbol and attach it to the parent scope. The following additional tasks have to be done:
 \begin{itemize}
-    \item Where am i declared?
+    \item Where am I declared?
     \item Add usage to my declaration
 \end{itemize}
 
@@ -302,7 +340,11 @@ To operate on the (partially) constructed symbol table, a separate component to 
 
 \intnote{2do Bild von nem baum und dann wie es so hoch und runter geht, Beispiel, Visualisierung einbauen fuer die Laufzeitanalyse.} \\
 
-Both options are implemented so that they can return a single, first match, or any symbols that match a criterion. To illustrate this, let's have a look at two examples.
+
+\intnote{Keine apostriche als abkürzungen. keine "you" sondern indirekte ansprachen. one.} \\
+
+
+Both options are implemented so that they can return a single, first match, or any symbols that match a criterion. To illustrate this, let us have a look at two examples.
 \begin{itemize}
     \item You want to know what symbol is at the cursor position. You call \code{TopDown} and pass the rootSymbol, as well as the cursor position as arguments. The rootSymbol hast 3 modules attached to it. One ranging from line 1 to 20, another ranging from line 21 to 40. The algorithm will now decide, in which of the two modules a further search is worthwile. If the cursor is located at line 25, it will continue to search in the second module. This can simply be done by calling the same function recursively, handing the second module as the entry point for the recursive search. Within the recursive call, the proper class will be found, and so on. Default namespaces and default clases had to be treated separately for this case.
     \item To build up autocompletion suggestions, you want to know what declarations are available at the symbol you found just before. Thus, you navigate to the parent symbol, and then you collect all children of that symbol. Then, again, go to the next parent and continue like that until the rootSymbol is reached. Again, the problem can be solved using recursion.
@@ -310,7 +352,7 @@ Both options are implemented so that they can return a single, first match, or a
 Note that this navigation can be executed very fast.
 
 \textbf{Symbol Table Manager}
-The manager is a rather simple component and can be used as an access point for the user of the symbol table. It is constructed by handing over a root symbol of a fully generated symbol table. It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}. That method will then just create a navigator and use the (maybe rather complex navigator) to provide the user with the desired result. 
+The manager is a rather simple component and can be used as an access point for the user of the symbol table. It is constructed by handing over a root symbol of a fully generated symbol table. It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}. That method will then just create a navigator and use the (maybe rather complex navigator) to provide the user with the desired result.
 
 
 \subsubsection{Core}
@@ -375,8 +417,10 @@ The last check is stronger than it needs to be, but since special characters are
 Eigentliche logik. implementiert interface. Die Features ev einzln druch, msus man fast, hat ja vieles interessantes, z.b. so diagnostic conversion (wobie xcdas bei dafny access is)
 
 \textbf{Completion}\\
+todo
 
 \textbf{Code Lens}\\
+todo
 
 \textbf{Compilation}\\
 Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the FileRepository. This also includes the precompiled \code{DafnyProgram}. The compilation provider will take advantage of that and use the precompiled item, and just hand it forwards to the compiler engine. Prior to the compilation, custom compilation arguments are installed if the user provided any. The process is fully integrated into the DAfny backend by using
@@ -441,6 +485,7 @@ This hash structure enables us to access child symbols with a runtime of O(1). S
 This chapter provides a general overview of the testing. It is split into unit, integration and system tests. To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
 
 \subsubsection{Unit Tests}
+todo
 \dots
 \intnote{hmm, net sicher was schreiben}
 
@@ -487,43 +532,6 @@ Note that the test is kept as concise as possible. The tester does not even have
 
 Since all tests base on actual Dafny files, a dedicated subfolder was created to store them. All files can be referenced globally from within the \code{TestCommons} project, where also the base class for all integration tests is located.
 
-\subsection{Code Reviews}
-\intnote{ich glaube es ist nicht gedacht einzelne code reviews zu dokumentieren. das waere ja mehr dann wie ein arbbeitsrapport, aka woche 12: wir haben das code review bearbeitet und dies und das gemacht. eher so bei kapitel design: wir haben entschieden, strings da und da auszulagnern. dies wurde u.a. wegen dem code review so geamcht. dann implementation: hier wurde das so und so implementiert, weil beim code review es so gesagt wurde}
-
-
-\subsubsection{Client Code Review}
-After a joint code review together with our advisors, individual optimisation potential was identified.
-This subchapter describes the associated improvements to the architecture. \\
-
-Although interfaces were used for the individualized types,
-the individual core components did not use their own interfaces.
-To reduce coupling, isolated modules were formed in a comprehensive refactoring process.
-The modules now no longer program on the class implementations, but against the interface. \\
-
-For this purpose one importable module with the name \code{\_<Directory>Modules} was created for each directory.
-Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
-In addition, the dependencies among each other are shown.
-For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} have been omitted. \\
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{client_2nd_refactoring.png}
-    \caption{Second Major Client Refactoring}
-    \label{fig:client_2nd_refactoring}
-\end{figure}
-
-At first glance, the architecture appears much tidier.
-The dependencies are now pointing from top to bottom.
-Methods have been simplified and the number of parameters could be reduced significantly.
-Component identifiers have been renamed to be more understandable. \\
-
-However, it is now also noticeable that there are considerably more dependencies on \code{stringRessources}.
-While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.
-
-This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all UI strings. \glsadd{UI}
-In the code review, it was decided that default values should no longer be set within the independent modules,
-but rather at a central location.
-This would make it easier to maintain these values. \\
 
 
 
@@ -536,18 +544,6 @@ This would make it easier to maintain these values. \\
 
 
 
-\subsection{Usability Test --> auch results oder?}
-
-
-\subsection{Mono Support for macOS and Linux -Kaptitel nicht hier. entweder anaylse oder Result}
-Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
-Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
-(warum in der SA; plficht wegen dafny core. was ist mono)
-
-Leider funktionierts nicht.
-Anssaetze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
-github issues: allgemein probleme mit lunux/mac weil primaer auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle)
-
-\cite{sa}
-\cite{mono-slack}
-\cite{mono-git}
+\subsection{Usability Test}
+Nein. Das ist Implementation. Bei Implementation Test gemacht; Implementation verbessert.
+todo

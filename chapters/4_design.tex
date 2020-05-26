@@ -44,6 +44,13 @@ As a first step, all areas of responsibility were divided into separate componen
 The components were grouped into packages as you can see in figure \ref{fig:client_now_packages}.
 These packages are discussed in the following sections. \\
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6cm]{client_now_packages}
+    \caption{Client Architecture - Packages}
+    \label{fig:client_now_packages}
+\end{figure}
+
 Additionally, all logic was detached from the extension class (the main component).
 This resulted in the root directory containing only a lightweight program entry point
 and the rest of the logic was split between the created packages. \\
@@ -55,7 +62,7 @@ As a little extra, each component contains code documentation to help other deve
 This component is the aforementioned \code{main} of the plugin and serves as an entry point. The contained code has been minimized. Only one server is instantiated and started. The logic is located entirely in the server package. \\
 
 {\bf Server} \textendash{}
-The server package contains the basic triggering \intnote{was ist 'triggering a server?' starten? msg senden? aktivieren?} of the language server and the connection setup. In addition, all server requests, which extend the LSP by own functions, are sent to the server via this package. \\
+The server package contains the initializing of the language server and the establishing of the connection between client (plugin for VSCode) and Dafny language server. In addition, all server requests, which extend the LSP by own functions, are sent to the server via this package. \\
 
 {\bf TypeInterfaces} \textendash{}
 In the new architecture, no \code{any} type should be used anymore. All types, in particular the types created specifically for additional functions such as \code{CounterExampleResults}, were defined by interfaces. \\
@@ -152,7 +159,9 @@ As already mentioned in the previous chapters, \code{any} types were largely sup
 There are individual built-in datatypes like \code{number}, \code{boolean} and \code{string} \cite{ts-types}.
 For custom types, such as \code{CounterExampleResults}, we have defined separate interfaces.
 
-\intnote{<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do --> würde ich dann deifnitiv bei implementaiton machen, nicht hier. oder?}
+\intnote{<<<hier vielleicht nich beispiel screenshots oder codes rein? >>> 2do --> würde ich dann deifnitiv bei implementaiton machen, nicht hier. oder?    Nennen welche; Sind alle Language Server Response (Begründung). }
+
+\intnote{OmniSharp Omnisharp, VSCode VS Code. überall einheitlich. }
 
 \intnote{Mir ist aufgefallen, dass die Information zum teil doppelt kommt: erst beim intro 'wir machen ejtzt interfaces statt any zu verwenden. dann 'jetzt kommt allesnochmal im detail', dann kommt 'wir haben statt any interfaces verwendet' nict sicher ob das aber schlimm ist oder nur mir auffällt, ein intro zu haben ist ja legitim.}
 
@@ -209,7 +218,7 @@ Since \code{TranslationResults} and \code{PhysicalFile} are used on multiple par
     \label{fig:server_dtu}
 \end{figure}
 
-Excluded from the figure are some converter methods, that convert \code{Diagnstoics}, such as warnings and errors, to a einheitlich format. Dafny and Boogie report their errors in different ways and different formats, which made their collecting actually relatively complex. To counterfeight that, simple converter extensions were written to unify any occuring errors.
+Excluded from the figure are some converter methods, that convert \code{Diagnstoics}, such as warnings and errors, to an uniform format. Dafny and Boogie report their errors in different ways and different formats, which made their collecting actually relatively complex. To counterfeight that, simple converter extensions were written to unify any occuring errors.
 
 \intnote{eben hier noch einfügen wie das jetzt mit der ST ist}
 
@@ -224,6 +233,8 @@ To be able to provide all the necessary functionality, there is more information
     \item What does the compiled Dafny und Boogie program look like?
     \item What symbols occur in the file? \intnote{ST diskutieren}
 \end{itemize}
+
+\intnote{Bei Aufzählungen gross/klein starten. einheitlich}
 
 \intnote{internen noch  auflsöen ob symbol table pro workspace oder pro file}
 
@@ -247,12 +258,12 @@ Creating, managing and navigating through the symbol table is a highly complex p
 
 This component contains of three classes:
 \begin{itemize}
-    \item SymbolInformation, a class containing just data about a symbol. 
+    \item SymbolInformation, a class containing just data about a symbol.
     \item Navigator, a class to navigate through the symbol table.
     \item Manager, the class that generates the symbol table.
 \end{itemize}
 
-The \code{SymbolInformation} class is supposed to contain any necessary data about every symbol. In which file is it? On what line, on what column? What is it's parent, what children are in the body of the symbol? This is just how they were discussed in chapter \ref{chapter:keineahnungTODO}. 
+The \code{SymbolInformation} class is supposed to contain any necessary data about every symbol. In which file is it? On what line, on what column? What is it's parent, what children are in the body of the symbol? This is just how they were discussed in chapter \ref{chapter:keineahnungTODO}.
 
 The \code{Navigator} is responsible to navigate through the symbol table. Since every symbol is supposed to know about its parent and children, it is legit to speak about a symbol tree. One task could be to naviagte upwards, starting from a symbol dep inside the tree. This way, all available declarations could be retrieved. Another task is to navigate from top to bottom, for example to locate a specific symbol. As a global access point, there is a root symbol. Thus, every top-down search task can be started from that root symbol.
 
@@ -393,9 +404,12 @@ public void FailureSyntaxErrorSemiExpected()
 As you can see, the test contains only of two lines of code. The first handing in the test file, the second one definind our expectations. By the way, the boolean values represent if there were errors and if an executable was generated.\\
 The same applies for test about counter examples, goto definition and other use cases. Thus, the integration test architecture could be created in a way so that the creation of tests is extremely simple and user friendly. The code can be kept very clean and contains no duplicated code. Tests can easily be organized into classes \textendash{} considering compilation this could for example be the separation into logical errors, syntax errors, wrong file types and such.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{integrationTestDesign}
+    \includegraphics[width=\textwidth/2]{integrationTestDesign}
     \caption{Test Architecture on the Basis of Compilation}
     \label{fig:testArchitecture}
 \end{figure}
+
+\subsubsection{Performance Measurement }
+todo
