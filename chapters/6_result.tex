@@ -2,11 +2,43 @@
 \label{section:results}
 \intnote{bei der SA hatte er hier gesagt: was wir unter result hatten ist 'user guide' und was wir unter conclusion hatten war results. wir dürfen hier wohl drum schon kritisch die features ansehen. dann können wir bei conclusion eher so 'es hat spass gmacht und war eine etolle erafhrung mimi fühlsch mi gsürsch mi' - ich glabu das erwartet er eher. und vlt noch so outlook und so bei conclusion - ake 'jetzt ist es einfacher, neue ffeatures hinzuzufügen,w eil die symboletable so geil ist'.}
 In this chapter, the achieved results of our work are described and critically reflected.
-On the one hand, this concerns the features offered by the plugin
-(and accordingly by the implemented laguage server),
-but on the other hand also the architectural improvements,
+The current version of the plugin supports numerous features:
+\begin{enumerate}
+    \item Syntax Highlighting
+    \item Code Verification
+    \item Compilation
+    \item Counter Example
+    \item Hover Information
+    \item Goto Definition
+    \item Rename
+    \item Code Lens
+    \item Autocompletion
+    \item mehr?
+\end{enumerate}
+
+
+Aside the features, also architectural improvements are discussed,
 which facilitate further development of the project for other developers.
 
+
+\subsection{Accessibility}
+Some of the features are just active by default, namely the syntax highlighting and the code verifiction.
+Hover information triggers everytime the user moves his mouse over a symbol.
+This should happen by chance, or by accident.
+Auto completion triggers whenever the user enters a dot or types a \code{new} and will thus be discovered automatically.
+Furthermore, the user can type \code{CTRL+Space} to trigger auto completion.
+Further functionality, such as goto definition, compile or rename, can be accessed via the context menu.
+Within the context menu, hotkeys are displayed, thus the user automatically learns how to increase his efficiency.
+
+Although there are a lot of different features, they are visible and perceivable to the enduser without the necessity of a tutorial.
+The user can start right away. \intnote{Ref auf usability tests. evtl noch ein bisschen mehr 'es ist voll geil zugänglich'}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{results/context_menu.png}
+    \caption{Plugin Context Menu}
+    \label{fig:result_contextmenu}
+\end{figure}
 
 \subsection{Intro}
 hier noch so:
@@ -258,3 +290,17 @@ github issues: allgemein probleme mit lunux/mac weil primaer auf windows und gar
 \cite{sa}
 \cite{mono-slack}
 \cite{mono-git}
+
+
+\subsection{Server Architectural Improvements}
+At the beginning of the thesis, the server's dependency graph was quite a mess.
+During development, the code was constantly cleaned up and dependencies were resolved.
+
+While the project is quite large and has a lot of dependencies, they could be well organized.
+As seen in figure \ref{fig:dependency_graph}, all dependency are now pointing downwards, just as it should be.
+Within the picture, dependencies to the Resources project are excluded for more overview.
+The core layer of the project, containing \code{SymbolTable}, \code{Handler} and \code{Core}, have some sidewards dependencies, which could not be avoided completely, since these packages are strongly coupled.
+
+Aside the grob architectural layout, many small refactorings were made to keep the code clean.
+This includes the creation of smaller classes and smaller methods with single responsibilities.
+A good example for this is the config reading, which was one single large class at first. \intnote{evtl lassen oder weg, ka wie ich das noch refactftore und ob überhaupt.}
