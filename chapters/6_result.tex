@@ -1,30 +1,91 @@
 \section{Result}
-In this chapter we describe the achieved results of our work.
+\intnote{bei der SA hatte er hier gesagt: was wir unter result hatten ist 'user guide' und was wir unter conclusion hatten war results. wir dürfen hier wohl drum schon kritisch die features ansehen. dann können wir bei conclusion eher so 'es hat spass gmacht und war eine etolle erafhrung mimi fühlsch mi gsürsch mi' - ich glabu das erwartet er eher. und vlt noch so outlook und so bei conclusion - ake 'jetzt ist es einfacher, neue ffeatures hinzuzufügen,w eil die symboletable so geil ist'.}
+In this chapter, the achieved results of our work are described and critically reflected.
 On the one hand, this concerns the features offered by the plugin
-(and accordingly by the implemented Language Server),
-but on the other hand also the architectural improvements to achieve further development of the project for other developers.
+(and accordingly by the implemented laguage server),
+but on the other hand also the architectural improvements,
+which facilitate further development of the project for other developers.
 
-\subsection{Features for the Plugin User}
 
-\subsubsection{Compile}
-\subsubsection{Counter Example}
-\subsubsection{Code Verification}
-\subsubsection{CodeLens}
-\subsubsection{Automatic Completion}
-\subsubsection{Hover Information}
-\subsubsection{Rename}
+\subsection{Sntax Highlighting}
+Copy PAsten $+/-$
 
-\subsection{Achieved Improvements for Further Development}
-Fabians Feedback aus der SA... neues Review. "Tu Gutes und sprich davon". -> vlt auch eher bei results "es wrude gsagt, das muss gemacht werden -> haben wir gemacht"
+\subsection{Verification}
+Jetzt deutlich besser
+Vorher: Einfach dTU der alten arbeiten angezapft, gar nicht recht verstanden.
+Neu: Dafny code mal debugged, was passiert überhauipt, was müssenw ir überhaupt machen?
+So konnten wir easy sagen: Aha, müssen DAfny Options als Defualt setzen, dann lexen, parsen, dingsen, können alles storen, können fehler hier und da rausziehen, aha, so geht das eigentlich.
+Dafny Error wurden total ignoriert, nur parser errors wurden berücksichtigt. jetzt viel geiler.
+Warnings und Information wird auch displayed.
 
-\subsubsection{Metriken}
-Performance Verbesserungen, Anzahl Code Lines, reduktion der lines/code anzahl / methodenanzahl.
-"Wie viel chelaner" unsere lösung geworden ist. wie viel schneller. sowas ist wichtig fpr t.corbat. 
+feature sehr gut, robust, da direkt dafny angezapft wird. keine flaws.
 
-\subsection{outlooks}
-Nicht erreichtes, was nicht bei den Features etc selbst schon genannt wurde.
+\intnote{noch todo im code: Ganzer Block underlined oder immer noch nur das \{? hier noch ergänzen oder 'gekonnt verschweigen'}
 
-\subsubsection{Mono Support for macOS and Linux}
+\subsection{Compile}
+Nutzt das pre-compiled Teil ausm buffer. sehr effizient. deutlich schneller. nur VSCOde braucht ewig den PowerShell zu launchen.
+Bei fehler oder so aber instant feedback, nicht wie zb bei visual studio, wo man troztz fehler erstmal 10s warten muss bis man di emsg bekommt xD.
+alt: einfach DAfny.exe gelaunched und (console) out geparsed.
+war gar nicht integrated.
+neu: if (status == verified) Dafny.compile(bufferedProgram).
+total fancy.
+Problem: Custom arguments, die vor dem verifien ziehen, werden eigentlich ignoriert. Als möglichkeit einfach dennoch halt Dafny.Main(args) aufrufen, gebufferetes ding incht nutzen. Im Sinne der integration haben wir aber darauf verzichtet. Ist im Git wie das früher war asonstnen;)
+
+
+\subsection{Counter Example}
+Mit model.bvd beschäftigt. Sehr kryptisch, eigenes thema.
+Initial state gefunden, dies schien in einfachen bsp das zu sein, was wir brauchen.
+neu: nur noch initial state angekuckt.
+neu: KRyptischen shit deleted, also alles was so **varX  oder TU!VAl314 -> weg
+neu: kjleines freformating   ((- 23)) to -23
+
+MArcel: Client, fensterwechsel
+
+Deutlich besser jetzt. immer noch etwas weird, weil ständig das modeo.bvd generiert werden muss, und man es vond er HDD lesen muss und so.
+
+
+\subsection{Hover Information}
+Just a little gimmick
+fragt einfach das Backend, wo der Curosr ist, und displayed ein paar infos zum symbol, die direkt von der symbol table kommen.
+macht sonst nix.
+gut für intern auch zum debuggen.
+Feature ist neu.
+
+\subsection{Goto Definition}
+Simples Feature, fragt einfach das Backend, wo der Curosr ist, und fragt nachher die SymbolTAble, wo das Symbol definiert ist.
+Basiert total auf Symbol Table logic und macht darüber hinaus eigentlich 'nix' spezielles.
+Müsste eigentlich Goto Declaration heissen, wofür es sogar ein Handler gibt vom LSP, aber das haben wir gekonnt immer ignoriert. Aber in der zukunft könnte man da noch diversifizieren.
+oder wir sagen iwie "programmierer sagen immer goto defintion, egal ob def oder decl".
+
+früher: total dumm, einfach code durchgescannt und erster vorkommnis eines namen-match genommen. Bei mehrfachen Namen war das feature falsch. cursor musste anfangs wort sein.
+schlechte laufzeit auch gehabt.
+
+heute:berücksichtigt jegliche art von scope, funzt, kann cursor auch am ende oder mitte vom wort haben. funzt soweit wie die symbol table funzt.
+hier das bild mit den vielen scopes und wo alles gleich heisst.
+
+
+\subsection{Rename}
+Auch dieses Feautre ist neu hinzugegkommen udn wurde durch die Symbol tAble ermöglicht.
+Auch hier gilt -- wo ist der cursor, danach symbol table fragen wo kommt symbol vor,d ann nur noch dsa ganze ding rüber hauen und fertig.
+ist also auch ganz von der table abhängig.
+macht noch ein poaar prüfungen, so reservierte wörter oder ob mit underscore anfängt. reservierte wörder user configurable, hehe. take this.
+
+\subsection{CodeLens}
+
+\subsection{Automatic Code Completion}
+
+\subsection{Symbol Table}
+In the previous chapter, it was mentioned that many features depend directly on the symbol table and do not contain much logic themselves.
+Thus, the features can only work as far as the symbol table gets built correctly and delivers the information correctly.
+If there is an error within the symbol table, the rename feature won't work accordingly.
+
+Mimi dass halt viele Sachen nicht in die table reinkommen, dann fängt die table an declarations nicht zu finden, dann wirft sie errors.
+mimi, im rahmen des SE-Kurses reichts aber.
+
+
+
+\subsection{Platform Independence / Mono Support for macOS and Linux}
+\intnote{welcher titel ist besser?}
 Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
 Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
 (warum in der SA; plficht wegen dafny core. was ist mono)
