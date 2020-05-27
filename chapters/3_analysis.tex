@@ -5,12 +5,6 @@ Since this thesis is a direct sequel of the preceding semester thesis, work coul
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
 The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{dafnyWiki}. In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{dafnyWiki}. The goal of the LSP is to untie the dependency of an IDE with its programming language. That means, that once a language server is available, the user is free in the choice of his IDE, as long as it offers a client instance that is able to communicate with the server. The user can then use a variety of features, as long as the language server offers them. Those features can for example be auto completions, hover information, or go to definition. Custom message types, for example compile or counterExample can also be added to the LSP. \cite{dafnyWiki}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{03_lspcommunication.png}
-    \caption{Communication Benefit of LSP}
-    \label{fig:lspcommunication}
-\end{figure}
 A big advantage of this is that the IDE specific plugin can be kept very simple. The relevant information is delivered by the language server, which is IDE and language independent. Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates these benefits. \cite{lspextensionguide}
 
 \subsubsection{Message Types}
