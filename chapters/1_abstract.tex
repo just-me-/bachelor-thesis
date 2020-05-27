@@ -1,18 +1,32 @@
 \section{Abstract}
 \label{section:abstract}
-\intnote{(Abschnitt 1-2 teilweise übernommen)}\\
 
-Dafny is a formal programming language to proof a program's correctness with preconditions, postconditions, loop invariants and loop variants. In a preceding bachelor thesis, a plugin for Visual Studio Code had been implemented to access Dafny-specific static analysis features. For example, if Dafny cannot prove a postcondition, the code will be highlighted and a counter example is shown. Furthermore, it provides access to code compilation, auto completion suggestions and various automated refactorings.\\
+Dafny is a formal programming language to proof a program's correctness with preconditions, postconditions, loop invariants and loop variants.
+In a preceding bachelor thesis, a plugin for Visual Studio Code had been implemented to access Dafny-specific static analysis features.
+For example, if Dafny cannot prove a postcondition, the code will be highlighted and a counter example is shown.
+Furthermore, it provides access to code compilation, auto completion suggestions and various automated refactorings.\\
 
-The plugin communicates with a language server, using Microsoft's language server protocol, which standardizes communication between an integrated development environment (IDE) and a language server.  The language server itself used to access the Dafny library, which features the backend of the Dafny language analysis, through a proprietary JSON-interface. In a preceding semester project, the language server was integrated into the Dafny backend to make the JSON-interface obsolete.\\
+The plugin communicates with a language server, using Microsoft's language server protocol, which standardizes communication between an integrated development environment (IDE) and a language server. 
+The language server itself used to access the Dafny library, which features the backend of the Dafny language analysis, through a proprietary JSON-interface.
+In a preceding semester project, the language server was integrated into the Dafny backend to make the JSON-interface obsolete.\\
 
-This bachelor thesis is a direct continuation of the preceding term project. It had two major goals:
+This bachelor thesis is a direct continuation of the preceding term project.
+It has two major goals:
 \begin{itemize}
     \item Improvement of previously implemented features in usability, stability and reliability.
     \item Implementation of a symbol table to facilitate the development of navigational features.
 \end{itemize}
-The symbol table was required to contain information about each name segment in the code. It should allow direct access to a name segment's declaration, information about its scope and a small usage statistic.
+The symbol table was required to contain information about each name segment in the code.
+It should allow direct access to a name segment's declaration, information about its scope and a small usage statistic.
 
-Using the visitor pattern, the Dafny abstract syntax tree is visited to generate the symbol table. After its generation, the symbol table can be navigated from top to bottom - for example to search for a certain symbol - or from bottom to top - for example to locate all available declared symbols in a scope. Every symbol contains information about its parent, its children and its declaration. Thus, the features goto defitnion, rename, code lens and auto completion were very simple to implement.\\
+Using the visitor pattern, the Dafny abstract syntax tree is visited to generate the symbol table.
+After its generation, the symbol table can be navigated from top to bottom - for example to search for a certain symbol - or from bottom to top - for example to locate all available declared symbols in a scope.
+Every symbol contains information about its parent, its children and its declaration.
+Thus, the features goto defitnion, rename, code lens and auto completion were very simple to implement.\\
 
-Aside features based on the simbol table, preexisting functionality was revisisted as well. The verification and compilation processes were simplified by creating a dedicated translation unit. Its results are buffered for efficient access. Unlike prior versions, warnings are now designated as well. Counter examples are displayed in a simpler matter. By hovering over a symbol, the user receives basic information, such as the symbol type. All features will now also work accross multiple files and namespaces.
+Aside features based on the simbol table, preexisting functionality was revisisted as well.
+The verification and compilation processes were simplified by creating a dedicated translation unit.
+Its results are buffered for efficient access. Unlike prior versions, warnings are now designated as well.
+Counter examples are displayed in a simpler matter.
+By hovering over a symbol, the user receives basic information, such as the symbol type.
+All features will now also work accross multiple files and namespaces.
