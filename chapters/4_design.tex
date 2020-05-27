@@ -412,4 +412,19 @@ The same applies for test about counter examples, goto definition and other use 
 \end{figure}
 
 \subsubsection{Performance Measurement }
-todo
+To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
+Within a classmethod, 10'000 LOC are generated, either containing
+\begin{itemize}
+    \item a variable definition: \code{var v142 := v16;}
+    \item a variable access: \code{print v142;}
+    \item a blockscope: \code{while (true) \{ \dots}
+    \item ending a blockscope: \code{\}}
+\end{itemize}
+The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 9'000 variable name segments, that have to be resolved.
+This challenges the symbol table quite a bit.
+Since the \code{textDocuemt/didOpen} notification is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
+Since we implemented compile in such a way, that it uses the precompiled dafnyProgram, we have chosen to run a compile command.
+The test has shown, that the process completes within 20 seconds on a 3.4GHz machine, which seems quite resonable for such a large file.
+
+For reproducibility, nUnits randomizer was used, which will create the same 'random' testfile on every run.
+Technically, the file generation could be excluded from the test engine, but it was left inside, in case someone wants to create additional or other tests.
