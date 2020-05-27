@@ -25,17 +25,17 @@ It should allow direct access to a name segment's declaration, information about
 Using the visitor pattern, the Dafny abstract syntax tree (AST) is visited to create the symbol table.
 Every symbol contains information about its parent, its children and its declaration.
 This makes navigation within the symbol hierarchy  very simple.
-The features goto defitnion, rename, code lens, hover information and auto completion can directly benefit by the symbol table and are no longer required to contain much logic.
+The features goto definition, rename, code lens, hover information and auto completion can directly benefit by the symbol table and are no longer required to contain much logic.
 This made the language server more robust.
-The offerings of the symbol table can be used for future extensions, such as auto formating Dafny code depending on the depth of scope.\\
+The offerings of the symbol table can be used for future extensions, such as auto formatting Dafny code depending on the depth of scope.\\
 
 
-Aside features based on the symbol table, preexisting functionality was revisisted as well:
+Aside features based on the symbol table, pre-existing functionality was revisited as well:
 \begin{itemize}
     \item The verification and compilation processes were simplified by creating a dedicated Dafny translation unit.
     \item Its results are buffered for efficient access.
-    \item Unlike in prior versions of the plugin, warnings are now reported to the enduser as well.
+    \item Unlike in prior versions of the plugin, warnings are now reported to the end-user as well.
     \item Counter examples are displayed in a simpler matter.
     \item By hovering over a symbol, the user receives basic information, such as the symbol type.
-    \item All features will now also work accross multiple files and namespaces.
-\end{enumerate}
+    \item All features will now also work across multiple files and namespaces.
+\end{itemize}
