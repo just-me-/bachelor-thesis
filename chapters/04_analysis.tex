@@ -481,18 +481,18 @@ To be in control, which information is stored, it was decided to implement an ow
 This component will be called \textit{symbol table} throughout this thesis, although it will have a double linked tree structure, as we will see later.
 
 
-%%%%Her asnasdfn
+%%%%
 
 \subsection{Visitor}
-To be able to generate an own symbol table, it is common to use the visitor programming language pattern by !!REFERENZ von den heinis gang of four balblada!!.
+To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gof}.
 The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
 The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
 
-Consider a tree based data structure.
+Consider any tree based data structure.
 Every node in the tree is supposed to offer an \code{Accept(Visitor v)} method.
 This method will accept the visitor, this is, it will execute the visitor's operation on the node itself.
-Further, it will also call the accept-methods of its child nodes.
-Thus, a typical implementation of an accpeptor would look like this:
+Further, it will also call the \code{accept}-methods of its child nodes.
+Thus, a typical implementation of an acceptor would look like this:
 
 \begin{lstlisting}[language=csharp, caption={Example for Accept}, captionpos=b, label={lst:accept}]
 public void Accept(Visitor v) {
@@ -503,13 +503,13 @@ public void Accept(Visitor v) {
 }
 \end{lstlisting}
 
-Note that the navigational aspect - the foreach loop - is inside the accept method, but nothing is said about the visit operation.
-The visitor can do whatever it wants with the node.
-The visitor has overload its \code{Visit} method for each possible node that it is visiting.
-Within a tree, these are usually nodes and leafs.
-For a symbol table, these are any kinds of expressions and statements.
-To complete the example, the visitor could simply print the node.
-Its implementation could look like shown below:
+Note that the navigational aspect - the foreach loop - is inside the accept method, but nothing is told about the visit operation.
+The visitor can do whatever it wants with the node, for example print it to the console.
+To work with every node that may occur, the visitor must overload the \code{Visit(Node n)} method for each possible subclass of \code{Node}.
+Within a tree, these are usually just nodes and leaves.
+For a symbol table, possible node types are any kinds of expressions and statements.
+
+A visitor implementation could look like shown below.
 
 \begin{lstlisting}[language=csharp, caption={Example for Visitor}, captionpos=b, label={lst:visitor}]
 public class Printer : Visitor {
@@ -525,59 +525,62 @@ public class Printer : Visitor {
 \subsection{Dafny Expression and Statement Types}
 \label{section:analysis_dafnyASTStuff}
 Dafny is a very versatile language.
-While it offers common object oriented language features, it also contains formal language features, comparable to more common languages like Haskell.
-Thus, it contains numerous AST-nodes.
-The most important ones shall be discussed within this section.\\
+While it offers common object oriented language features, it also contains formal language features, comparable to languages like Haskell \cite{haskell}.
+This results in a humungous variety of AST-nodes.
+The most important ones are discussed in this section.\\
 
-Dafny works with three major base clases in its AST.
+Dafny works with three major base classes in its AST.
 These are
 \begin{itemize}
     \item Expression
     \item Statement
     \item Declaration
 \end{itemize}
-Aside these, some AST-nodes are separate, such as \code{AssignmentRHS}, which is the right side of an assignment.
+Aside these, some AST-nodes are separated, such as \code{AssignmentRHS}, which is the right hand side of an assignment.
 \code{LocalVariable} is another example for an isolated class, that does not extend any base class.
-hy this decision was made by Dafny could not be evaluated.
-Both items are actually expressions and could technically be subclasses of \code{Expression}.
+Why this isolation of certain AST-nodes was made by Dafny could not be evaluated.
+Both items are technically expressions and could thus be subclasses of \code{Expression}.
 
 \subsubsection{Expressions}
-In this chapter, the most important expression types are explained:
+In this chapter, the most important expression types are explained.
+These are also the expressions that were implemented with a dedicated \code{Accept} and \code{Visit}-method.
 \begin{itemize}
 
     \item NameSegment: Any name of a variable or method.
     \item BinaryExpression: An expression with two operands, for example 'plus', or 'less than'.
-    \item NegationExpression: Just the negation of a variable or literal, for example \code{-b}.
+    \item NegationExpression: The negation of a variable or literal, for example \code{-b}.
     \item UnaryOpExpression: A unary expression, mostly connected to the "not"-Operator, for example \code{!someBoolean}.
-    \item ITEExpr: If-then-else expression, such as \code{if a<0 then -a else a}
+    \item ITEExpr: If-then-else expression, such as \code{if a < 0 then -a else a}
     \item ParensExpression: Any expression surrounded by brackets.
-    \item AutoGhostIdentifierExpr: If a variable declaration also contains an assignment as well, the left hand side of the declaration is a ghost-identifer.
+    \item AutoGhostIdentifierExpr: A variable declaration can also contain an initial assignment as well. If so, the left hand side of the declaration is a ghost-identifer.
     \item LiteralExpression: Literals like numbers or strings.
-    \item ApplySuffix: The brackets after a method. This expression just refers to the brackets, the actual arguments are stored within the method expression.
-    \item MaybeFreeExpr: Occurs at ensure-clauses and just contains a subexpression.
-    \item FrameExpr: Occurs at the modifies-clause and just contains a list of subexpressions.
+    \item ApplySuffix: The brackets after a method. This expression just refers to the brackets, the actual arguments are stored within the method statement.
+    \item MaybeFreeExpr: Occurs at ensure-clauses and contains a single subexpression.
+    \item FrameExpr: Occurs at the modifies-clause and contains a list of subexpressions.
+    \item Formals: Arguments and return values of a method.
 \end{itemize}
-The reader notes himself, that many expressions contain of other subexpressions.
+The reader notes himself, that many expressions contain other subexpressions.
 
 \subsubsection{Statements}
 \begin{itemize}
     \item BlockStmt: Anything surrounded by curly brackets.
-    \item IfStmt: A classic if-statement. It contains an expression for the condition, a blockstatment for the then-block, and another, optional if-statement for the else-block.
-    \item WhileStmt: A while-loop. It also contains a blockstatment for its body and an expression for the condition. Aside these, it also contains expressions for the loop invariants and decrease-clasues.
-    \item Method: The method contains a block statement for its body. The arguments and return values are stored as \code{Formals}.
+    \item IfStmt: A classic if-statement. It contains an expression for the condition, a block statement for the then-block, and another, optional if-statement for the else-block.
+    \item WhileStmt: A while-loop. It also contains a block statment for its body and an expression for the condition. Aside these, it also contains expressions for the loop invariants, variants and decrease-clauses.
+    \item Method: A method contains a block statement for its body. The arguments and return values are stored as formals.
     \item Function: Analog to method.
 \end{itemize}
 
 \subsubsection{Declarations}
 The following declarations were analyzed:
 \begin{itemize}
-    \item ModuleDecl: A module declaration
-    \item Class: A class declaration
-    \item Field: A variable member of a class
-    \item Method: A method member of a class
-    \item Function: A function member of a class
+    \item ModuleDecl: The declaration of a module.
+    \item ClassDecl: A class declaration.
+    \item Field: A variable member of a class.
+    \item Method: A method member of a class.
+    \item Function: A function member of a class.
 \end{itemize}
 
+%%do wiiter
 
 
 \subsection{Dafny AST Implementation}
