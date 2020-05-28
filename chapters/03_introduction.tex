@@ -1,6 +1,6 @@
-\section{Management Summary and Introduction}
+\section{Introduction}
 \label{section:introduction}
-This chapter describes the motivation and the goals of the thesis in more detail.
+This chapter describes the initial solution of the project, as well as the motivation and the goals of the thesis in more detail.
 To provide the reader with the necessary context, the technologies touched by this bachelor thesis are explained at the beginning.
 This mainly concerns Dafny and the language server protocol (LSP).
 
@@ -10,7 +10,7 @@ Dafny is a compiled language optimized to prove formal correctness \cite{dafnyWi
 It bases on \textit{Boogie}, which uses the \textit{Z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}.
 That means, a programmer can define a precondition - a fact that is just given at the start of the code.
 The postcondition on the other hand is a statement that must be true after the code has been executed.
-Just as the precondition, the postcondition is also defined by the programmer.
+Just as the precondition, the postcondition are both defined by the programmer.
 In other words, it can be proven, that under a given premise, the code will manipulate data only thus far, so that also the postcondition will be satisfied.
 Dafny will formally ensure this.
 If it is not guaranteed that the postcondition holds, an error is stated.\\
@@ -33,7 +33,6 @@ In a real project, correctness is not always that obvious.
 With Dafny, a programmer can be sure if the program is correct.
 Since the proof is done with formal, mathematical methods, the correctness is guaranteed.\\
 
-%%%weg start
 If Dafny is unable to perform a proof, the user can assist by creating lemmas.
 Lemmas are mathematical statements.
 For example, a lemma could be that a factorial number is never zero.
@@ -56,8 +55,6 @@ function Foo(n: nat): float
     100 / Fact(n)
 }
 \end{lstlisting}
-\intnote{ich würde den absatz streichen, was meinst du?}
-%%%weg end
 
 
 \subsection{Language Server Protocol}
@@ -81,14 +78,19 @@ A developer only has to set up the connection to the language server.
 \label{section:introduction:initialsolution}
 In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a LSP client-server infrastructure for Visual Studio Code was created to support Dafny \cite{ba}.
 The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{correctnessLab} to make coding in Dafny easier.
-The pre-existing solution offered a LSP-client for Visual Studio Code, which connected to a language server.
+Its development was continued within the HSR under the lead of Fabian Hauser.
+In the following text, the existing project will be referred as the \textit{pre-existing project}.
+The pre-existing project offered a LSP-client for Visual Studio Code, which connected to a language server.
 Both, the language server and the plugin, were written in TypeScript.
 To communicate with the Dafny backend, the language server used a proprietary JSON-interface.
 Information provided by Dafny was parsed from the console.
 Functionality was therefore limited to the Dafny console output.\\
-In the preceding semester project \cite{sa}, the language server was migrated to \CsharpWithSpace and could be integrated into the Dafny backend.
+
+Marcel Hess and Thomas Kistler continued the development of the project within a semester project \cite{sa}.
+The language server was migrated to \CsharpWithSpace and could be integrated into the Dafny backend.
 Any Dafny functionality was directly accessible and the proprietary JSON-interface, as well as console parsing, could be omitted.
 All features were reimplemented to satisfy the new architectural layout.
+The result of this semester thesis will be referred as the \textit{prototype} throughout this thesis.
 
 \begin{figure}[h]
     \centering
@@ -99,105 +101,25 @@ All features were reimplemented to satisfy the new architectural layout.
 
 
 \subsection{Goals}
-- stuedenten wollen plugin für dafny
-- sie sollen was bekommen,w as ihr leben vereinfacht
-- devs, die das plugin weiterentwicklen (florian) sollen es einfacher weiterbasteln können - interfaes, symbol tables, ist viel geiler zum devven.
-- LOC Vergleich soll erreicht werden. 
-- performance
-
-
-
-\subsection{Results}
-%%intro
-Within this bachelor thesis, the development of the pre-existing language server and its VSCode client was continued.
-Significant improvements could be achieved.
-
-%%Features
-The following features are supported by the server:
+At HSR, Dafny is taught within the course \textit{Software Engineering}.
+Students have to make their first steps in Dafny, using a simple tutorial.
+To provide the students with the necessary support, they shall profit by common IDE features like
 \begin{itemize}
-    \item Syntax highlighting
-    \item Verification, highlighting of errors and warnings
-    \item Compilation
-    \item Show Counter Example
-    \item Code Lens
-    \item Auto Completion
-    \item Renaming
-    \item Hover Information
+    \item Error highlighting
+    \item Compile and run
+    \item Auto completion
 \end{itemize}
 
-In comparison to the initial solution, any pre-existing features were improved.
+On the other hand, the plugin shall also be used in a professional environment.
+Thus, more advanced features have to be supported.
+To facilitate the development of further features, the code shall be refactored to achieve a clean state.
+This especially involves a clear architectural layout with dependencies that only point downwards.
 
-\begin{itemize}
- \item Compilation will no longer start a dedicated Dafny process for compilation. Instead, it will now use a buffered pre-compilat generated by verification and directly call the Dafny's compile method, to generate an executable.
- \item Counter example representation is now much cleaner and easier to perceive.
- \item Verification will now also show warnings.
- \item Verification will no longer just highlight single characters.
- \item Code Lens can now actively be used to preview symbol usages.
- \item Auto completion no longer performs simple pattern matching, but provides exact results.
-\end{itemize}
-Renaming and hover information could newly be implemented due to the offerings of the symbol table.
-The user can now benefit by a plugin, which gained a lot of user experience, but also robustness compared to the initial solution.\\
+Aside a clean architecture, a major goal is the creation of a custom symbol table.
+This is necessary to make features like \textit{go to definition} or \textit{auto completion} possible at all.
+It also allows the development of further features.
+For example, if every the symbol table provides information about the scope-depth, the indentation width can be deduced for a feature like auto formatting.\\
 
-%%Dev Benefits.
-Aside the improvements in features, many internal aspects were also improved.
-A component called Dafny translation unit was completely re-visisted and simplified.
-The component accesses any Dafny functionality.
-For example, instead of passing Dafny options as an array of strings, they are now set by
-directly accessing Dafny's config class.
-Any results provided by the Dafny translation unit are buffered for later re-use at compilation or to create the symbol table.
-This makes the implementation significantly more performant.\\
-
-%%ST
-The targeted symbol table could be implemented for the most important Dafny language features.
-Various challenges had to be accommodated, including the handling of default scopes, default classes, inheritance, external file import or variable hiding.
-All of these are properly handled, but in exchange to this quality attribute, not all Dafny language features are supported by the symbol table.
-For example, custom datatypes\footnote{for example datatype Tree<T> = Empty | Node(left:Tree,root:T,right:Tree)}, as used in formal programming languages, are not supported.\\
-
-The symbol table opens the option to implement many more features than currently provided.
-For example, the LSP offers a highlight request, marking occurrences of a symbol.
-Any information required for this feature are already provided by the symbol table.
-Thus, adding this feature would be very simple.
-
-
-%%client
-Aside changes in the server, the VSCode client is now as lightweight as possible.
-This makes the adaption to other IDE's very simple.
-The server is now able to create a symbol table containing any information required for the langue analysis features.
-Pre-existing features and algorithms were improved to gain more reliability and a better user experience.
-
-
-
-
-
-%% symbol table
-
-
-%%was haben devs vom ganzen
-
-
-
-
-
-\subsection{Outlook}
-While the quality of the features, as well as the general code quality could be massively improved, the functionality of the project could be improved even further.
-Ideas include:
-\begin{itemize}
-    \item Automatic generation of contracts
-    \item Debugging
-    \item Create clients for other IDE's.
-\end{itemize}
-Aside the widening of the feature range, it is definitely necessary to complete the visitor, which currently only traverses the most important AST node.
-This was due to the limited time frame of the bachelor thesis.
-Nevertheless, the plugin is of a nice quality and may be deployed into the VSCode market place.
-Thus, future students can work with it and make their first steps in the Dafny programming language using our plugin.
-
-
-
-
-
-
-
-
-\intnote{2do: iwo den Satz "Zielgruppe die HSR Studenten" einbauen.
-"Messbarkeit von Erfolg." habs ams chluss kurz aber nja, evtl noch etwas deutlich iwo.}
-\intnote{2do: allfeatures in one bild? hat da snoch platz überhaupt xD}
+The symbol table shall further contain a well organized tree structure, so that navigation can be done efficiently.
+Each symbol shall have direct links to it's parent, children and declaration for very fast access.
+Compared to the prototype, the pre-existing implementations can be extracted into the symbol table, reducing the lines of code (LOC) and increasing performance.

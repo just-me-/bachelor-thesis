@@ -1,18 +1,19 @@
 \section{Management Summary}
-\intnote{non-technical summary von allem mit results}
-\label{section:introduction}
-This chapter gives a brief overview of the bachelor thesis at hand.
-It his held in a non-technical language to be comprehensive for anyone.
+\label{section:management_summary}
+This chapter describes the motivation and the goals of the thesis in more detail.
+To provide the reader with the necessary context, the technologies touched by this bachelor thesis are explained at the beginning.
+This mainly concerns Dafny and the language server protocol (LSP).
 
 \subsection{Dafny}
-\label{section:introduction:dafny}
-Dafny is formal programming language.
-Within the Dafny code, a developer has the option to state a so called precondition.
-This is a fact that must be true at the beginning of the code.
-Once the code has been executed, the developer may state a postcondition.
-The postcondition is, contrary to the precondition, something that is true at the end of code.
-Dafny contains an internal engine to automatically proof postconditions.
-This means, given the precondition holds, the code will manipulate data only thus far, so that also the postcondition is valid.
+\label{section:management_summary:dafny}
+Dafny is a compiled language optimized to prove formal correctness \cite{dafnyWiki}.
+It bases on \textit{Boogie}, which uses the \textit{Z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}.
+That means, a programmer can define a precondition - a fact that is just given at the start of the code.
+The postcondition on the other hand is a statement that must be true after the code has been executed.
+Just as the precondition, the postcondition is also defined by the programmer.
+In other words, it can be proven, that under a given premise, the code will manipulate data only thus far, so that also the postcondition will be satisfied.
+Dafny will formally ensure this.
+If it is not guaranteed that the postcondition holds, an error is stated.\\
 
 The following code snippet shows an example.
 The value \code{a} is given, but it is required to be positive.
@@ -28,41 +29,30 @@ ensures b < 0
 }
 \end{lstlisting}
 This example is of course trivial.
-In a real project, correctness is not always that obvious and computational assistance is welcome.
-The main advantage of pre- and postconditions is, that a programmer can be sure that the program is correct.
+In a real project, correctness is not always that obvious.
+With Dafny, a programmer can be sure if the program is correct.
+Since the proof is done with formal, mathematical methods, the correctness is guaranteed.\\
 
 
 \subsection{Language Server Protocol}
-The language server protocol (LSP) is a specification for communication.
-It regulates data exchange between an editor and a so called language server.
-The editor is used by the programmer to write code.
-The code is then transferred to the language server, using a format specified by the LSP.
-The language server is now responsible to analyze the code and provide proper replies to the editor, whenever the editor requests something.
-A request could for example be to show information about a variable.
-The server has to provide all the necessary information.\\
+The language server protocol (LSP) was created to unify communication between an integrated development environment (IDE) and a language server.
+It specifies requests, such as auto completion, rename or go to definition.
+If the user performs an action like rename, the IDE will send the proper request to the language server.
+The message format is specified by the LSP and bases on JSON.
 
-The separation between the editor and the server has the advantage, that multiple editors can use the same language server.
-Support for a programming language like Dafny can thus be achieved for multiple editors by just implementing the language server once.
+The language server is responsible to calculate a proper result.
+For the example of a rename request, the answer contains the information where to apply the renaming.
+It is the task of the server to analyze the source code and provide a rename response with respect to language specific rules.\\
 
-The most important requests the LSP supports incorporate:
-\begin{itemize}
-    \item Transfer code to server
-    \item Show errors and warnings
-    \item Rename a variable
-    \item Go to the definition of a variable
-    \item Show auto completion suggestions
-    \item Perform a refactoring
-    \item Show usages of a code item
-\end{itemize}
-These are features that are commonly used by programmers, independent of the language.
-Aside these, Dafny has the option to show a counter example, if a postcondition is violated.
-This request is not natively supported by Dafny.
-However, custom requests can easily be added to the LSP.
-These have to be handled separately within the client though, since the LSP is not automatically displaying the result.
+Since the language server is independent of the client, a language server can be used from within multiple IDE's.
+To provide support for another IDE, just the client has to be coded.
+Since all logic is contained within the server, this can be done with minimal effort.
+A developer only has to set up the connection to the language server.
+
 
 
 \subsection{Initial Solution}
-\label{section:introduction:initialsolution}
+\label{section:managment_summary:initialsolution}
 In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a LSP client-server infrastructure for Visual Studio Code was created to support Dafny \cite{ba}.
 The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{correctnessLab} to make coding in Dafny easier.
 The pre-existing solution offered a LSP-client for Visual Studio Code, which connected to a language server.
@@ -85,12 +75,17 @@ All features were reimplemented to satisfy the new architectural layout.
 \subsection{Goals}
 At HSR, Dafny is taught within the course \textit{Software Engineering}.
 Students have to make their first steps in Dafny, using a simple tutorial.
-To provide the students with the necessary support, they shall profit by common IDE features like
+The course is taught at the third and fourth semester.
+Students are already used to integrated development editors, IDEs.
+These commonly provide features like
 \begin{itemize}
     \item Error highlighting
     \item Compile and run
     \item Auto completion
 \end{itemize}
+
+To provide a nice environment to the students while they explore Dafny, they shall also profit by these features in the Software Engineering course.
+Therefore, common IDE features shall be provided.
 
 On the other hand, the plugin shall also be used in a professional environment.
 Thus, more advanced features have to be supported.
@@ -109,19 +104,20 @@ Compared to the prototype, the pre-existing implementations can be extracted int
 
 
 \subsection{Results}
+\label{section:managment_summary:results}
 %%intro
 Within this bachelor thesis, the development of the pre-existing language server and its VSCode client was continued.
-Significant improvements could be achieved, which are described in this chapter.
+Significant improvements could be achieved.
 
 %%Features
 The following features are supported by the server:
 \begin{itemize}
     \item Syntax highlighting
-    \item Verification: highlighting of errors and warnings
+    \item Verification, highlighting of errors and warnings
     \item Compilation
     \item Show Counter Example
     \item Code Lens
-    \item Auto Completion Suggestion
+    \item Auto Completion
     \item Renaming
     \item Hover Information
 \end{itemize}
@@ -129,7 +125,7 @@ The following features are supported by the server:
 In comparison to the initial solution, any pre-existing features were improved.
 
 \begin{itemize}
- \item Compilation will no longer start a dedicated Dafny process for compilation. Instead, it will now use a buffered pre-compilate generated by verification and directly call the Dafny's compile method, to generate an executable.
+ \item Compilation will no longer start a dedicated Dafny process for compilation. Instead, it will now use a buffered pre-compilat generated by verification and directly call the Dafny's compile method, to generate an executable.
  \item Counter example representation is now much cleaner and easier to perceive.
  \item Verification will now also show warnings.
  \item Verification will no longer just highlight single characters.
@@ -167,19 +163,15 @@ The server is now able to create a symbol table containing any information requi
 Pre-existing features and algorithms were improved to gain more reliability and a better user experience.
 
 
-
 \subsection{Outlook}
-While the quality of the features, as well as the general code quality could be massively improved, the project is not in a final state.
-Functionality of the project could be improved even further.
+While the quality of the features, as well as the general code quality could be massively improved, the functionality of the project could be improved even further.
 Ideas include:
 \begin{itemize}
     \item Automatic generation of contracts
     \item Debugging
     \item Create clients for other IDE's.
 \end{itemize}
-Aside the widening of the feature range, it is definitely necessary to complete the visitor.
-The visitor is the component generating an internal symbol table within the language server.
-Currently, only the most important Dafny language features are supported.
+Aside the widening of the feature range, it is definitely necessary to complete the visitor, which currently only traverses the most important AST node.
 This was due to the limited time frame of the bachelor thesis.
-Nevertheless, the plugin is of a nice quality and can be deployed into the VSCode market place.
+Nevertheless, the plugin is of a nice quality and may be deployed into the VSCode market place.
 Thus, future students can work with it and make their first steps in the Dafny programming language using our plugin.
