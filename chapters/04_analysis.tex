@@ -28,7 +28,7 @@ Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates th
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{03_lspcommunication.png}
+    \includegraphics[width=\textwidth]{analysis/lspcommunication.png}
     \caption{Communication Benefit of LSP}
     \label{fig:lspcommunication}
 \end{figure}
@@ -404,7 +404,7 @@ While these are just three lines of code, the AST is already quite large compare
     \label{fig:ast_for_example}
 \end{figure}
 
-The tree structure can be well seen in figure \ref{fig:tree_for_example}.
+The tree structure can be well seen in figure \ref{fig:ast_for_example}.
 Usually, the AST does not contain information about the type of symbols.
 This is where the symbol table comes into play.
 The symbol table contains that information and is connected to the AST, for example by the use of a dictionary, linking an AST-node to a symbol table entry.
@@ -484,7 +484,7 @@ This component will be called \textit{symbol table} throughout this thesis, alth
 %%%%
 
 \subsection{Visitor}
-To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gof}.
+To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gof}. \intnote{gof undefined heisst es. darf ich da keine ISBN angeben?}
 The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
 The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
 
@@ -579,19 +579,21 @@ The following declarations were analyzed:
     \item Method: A method member of a class.
     \item Function: A function member of a class.
 \end{itemize}
-
-%%do wiiter
-
+These form the most important AST-nodes.
+Dafny provides many more of them.
+Due to the limited time frame, not all of them could be analyzed.
+A benefit of the visitor pattern is, that it can just be implemented once for the base interface \code{IAstNode} with an empty action.
+This way, the visitor will just do nothing for nodes that are not supported.
 
 \subsection{Dafny AST Implementation}
-During analysis of the Dafny AST, it was noticed that the file \code{DafnyAst.cs} is huge.
+During analysis of the Dafny AST, it was noticed that the file \code{DafnyAst.cs} is humungous.
 It contains eleven thousand lines of code and a large number of classes.
-This is so extensive that even Visual Studio struggles with it and crashed occasionally on performing autocompletions.\\
+This is so extensive that even Visual Studio struggles with it and stopped working occasionally on performing refactorings.\\
 
 Since this file and its contained classes will have to be extended by \code{Accept}-methods
-to implement a the visitor pattern, it was considered to refactor the whole file.\\
+to implement the visitor pattern, it was considered to refactor the whole file.\\
 
-Splitting the file into individual class files and dividing it into a separate packages would provide a mutch better maintainability.
+Splitting the file into individual class files and dividing it into a separate package would provide much better maintainability.
 The following advantages are particularly evident:
 \begin{itemize}
     \item Clearer separation
@@ -603,65 +605,78 @@ The following advantages are particularly evident:
 However, there would also be individual disadvantages:
 \begin{itemize}
     \item Time-consuming
-    \item Inconsistency: Any other Dafny files would still be rather large. Refactoring should then be extended
-    \item The maintainers of Dafny may not want a refactored style at all, because they are used to the current situation
-    \item By swapping out all lines of code, the top level of the git history would be disturbed for git blame
+    \item Inconsistency: Other Dafny files would still be rather large. Refactoring should then be extended.
+    \item It is not our responsibility to refactor Dafny code.
+    \item Dafny may not want a refactoring at all, because they are used to the current situation.
+    \item By swapping out all lines of code, the top level of the git history would be disturbed for git blame.
 \end{itemize}
 
-It was decided not to carry out a refactoring.
+It was decided to not carry out a refactoring.
 It would be very time consuming and we would have to extend the refactoring to the whole Dafny project.
-Since the time frame of the bachelor thesis is limited, ressources should rather be used at the own code segments and the core concept of the bachelor thesis, such as the implementation of the symbol table.
-However, refactoring the code of Dafny itself is one of the possible outlooks of this project.
+Since the time frame of the bachelor thesis is limited, resources should rather be used at the own code segments and the core goals of the bachelor thesis, such as the implementation of the symbol table.
+However, refactoring the code of Dafny itself is one of the possible extension points for this project.
 
 
 
+%%%%%%CI%&%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
-
-
+\intnote{ich würde ein eigenes CI-Kapitel aufschlagen... fragen nächste woche. weil das ci kapitel ist so bissl alles. von introduction (initial sit) bis hin zu analyse über lösung aka result/implementaiton\dots passt also iwie nirgends. länge rechtfertigt es auch locker ein eigenes kapitel zu sein.}
 
 \subsection{Continuous Integration (CI)}
-Continuous integration is a very important part for code quality and colaboration.
-Unfortunately, setting up the CI process in the preceding project\cite{sa} took almost until the end of the project stage.
+Continuous integration is a very important part for code quality and collaboration.
+Unfortunately, setting up the CI process in the preceding semester project\cite{sa} took almost until the end of the project.
 
-According to our project plan, we wanted to resolve all CI-issues at the beginning of the bachelor thesis, so that we can then profit by a supportive workflow.
+According to the project plan, we wanted to resolve all CI-issues at the beginning of the bachelor thesis, so that we can then profit by a supportive workflow.
 
-This chapter describes the initial situation, the desired objectives and the targets achieved.
+This chapter describes the initial situation, the desired objectives and the targets achieved regarding CI.
 
 \subsubsection{Initial Situation}
-On the client side, code was analyzed with SonarQube durring the CI process.
-If the code contained TypeScript errors, the build failed \cite{sa}.
-The end-to-end tests, provided by the preceding bachelor thesis\cite{ba} could not be integrated until the end of the project, due to their heavy dependencies.\\
+On the client side, code was analyzed with SonarQube by the CI process.
+If the code contained any TypeScript errors, an error was thrown and the build failed \cite{sa}.
+The end-to-end tests, provided by the pre-existing project could not be integrated, due to their heavy dependencies.\\
 
-On the server side, the project was automatically built by the CI server.
-Our own unit tests, as well as tests provided by Dafny could as well be automatically exectued.
+On the server side, the project was automatically built by the CI server using \textit{MSBuild}.
+Our own unit tests, as well as tests provided by Dafny could as well be automatically executed using the nUnit console runner.
 Integration testing and code analysis by SonarQube remained pending \cite{sa}.
 
 \subsubsection{Targeted Solution - Achieved Solution}
 According to our research, a major problem was that the scanner for SonarQube can only analyze one language at a time \cite{sonar-supports-only-one-language}.
-This means, that the TypeScript code in the client and the \Csharp code in the server cannot be analyzed simultaneously.
-Furthermore, in the preexisting Dafny project, there are also single Java files.
+This means, that the TypeScript code in the client and the \CsharpWithSpace code in the server cannot be analyzed simultaneously.
+Furthermore, in the pre-existing Dafny project, single Java files appear, too.
 This led to further conflicts in the Sonar analysis \cite{sa}.\\
 
 As a simple solution, we decided to separate the client (VSCode plugin) and server (Dafny Language Server) into two separate git repositories.
-This not only simplifies the CI process but also ensures a generally better and clearer separation \\
+This not only simplifies the CI process but also ensures a generally better and clearer separation. \\
 
 As a result, the client could still be easily analyzed with the previous Sonar scanner.
 Regarding the server, a special Sonar scanner for MSBuild had to be installed, which publishes the analysis in a dedicated SonarCloud project \cite{dev}.
 The available statistics are very helpful for code reviews.\\
 
-The only downside is that the code coverage is not analyzed.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{sonarexamaple.png}
+    \caption{Example of a Useful Sonar Finding}
+    \label{fig:sonarexample}
+\end{figure}
+
+
+Unfortunately, the code coverage by tests is not analyzed.
 Searching for an alternative, \textit{OpenCover} was found as a very common tool for code coverage analysis in \Csharp.
 Unfortunately, it only runs under Windows  \cite{opencover}.
 The CI server bases on Linux, though.
-During our research we came across monocov \cite{monocov}.
+During our research we came across \textit{monocov} \cite{monocov}.
 This tool would run under Linux and analyze .NET Framework projects.
-Unfortunately this project was archived and has not been supported for almost 10 years \cite{monocov}.
+Unfortunately, this project was archived and has not been maintained for almost 10 years \cite{monocov}.
 
 Since we would not gain much value with sonar code coverage, we decided not to pursue this approach any further.
-The coverage information is provided by the locally installed IDEs anyway.\\
+The coverage information is provided by the ReSharper extension \textit{dotCover} \cite{dotcover} to the developers.\\
 
 The end-to-end tests base on a lot of dependencies, such as a headless instance of Visual Studio Code.
-In consultation with our supervisor, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
+In consultation with our supervisors, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
+This can be justified with the client only containing a minimal amount of logic.
+Any other logic was moved to the server.
 
 \subsubsection{Docker}
 The CI server bases on a Docker distribution.
@@ -669,16 +684,16 @@ Docker's lightweight virtualization is ideally suited to run the CI environment.
 
 For an easier testability of the CI, we also installed Docker locally.
 This allowed us to resolve CI issues locally and platform-independently (through the Docker Client) in case of problems.
-See the developer documentation for more details \cite{dev}.\\
+More details are stated in the developer documentation \cite{dev}.\\
 
-Docker also realizes the priciple "Cattle, not pets" with docker.  \intnote{hier noch irgend eine cite adden wo das prinzip definiert wird... hab nur grad stackoverflow gefunden, was zitierfähiges wäre nett. sonst wirkt es fast etwas kindisch/verpsielt fürü eine BA.}
+Docker also realizes the principle "Cattle, not pets" with docker.  \intnote{hier noch irgend eine cite adden wo das prinzip definiert wird... hab nur grad stackoverflow gefunden, was zitierfähiges wäre nett. sonst wirkt es fast etwas verpsielt für eine BA, nich?}
 Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used.
 This way, the dependent packages will always be up to date and security patches and the like are automatically deployed.\\
 
-Excluded from this principle are Node, Z3, Go, Boogie and Sonar.
-All of these have to be installed in specific release versions within the CI server.
-This is, since Dafny relies on specific deployments of these products. See the developer documentation for more details \cite{dev}. \\
-\intnote{wtf ist go, und node und sonar ist doch egal werlche version oder?}
+Excluded from this principle are \textit{Node}, \textit{Z3}, \textit{Go}, \textit{Boogie} and \textit{Sonar}.
+All of these have to be installed in specific release versions by the CI server.
+This is, since Dafny relies on specific deployments of these products.
+See the developer documentation for more details \cite{dev}.\\
 
 \subsubsection{2do - Kapitelaufteilung komisch}
 Ich hab hier jetzt in der Analyse auch schon die Lösung vorabgegriffen. Sollen wir das splitten? Bricht das nicht den Lesefluss? Evt besprechen.
@@ -692,16 +707,12 @@ todo
 $\rightarrow$ Gedanken zum Updaten sind wichtig. Evt ned alles implementieren aber dokumentieren.... Effizienz. Ned alles neu Builden
 wenn in einem File nur ein Zeichen geändert wird auf einer Linie etc. $\rightarrow$ Ausblick.
 
-Und Testing in einem grossen Dafny Project wär evt auch noch ganz nice... ein paar Performance-Tests und so?
+Und Testing in einem grossen Dafny Project wär evt auch noch ganz nice... ein paar Performance-Tests und so?  \\t: die sind iwo.
 Und die dann mit dem Plugin aus der Studienarbeit vergleichen? Und dem alten-alten Plugin? Käme bestimmt jut an.
 
 
 \subsection{notizen von tom}
 gleich nachm schreiben, was mir onch so durch den kopf geht:
 \begin{itemize}
-    \item Visitor Pattern braucht auch olaf und guido nicht jeden tag. Kommen die draus? Wäre nicht ein schema-bildchen noch gut, aka 'kuck hier links, der accept sagt wo ich durch muss, udn kuck hier rechts, der visitor sagt was getan wird. oder irgend sowas, ka.
-    \item expression list und co total random... halt brutal unvollständig etc pp. erklären, warum das unvollständig ist.
-    \item SymbolTable, AST, connected, blabla... ist das gut genug? Corbat hat sehr viel Ahnung davon und mein Halbwissen ist da ein bisschen gefährlich, das gibt dann ja total schelchten eindruck.
-    \item Lanague Feautres: am anfang noch spezifisch schreiben, dass wir jetzt nur auf den shit eingehen, der für symboltable relevant ist, aka wo könnten doppelte namen vorkommen.
-    \item Ist der flow eig klar? wir müssen ne symbolt able machen, $\Rightarrow$ was hat n dafny da überhaupt so, $\Rightarrow$ wie machen wir es, $\Rightarrow$ visitor is gut für sowas $\Rightarrow$ muss dies und das visitien.
+    \item Optional: Bildchen für Visitor pattern, wo man sieht (links) Acceptor, macht so den flow, udn rechts 2-3 vidistor wo man sieht, dass die die action machen.
 \end{itemize}
