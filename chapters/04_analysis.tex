@@ -1,19 +1,28 @@
 \section{Analysis}
 \label{section:analysis}
-Since this thesis is a direct sequel of the preceding semester thesis, work could be directly continued.
-However, to provide the reader with a comprehensive knowledge base about Dafny and the language server protocol, some chapters out of the semester thesis will be repeated in the following subsections.
-To be able to create the symbol table, more detailed research about Dafny's language feature and its AST element had to be done, which is also described in this chapter.
+Since this bachelor thesis is a sequel of the preceding semester thesis, work could be directly continued.
+Many topics were already analyzed during the semester thesis.
+To provide the reader with a comprehensive knowledge base about Dafny and the language server protocol (LSP), some chapters out of the semester thesis will be repeated in the following subsections.
+New within this bachelor thesis was the studies of the Dafny-specific compilation process.
+It was especially necessary to gain an overview of the existing abstract syntax tree nodes.
 
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
-The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{dafnyWiki}.
-In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{dafnyWiki}.
+The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{lspWiki}.
+In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{lspWiki}.
 The goal of the LSP is to untie the dependency of an IDE with its programming language.
-That means, that once a language server is available, the user is free in the choice of his IDE, as long as it offers a client instance that is able to communicate with the server.
-The user can then use a variety of features, as long as the language server offers them.
-Those features can for example be auto completions, hover information, or go to definition.
-Custom message types, for example compile or counterExample can also be added to the LSP \cite{dafnyWiki}.
-A big advantage of this is that the IDE specific plugin can be kept very simple.
+That means, that once a language server is available, the user is free in the choice of the IDE, as long as it offers a client instance that is able to communicate with the server.
+The user can then use a variety of features, as long as the language server is capable to handle them.
+Those features can for example be
+\begin{itemize}
+    \item auto completion
+    \item hover information
+    \item rename
+    \item go to definition
+\end{itemize}
+and much more. A full list can be found within the LSP specificiation \cite{lspspec}.
+Custom requests, for example \textit{compile} or \textit{counterExample} can also be added to the LSP \cite{lspWiki}.
+The major advantage of this concept is that the IDE specific plugin can be kept very simple.
 The relevant information is delivered by the language server, which is IDE and language independent.
 Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates these benefits \cite{lspextensionguide}.
 
@@ -27,18 +36,23 @@ Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates th
 \subsubsection{Message Types}
 The LSP supports three types of messages.
 \begin{itemize}
-    \item Notification: One-way message, for example for a console log or a window notification.
+    \item Notification: One-way message, for example for a window notification.
     \item Request: A message that expects a response.
     \item Response: The response to a request.
 \end{itemize}
 Each message type can be sent from both sides.
 
 \subsubsection{Communication Example}
-The basic concept of the LSP is, that the IDE tells the language server what the user is doing.
-These messages are pretty simple, namely \code{textdocument/didOpen} or \code{textDocument/didChange}.
-The language server on the other hand can now verify the opened or changed document and test it for errors.
-If errors are found, the server can send a \code{textDocument/publishDiagnostics} notification back to the client.
-The client may now underline the erroneous code range in red \cite{lspspec}.
+The basic concept of the LSP is to inform the server about any client action.
+For example, when the user is opening a document, the notification \code{textdocument/didOpen} is sent.
+The message contains the URI of the opened document, so that the language server can load the source code.
+Whenever the user is typing, the notification \code{textDocument/didChange} is sent.
+It contains any changes that were made.
+
+The language server on the other hand can verify the opened or changed document and test it for errors.
+If errors are found, the server is able to send a \code{textDocument/publishDiagnostics} notification back to the client.
+The client may now underline the erroneous code range \cite{lspspec}.
+Since the protocol is standardized, the client supporting the LSP is natively able to handle the diagnostics notification, without any actions necessary by a developer.
 
 \begin{figure}[h]
     \centering
@@ -49,7 +63,8 @@ The client may now underline the erroneous code range in red \cite{lspspec}.
 
 \subsubsection{Message Example}
 The following message is a \code{textDocument/publishDiagnostics} notification as it appears in the example above.
-It states that on line 4, from character 12 to 17, there is an assertion violation.\\
+It states that on line 4, from character 12 to 17, there is an assertion violation.
+Note the JSON-based message format.\\
 
 
 \begin{lstlisting}[language=json, caption={LSP Message Example}, captionpos=b, label={lst:lspjsonmsg}]
@@ -58,7 +73,7 @@ It states that on line 4, from character 12 to 17, there is an assertion violati
    "jsonrpc":"2.0",
    "method":"textDocument/publishDiagnostics",
    "params":{
-      "uri":"file:///D:/[...]/fail1.dfy",
+      "uri":"file:///D:/[\ddots]/fail1.dfy",
       "diagnostics":[
          {
             "range":{
@@ -73,7 +88,7 @@ It states that on line 4, from character 12 to 17, there is an assertion violati
             },
             "severity":1,
             "code":0,
-            "source":"file:///D[\dots]/fail1.dfy",
+            "source":"file:///D:/[\ddots]/fail1.dfy",
             "message":"assertion violation"
          }
       ]
@@ -82,19 +97,16 @@ It states that on line 4, from character 12 to 17, there is an assertion violati
 \end{lstlisting}
 
 \subsubsection{LSP Standard and Individual Extensions}
-\intnote{Beschreibung von "Default LSP Sachen" und was wir erweitert haben. Olaf Zimmernmann. Verweis auf Kapitel Custom LSP Messages
-}\\
+\intnote{Beschreibung von "Default LSP Sachen" und was wir erweitert haben. Olaf Zimmernmann. Verweis auf Kapitel Custom LSP Messages - ist gut so oder?}\\
 
 \subsection{OmniSharp}
 \label{section:analysis:omnisharp}
-To work with the language server protocol, a proper LSP implementation was required.
-OmniSharp offers support for \Csharp \cite{langserverdotorg}.
-It could be simply installed as a NuGet package.
-OmniSharp also offers a language server client that can be used for testing.
+To create a language server, a proper LSP implementation is required.
+OmniSharp offers support for \Csharp \cite{langserverdotorg} in the form of a NuGet package.
+They also offer a language server client that can be used for testing.
 
 \subsubsection{Basic OmniSharp Usage}
-\intnote{rewritten}
-Mr. artin Bj\"orkstr\"om published a comprehensible tutorial about Omnisharp's language server protocol implementation.
+Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about Omnisharp's language server protocol implementation.
 The tutorial provides the user with all the required knowledge to set up a language server in \Csharp.
 Besides the setup of the server, it also illustrated how to create message handlers, for example for auto completions or document synchronization.
 
@@ -110,29 +122,30 @@ public class AutoCompletion : ICompletionHandler
 
 Listing \ref{lst:lspbasichandler} illustrates that the user simply has to implement an interface provided by Omnisharp.
 Within the \code{request} parameter, all required information is passed to the handler.
-For auto completion, this is the file and the cursor position and some context information, how the auto completion event was triggered.
-The task of the langauge server is now to figure proper suggestions and return them in the form of a \code{CompletionList}.\\
+For auto completion, this is the file and the cursor position, as well as some context information, how the auto completion event was triggered.
+The task of the language server is to figure proper suggestions and return them in the form of a \code{CompletionList} back to the client.\\
 
 Since OmniSharp is open source, we could find all available interfaces and thus all available handlers in their git repository \cite{omnisharpgit}.
-This collection is very helpful to perceive LSP's possibilities.
+Aside the official LSP specification, this collection is very helpful to perceive LSP's possibilities.
 
 \subsubsection{Custom LSP Messages}
 \label{chapter:customlspmsg}
-The current problem domain does not only require premade LSP messages like auto completions or diagnostics, but also custom requests such as \code{counterexample}, which is Dafny-specific.
+The current problem domain does not only require premade LSP messages like auto completions or diagnostics, but also custom requests such as \code{counterExample}, which is Dafny-specific.
 Such a message is not natively supported by the language server protocol.
 Since no example or documentation could be found on custom messages, Martin Bj\"orkstr\"om was contacted in the OmniSharp Slack channel \cite{omnisharpslack}.
-Mr. Bj\"orkstr\"om and his team were able to provide the solution for this issue.\\
+Mr. Bj\"orkstr\"om and his team were able to quickly provide the solution for this issue.\\
 
-The server can simply register custom handlers, too. The following three items have to be specified:
+The server can simply register custom handlers by implementing the correct interfaces.
+The following three items have to be specified:
 \begin{itemize}
-    \item Name of the message, e.g. "counterExample"
-    \item Parameter type, e.g. "CounterExampleParams"
-    \item Response type, e.g. "CounterExampleResults"
+    \item Name of the message, e.g. \code{counterExample}
+    \item Parameter type, e.g. \code{CounterExampleParams}
+    \item Response type, e.g. \code{CounterExampleResults}
 \end{itemize}
 
 
-The parameter and response types can be custom classes and allow for maximal flexibility.
-The following code skeleton demonstrates how a custom request handler can be implemented:
+The parameter and response types can be custom classes and allow for maximal flexibility. \intnote{allow for - is that correct english?}
+The following skeleton code demonstrates how a custom request handler can be implemented:
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspcustomhandler}]
 public class CounterExampleParams : IRequest<CounterExampleResults> { [\dots] }
@@ -153,25 +166,23 @@ public class MyHandler : ICounterExampleHandler
 
 
 \subsection{Visual Studio Code Plugin}
-todo. seite 16 SA.
+\intnote{todo. seite 16 SA.}
 
 
 \subsection{Dafny Language Features}
 With regard to the symbol table, the Dafny language had to be studied more in detail.
-For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes
-This is highly relevant for the construction of a symbol table.
+For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes.
+Concepts like these are highly relevant for the construction of a symbol table.
 
-To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the Dafny Reference Guide \cite{dafnyReferenceManual}.
-This chapter provides the reader with the most relevant concepts with regard to the symbol table.
+To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the \textit{Dafny Reference Manual} \cite{dafnyReferenceManual}.
+This chapter discusses the most relevant Dafny language concepts with regard to the symbol table.
 
 
 \subsubsection{Modules}
-\intnote{C Sharp hat iwie nie einen Abstand... Latex fix? oben auch backslash dots nicht als drei dots im code snipped.}
-
 Dafny code can be organized by modules.
-A module can be compared to a namespace in \Csharp or C++.
+A module is comparable to a namespace in \CsharpWithSpace or C++.
 Modules can also be nested.
-To use a class, method or variable defined in another module, the user has three options.
+To use a class defined in another module, the user has three options.
 Imagine a method \code{addOne} defined in a module \code{Helpers}.
 
 \begin{lstlisting}[language=dafny, caption={Module Example}, captionpos=b, label={lst:addOneMethod}]
@@ -183,7 +194,7 @@ Imagine a method \code{addOne} defined in a module \code{Helpers}.
 \end{lstlisting}
 
 \begin{itemize}
-    \item The user writes the module name explicitly in front of the method he wants to call, \linebreak namely \code{Helpers.addOne(5)}.
+    \item The user states the module name explicitly in front of the method he wants to call, \linebreak namely \code{Helpers.addOne(5)}.
     \item The user imports the module, for example with \code{import H = Helpers}.
     Afterwards, he may type \code{H.addOne(5)}.
     \item The user imports the module in opened state: \code{import opened Helpers}.
@@ -211,44 +222,44 @@ For example, in listing \ref{lst:moduleShadowing}, the assert statement is viola
 
 \end{lstlisting}
 
-To import a module defined in another file, the user has to import the file using the command \code{include "myFile.dfy"}.
+To import a module defined in another file, the user has to import the file using the expression \code{include "myFile.dfy"}.
 This includes all content of the included file into the current file.
 
 \subsubsection{Functions and Methods}
 Dafny has two types of methods, or functions respectively.
-For a programmer used to \Csharp or C++, this concept may be confusing at first, but is very simple:
+For a programmer used to \CsharpWithSpace or C++, this concept may be confusing at first, but is very simple:
 \begin{itemize}
-\item A method is what a programmer from \Csharp or C++ may be used to.
+\item A \textit{method} is what a programmer from \CsharpWithSpace or C++ may be used to.
 A sequence of code, accepting some parameters at the beginning and returning some values at the end.
 It can be a class member or be in global space.
-\item A function is more like a mathematical function.
+\item A \textit{function} is more like a mathematical function.
 It takes an input and returns a single value.
-The function may consist of only one expression.
+The function must consist of only one expression.
 For example, consider listing \ref{lst:function}.
-Further, functions are not compiled and may only be used in specification context.
-That is, in contracts or assert statements to proof logical correctness \cite{functionVSMethod}.
-\item The Function Method is just both at once.
-It also contains of a single expression with a single return, but is also compiled and thus also available in regular context \cite{functionVSMethod}.
+Furthermore, functions are not compiled into the final executable and may only be used in specification context.
+That is, in contracts or assert statements to proof logical correctness prior to compilation \cite{functionVSMethod}.
+\item A \textit{function method} is just both at once.
+It contains a single expression with a single return, but is also compiled and thus also available in regular context \cite{functionVSMethod}.
 \end{itemize}
 
-\begin{lstlisting}[caption={Function}, captionpos=b, label={lst:function}]
-    function method minFunctionMethod(a:int, b:int):int
-    {
-        if a<b then a else b
-    }
+\begin{lstlisting}[language=dafny, caption={Function Method Example}, captionpos=b, label={lst:function}]
+function method min(a:int, b:int) : int
+{
+    if a < b then a else b
+}
 \end{lstlisting}
 
 Further concepts include:
 \begin{itemize}
-\item A predicate is just a function returning a bool value.
-\item An inductive predicate is a predicate calling itself.
-\item A lemma is a mathematical fact.
+\item A \textit{predicate} is just a function returning a bool value.
+\item An \textit{inductive} predicate is a predicate calling itself.
+\item A \textit{lemma} is a mathematical fact.
 It can be called whenever Dafny cannot prove something on its own.
 By calling the lemma, the user tells Dafny a fact it can use for its proof.
 An example can be found in listing \ref{lst:lemma_example} \cite{dafnyReferenceManual}.
 \end{itemize}
 
-\begin{lstlisting}[caption={Lemma}, captionpos=b, label={lst:lemma_example}]
+\begin{lstlisting}[language=dafny, caption={Lemma}, captionpos=b, label={lst:lemma_example}]
 lemma ProvingMultiplication(c: int, m: int)
     ensures c*m == m + (c-1)*m
 {}
@@ -276,27 +287,27 @@ class Sub extends Base {
 This means that this issue does not have to be considered any further with regard to the symbol table.
 
 \subsubsection{Overloading}
-Overloading means defining the same method with a different signature.
-This is, with different parameters.
-Dafny prohibits this language concept to be able to uniquely identify each method by its name \cite{dafnyReferenceManual}.
-This means, that whitin each module, each method name is unique.
+Overloading describes the definition of a method with an existing name, but a different signature.
+This is, with a different parameter list.
+Dafny prohibits this language concept to be able to uniquely identify each method by solely its name \cite{dafnyReferenceManual}.
+This means, that within each module, each method name is unique.
 
 \subsubsection{Shadowing}
 
-Shadowing means that a class method redefines a variable that was already defined as a class member.
+Shadowing means that a class method redefines a variable that was already previously defined as a class member.
 This means that two variables with the same name exist.
-The local variable can be accessed via its name, but to access the class member, the programmer needs to write a \code{this} in front of the variable name.
-One can even go further and redefine a local variable in a nasted blockscope.\\
+The local variable can be accessed via its name, but to access the class member, the programmer needs to write \code{this} in front of the variable name.\\
 
+One can even go further and redefine a local variable in a nested blockscope.
 Consider the following code snippet.
 It defines a class with a member variable \code{a}.
-It is initialized with value 2 in the class constructor.
-In method \code{m}, the variable \code{a} is first of all printed.
-This will print 2, since the class variable is the only one we are aware of.
+It is initialized with value $2$ in the class constructor.
+In method \code{m}, the variable \code{a} is printed.
+This will output $2$, since the class variable is the only one we are aware of.
 Next, a variable with the same name is redefined.
 The class variable is now shadowed by the local variable.
-Printing a will now print the local variable.
-To access the class variable, the this-locator is necessary.
+Printing \code{a} will now print the local variable.
+To access the class variable, the this-locator is required.
 
 \begin{lstlisting}[language = dafny, caption={Complex Shadowing Example}, captionpos=b, label={lst:shadowing}]
 class A {
@@ -319,11 +330,11 @@ class A {
 }
 \end{lstlisting}
 
-Next, a nested scope is opened.
-Printing a at first will still yield the local variable.
-However, in the nested scope, we can redefine a again, shadowing the own local variable.
-Further calls of a will then print the boolean variable.
-\code{this.a} will still yield 2, even in the nested scope.\\
+In line 11, a nested scope is opened.
+Printing \code{a} at first will still yield the local variable.
+However, in the nested scope, we can redefine \code{a} again, shadowing the own local variable.
+Further calls of \code{a} will then return the boolean value.
+\code{this.a} will still yield 2, even inside the nested scope.\\
 
 This behaviour can be summarized with the following three rules:
 \begin{itemize}
@@ -332,11 +343,8 @@ This behaviour can be summarized with the following three rules:
     \item If a class member is called via the \code{this} identifier, the class member is significant.
 \end{itemize}
 
-\intnote{->kapitel implemnentiaotn}
-Regarding the implementation, the definition of a symbol could be found using the following method.
-Prerequisite is though, the scope.
-AllSymbols returns only those symbols that are defined so far.
-
+During analysis of this problem, the following recursive algorithm was created to solve the problem of finding a symbols relevant declaration.
+\intnote{ist code - ja. ist aber ein ANALYSE wie man das problem lösen kann - gemacht wurde es dann ja sowieso anders. kann man also imho sehr wohl hier lassen}
 
 \begin{lstlisting}[language=csharp, caption={Finding Symbol Definition}, captionpos=b, label={lst:findsymbol}]
 private Symbol FindDeclaration(Symbol target, Symbol scope)
@@ -354,74 +362,84 @@ private Symbol FindDeclaration(Symbol target, Symbol scope)
     }
 }
 \end{lstlisting}
-
-The code above would basically already resolve the \textit{GoTo Definition} problem.
-
+The code had to be adjusted later on, to also respect inherited symbols and to also check inside the default scope.
+If all declarations are known, the algorithm does already work for symbols defined after the first usage.
 
 
 \intnote{Corbat: @if und dann if als variable ist kein gültiger indentifiyer in dafny.
-Noch weitere versprochene doku in der agenda? }\\
+Noch weitere versprochene doku in der agenda?
+findest du das relevant?
+interessiert mich jetzt nicht so primär, dass ich kein if identifier nutzen darf. will er das wirklich hören? :O }\\
 
 
 \subsection{Symbol Table}
+Whenever source code is compiled into an executable assembly, the first step is to \textit{parse} the code.
 The parser of a compiler works with two major concepts.
 One of them is the abstract syntax tree (AST), the other is the symbol table.
 The AST is a tree, that contains information about the scope of symbols.
 Consider the following code snippet.
 
-\begin{lstlisting}[language=csharp, caption={AST Demo Snippet}, captionpos=b, label={lst:astsnipped}]
+\begin{lstlisting}[language=dafny, caption={AST Demo Snippet}, captionpos=b, label={lst:astsnipped}]
 while(i<5) {
-    i = i + 1;
+    i := i + 1;
+    print i;
 }
 \end{lstlisting}
 
 The tree segment for this snippet would contain of the while-Statement as the root node.
-It then has two branches, one for the condition, and one for the body.
-The body itself consists of a list of expressions.
-In the above example, there is only one expression, namely an assignemnt.
+It then has two branches, one for the condition, and one for the body of the while statement.
+The body itself consists of a list of statements.
+In the above example, there are two statements.
+The first one is an assignment.
 The assignment has again a left and a right side.
-The right side is a binary expression, with the +-operator.
-Left of the plus is a name segment, and on the right hand side a literal expression.\\
+The right hand side is a binary expression, with the +-operator in between two operands.
+The left operand is a name segment expression, and on the right hand side is a literal expression.
+The second statement inside the body is a simple print statement with only one item to print, the name segment expression \code{i}.
+While these are just three lines of code, the AST is already quite large compared to the code.\\
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{03_tree.png}
-    \caption{Communication Benefit of LSP}
-    \label{fig:tree_for_example}
+    \includegraphics[width=10cm]{analysis/DemoASTWithWhileLoop.png}
+    \caption{AST Example}
+    \label{fig:ast_for_example}
 \end{figure}
 
-Often, the AST doesn not contain information about the type of symbols.
+The tree structure can be well seen in figure \ref{fig:tree_for_example}.
+Usually, the AST does not contain information about the type of symbols.
 This is where the symbol table comes into play.
-The symbol table contains that information and is connected to the AST, for example by the use of a dictionary.
-This way, it could be stored that the name segment \code{i} is of type int.
+The symbol table contains that information and is connected to the AST, for example by the use of a dictionary, linking an AST-node to a symbol table entry.
+With the help of the symbol table, it can be figured that the name segment \code{i} is of type int.
 The two concepts are strongly coupled.
 
 \subsubsection{Requirements for the symbol table}
-To be able to implement our feature set, the following requirements must be fullfilled by the symbol table.
+To be able to implement the required feature set for this project, the following questions must be answered by the symbol table or the AST, respectively.
 \begin{itemize}
-    \item Cursor Position
+    \item Cursor position
     \begin{itemize}
-        \item Which name segment is at the cursor's position?
+        \item Which name segment (if any) is at the cursor's position?
     \end{itemize}
 
-    \item Goto Definition
+    \item Go to definition
         \begin{itemize}
-            \item Where is the a symbol declared?
+            \item Where is the symbol declared?
         \end{itemize}
 
-    \item Code Lense
+    \item Code lens
         \begin{itemize}
             \item How often, and where, is a declaration used?
+            \item What is stated inside each usage?
         \end{itemize}
 
     \item Rename
         \begin{itemize}
-            \item What are all occurences of a symbol?
+            \item What are all occurrences of a symbol?
         \end{itemize}
 
     \item Autocompletion
         \begin{itemize}
-            \item Which declarations are available in a scope?
+            \item Within which scope was the event triggered?
+            \item Which declarations are available inside a certain scope?
+            \item What is the context; what was just typed before (e.g. a dot or the keyword \code{new})
         \end{itemize}
 \end{itemize}
 
@@ -429,35 +447,41 @@ To be able to implement our feature set, the following requirements must be full
 \subsubsection{Dafny Symbols}
 In an optimal case, Dafny's own implementation of its symbol table and AST would already contain all of this information.
 Unfortunately, this was not the case.
+Dafny uses the Coco/R library for its compilation.
+This library can generate a source code parser, is thus just generating the AST \cite{coco}.
+As one can note regarding figure \ref{fig:ast_for_example}, the AST is not really providing the information required in the list above.
+For example, the question where \code{i} is declared is not answered.
+Also, some information is not even relevant for the language server.
+Within a binary statement, the operand is not of interest for example.\\
+
 The following screenshot shows all available properties and fields of a name segment.
-A name segment is just any occurence of an identifier, for example of a variable or of a method.
+A name segment is just any occurrence of an identifier, for example of a variable or of a method.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.6]{03_namesegmentfields.png}
+    \includegraphics{analysis/namesegmentbsp.png}
     \caption{Properties and Fields of a NameSegment Expression}
     \label{fig:namesegment}
 \end{figure}
-While \code{ResolvedExpression} looks like an interesting property, it just points to itself in a regular case, not to the declaration or such.
-Thus, if a name segment is encountered, for example as the right hand side of an assignment, the name segment does not contain any information about its origin.\\
-
-
+While \code{ResolvedExpression} looks like an interesting property, it just points to itself in a regular case, not to the declaration.
+Thus, if a name segment is encountered, for example as the right hand side of an assignment, the AST node provided by Dafny does not contain any information about its origin.\\
 
 A better example may be on a higher level.
-Let us have a look at the class \code{method}.
-It contains properties and methods for it's body, but not exactly which name segments are declared inside that body.
-While it has a property \code{EnclosingModule}, it is not stated in what class that method is defined.
-The property \code{CompileName} contains information about the enclosing class, but only as a string and is thus of limited use.
-Also, there is no way to know where that method is used, which was a prerequisite for the code lens feature.
+Regarding the AST-element \code{method},
+it contains properties and methods for its body, but not exactly which name segments are declared inside that body.
+Also, there is no way to know where that method is used.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{03_method.png}
+    \includegraphics{analysis/methodbsp.png}
     \caption{Properties and Fields of a Method}
     \label{fig:method}
 \end{figure}
 
-Thus, it was decided to implement an own symbol table.
-%%%%
+To be in control, which information is stored, it was decided to implement an own symbol table / AST combination.
+This component will be called \textit{symbol table} throughout this thesis, although it will have a double linked tree structure, as we will see later.
+
+
+%%%%Her asnasdfn
 
 \subsection{Visitor}
 To be able to generate an own symbol table, it is common to use the visitor programming language pattern by !!REFERENZ von den heinis gang of four balblada!!.
@@ -500,9 +524,6 @@ public class Printer : Visitor {
 
 \subsection{Dafny Expression and Statement Types}
 \label{section:analysis_dafnyASTStuff}
-\intnote{ISt dieses Kapitel an einer guten Position? Besser nach Danfy Language Features oder so? Ahh. Ne schon richtig hier. "Platsch" einstieg ersetzen durch "was es so gibt, und warum wichtig (beachten für visitor) etc. Analyse von was es für types gibt und warum. einstieg." }\\
-
-
 Dafny is a very versatile language.
 While it offers common object oriented language features, it also contains formal language features, comparable to more common languages like Haskell.
 Thus, it contains numerous AST-nodes.
@@ -516,7 +537,7 @@ These are
     \item Declaration
 \end{itemize}
 Aside these, some AST-nodes are separate, such as \code{AssignmentRHS}, which is the right side of an assignment.
-\code{LocalVariable} is another example for an isolated class, that does not extend any base class. 
+\code{LocalVariable} is another example for an isolated class, that does not extend any base class.
 hy this decision was made by Dafny could not be evaluated.
 Both items are actually expressions and could technically be subclasses of \code{Expression}.
 

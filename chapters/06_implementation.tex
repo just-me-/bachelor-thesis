@@ -331,7 +331,8 @@ protected ISymbol FindDeclaration(string target, ISymbol scope, Kind kind)
 This snippet assigns the navigator to move upwards in scope and serach for a symbol, that is a declaration and matches in name and kind. If found, the proper symbol must be the according declaration.
 
 \textbf{Symbol Table Navigator}
-To operate on the (partially) constructed symbol table, a separate component to navigate was created. It has basically two procedures. Remember that the data structure of the symbol table is basically a double linked tree.
+To operate on the (partially) constructed symbol table, a separate component to navigate was created. It has basically two procedures.
+Remember that the data structure of the symbol table is basically a double linked tree.
 
 \begin{itemize}
 \item TopDown: Starting from a node, the navigator dives downwards and searches a specific symbol.
@@ -341,7 +342,7 @@ To operate on the (partially) constructed symbol table, a separate component to 
 \intnote{2do Bild von nem baum und dann wie es so hoch und runter geht, Beispiel, Visualisierung einbauen fuer die Laufzeitanalyse.} \\
 
 
-\intnote{Keine apostriche als abkürzungen. keine "you" sondern indirekte ansprachen. one.} \\
+\intnote{Keine apostriche als abkürzungen. keine "you" sondern indirekte ansprachen. one. mimimi} \\
 
 
 Both options are implemented so that they can return a single, first match, or any symbols that match a criterion. To illustrate this, let us have a look at two examples.
@@ -350,6 +351,16 @@ Both options are implemented so that they can return a single, first match, or a
     \item To build up autocompletion suggestions, you want to know what declarations are available at the symbol you found just before. Thus, you navigate to the parent symbol, and then you collect all children of that symbol. Then, again, go to the next parent and continue like that until the rootSymbol is reached. Again, the problem can be solved using recursion.
 \end{itemize}
 Note that this navigation can be executed very fast.
+
+
+
+
+
+
+
+
+
+
 
 \textbf{Symbol Table Manager}
 The manager is a rather simple component and can be used as an access point for the user of the symbol table. It is constructed by handing over a root symbol of a fully generated symbol table. It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}. That method will then just create a navigator and use the (maybe rather complex navigator) to provide the user with the desired result.
