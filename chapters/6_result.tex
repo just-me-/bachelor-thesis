@@ -239,9 +239,31 @@ Since the symbol table reports occurences accross imported file as well, the ren
 
 
 
-\subsection{CodeLens} 
+\subsection{CodeLens}
+
+CodeLens supportet halt jetzt nicht "used by include".
+sprich inkludierte files; die die von andern verwendet werden
+
+Ansatz: Buffering (wird dann noch von dem und dem file übrigend verwendet, geh mal querchecken)
+umständlich "gebastel". muss dauern up to date eghalten werden wenn includes eingefügt oder gelöscht werden.
+
+besserer ansatz: löst sich selbst sobald die symboltable wieder im workspace statt im "pro file"
+implementiert wurde. dann ist die sicht nicht mehr pro file (und inkludierte files) sondern pro workspace
+und man weiss daher danna uch, "dass man von andern files inkludiert wurde". 
 
 \subsection{Automatic Code Completion}
+Wichtige Erweiterung für Corbat:
+Autocompletion; alles completion… und dann machts auch gleich noch einen auto import
+ALle Files werden am Anfang mal durchgedingens.
+Auch noch dokumentieren.. sehr aufwändig. erwartet er nicht; aber sollen wir dokumentieren.
+
+Fancy XCOde. Parameter vorschlagen, einfügen.
+Auch: Completion mit Parametern programmieren. Wie in XCOde sagen machen wir ned, aber wär emöglich. Und wie.
+Dokumentieren: man könnte vscode mässig auf TAB achten und springen und so implementieren.
+Auch bezug nehmen auf usability test; wäre noch fancy auch die parameter anzeigen zu lassen.
+
+ACHTUNG: Haben wir in der Symboltable überhaupt die info welche methode welche parameter akzeptiert??
+Sonst eräwhnen dass man das im Visitor oder so noch zuordnen müsste.
 
 \subsection{Symbol Table}
 All of the previous features, with the exception of auto completion, do not contain much logic theemselves.
