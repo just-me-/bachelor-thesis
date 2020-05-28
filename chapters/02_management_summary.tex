@@ -62,24 +62,16 @@ These have to be handled separately within the client though, since the LSP is n
 
 
 \subsection{Initial Solution}
-\label{section:introduction:initialsolution}
+\label{section:management_summary:initialsolution}
 In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a LSP client-server infrastructure for Visual Studio Code was created to support Dafny \cite{ba}.
 The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{correctnessLab} to make coding in Dafny easier.
-The pre-existing solution offered a LSP-client for Visual Studio Code, which connected to a language server.
-Both, the language server and the plugin, were written in TypeScript.
-To communicate with the Dafny backend, the language server used a proprietary JSON-interface.
-Information provided by Dafny was parsed from the console.
-Functionality was therefore limited to the Dafny console output.\\
-In the preceding semester project \cite{sa}, the language server was migrated to \CsharpWithSpace and could be integrated into the Dafny backend.
-Any Dafny functionality was directly accessible and the proprietary JSON-interface, as well as console parsing, could be omitted.
-All features were reimplemented to satisfy the new architectural layout.
+The language server and the Dafny backends were separated into two different components.
+This had the disadvantage that they had to communicate over a proprietary interface.
+This solution was not optimal, since the Dafny backend was not accessed directly.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{02_oldBAvsSA.png}
-    \caption{Architecture before (left) and after (right) the preceding term project}
-    \label{fig:oldBAvsSA}
-\end{figure}
+In the preceding semester project \cite{sa}, the language server was merged into the Dafny backend, so that the proprietary interface was no longer necessary.
+Dafny could be accessed directly by the new software architecture.
+Within this bachelor thesis, the work of the existing solution will be continued.
 
 
 \subsection{Goals}
@@ -92,19 +84,18 @@ To provide the students with the necessary support, they shall profit by common 
     \item Auto completion
 \end{itemize}
 
-On the other hand, the plugin shall also be used in a professional environment.
+On the other hand, the plugin shall also be used in a professional environment in the future.
 Thus, more advanced features have to be supported.
-To facilitate the development of further features, the code shall be refactored to achieve a clean state.
-This especially involves a clear architectural layout with dependencies that only point downwards.
+To facilitate the future development of such features, the codebase shall be refactored to achieve a clean and maintainable state.
+This especially involves a clean architectural layout with well-organized dependencies.
 
 Aside a clean architecture, a major goal is the creation of a custom symbol table.
-This is necessary to make features like \textit{go to definition} or \textit{auto completion} possible at all.
-It also allows the development of further features.
-For example, if every the symbol table provides information about the scope-depth, the indentation width can be deduced for a feature like auto formatting.\\
-
-The symbol table shall further contain a well organized tree structure, so that navigation can be done efficiently.
-Each symbol shall have direct links to it's parent, children and declaration for very fast access.
-Compared to the prototype, the pre-existing implementations can be extracted into the symbol table, reducing the lines of code (LOC) and increasing performance.
+A symbol table contains information about items appearing in the Dafny code.
+It shall allow very simple navigation within the Dafny code, for example to locate the declaration of a variable.
+Once the symbol table is generated, navigation within the code will be very easy for the language server.
+This has the advantage, that many features can be realized with almost trivial logic.
+For example, the feature \textit{go to definition} just has to ask the symbol table, where the definition of the symbol is.
+Consequently, a well implemented symbol table will also facilitate the development of further features.
 
 
 
