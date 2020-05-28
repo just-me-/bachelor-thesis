@@ -168,8 +168,10 @@ This chapter provides the reader with the most relevant concepts with regard to 
 \subsubsection{Modules}
 \intnote{C Sharp hat iwie nie einen Abstand... Latex fix? oben auch backslash dots nicht als drei dots im code snipped.}
 
-Dafny code can be organized by modules. A module can be compared to a namespace in \Csharp or C++.
-Modules can also be nested. To use a class, method or variable defined in another module, the user has three options.
+Dafny code can be organized by modules.
+A module can be compared to a namespace in \Csharp or C++.
+Modules can also be nested.
+To use a class, method or variable defined in another module, the user has three options.
 Imagine a method \code{addOne} defined in a module \code{Helpers}.
 
 \begin{lstlisting}[language=dafny, caption={Module Example}, captionpos=b, label={lst:addOneMethod}]
@@ -646,7 +648,8 @@ This allowed us to resolve CI issues locally and platform-independently (through
 See the developer documentation for more details \cite{dev}.\\
 
 Docker also realizes the priciple "Cattle, not pets" with docker.  \intnote{hier noch irgend eine cite adden wo das prinzip definiert wird... hab nur grad stackoverflow gefunden, was zitierfähiges wäre nett. sonst wirkt es fast etwas kindisch/verpsielt fürü eine BA.}
-Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used. This way, the dependent packages will always be up to date and security patches and the like are automatically deployed. \\
+Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used.
+This way, the dependent packages will always be up to date and security patches and the like are automatically deployed.\\
 
 Excluded from this principle are Node, Z3, Go, Boogie and Sonar.
 All of these have to be installed in specific release versions within the CI server.
