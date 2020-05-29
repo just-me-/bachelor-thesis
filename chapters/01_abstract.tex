@@ -1,43 +1,27 @@
 \section{Abstract}
 \label{section:abstract}
 
-Hält sich abstract an die zeichenbergenzung?
-darf man aufzählungen verwenden? im tool ja, im abstract der arbeit glaube ich aber nicht, oder? sprich fliesstext. 
+ \intnote{Zeichen. Es war 4622/3400 Zeichen. Aufzhaeuing weg., Konnen aber noch fragen}
 
 \textbf{Initial Situation}\\
-Dafny is a formal programming language to proof a program's correctness with preconditions, postconditions, loop invariants and loop variants.
+Dafny is a formal programming language to proof a program's correctness.
 In a preceding bachelor thesis, a plugin for Visual Studio Code had been created to access Dafny-specific static analysis features.
-For example, if a postcondition is violated, the code will be highlighted and a counter example can be shown.
-Furthermore, it provides access to code compilation and auto completion suggestions.\\
-
 The plugin communicates with a language server, using Microsoft's language server protocol, which standardizes communication between an integrated development environment (IDE) and a language server.
 The language server itself used to access the Dafny library, which features the backend of the Dafny language analysis, through a proprietary JSON-interface.
 In a preceding term project, the language server was integrated into the Dafny backend to render the JSON-interface obsolete.\\
 
 \textbf{Objective}\\
-This bachelor thesis continues the preceding term project and contains two major goals:
-\begin{itemize}
-    \item Improvement of previously implemented features in usability, stability and reliability.
-    \item Implementation of a symbol table to facilitate the development of symbol-oriented features like rename or auto completion.
-\end{itemize}
-The symbol table is required to contain information about each name segment in the code.
-It should allow direct access to a name segment's declaration, information about its scope and usage statistic.
-The symbol table opens a wide range for further development.
-For example, by knowing the depth of a symbol, indentation width can be determined for an auto formatting functionality.\\
+This bachelor thesis continues the preceding term project and contains two major goals.
+Firstly, the previously implemented prototype has to be improved in usability, stability and reliability.
+Secondly, a symbol table has to be implemented to facilitate the development of symbol-oriented functionality like rename or auto completion.
+The symbol table is supposed to open a wide range for further development.\\
 
 \textbf{Result}\\
-Using the visitor pattern, the Dafny abstract syntax tree (AST) is visited to create the symbol table.
+A symbol table was created using the visitor pattern.
 Every symbol contains information about its parent, its children and its declaration.
-This makes navigation within the symbol hierarchy very simple.
-The implemented features go to definition, rename, code lens, hover information and auto completion can directly benefit by the symbol table and are no longer required to contain much logic.
+Navigation within the symbol hierarchy is kept very simple.
+The implemented features go to definition, rename, code lens, hover information and auto completion benefit by the symbol table and are no longer required to contain complex algorithms.
 The offerings of the symbol table can be accessed for future extensions, such as auto formatting or code highlighting.\\
 
-
-Aside features based on the symbol table, pre-existing functionality was revisited as well:
-\begin{itemize}
-    \item The verification process was simplified by creating a dedicated Dafny translation unit.
-    \item Unlike in prior versions of the plugin, warnings are now reported to the end-user as well.
-    \item The verification results are buffered for efficient re-use upon compilation.
-    \item Counter examples are simplified and better perceptive to the end user. They also remember their display setting per file.
-    \item All features will now also work across multiple files and namespaces.
-\end{itemize}
+Aside features based on the symbol table, pre-existing functionality was revisited as well.
+The prototype was extended to support multiple files in a workspace, use buffered compilation results to be more performant, and increase user experience in general.
