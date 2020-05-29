@@ -120,16 +120,20 @@ The client developer would just have to implement the language server connection
 Regarding the goals provided by Fabian Hauser at the beginning of the thesis, the following goals could be reached:
 \begin{itemize}
     \item Client and Server are split into seperate repositories.
-    \item Language Server was rebased to use the newest Dafny upstream
+    \item Language Server was rebased multiple times to be on par with the newest Dafny upstream
+    \item No local paths occur in the code
     \item General Code cleanup was done
-    \item Ready to merge
+    \item Clean folder structure was implemented, especially for tests, too
+    \item Tests run clean, not every test has to be added manually
     \item Sonar Qube is now running
-    \item Dafny Library is directly integrated by now
-    \item Symbol Table was implemented - clean - geht so.
-    \item Previous features were implemented \textbf{clean}ly
-    \item ... tun wir hier wirklich alles listen? kmomt mir komisch vor. es steht ja eig schon zuvor im text. grad wenne r dann eben unten schreibt "clean bla, clean bla", short methods.
-    \item korrektur: ja, alles listen, weil wir eige iwrlich alles gemacht haben, je nachdem wie man sein CLEAAN interpretiert.
-    \item clean git branching, hmm, ja, hus thsut.
+    \item Logging is injected properly and a common logging framework is used
+    \item Dafny Library is directly integrated everywhere by now
+    \item Client completely refactored and cleaned up
+    \item Symbol Table was implemented
+    \item Previous features were improved
+    \item Small feature branches were used on git with short commits and good commit messages
+    \item No todo remain in the code
+    \item Integration tests run properly with OmniSharp's client
 \end{itemize}
 
 

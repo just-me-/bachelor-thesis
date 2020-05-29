@@ -206,9 +206,9 @@ More interesting is the class \code{FileRepository}, which is used as the intern
 It of course contains the source code.
 However, this is not done directly as a string property, but wrapped in a class \code{PhysicalFile}.
 Thus, the actual representation on the hard disk is separated even further.
-The \code{PhysicalFile} class can then also take responsibility for applying file updates.
+The \code{PhysicalFile} class can then also take responsibility for applying file updates.\\
 
-\intnote{todo bild hier unbedingt mit workspace -> filerepo -> physfile/translationresult/symobltablemanager und methoden die hier beschrieben werden.kann ja ovn der design ding kapitel vorlage nehmen}.
+\intnote{ich wrüde hier gerne ein bild einfügen aber das wäre das gleiche wie beim design.. grml.}.\\
 
 Aside the file content, each \code{FileRepository} will also contain \code{TranslationResults}.
 \code{TranslationResults} is a wrapper class for anything provided by the Dafny backend:
@@ -240,7 +240,7 @@ public interface FileRepository
 \subsubsection{DafnyAccess}
 Dafny Access it the package invoking the Dafny backend to obtain verification results.
 The core class in this package is the \code{DafnyTranslationUnit}.
-It was partially taken over from the pre-existing projects, but as part of this bachelor thesis it was refactored and simplified.
+It was partially taken over from the pre-existing projects, but as part of this bachelor thesis it was refactored and simplified.\\
 
 In the constructor, the translation unit accepts a \code{PhysicalFile}.
 The class then offers a single public method \code{public TranslationResults Verify()}.
@@ -265,7 +265,6 @@ Within the method, the following sequence of events occurs:
 \end{enumerate}
 
 \intnote{evtl bild, so ablaufdiagramm}
-\intnote{bild mit TranlsationResult + TranlsationStatus wäre gut ich denke}
 
 
 
@@ -283,10 +282,7 @@ private void SetUpDafnyOptions()
 \subsection{Symbol Table}
 This package provides four components:
 
-\intnote{Ich finde diese Aufzählungen haben wenig Aussage.
-Zusätzlich noch ein Klassendiagramm mässiges Bild mit Typ. edit: ja- kommt alles noch xD. bilder hab ich noch nicht gemacht :P cor bat findet aufzähleungen aber geil, drum müssenw ri damit nicht sparen
-Im Text noch beschreiben "was das ist/tut".
-todo}\\
+\intnote{bilder hier ist schwierig weil es einfach das gleiche ist wie bei design...)}\\
 
 \begin{itemize}
     \item Symbol Information
@@ -332,7 +328,7 @@ The \code{[]} operator was overloaded to make this as convenient as possible:\\
 To enable efficient access to the children of a symbol, we have opted for a key-value data structure.
 The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
 This hash structure enables access to a child symbol with a runtime of $O(1)$.
-Since every symbol also has a link to it's parent, navigation in both ways can be done within $O(1)$.
+Since every symbol also has a link to it's parent, navigation in both ways can be done within $O(1)$.\\
 
 While this is very fancy, the convenience comes at a price.
 Many properties do not apply for all kinds of symbols.
@@ -362,7 +358,7 @@ Aside the properties, the \code{SymbolInformation} also offers a public method.
 This method will check if a certain location is wrapped by the symbol.
 This namely answers the question, if for example line 5, column 2 is within the symbol's body.\\
 
-\textbf{Symbol Table Creation}
+\textbf{Symbol Table Creation}\\
 The symbol table generator accepts a precompiled Dafny program in the constructor.
 The generator offers a public method \code{GenerateSymbolTable}.
 It will first of all create a virtual root symbol.
@@ -380,9 +376,9 @@ Finally, the module will accept the declaration visitor.
 The visitor is described later.
 Once it has completed, all symbol declarations are registered in the symbol table.
 A second iteration is then started, using a visitor, which will ignore declarations but run through all method bodies and take care of symbol usages.\\
-This way, symbols that are declared after the first usage can be found as well.
+This way, symbols that are declared after the first usage can be found as well.\\
 
-\textbf{Visitor}
+\textbf{Visitor}\\
 As already mentioned, the whole symbol table generation is realized using the visitor pattern.
 For that, Dafny code had to be adjusted to offer a \code{Accept(Visitor v)} method.
 This method will basically just navigate through the internal Dafny symbol representation.
@@ -424,7 +420,7 @@ public override void Accept(Visitor v)
 Note that the method is marked with the override keyword.
 This is, since every AST-Element is either a statement or an expression, among others.
 In case a specific AST element is not treated separately, a general accept method is defined for statements, as well as expressions.
-However, for supported AST elements, a more specific method is supposed to be used.
+However, for supported AST elements, a more specific method is supposed to be used.\\
 
 On the other hand of the acceptor, there is the actual visitor.
 The visitor has to implement \code{Visit} methods for each of the AST elements that it is supposed to visit, for example our \code{Method} from the preceding example.\\
@@ -499,6 +495,7 @@ protected ISymbol FindDeclaration(string target, ISymbol scope, Kind kind)
     return navigator.BottomUpFirst(scope, filter);
 }
 \end{lstlisting}
+
 This snippet assigns the navigator to move upwards to tree, starting from the scope the visitor is just operating in.
 In every scope, the navigator will iterate over all symbols and search one, that is a declaration and matches in name and kind.
 For example, if we start inside a method, every symbol already visited in that method will be checked.
@@ -509,7 +506,7 @@ Since all declarations were registered beforehand, the process works even if the
 
 If the symbol cannot be found, the algorithm will search the default scope at the end as a last option to locate the symbol.
 Since the symbol tree is moved upwards, the process takes $O(logn)$ time.
-It is executed for every occurring symbol, thus the building of the symbol table takes $O(nlogn)$ time, while n denoted the amount of occurring symbols.
+It is executed for every occurring symbol, thus the building of the symbol table takes $O(nlogn)$ time, while n denoted the amount of occurring symbols.\\
 
 \begin{figure}[h]
     \centering
@@ -519,7 +516,7 @@ It is executed for every occurring symbol, thus the building of the symbol table
 \end{figure}
 
 
-\textbf{Symbol Table Navigator}
+\textbf{Symbol Table Navigator}\\
 To operate on the (partially) constructed symbol table, a separate component to navigate was created.
 It has basically two procedures.
 Remember that the data structure of the symbol table is basically a double linked tree.
@@ -546,7 +543,7 @@ Within the recursive call, the proper class will be found, and so on.
 Default namespaces and default classes had to be treated separately for this case.
 Since the tree is moved along a single branch, the runtime for this process is $O(logn)$.\\
 
-\textbf{What auto completion suggestions are indicated?}
+\textbf{What auto completion suggestions are indicated?}\\
 To build up autocompletion suggestions, all declarations available at a certain locations must be figured.
 First of all, the previous \code{TopDown} algorithm is used to find the current location.
 Then, all declarations in the current scope are requested.
@@ -563,19 +560,19 @@ Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used i
 
 
 
-\textbf{Symbol Table Manager}
+\textbf{Symbol Table Manager}\\
 The manager is a rather simple component and can be used as an access point to perform operations on the symbol table.
 It is constructed with a root symbol of a fully generated symbol table and contains a navigator. \intnote{todo es würd echt sinn machen den navigator als klassenprop des managers, falls das unterzubringen is und schnell gemach sti}
 It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}.
 That method will use the navigator to provide the user with the desired result.
-Access to the rather complex navigator is encapsulated this way.
+Access to the rather complex navigator is encapsulated this way.\\
 
 
 \subsubsection{Core}
 In this package, the actual task of providing results for the server is done.
 Often, not much code is necessary, since the symbol table provides all necessary information.
 The classes in this package are called \textit{providers}.
-A few of them are explained more in detail.
+A few of them are explained more in detail.\\
 
 \textbf{Go to Definition}\\
 Go to definition is a very simple feature once the symbol table is created.
@@ -586,7 +583,7 @@ Since every symbol has a property, containing its declaration, the declaration c
 Finally, the provider converts the declaration position to the proper response format and returns it.\\
 
 To provide a better usability, it does a few further checks, such as checking if the symbol already was a definition or if no result could be found at all.
-The results are stored in an \code{Outcome} property, which the handler can use to send proper client feedback.
+The results are stored in an \code{Outcome} property, which the handler can use to send proper client feedback.\\
 
 \begin{lstlisting}[language=csharp, caption={Providing Goto Definition}, captionpos=b, label={lst:gotoCore}]
 public LocationOrLocationLinks GetDefinitionLocation(Uri uri, int line, int col)
@@ -612,14 +609,14 @@ public LocationOrLocationLinks GetDefinitionLocation(Uri uri, int line, int col)
 }
 \end{lstlisting}
 
-\textbf{DiagnosticProvider}
+\textbf{DiagnosticProvider}\\
 This component is invoked every time a document is updated.
 It accepts a \code{FileRepository} as an argument.
 Within the repository, the translation results are stored, including the diagnostics.
 This component will read the diagnostic, convert them to an LSP-suitable format, add usability information, and finally send the result back to the client.
-Since this is just a conversion of already calculated \code{TranslationResults} by the \code{DafnyTranslationUnit}, the runtime of this provider is neglectable.
+Since this is just a conversion of already calculated \code{TranslationResults} by the \code{DafnyTranslationUnit}, the runtime of this provider is neglectable.\\
 
-\textbf{HoverProvider}
+\textbf{HoverProvider}\\
 This component is very simple.
 It requests the \code{SymbolTableManager} to provide the symbol at the hover location - again this will require $O(logn)$ time.
 The hover location is passed as an argument within the request.
@@ -632,7 +629,7 @@ That information includes
     \item Parent symbol
     \item Declaration origin
 \end{itemize}
-and is instantly available, not adding any runtime penalties.
+and is instantly available, not adding any runtime penalties.\\
 
 \textbf{RenameProvider}
 Rename is another feature that profits strongly by the symbol table.
@@ -640,7 +637,7 @@ Again the feature requests the symbol at the cursor in $O(logn)$.
 Afterwards, it jumps to it's declaration in $O(1)$.
 The declaration has all usages of the symbol stored, and thus, all occurrences are also instantly accessible.
 The provider will now just assemble a \code{WorkspaceEdit} and return it.
-The \code{WorkspaceEdit} contains the new name and as well all \code{Range}s, where the name has to be applied.
+The \code{WorkspaceEdit} contains the new name and as well all \code{Range}s, where the name has to be applied.\\
 
 Additionally, the rename provider performs a few checks, if the new name is valid.
 The checks are
@@ -651,41 +648,41 @@ The checks are
 \end{itemize}
 
 The last check is more restrictive than it needs to be, but since special characters are extremely uncommon in programming, it is well suitable.
-It was mainly implemented to prohibit brackets in names.
+It was mainly implemented to prohibit brackets in names.\\
 
 \textbf{Completion}\\
 todo
 Recht komplex
 Wir supporten drei cases; nennen. Beschreiben.
-Ablauf. Diagramme wie in der SA sind nützlich. das mag olaf bestimmt. 
+Ablauf. Diagramme wie in der SA sind nützlich. das mag olaf bestimmt. \\
 
-PAP oder flussdiagramm zeichnen für die fall untrscheidungen
+PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
 
 \textbf{Code Lens}\\
 todo
 komplett server seitig nicht übers lsp möglich, weild er client die 'lens' aktion auslöst.
 reicht daten für codelens popup an den client wieter; ruft vs code feature auf.
-beide aspekte werden durch integration tests abgedeckt
+beide aspekte werden durch integration tests abgedeckt\\
 
 \textbf{Compilation}\\
 Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the \code{FileRepository}.
 This includes the precompiled \code{dafnyProgram}.
 The compilation provider will take advantage of that and use the precompiled item, and just forward it to the compiler engine.
 Prior to the compilation, custom compilation arguments are installed, if the user provided any.
-The process is fully integrated into the Dafny backend by using the following code line.
+The process is fully integrated into the Dafny backend by using the following code line.\\
 
 \begin{lstlisting}[language=csharp, caption={Calling the Dafny Compiler}, captionpos=b, label={lst:dafnycompiler}]
 DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwriter);
 \end{lstlisting}
 
-The provider will check if any errors occurred and return the outcome within a wrapper class.
+The provider will check if any errors occurred and return the outcome within a wrapper class.\\
 
 \textbf{Counter Example}\\
 This feature bases on the model file, which is generated during verification.
 The model file is a key-value store generated by Boogie.
 It contains several states.
 Each state tracks the content of variables during different stages of the proof.
-Of interest is primarily the \textit{initial} state, since this one contains the information how variables need to be set at the initially to achieve a counter example.
+Of interest is primarily the \textit{initial} state, since this one contains the information how variables need to be set at the initially to achieve a counter example.\\
 
 This provider reads the model file and uses the Boogie backend to convert into a useful format.
 Afterwards, it extracts the initial state from the model.
@@ -693,7 +690,7 @@ Out of the remaining model, all key-value-pairs containing useful information ar
 The component will also transform information into a more human readable format, e.g. $((- 12)) \rightarrow -12$.
 Furthermore, many values are internal Boogie references and cannot be resolved.
 These just look like \code{T@U!val!12}.
-Such values are replaced with the text \code{[Object Reference]}.
+Such values are replaced with the text \code{[Object Reference]}.\\
 
 
 
@@ -794,10 +791,6 @@ todo
 
 erkentnisse notieren. was machbar, war nicht. was haben wir noch geschafft. vorher nachher screen.
 zb hover information fix machbar. button meint corbat ned nötig. evt link auf vs code dokumentation für button play.
-
-
-Nein. Das ist Implementation. Bei Implementation Test gemacht; Implementation verbessert.
-todo
 
 Entgegen der ursprünglichen Annahme, nicht "alt und neu" als vergleich testen lassen (fehlende probanden)
 Testing der allgemeinen Benutzbarkeit unserer Features (verständlichkeit, nützlichkeit)
