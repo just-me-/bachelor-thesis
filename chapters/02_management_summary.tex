@@ -1,72 +1,37 @@
 \section{Management Summary}
 \label{section:management_summary}
-
-\intnote{max 1900 zeichen, max zwei seiten. fragen ob wir öänger dürfen? todo}
-
 This chapter contains a brief overview of the bachelor thesis at hand.
-It his held in a non-technical language to be comprehensive for anyone. \\
-
 First the technologies Dafny and Language Server protocol were explained to understand the initial solution.
 This is followed by a presentation of the objectives, results achieved and future prospects.
 
 \subsection{Dafny}
 \label{section:introduction:dafny}
 Dafny is formal programming language.
+Our work should make it easier for Dafny developers to write programs in Dafny. \\
+
+Dafny offers optimizations for proofs as an advantages over other programming languages.
 Within the Dafny code, a developer has the option to state a so called precondition.
 This is a fact that must be true at the beginning of the code.
 Once the code has been executed, the developer may state a postcondition.
 The postcondition is, contrary to the precondition, something that is true at the end of code.
 Dafny contains an internal engine to automatically proof postconditions.
 This means, given the precondition holds, the code will manipulate data only thus far, so that also the postcondition is valid.
-Dafny's specialty is that it was optimized for such proofs. \\
-
-The following code snippet shows an example.
-The value \code{a} is given, but it is required to be positive.
-This is the precondition.
-In the method body, the variable \code{b} is assigned the negative of \code{a}.
-We ensure, that \code{b} must be negative, which is the postcondition.
-
-\begin{lstlisting}[language=dafny, caption={Simple Dafny Example}, captionpos=b, label={lst:simpleDafnyExample}]
-method Negate(a: int) returns (b: int)
-requires a > 0
-ensures b < 0
-{
-    b := -a;
-}
-\end{lstlisting}
-
-This example is of course trivial.
-In a real project, correctness is not always that obvious and computational assistance is welcome.
-The main advantage of pre- and postconditions is, that a programmer can be sure that the program is correct.
+Dafny's specialty is that it was optimized for such proofs.
 
 \subsection{Language Server Protocol}
 The language server protocol (LSP) is a specification for communication.
-It regulates data exchange between an editor and a so called language server.
-The editor is used by the programmer to write code.
+It regulates data exchange between an IDE and a so called language server.
+This ensures a separation between IDE and the actual language support in the Language Server for a programming language (such as Dafny).
+With this standard protocol, the same language server can be easily integrated by different IDEs. \\
+
+Our Dafny Plugin was developed for the IDE "Visual Studio Code".
+Visual Studio Code is for example used by programmers to write Dafny code.
 The code is then transferred to the language server, using a format specified by the LSP.
 The language server is now responsible to analyze the code and provide proper replies to the editor, whenever the editor requests something.
 A request could for example be to show information about a variable.
-The server has to provide all the necessary information.\\
+The server has to provide all the necessary information to the IDE.\\
 
-The separation between the editor and the server has the advantage, that multiple editors can use the same language server.
-Support for a programming language like Dafny can thus be achieved for multiple editors by just implementing the language server once.\\
-
-The most important requests the LSP supports incorporate:
-\begin{itemize}
-    \item Transfer code to server
-    \item Show errors and warnings
-    \item Rename a variable
-    \item Go to the definition of a variable
-    \item Show auto completion suggestions
-    \item Perform a refactoring
-    \item Show usages of a code item
-\end{itemize}
-These are features that are commonly used by programmers, independent of the language.
-Aside these, Dafny has the option to show a counter example, if a postcondition is violated.
-This request is not natively supported by Dafny.
-However, custom requests can easily be added to the LSP.
-These have to be handled separately within the client though, since the LSP is not automatically displaying the result.
-
+As a result of using çthe LSP we make it possible that Dafny can be supported for other IDEs with minimal effort.
 
 \subsection{Initial Solution}
 \label{section:management_summary:initialsolution}
@@ -75,11 +40,11 @@ The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{corre
 The language server and the Dafny backends were separated into two different components.
 This had the disadvantage that they had to communicate over a proprietary interface.
 This solution was not optimal, since the Dafny backend was not accessed directly.
+This led to the fact that implementations of new features are very time consuming. \\
 
 In the preceding semester project \cite{sa}, the language server was merged into the Dafny backend, so that the proprietary interface was no longer necessary.
 Dafny could be accessed directly by the new software architecture.
 Within this bachelor thesis, the work of the existing solution will be continued.
-
 
 \subsection{Goals}
 At HSR, Dafny is taught within the course \textit{Software Engineering}.

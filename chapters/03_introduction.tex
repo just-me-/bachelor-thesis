@@ -1,31 +1,5 @@
 \section{Introduction}
 
-Motivation
-
-Ziele, Aufgabenstellung
-Plattform Independence
-Setup, easy installation
-UsabilityTest Code
-IDE Independence, Wiederverwendbarkeit
-Feature Richness
-Einfache Erweiterbarkeit
-....
-Ziele: project cleanup
-Repository Splitting
-Merge Back ready state (Rebase)
-General Code cleanup
-SonarQUbe run, fixes
-clean loggin
-features verbessern gemäs SA als AUsblicke festgelegt
-symbol table implementieren, um gotodefinition zu verbessern sowie künftige Features
-
-optional: neue features
-hover information
-codelens
-refactorings like extract method
-automated contract generation
-
-
 \label{section:introduction}
 This chapter describes the initial solution of the project, as well as the motivation and the goals of the thesis in more detail.
 To provide the reader with the necessary context, the technologies touched by this bachelor thesis are explained at the beginning.
@@ -57,7 +31,7 @@ ensures b < 0
 \end{lstlisting}
 This example is of course trivial.
 In a real project, correctness is not always that obvious.
-With Dafny, a programmer can be sure if the program is correct.
+With Dafny, a programmer can be sure if the program is correct in a logical way.
 Since the proof is done with formal, mathematical methods, the correctness is guaranteed.\\
 
 If Dafny is unable to perform a proof, the user can assist by creating lemmas.
@@ -97,11 +71,30 @@ It is the task of the server to analyze the source code and provide a rename res
 Since the language server is independent of the client, a language server can be used from within multiple IDE's.
 To provide support for another IDE, just the client has to be coded.
 Since all logic is contained within the server, this can be done with minimal effort.
-A developer only has to set up the connection to the language server.
+A developer only has to set up the connection to the language server and has to implement the display logic for the newly supported IDE.
 
+The most important requests the LSP supports incorporate:
+\begin{itemize}
+    \item Transfer code to server
+    \item Show errors and warnings
+    \item Rename a symbol
+    \item Go to the definition of a symbol
+    \item Show auto completion suggestions
+    \item Perform a refactoring
+    \item Show usages of a code item
+\end{itemize}
 
+These are features that are commonly used by programmers, independent of the language.\\
 
-\subsection{Initial Solution}
+Aside these standard features, Dafny has the option to show a counter example, if a postcondition is violated.
+This request is not natively supported by the LSP.
+However, own custom requests and data responses can easily be added to the LSP.
+These have to be handled separately within the client though, since the LSP is not automatically displaying the result. \\
+
+Because of these advantages our work is based on this protocol.
+Exactly which features have to be implemented in the LSP is discussed in the analysis part of this thesis.
+
+\subsection{Initial Solution and Motivation}
 \label{section:introduction:initialsolution}
 In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a LSP client-server infrastructure for Visual Studio Code was created to support Dafny \cite{ba}.
 The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{correctnessLab} to make coding in Dafny easier.
@@ -111,10 +104,13 @@ The pre-existing project offered a LSP-client for Visual Studio Code, which conn
 Both, the language server and the plugin, were written in TypeScript.
 To communicate with the Dafny backend, the language server used a proprietary JSON-interface.
 Information provided by Dafny was parsed from the console.
-Functionality was therefore limited to the Dafny console output.\\
+Functionality was therefore limited to the Dafny console output.
+Due to the preparation of this console output and subsequent preparation for LSP communication,
+it was very complex and time consuming to implement additional features. \\
 
 Marcel Hess and Thomas Kistler continued the development of the project within a semester project \cite{sa}.
-The language server was migrated to \CsharpWithSpace and could be integrated into the Dafny backend.
+The language server was migrated to \CsharpWithSpace and could be integrated into the Dafny backend
+as you can see in figure \ref{fig:oldBAvsSA}.
 Any Dafny functionality was directly accessible and the proprietary JSON-interface, as well as console parsing, could be omitted.
 All features were reimplemented to satisfy the new architectural layout.
 The result of this semester thesis will be referred as the \textit{prototype}.
@@ -151,3 +147,27 @@ For example, if every the symbol table provides information about the scope-dept
 The symbol table shall further contain a well organized tree structure, so that navigation can be done efficiently.
 Each symbol shall have direct links to it's parent, children and declaration for very fast access.
 Compared to the prototype, the pre-existing implementations can be extracted into the symbol table, reducing the lines of code (LOC) and increasing performance.
+
+
+Ziele, Aufgabenstellung
+Plattform Independence
+Setup, easy installation
+UsabilityTest Code
+IDE Independence, Wiederverwendbarkeit
+Feature Richness
+Einfache Erweiterbarkeit
+....
+Ziele: project cleanup
+Repository Splitting
+Merge Back ready state (Rebase)
+General Code cleanup
+SonarQUbe run, fixes
+clean loggin
+features verbessern gemäs SA als AUsblicke festgelegt
+symbol table implementieren, um gotodefinition zu verbessern sowie künftige Features
+
+optional: neue features
+hover information
+codelens
+refactorings like extract method
+automated contract generation
