@@ -9,6 +9,19 @@ Dann gleich den "ISt zustand" mit dem Refactroing vom Design hier einflieessen l
 ISt für den Leser meine ich weniger verwirrend.
 
 
+- download:
+GitLab Pages (Fabian gm Meeting... hust erwaehnen)
+Interfaces geschrieben, versucht API zu nehmen, ging ned also server
+dank interface austauschbar
+interface altem tool nachempfunden. teils namen passender gewaehlt.
+
+- vs kapselung
+einfache migration auf andere IDE ermoeglicht
+
+config
+man kann alles konfigurieren. support fuer dark mode.
+sonstige config und so sachen wurden zentralisiert. gm code review.
+
 
 \subsubsection{Client (Code Review)}
 After a joint code review together with our advisors, individual optimisation potential was identified.
@@ -50,6 +63,8 @@ This would make it easier to maintain these values. \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
 
+todo haben wir hier überall die laufzeitanalyse? pro feature?
+programmierug gegen interface drinne? todo (testbarkei, isolation)
 
 \subsubsection{Server Launch}
 As done in common practice, the \code{Main} function is kept very short. All it does is launching the language server, which is already handled by another class.
@@ -342,7 +357,7 @@ Remember that the data structure of the symbol table is basically a double linke
 \intnote{2do Bild von nem baum und dann wie es so hoch und runter geht, Beispiel, Visualisierung einbauen fuer die Laufzeitanalyse.} \\
 
 
-\intnote{Keine apostriche als abkürzungen. keine "you" sondern indirekte ansprachen. one. mimimi} \\
+\intnote{Keine apostriche als abkürzungen. keine "you" sondern indirekte ansprachen. one.} \\
 
 
 Both options are implemented so that they can return a single, first match, or any symbols that match a criterion. To illustrate this, let us have a look at two examples.
@@ -431,13 +446,15 @@ Eigentliche logik. implementiert interface. Die Features ev einzln druch, msus m
 todo
 Recht komplex
 Wir supporten drei cases; nennen. Beschreiben.
-Ablauf. Diagramme wie in der SA sind nützlich.
+Ablauf. Diagramme wie in der SA sind nützlich. das mag olaf bestimmt. 
+
+PAP oder flussdiagramm zeichnen für die fall untrscheidungen
 
 \textbf{Code Lens}\\
 todo
 komplett server seitig nicht übers lsp möglich
 reicht daten für codelens popup an den client wieter; ruft vs code feature auf.
-beide aspekte werden durch integration tests abgedeckt?
+beide aspekte werden durch integration tests abgedeckt
 
 \textbf{Compilation}\\
 Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the FileRepository. This also includes the precompiled \code{DafnyProgram}. The compilation provider will take advantage of that and use the precompiled item, and just hand it forwards to the compiler engine. Prior to the compilation, custom compilation arguments are installed if the user provided any. The process is fully integrated into the DAfny backend by using
@@ -569,6 +586,13 @@ Since all tests base on actual Dafny files, a dedicated subfolder was created to
 
 
 \subsection{Usability Test}
+
+todo
+
+erkentnisse notieren. was machbar, war nicht. was haben wir noch geschafft. vorher nachher screen.
+zb hover information fix machbar. button meint corbat ned nötig. evt link auf vs code dokumentation für button play.
+
+
 Nein. Das ist Implementation. Bei Implementation Test gemacht; Implementation verbessert.
 todo
 

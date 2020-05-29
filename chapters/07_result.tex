@@ -1,4 +1,7 @@
 \section{Results}
+
+Da fehlt Kapitel Features.
+
 \label{section:results}
 \intnote{bei der SA hatte er hier gesagt: was wir unter result hatten ist 'user guide' und was wir unter conclusion hatten war results. wir dürfen hier wohl drum schon kritisch die features ansehen. dann können wir bei conclusion eher so 'es hat spass gmacht und war eine etolle erafhrung mimi fühlsch mi gsürsch mi' - ich glabu das erwartet er eher. und vlt noch so outlook und so bei conclusion - ake 'jetzt ist es einfacher, neue ffeatures hinzuzufügen,w eil die symboletable so geil ist'.}
 In this chapter, the achieved results of our work are described and critically reflected.
@@ -212,7 +215,8 @@ This has also been improved and the cursor can now be at any spot within a symbo
 Technically, the feature is misnamed.
 A better name would actually be \code{Goto Declaration}, since it jumps to the symbol declaration, not definition.
 LSP would even offer a dedicated handler for \code{textDocument/declaration} \cite{lspspec}.
-\intnote{ich würd das so lassen aebr technisch gesheen müssten wir genau das implementierte interface ändern, der rest ist eh gleiich xD vlt könnte mand as sogar noch schnell machen}
+\intnote{ich würd das so lassen aebr technisch gesheen müssten wir genau das implementierte interface ändern, der rest ist eh gleiich xD vlt könnte mand as sogar noch schnell machen
+VSCode nennt das aber auch Go to Definition Müssen wir das überhaupt erwähnen? einfach streichen husthust? }
 
 \subsection{Rename}
 Rename is a feature that could only be added, since the symbol table provides all necessary information.
@@ -239,9 +243,24 @@ Since the symbol table reports occurences accross imported file as well, the ren
 
 
 
-\subsection{CodeLens} 
+\subsection{CodeLens}
+todo
+
+bessere anzeige, bessere laufzeit
+0 -- kann gelöscht werden
+1 - ingular
+2 plural
+ klick auf grauer text, popup geht auf. man kann sofort wie man es von codelens erwartet zu den verwendeten positionen springen sprich diese einsehen.
 
 \subsection{Automatic Code Completion}
+todo
+Basecase (aktueller scope)
+punkt - für das symbol verfügbare methoden und variablen werden vorgeschlagen
+new - nur klassen im aktuellen scope werden angezeigt
+
+bei der einfügung einer klasse nach "new" und bei einfügung von funktionen/methoden nach punkt werden klammern gesetzt.
+
+(krieg ich noch die anzeige von parametern hin? )
 
 \subsection{Symbol Table}
 All of the previous features, with the exception of auto completion, do not contain much logic theemselves.
@@ -283,9 +302,22 @@ Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebs
 Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
 (warum in der SA; plficht wegen dafny core. was ist mono)
 
+todo
+
 Leider funktionierts nicht.
 Anssaetze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
 github issues: allgemein probleme mit lunux/mac weil primaer auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle)
+
+ansatz in die implementation rein
+ergebnis "wir habens probiert", die nächsten machen dass dann
+
+- ms build wegen sonar, probleme in der SA mit core
+dotnet build sollen wir umstellen...
+unerer eig core fähig
+danfy braucht bei der SA framework.. abhängigkeiten machten alles kaput, mit manuel nicht fixen können, framework genommen
+inwzsichen ist diese dafny konsole / server weg weil wir das fancy gemacht haben
+evt bestehen diese abhängigkeiten gar nicht mehr; umstellung auf core könnte leicht sein
+mangelnde zeit daher nicht gemacht. als ausblick festhalten.
 
 \cite{sa}
 \cite{mono-slack}
@@ -304,3 +336,23 @@ The core layer of the project, containing \code{SymbolTable}, \code{Handler} and
 Aside the grob architectural layout, many small refactorings were made to keep the code clean.
 This includes the creation of smaller classes and smaller methods with single responsibilities.
 A good example for this is the config reading, which was one single large class at first. \intnote{evtl lassen oder weg, ka wie ich das noch refactftore und ob überhaupt.}
+
+todo interfaces erwähnen. super für s testing. auch wenn ned optimale testabdeckung aus zeitgründen. letzteres evt ned erwähnen.
+aber isolation und gegen interfaces programmiert. 
+
+\subsection{Client Architectural Improvements}
+todo
+Cleaner, kleinere componenten, bessere isolation
+verwendung von interfaces, kapselung. falls logik künftig eingefügt wird und man tests schreiben möchte; geht dank interfaces relativ gut.
+
+isolation von vscode komponenten
+kann so möglichst einfach auf andere IDEs migriert werden
+bsp atom... link dass es auch typescript und js verwendet...
+
+\subsection{Veroeffentlichung}
+todo
+- plugin live
+- rebase auf server machen
+- pull request dokumentieren -- signifikantes ergebnis -- man kanns verwenden
+
+beschreiben interface download, wie das ausgetaucht werden kann.

@@ -1,5 +1,5 @@
 \section{Design}
-This chapter contains discussions of fundamental design decisions.
+This chapter contains discussions of fundamental design decisions (todo planned before the implementation started oder so?).
 It is primarily divided into client and server architecture.
 
 \subsection{Technologies}
@@ -109,7 +109,7 @@ All other features, such as \textit{code lens} or \textit{auto completion} are n
 This means, that no additional client logic is necessary to support these features.
 Since \textit{compile} and \textit{counterexample} are custom requests, their handling has to be implemented manually within the client.
 
-If VSCode receives a \textit{auto completion} response, the LSP standard defines how VSCode has to handle it - 
+If VSCode receives a \textit{auto completion} response, the LSP standard defines how VSCode has to handle it -
 namely displaying the completion suggestions and insert the text which the user selects.
 This server-side-oriented implementation via the LSP is a great enrichment to keep the client lightweight.
 Adaption to other IDE's is very simple this way.
@@ -137,7 +137,7 @@ The logic contained in the client has been reduced to a minimum.
 This has the advantage, that porting the client to other IDEs is as easy as possible.
 This subchapter describes where and why the client still contains logic.\\
 
-{\bf Server Connection} \textendash{} \intnote{eig wär hier ein custom command, so subsubsubchaptermässig angezeigt. aber ich bin zu faul :P}
+{\bf Server Connection} \textendash{}
 Handling of the connection to the language server and sending API requests.
 In addition, the client has a simple logic that certain server requests (such as updating the counter example) are sent at most twice per second. \\
 

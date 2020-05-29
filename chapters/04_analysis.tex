@@ -1,4 +1,7 @@
 \section{Analysis}
+
+\intnote{Die andern hatten in ihrer arbeit noch:  Für jedes Features. Was tut es, warum implementieren, wer profitiert davon. sollen wir das auch machen? ja }
+
 \label{section:analysis}
 Since this bachelor thesis is a sequel of the preceding semester thesis, work could be directly continued.
 Many topics were already analyzed during the semester thesis.
@@ -144,7 +147,7 @@ The following three items have to be specified:
 \end{itemize}
 
 
-The parameter and response types can be custom classes and allow for maximal flexibility. \intnote{allow for - is that correct english?}
+The parameter and response types can be custom classes and more flexibility. \intnote{allow for - is that correct english? naja. huge. maximum. great. das sind alle sso worte gwesen, die er bei der SA nicht toll fand. - more.}
 The following skeleton code demonstrates how a custom request handler can be implemented:
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspcustomhandler}]
@@ -166,7 +169,53 @@ public class MyHandler : ICounterExampleHandler
 
 
 \subsection{Visual Studio Code Plugin}
-\intnote{todo. seite 16 SA.}
+To provide a plugin for Visual Studio code, a custom extension must be programmed.
+To get a rough understanding of how to build such an extension, and how to run and debug an own plugin, we already worked through a tutorial during our STUDIENARBEIT todo.
+In the tutorial "Your First Extension” basic concepts for own plugins were learned \cite{vscode-first-extension}.
+Examples for integrating a Language Server were found on the advanced examples page "Extension Guides" \cite{vscode-extensions}. \\
+
+Creating a simple plugin extension, generates the folder structure shown in figure \ref{fig:vs_code_extension_file_structure}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=100mm]{analysis/vs_code_extension_file_structure}
+    \caption{VSCode Extension File Structure}
+    \label{fig:vs_code_extension_file_structure}
+\end{figure}
+Davor ein Bild. \\
+Mehr dazu in Abbildung
+
+The primary components are the two TypeScript files for the extension manifest and the extension source code. \\
+
+Basic plug-in configurations are specified in the manifest.
+These include, for example, the name of the plugin, the version,
+command registrations and the specification of which files the plugin should be active on. \\
+
+The entry point for the program logic is in the extension source code.
+In principle this is a template method.
+
+\begin{lstlisting}[language=typescript, caption={extension.ts}, captionpos=b, label={lst:extension-file}]
+import * as vscode from 'vscode';
+
+// This method is called when the extension is activated.
+export function activate(context: vscode.ExtensionContext) {
+  // Entry point
+}
+\end{lstlisting}
+
+The logic contained in the client is reduced to the minimum necessary display of
+information and the basic registration of events such as the triggering of shortcuts.
+The primary logic is handled by the Dafny language server.
+To communicate with the language server, the language server must first be started locally as a process by the plugin. \\
+
+With the current version it is assumed that Dafny Language Server is automatically located in the appropriate directory.
+
+Since the Dafny language server is not part of the plugin delivery for the VS Code Marked Place,
+this is a problem for the plugin release.
+An automated download of the Dafny langauge server is currently missing. \\
+
+One goal of this bachelor thesis is to perform an automated download of the Dafny language server to the local machine of the user.
+This ensures the usability of the plugin when published via the VSCode Marked Place.
 
 
 \subsection{Dafny Language Features}
@@ -273,7 +322,7 @@ While the trait can define a class variable, any class deriving from it is not a
 Consider the following example.
 The commented code line would cause an error \cite{dafnyReferenceManual}.
 
-\begin{lstlisting}[caption={Hiding}, captionpos=b, label={lst:hiding}]
+\begin{lstlisting}[language=dafny, caption={Hiding}, captionpos=b, label={lst:hiding}]
 trait Base {
     var a: int
 }
@@ -617,10 +666,194 @@ Since the time frame of the bachelor thesis is limited, resources should rather 
 However, refactoring the code of Dafny itself is one of the possible extension points for this project.
 
 
+\subsection{Supported Features and Needed Improvements / Bisherige FUnktionen und nötige Verbesserungen}
+\label{section:analysis:features}
+
+In our existing work we have already realized a number of features.
+In the outlook, we have noted what improvements would be appropriate.
+This chapter describes the corresponding starting positions and the necessary improvements.
+It also describes how we intend to implement these improvements.
+
+\subsubsection{Syntax Highlighting}
+The syntax highlighting is realized through a given Dafny grammar file.
+The following screenshot \ref{fig:analysis_syntax_highlighting} shows how syntax highlighting looks inside Visual Studio Code. \\
+
+As you can see, keywords like method, returns, requires and ensures are marked in purple. Types like int are printed in blue and comments become green. Symbols, such as classes and methods, are displayed in a brownish color. Just these simple rules increase the readability significantly.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/syntax_highlighting}
+    \caption{Syntax Highlighting}
+    \label{fig:analysis_syntax_highlighting}
+\end{figure}
+
+In the current public plugin an update was made to the grammer file \cite{syntax_update}.
+Among other things, new keywords are now recognized and visually marked, such as "expect".
+This update will be applied to the Dafny grammar file for our plugin version as well.
+
+\subsubsection{Verification}
+The verification feature underlines logical errors in the user's code. An example is shown in the following figure \ref{fig:analysis_verification}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/verification}
+    \caption{Postcondition Violation}
+    \label{fig:analysis_verification}
+\end{figure}
+
+The logical verification is permanently active. The user just has to type Dafny code and it will be verified. The current version only supports logical errors, not syntax errors.
+
+Whenever an assertion or postcondition violation appears, the code block is underlined in red. The actual postcondition is underlined in yellow. The user can hover over the error to get additional information about the problem. \\
+
+In our thesis we want to extract the syntax errors from the Dafny diagnostic report and show them to the user as well.
+todo evt noch kurz genauer schreiben "wie wir das erreichen wollten / planten zu erhalten die info" \\
+
+In addition, it is noticeable that only the curly opening parenthesis is underlined in case of errors concerning methods.
+This can easily be overlooked by the user.
+For a more distinctive marking, we would now like to underline the complete method block from the opening to the closing parentheses.
+With the previous version, this implementation would have been possible only by extensive string parsing of the code - and that with every change to the Dafny code.
+With the planned renewal of the symbol table, we automatically have access to the information where the corresponding closing parenthesis of a code block is.
+
+\subsubsection{Compile}
+The user has two options to initiate compilation: He can just compile his software or he can additionally run it on a console. The commands are available as hotkeys, in the context menu or via the VSCode command bar. The client will save the document, send its URI, and the server will report back if compilation was successful. If any errors are present in the code, they are reported as a window notification as shown in figure \ref{fig:analysis_compile}. This includes syntax errors. If the compiled program can be run, a PowerShell instance is started directly inside Visual Studio Code.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/compile}
+    \caption{User Notification on Compile Errors}
+    \label{fig:analysis_compile}
+\end{figure}
+
+Dafny allows to specify own arguments for compilation.
+We want to offer the plugin user the possibility to specify individual arguments for compilation. \\
+
+On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VS Code can be used for individual argument input for each compile.
+todo quellen auf die funktionen von der vs code api
+
+\subsubsection{Counter Example}
+To show a counter example, the user has again the choice between a hotkey, the context menu or using the command bar. The counter example is then shown as a VSCode design element. If the user is no longer interested in the counter example, there is another command to hide it. The suppression of the counter model is completely handled inside the client. \\
+
+The example in figure \ref{fig:analysis_counter_example} demonstrates a counter example.
+The precondition is commented. Without this requirement, the postcondition can be violated with y = 0.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/counter_example}
+    \caption{Demonstration of Counter Examples}
+    \label{fig:analysis_counter_example}
+\end{figure}
+
+In the current version the counter example is automatically hidden when the Dafny code is changed.
+Even if the file is changed in the workspace, the counter example is hidden. \\
+
+New client logic is to be used to store for which files the counter example is to be displayed.
+So the counterexample can be displayed to the user again, as soon as he switches back to the original dafny file.
+Furthermore an automatic update of the counter example should take place.
+
+If the user inserts additional lines above the display of the counter example.
+This shifts the counter example together with the associated code down by the corresponding number of lines. \\
+
+In the future, the Language Server will parse the counterexample.
+This allows for the extraction of useful information for the user.
+This provides a clear and concise display and increases user friendliness.
+
+\subsubsection{Auto Completion for Identifiers}
+Whenever a valid interim result of a Dafny file is sent to the server, the file symbol table is created and buffered.
+As an example, if one would have a Dafny code snippet like below, the best and only match would be method m. This is exactly what is suggested for the user as you can see in figure \ref{fig:analysis_completion_1}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/analysis_completion_1}
+    \caption{Auto Completion for Instance of Class C}
+    \label{fig:analysis_completion_1}
+\end{figure}
+
+In addition auto completion is also able to provide general completion suggestions if one is not typing a word. In this case, just all available symbols are proposed. This is illustrated below in figure \ref{fig:analysis_completion_1}. Please also note that every symbol type (i.e. methods, classes and variables) has its own icon.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/analysis_completion_2}
+    \caption{General Suggestions with Symbol Types}
+    \label{fig:analysis_completion_2}
+\end{figure}
+
+Unfortunately, both implemented versions are neither very reliable nor very performant.
+Autocompletion was implemented via string matching.
+That means, if the auto completion is called after a dot, the word before the dot is extracted from the source code.
+Afterwards the complete symboltable is iterated through and as soon as a symbol with the matching name is found,
+it is assumed that this symbol is the originally declared symbol.
+If there is a symbol with the same name in different scope areas in a larger project,
+the autoocmpletion would no longer function properly. \\
+
+For the general suggestions, simply all the symbols found are suggested.
+This means that also symbols are suggested which are not visible in the current scope. \\
+
+As we now receive the originally required information through our new symbol table,
+the auto completion is to be rebuilt so that it functions reliably. \\
+
+Symbols can be reliably identified based on the position data in the new symbol table.
+Furthermore, the tree structure of the symbol table for auto completion allows us to use only
+to suggest the characters in the currently available character in the current scope. \\
+
+In addition, it would be very useful for users if the autocompletion is called after a "new"
+keyword and only available classes are automatically listed. This can be achieved by type filtering the symbols.
+
+\subsubsection{Go to Definition}
+With the "Go to Definition" feature, a user can simply use the context menu or hit F12 to go to the definition of the used symbol.
+In the following figure \ref{fig:analysis_goto_1}, you can see how a user would like to jump to the definition of the method m.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/analysis_goto_1}
+    \caption{Go to Definition via Context Menu}
+    \label{fig:analysis_goto_1}
+\end{figure}
+
+Please note that in the current version, the cursor has to be on the left side of the symbol's keyword. Once pressed, the cursor jumps instantly to the definition of the desired symbol as it is shown in the following figure \ref{fig:analysis_goto_2}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/analysis_goto_2}
+    \caption{Cursor Position after go to Definition}
+    \label{fig:analysis_goto_2}
+\end{figure}
+
+Go to definition uses a similar logic to autocompletion and is therefore just as unreliable.
+The name of the currently selected word is read from the cursor position.
+Afterwards the whole symbol table is iterated through - the first symbol with the same name is assumed to be the declaration.
+Then the position of this symbol is jumped to. \\
+
+Similar to auto completion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
+
+\subsubsection{CodeLens}
+todo manchmal code lens manchmal codelens \\
+
+Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol. As an example, the class C has been instantiated twice and the method m was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
+
+Unfortunately, clicking the grey references is not yet supported. This should open a popup box in which the corresponding uses are shown.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics{analysis/analysis_codelens}
+    \caption{CodeLens Example}
+    \label{fig:analysis_codelens}
+\end{figure}
+
+The current implementation of CodeLens does not have an optimal runtime. For each symbol found, each symbol in the symbol table is iterated again to compare whether one symbol is a use of the other symbol. This results in a quadratic runtime. \\
+
+With the new symbol table, each symbol knows how often and where it has been used.
+Therefore, we only have to iterate through the symbol table once.
+Furthermore, the iteration can be limited exclusivly to  declarations.
+
+
+\subsection{Continuous Integration (CI)}
+
 
 %%%%%%CI%&%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
-\intnote{ich würde ein eigenes CI-Kapitel aufschlagen... fragen nächste woche. weil das ci kapitel ist so bissl alles. von introduction (initial sit) bis hin zu analyse über lösung aka result/implementaiton\dots passt also iwie nirgends. länge rechtfertigt es auch locker ein eigenes kapitel zu sein.}
+\intnote{Analyse ist "was haben wir erreicht", Implementation "was haben wir getan, umgesetzt, verbessert", Project Management ist "darum haben wirs getan, für qualität". einverstanden? }
+
+todo machen 
 
 \subsection{Continuous Integration (CI)}
 Continuous integration is a very important part for code quality and collaboration.
