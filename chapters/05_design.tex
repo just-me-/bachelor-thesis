@@ -1,5 +1,5 @@
 \section{Design}
-This chapter contains discussions of fundamental design decisions (todo planned before the implementation started oder so?).
+This chapter contains discussions of fundamental design decisions that were made.
 It is primarily divided into client and server architecture.
 
 \subsection{Technologies}
@@ -207,8 +207,21 @@ export interface ICompilerResult {
 
 
 \subsection{Server}
-\intnote{noch ne übersicht iwo, wie figure 9 SA - todo}
-\intnote{iuntro todo, mimi, heir übersicht, gehen top down durch im folgenden}\\
+\intnote{noch ne übersicht figure iwo, wie figure 9 SA - todo}
+This subsection documents the architectural layout of the server.
+The server consists of \intnote{eight?} different packages:
+\begin{itemize}
+    \item Main: Starting of the language server
+    \item Handler: Components handling LSP requests
+    \item Core: Contains provider-classes that supply the handlers with the necessary information
+    \item WorkspaceManager: Represents the user workspace with its buffered files.
+    \item SymbolTable: Handles anything related to the symbol table (creation, navigation, access)
+    \item Tools: Individual, isolated services needed across the project.
+    \item Commons: Classes accessed from multiple components, such as the language server configuration.
+    \item Resources: Strings and filesystem resources.
+\end{itemize}
+
+The packages are discussed in a detailed matter below.\\
 
 \subsubsection{Main Component}
 The server's responsibility is to offer a language server that is able to reply to a client's request.
@@ -418,6 +431,7 @@ It would be the sixth class related to the config initialization.
 
 
 \subsubsection{Workflow Overview}
+%Sourcecode des flowgraphen:
 %Language Server->Handler:textdocument/rename
 %Handler->Provider:Forwarding request
 %Provider->WorkspaceManager:Requesting FileRepository
@@ -570,17 +584,17 @@ Tests can easily be organized into classes \textendash{} considering compilation
 
 \subsubsection{Performance Measurement}
 To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
-Within a classmethod, 10'000 LOC are generated, either containing
+Within a class method, 10'000 LOC are generated, either containing
 \begin{itemize}
     \item a variable definition: \code{var v142 := v16;}
     \item a variable access: \code{print v142;}
-    \item a blockscope: \code{while (true) \{ \dots}
+    \item a block scope: \code{while (true) \{ \dots}
     \item ending a blockscope: \code{\}}
 \end{itemize}
 The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 9'000 variable name segments, that have to be resolved.
 This challenges the symbol table quite a bit.
 Since the \code{textDocuemt/didOpen} notification is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
-Since we implemented compile in such a way, that it uses the precompiled dafnyProgram, we have chosen to run a compile command.
+Since we implemented compile in such a way, that it uses the precompiled \code{dafnyProgram}, we have chosen to run a compile command.
 The test has shown, that the process completes within 20 seconds on a 3.4GHz machine, which seems quite reasonable for such a large file.
 
 For reproducibility, nUnits randomizer was used, which will create the same 'random' test file on every run.
