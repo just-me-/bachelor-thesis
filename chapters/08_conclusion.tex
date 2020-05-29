@@ -1,129 +1,123 @@
 \section{Conclusion}
 \label{section:conclusion}
-Erreicht eund offene Ziele?
+Erreicht eund offene Ziele? am ende hab ich was. was waren ig die ziele? editier ruhig.
 
 
-This chapter concludes this paper by comparing the reached goals with the reached state. 
-It closes with some outlooks for future improvements.
+This chapter concludes the thesis by comparing the reached goals with the reached state. 
+It ends up with some outlooks for future improvements.
 
 \subsection{Project Summary}
 Overall, the project can be counted as a success.
-The preexisting features could be improved, and new, major features were added to create a comprehensive user experience.
+The features of the prototype could be improved significantly, and new, major features were added to create a comprehensive user experience.
 The plugin is quite robust and will recover from exceptional states.
-If something goes completely wrong, an option to restart the language server is available.
+If something goes completely wrong, an option to restart the language server is available.\\
 
-Due to timely reasons, the major flaw of the project is, that the symbol table (in particular: the visitor) could not be implmented completely.
-This allows only for a limited usabiltiy of the plugin, namely for the supported Dafny language features as stated in chapter \ref{section:analysis_dafnyASTStuff}.
+Due to timely reasons, the major flaw of the project is, that the symbol table (in particular: the visitor) could not be implemented completely.
+This allows only for a limited usability of the plugin, namely for the supported Dafny language features as stated in chapter \ref{section:analysis_dafnyASTStuff}.
 However, completing the visitor is not necessarily complex, but rather a diligence task.
 The reason we couldn't complete the visitor was just the limited time frame of the bachelor thesis.
-When time is fixed, scope ahs to be variable, thus we needed to cut out some Dafny language features from the visitor. \cite{keller}
+When time is fixed, scope has to be variable \cite{keller}, thus we needed to cut out some Dafny language features from the visitor.
 The foundation to complete it are set though.
-Thus, we are confident, that this will be done within further development of the plugin.
+Thus, we are confident, that this will be done within further development of the plugin.\\
 
 For us, it was important that the plugin will somehow stay alive, whenever it encounters language features that are not supported.
-It was targeted to just do nothing, whenever an exceptional state occurs, which worked out quite well.
+It was targeted to just do nothing, whenever an exceptional state occurs, which worked out quite well.\\
 
-Although the symbol table is incomplete, the plugin provides a great experience for someone taking his or her first steps in Dafny.
+Although the symbol table is incomplete, the plugin provides a great experience for someone taking first steps in Dafny.
 The target persona was the student, completing the HSR-internal exercises on Dafny, for which the plugin is more than sufficient.
-Our user experience tests have shown, that the plugin accomodates this requirement, and thus, the project is counted as a success.
+Our user experience tests have shown, that the plugin accommodates this requirement, and thus, the project is counted as a success.\\
 
 Since the symbol table is its own component, the existing features which base on the symbol table will automatically scale, once the symbol table is completely implemented.
-This means, that once the visitor is completed, the plugin automatically gained a lot of usability and can then also target more advanced users, that use more advanced language features.
+This means, that once the visitor is completed, the plugin automatically gains a lot of usability and can then also target more advanced users, that use more advanced language features.\\
 
-The \code{DafnyServer} component, which originates from old bachelor thesis \cite{ba}, could be be completely superseded by our new \code{DafnyAccess} package.
-The code is well organised, splitted in to components, and ready to be merged into the Dafny repoistory.
+The \code{DafnyServer} component, which originates from the pre-existing project, could be be completely superseded.
+The code is well organized, split into components, and ready to be merged into the Dafny repository. \intnote{vs. veröffentlichung letztes kapitel, ocnsistent sein hier, ka was wir am ende schreiben}
 
-\subsection{Deployment}
+\subsection{Deployment} \intnote{achtung keine widersprüche produzieren mit kap 7,e vtl hjier streichen.}
 One goal of the project was the deployment of the project.
 Fabian Hauser, our co-supervisor prepared already all necessary steps to deploy a preview version.
 For usage within the software engineering course, a deployment is absolutely viable.
 However, to target a wide audience, the symbol table implementation should be completed first.
 Thus, we would only deploy the plugin as a preview version.
-Nevertheless, the plugin acheived a well enough quality to be ready for deployment.
+Nevertheless, the plugin achieved a well enough quality to be ready for deployment.
 
 \subsection{Outlook}
 In this chapter, the further development of the project is described.
 
 \subsubsection{Completion of the Visitor}
-As mentioned previously in this section, the visitor should be completed to also target more advanced users.
-We left that task out, since it is very time consuming.
-Once this is done, the project instantly gains a lot of quality, since all features scale autmatically with the symbol table.
+As mentioned previously in this chapter, the visitor should be completed to also target more advanced users.
+Since time ran out, we could not complete it ourselves.
+Once this is done, the project instantly gains a lot of quality, since all targeted features scale automatically with the symbol table.
 While it was said that this is rather a diligence tasks, some problems may arise though.
-For example, when inheritence was implemented, a whole new challenged appeared.
+For example, when inheritance was implemented, a whole new challenged appeared.
 Declarations in base classes were not found, since we could no longer just move up the symbol tree.
-Possible inherited symbols had to be treated separetely.
+Possible inherited symbols had to be treated separately.
 Thus, the task of completing the visitor is not to underestimate.
 Especially if a new team takes over this task, they first of all have to get into the current project.
 This is non-trivial, since it has grown quite a lot.
 
 
-
 \subsubsection{LSP Extensions}
 The language server protocol \cite{lspspec} offers a lot more than what is currently implemented.
-Many of these features could now be easily implemented, since the symbol table offers all information required.
-Indeed, many of the following features can be implemented in just a few minutes to hours.
+Many of these features can now easily be implemented, since the symbol table offers all information required.
+Indeed, many of the following features can be implemented in just a few minutes to hours.\\
 
-In chapter \ref{chapter:ding} it was already mentioned, that 'textDocument/documentHighlight' is already completely supported by the symbol table.
-The feature highlights all occurences of a symbol, given a certain text position.
+In chapter \ref{chapter:ding} it was already mentioned, that 'textDocument/documentHighlight' \cite{lspspec} is already completely supported by the symbol table.
+The feature highlights all occurrences of a symbol, given a certain text position.
 The developer just has to request the symbol at the text position, which is passed by the client.
-Then, all occurences have to be requested, by just calling \code{symbol.GetAllOccurences()}.
-Finally, these occurences have to be assembled into the target response format \code{DocumentHighlight[]} and can be sent back to the client.
+Then, all occurrences have to be requested, by just calling \code{symbol.GetAllOccurences()}.
+Finally, these occurrences have to be assembled into the target response format \code{DocumentHighlight[]} and can be sent back to the client.
 
 \code{textDocument/documentHighlight} is actually very similar to \code{textDocument/rename} and would be a nice first step for a future development team,
-for example if this project gets further developed within another semester thesis.
+for example if this project gets further developed within another semester thesis.\\
 
-Aside highlight, the following LSP requests are also of interest for future development:
+Aside highlights, the following LSP requests are also of interest for future development:
 \begin{itemize}
     \item \code{workspace/workspace/didChangeWatchedFiles}: Actually handle the request (for example remove the file from the buffer if it was deleted) instead of ignoring the change.
-    \item \code{workspace/symbol}: A request that sends all, project-wide symbols to the client. This could be done relatively easy with the symbol table, for whatever purpsose.
+    \item \code{workspace/symbol}: A request that sends all, project-wide symbols to the client. This could be done relatively easy with the symbol table, for whatever purpose.
     \item \code{textDocument/didClose}: Currently, nothing is done. The proper file could actually be removed from the buffer in this case.
     \item \code{textDocument/signatureHelp}: A feature that allows to auto-fill the signature of something callable. For this, methods would have to remember their parameters, which could then be automatically filled using this request.
     \item Differentiation between \code{textDocument/definition}, \code{textDocument/declration}.
-    \item \code{textDocument/implementation}: Goto the implementation of a declared symbol.
+    \item \code{textDocument/implementation}: Go to the implementation of a declared symbol.
     \item \code{textDocument/formatting}: Auto Formatting would actually be simpler to implement than one may think. Since the symbol table keeps track of scopes, the scope depth is well known. Indentation could just be done according to the scope depth.
 \end{itemize}
 
 \subsubsection{More Refactorings}
-The language server protocol also offers a code action request. It can be used for quick fixes, which would be a nice addendum to the plugin.
+The language server protocol also offers a code action request.
+It can be used for quick fixes, which would be a nice addendum to the plugin.
 For example, if Dafny reports, that a semicolon is missing, a quick fix would just be to insert a semicolon at the target position.
-This is also something that could be done with little effort.
+This is also something that could be done with little effort.\\
 
 Aside quick fixes, the LSP also provides support for refactorings like extractions (extract method, extract variable...) \cite{lspspec}.
-The result can directly be transferred via the LSP within a \code{CodeAction} contianer, that contains all text edits which have to be done.
+The result can directly be transferred via the LSP within a \code{CodeAction} container, that contains all text edits which have to be done.
 Support for these refactorings would increase the quality of the plugin even further.
 The symbol table can also assist for these features.
 For example, for \textit{extract method}, the symbol table could provide information about what symbols have to passed as an argument, and which symbols are local variables and get extracted, too.
 This example shows, how far the benefits of the implemented symbol table reach.
-A whole new set of feature becomes possible. Bäm! \intnote{das bäm entfernen}
+A whole new set of feature became possible by our implementation of the symbol table.
 
 \subsubsection{Dafny Specific}
-Further extension points would be to work on dafny-specific features.
+Further extension points would be to work on Dafny-specific features.
 An optional goal of this bachelor thesis was the automated generation of contracts, which could not be implemented due to timely reasons.
 Thus, it remains as a possible extension point for the future.
-Here, even topics like AI come into play and the project would involve completely different fields of work.
+Here, even topics like AI come into play and the project would involve completely different fields of work.\\
 
-A feature, that was discussed already back at the preceding bachelor thesis \cite{ba}, is the support for debugging.
-However, this is a very complex topic and may not fit into the scope of a bachelor thesis.
+A feature, that was discussed already back at the preceding bachelor thesis \cite{ba}, was the support for debugging.
+However, this is a very complex topic and may not fit into the scope of a bachelor thesis.\\
 
 
-\subsubsection{More IDE}
+\subsubsection{More IDEs}
 Currently, only Visual Studio Code is supported.
-The idea of the language server protocol is, that the server is isolated and connect to various clients.
-Thus, a nice extension point would be to implement support for other IDE's, just like Eclipse or Atom.
+The idea of the language server protocol is, that the server is isolated and can connect to various clients.
+Thus, a nice extension point would be to implement support for other IDE's, like Eclipse or Atom.
 Within this bachelor thesis, the VSCode client was refactored completely and the code was cleaned up.
-thus, it is even more lightweight than before and adaption for other IDE's would not cost much effort.
-Support for the native LSP features should actually come out of the box.
-The client developer would just have to keep an eye on the additional features, namely compile and counter example.
-These require a minimal amount of extra code.
-For example, a mechanic has to be found to display a counter example inline.
+Thus, it is even more lightweight than before and adaption for other IDE's would not cost much effort.
+Support for the native LSP features come out of the box.
+The client developer would just have to implement the language server connection establishment and provide support for the additional features, namely compile and counter example.
 
 
-
-
-
-
-\subsection{Achieved Improvements compared to the preceding semester thesis}
-Regarding the goals provided by Fabian Hauser at the beginning of the thesis, the following goals could be completely achieved:
+\subsection{Achieved Improvements compared to the prototype}
+Regarding the goals provided by Fabian Hauser at the beginning of the thesis, the following goals could be reached:
 \begin{itemize}
     \item Client and Server are split into seperate repositories.
     \item Language Server was rebased to use the newest Dafny upstream
@@ -137,9 +131,6 @@ Regarding the goals provided by Fabian Hauser at the beginning of the thesis, th
     \item korrektur: ja, alles listen, weil wir eige iwrlich alles gemacht haben, je nachdem wie man sein CLEAAN interpretiert.
     \item clean git branching, hmm, ja, hus thsut.
 \end{itemize}
-
-
-
 
 
 \subsection{Metrics}

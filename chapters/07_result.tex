@@ -1,15 +1,14 @@
 \section{Results}
-
 \label{section:results}
-In this chapter, the achieved results of our work are described and critically reflected.
-The current version of the plugin supports numerous features:
+In this chapter, the achieved results of the project are described and critically reflected.
+The current version of the plugin supports the following features:
 \begin{enumerate}
     \item Syntax Highlighting
     \item Code Verification
     \item Compilation
     \item Counter Example
     \item Hover Information
-    \item Goto Definition
+    \item Go to Definition
     \item Rename
     \item Code Lens
     \item Autocompletion
@@ -18,20 +17,21 @@ The current version of the plugin supports numerous features:
 
 
 Aside the features, also architectural improvements are discussed,
-which facilitate further development of the project for other developers.
-
+which increase maintainability and facilitate future extensions of the project.
 
 \subsection{Accessibility}
-Some of the features are just active by default, namely the syntax highlighting and the code verifiction.
-Hover information triggers everytime the user moves his mouse over a symbol.
-This should happen by chance, or by accident.
-Auto completion triggers whenever the user enters a dot or types a \code{new} and will thus be discovered automatically.
+Some of the features are just active by default, namely syntax highlighting and code verification.
+The user perceives these features without any actions necessary.\\
+
+Hover information triggers every time the user moves his mouse over a symbol.
+This should happen by chance, or by accident.\\
+
+Auto completion triggers whenever the user enters a dot or types a \code{new} and will thus be discovered automatically. \intnote{stimmt das überhaupt?}
 Furthermore, the user can type \code{CTRL+Space} to trigger auto completion.
-Further functionality, such as goto definition, compile or rename, can be accessed via the context menu.
+Further functionality, such as go to definition, compile or rename, can be accessed via the context menu.
 Within the context menu, hotkeys are displayed, thus the user automatically learns how to increase his efficiency.
 
-Although there are a lot of different features, they are visible and perceivable to the enduser without the necessity of a tutorial.
-The user can start right away. \intnote{Ref auf usability tests. evtl noch ein bisschen mehr 'es ist voll geil zugänglich'}.
+Although there are a lot of different features, they are visible and perceivable to the end user without the necessity of a tutorial.
 
 \begin{figure}[H]
     \centering
@@ -40,22 +40,20 @@ The user can start right away. \intnote{Ref auf usability tests. evtl noch ein b
     \label{fig:result_contextmenu}
 \end{figure}
 
-\subsection{Intro}
-hier noch so:
-feature sind über context menü erreichbar
-hotkey einsehbar -> automatisches user learning für faster feature access
--> user sieht auch, was es alles so gibt
-voll geil.
-advanced shit, wie etwa farbe konfigurierbarkeit, launcha arguments, lo gplacement ist dann im readme.md für die advanced user, sodass der otto normalo SE2 student nicht überflutet wird.
+More advanced features that do not target the every day user are described in the \code{readme.md} file.
+These include:
+\begin{itemize}
+    \item Configuring colors
+    \item Setting language server arguments
+    \item Editing the language server config
+\end{itemize}
 
-andere feautres laufen einfach so, wie etwa syntax und veri
-
-\subsection{Sntax Highlighting}
-\label{section:result_syntaxhighgliht}
+\subsection{Syntax Highlighting}
+\label{section:result:syntaxhighgliht}
 Syntax highlighting is realized by a given Dafny grammar file.
 The file contains regex expressions defining the highlights.
 It is provided by Dafny \intnote{link reffen, ich find den link nicht} and could simply be downloaded.
-The feature was already implemented in the preceding term project \cite{sa}, thus no further actions had to be done.
+The feature was already implemented in the prototype, thus no further actions had to be done.
 The following screenshot shows how syntax highlighting looks inside Visual Studio Code.
 
 \begin{figure}[H]
@@ -65,41 +63,40 @@ The following screenshot shows how syntax highlighting looks inside Visual Studi
     \label{fig:result_syntax_highlight}
 \end{figure}
 
-As you can see, keywords like method, returns, requires and ensures are marked in purple.
-Types like int are printed in blue and comments become green. Symbols, such as classes and
-methods, are displayed in a brownish color. Just these simple rules increase the readability
-significantly.
+As you can see, keywords like \textit{method}, \textit{returns}, \textit{requires} and \textit{ensures} are marked in purple.
+Types like int are printed in blue and comments become green.
+Symbols, such as classes and methods, are displayed in a brownish color.
+Just these simple rules increase the readability significantly.
 
 
 \subsection{Verification}
-Verification was already implemented in the preceding project \cite{sa}.
-Previously, the feature held some major flaws.
-It only reporoted logical errors.
-Syntax errors were not reported.
-The code just invoked the preexisting Dafny Translation Unit, taken over by the original project \cite{ba}.
-Errors reported by Dafny were no longer respected.
-Only errors reported by Boogie were be tapped and reported to the user.
+Verification was already implemented in the prototype, too.
+At the start of the project, the feature held some major flaws.
+It only reported logical errors.
+Syntax errors were not announced.
+The code just invoked the \code{DafnyTranslationUnit}, taken over by the pre-existing project.\\
 
-Verification was reworked completely in course of this bachelor thesis.
-First of all, Dafny code it self was analyzed to get a better understanding of how Dafny compiles its code and how errors are reported.
+Verification was reworked completely during this project.
+First of all, Dafny code itself was analyzed to get a better understanding of how Dafny compiles its code and how errors are reported.
 Those errors could finally directly be extracted out of the Dafny error reporting engine.
 Thus, the user is now informed not only about logical errors, but also about syntax errors.
 Furthermore, warnings and information diagnostics are now also reported.
-This is something the original project \cite{ba} did not do and was actually already issued on the official Dafny git repository \cite{dafny_noWarnings}.
+Reporting warnings something the pre-existing project did not do and was actually already issued on the official Dafny git repository \cite{dafny_noWarnings}.
+With the symbol table, it is now also possible to underline complete code blocks, instead of just single symbols which were barely visible at the beginning of the project.
+This shows well how the quality of the tool could be improved.\\
 
-The feature directly invokes Dafny's compile engine, thus is quite solid and scales automatically with future Dafny features.
+The feature directly invokes Dafny's compile engine, thus works quite solid and scales automatically with future Dafny features.
 
-\intnote{Screnshot mit warning... ich krieg kein unreachable code warning hin wtf xD}
-
-\intnote{noch todo im code: Ganzer Block underlined oder immer noch nur das \{? hier noch ergänzen oder 'gekonnt verschweigen'}
+\intnote{todo Screnshot mit warning und ganzer codeblock... ers ist dumemrweise nicht so leciht dafny wrnings zu produzieren xD.}
 
 \subsection{Compile}
 The compile feature is strongly connected to the verification process.
 Prior to compilation, the whole Dafny project has to be verified anyway.
 Thus, since verification yields a precompiled \code{DafnyProgram}, the buffered result can be used to invoke the Dafny compiler.
-This makes the compilation process very snappy and responsive.
-If the code contains errors, the verificaiton process already failed and compilation can instantly be denied.
-However, if the code is fine, the precompiled \code{DafnyProgram} just has to be translated, which can be done relatively fast.
+This makes the compilation process very snappy and responsive.\\
+
+If the code contains errors, the verification process already failed and compilation can instantly be denied.
+However, if the code is fine, the precompiled \code{DafnyProgram} just has to be translated, which can be done quickly.
 
 The user also has the option to apply custom compilation arguments.
 These can be directly set within VSCode.
@@ -110,16 +107,14 @@ These can be directly set within VSCode.
     \label{fig:compilation_custom_args}
 \end{figure}
 
-These are directly handed to the Dafny options parser and are directly applied within the Dafny engine.
-Since compilation uses the precompiled Dafny program, compilation arguments that would actually affect the verification process have no effect.
-This is something that could be resolved by just restarting the verification process if custom arguments were given.
-Unfortunately, due to the hard project deadline, this could not be implemented anymore.
+Custom arguments are directly handed to the Dafny options parser and are applied within the Dafny engine.
+Since compilation uses the precompiled Dafny program, compilation arguments affecting the verification process have no effect.
+This is something that could be resolved by just restarting the verification process if custom arguments were given.\\
 
-Previously, compilation was implemented so that it just started a subprocess, launching \code{Dafny.exe} with any custom arguments given.
-This solution was obviously not integrated at all.
-To obtain compilation results, the console output of the subprocess was parsed and reported to the user.
-
-The current implementation is completely integrated, both, in terms of invocation and result reporting.
+In the prototype, compilation was implemented by just starting a sub-process, launching \code{Dafny.exe} with custom arguments given.
+To obtain compilation results, the console output of the sub-process was parsed and reported to the user.
+That solution was obviously not integrated at all.
+The current implementation improved that significantly, is now completely integrated, both, in terms of invocation and result reporting.
 
 \begin{figure}[h]
     \centering
@@ -129,22 +124,24 @@ The current implementation is completely integrated, both, in terms of invocatio
 \end{figure}
 
 
-A little flaw of this feature is, that if the user chooses the option to \code{Compile And Run}, while the compilation process finishes very quickly, the actual launch of the executable takes quite some time.
-However, this is nothing in scope of the language server.
-If the executable is launched manually within an other console outside of Visual Studio Code, it also takes quite some time until the program starts.
+If the user chooses the option to \code{Compile And Run}, the actual launch of the executable takes quite a long time - up to about 10 seconds.
+However, this delay is not related to the language server or the compilation process.
+If the executable is launched manually within another console outside of Visual Studio Code, it also takes long until the program starts.
+The effect just occurs the first time an executable is launched.
+The reason for that could not be investigated.
 
 \subsection{Counter Example}
-Providing counter examples was already possible in the previous projects.
+Providing counter examples was already possible in the prototype.
 A major flaw was, that the representation of the counter example was quite complex and not intuitively readable.
-Thus, it was a goal to ease the counter example representation.
+Thus, it was a goal to ease the counter example representation.\\
 
 For this, the related \code{model.bvd} file was studied.
-It is a quite cryptic file and getting a full understanding of it would be very complex.
-However, an \code{inital state} was located which seemed exactly that part of information, that the user is intersted in.
-Thus, unlike previous versions, only that \code{initial state} is considered in counter examples.
-Furthermore, any unreadable representations such as \code{**myVar} or \code{TU!Val23} were ommitted.
+It is quite a  cryptic file and getting a comprehensive understanding of it would be very complex.
+However, an \code{inital state} was located which seemed exactly that part of information, that the user is interested in.
+Thus, unlike previous in versions, only that \code{initial state} is considered in counter examples.
+Furthermore, any unreadable representations such as \code{**myVar} or \code{TU!Val23} were omitted.
 To allow the user to catch the information at first sight, obsolete brackets are also removed, and the minus sign is directly moved to the number.
-The expression \code{((- 23))} is therefore reformated into \code{-23}, making the term much more perceiveable.
+The expression \code{((- 23))} is therefore reformatted into \code{-23}, making the term much more perceivable.
 
 \begin{figure}[h]
     \centering
@@ -154,24 +151,23 @@ The expression \code{((- 23))} is therefore reformated into \code{-23}, making t
 \end{figure}
 
 Figure \ref{fig:ce_beforeafter} shows a comparison of the counter example feature between the initial state and at the end of the project.
-The representation is much cleaner and easier to catch.
+The representation is much cleaner and easier to immerse.
 Also note, that more room is given so that is does not have a clumsy effect on the user's eye. \intnote{die HCID Trulla reffen? Mehr raum?}
 
 This feature was also improved on the client side.
 The user has the option to configure the color scheme of the counter example representation, if he does not like the default colors.
-The default colors are chosen with respect to the user's base color theme (dark or light mode).
+The default colors are chosen with respect to the user's base color theme of VSCode (dark or light mode).
 The counter example will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
 If the user switches between windows, the counter example state is buffered, so that once the user switches back to the original window, the counter example will be shown again.
 
 
-
 \subsection{Hover Information}
-Hover information displays a set of information, whenever the user hovers with his mouse cursor over a code symbol.
-The feature itself was very simple to implement, since it basically just asks the newly implemented symbol table engine, what symbol at the cursor position is, and finally displays some information about the symbole.
-It was taken as an exemplary feature, to show off how easy some LSP functionality can now be implemented using the new symbol table.
-Similar to hover information, other features like text hihglighting could be added as well, which is discussed in chapter \ref{section:conclusion}.
-Hover may not provide much useful information to the user, but still can be used for debugging.
-For example, in figure \ref{fig:hover} the user can actually find out, where his symbol \code{field} is declared if he is unsure or what type it has.
+Hover information displays a set of information, whenever the user hovers with the mouse cursor over a code symbol.
+The feature itself was very simple to implement, since it receives all necessary information from the symbol table.
+It was additionally implemented as an exemplary feature, to show off how easy some LSP functionality can now be implemented using the new symbol table.
+Similar to hover information, other features like text highlighting can be added as well in the future, which is discussed in chapter \ref{section:conclusion}.
+Hover may not provide much useful information to the user, but it is still a nice gimmick.
+For example, in figure \ref{fig:hover} the user can actually find out, where his \code{field} is declared if he is unsure.
 
 \begin{figure}[h]
     \centering
@@ -181,11 +177,23 @@ For example, in figure \ref{fig:hover} the user can actually find out, where his
 \end{figure}
 
 \subsection{Go to Definition}
-Goto Definition is also a very simple feature.
-Similar to hover information, it will just ask what symbol is at the cursor's location.
-Then, it will request the symbol table backend to report the declaration of that symbol.
-Finally, the declaration origin location is returned to the lsp and the cursor jumps to it.
-To increase the user experience a bit further, notificaitons are sent to the user if the symbol was already a declaration, or if there is no valid symbol at the cursor posiition.
+Compared to the prototype, go to definition has been significantly improved.
+Prior to this bachelor thesis, the feature just scanned all code for the first name-match and reported it as the definition.
+This did neither work if multiple symbols with the same name occurred, nor if the declaration was placed after the first usage in the code.
+Both cases are now handled well by the symbol table engine.\\
+
+Runtime could also be improved, since the symbol table generator scans for possible declarations scope by scope, and doesn't just iterate over all symbols.
+Last but not least, in the prototype, the cursor had to be at the beginning of a symbol to recognize the symbol at all.
+This major flaw has of course been overcome.
+The cursor can now be at any character within a symbol.\\
+
+Technically, the feature is misnamed.
+A better name would actually be \code{Go to Declaration}, since it jumps to the symbol declaration, not definition.
+LSP would even offer a dedicated handler for this, \code{textDocument/declaration} \cite{lspspec}.
+\intnote{ich würd das so lassen aebr technisch gesheen müssten wir genau das implementierte interface ändern, der rest ist eh gleiich xD vlt könnte mand as sogar noch schnell machen
+VSCode nennt das aber auch Go to Definition (ja, weil der deinition handler implemented ist xD) Müssen wir das überhaupt erwähnen? einfach streichen husthust? erwähnen würd ich es aber tatsächlich, weil ich find das jetzt nicht so tragisch /schlimm. aber ich schau nächste woche mal noch, je nachdem ist das wirklich eine 2min arbeit. aber wenn dann alle grafiken und bla anders isnd, n ja. mal schauen.}
+
+To increase the user experience with this feature, notifications are sent to the user if an error occurred or the requested symbol was already a declaration.r
 \begin{figure}[h]
     \centering
     \includegraphics{results/goto.png}
@@ -195,48 +203,33 @@ To increase the user experience a bit further, notificaitons are sent to the use
 
 \intnote{die msg tut iwie nich xD is aber my bad hab da noch was geändert kürzlich. punkt 2: vscode reported das grad selber bei return null, damüssen wir unsere eigene notification eig net bringen.}
 
-Jumps can also be done accross different files.
+Jumps can also be done across different files.
 If the proper file is not opened, VSCode will just open it inside the workspace.
-It is also possible to go to the defintion of \code{this}-Expressions, which will just jump to the class definition.
-The feature works also accross code that is not within a blockstatement, for example for expressions occuring inside an \code{ensures}-clause.
+It is also possible to go to the definition of \code{this}-Expressions, which will just jump to the class definition.
+The feature works also across code that is not within a block statement, for example for expressions occurring inside an \code{ensures}-clause.
 
-Compared to the original implementation, goto definition has been significantly improved.
-Prior to this bachelor thesis, the feature just scanned all code for the first name-match and reported it as the definition.
-This did neither work if multiple symbols with the same name occured, nor if the declaration was placed after the first usage in the code.
-Both cases are now handled well by the symbol table generator.
-
-Runtime could also be improved, since the symbol table generator scans for possible declarations scope by scope, and doesn't just iterate over all symbols.
-Last but not least, the cursor had to be at the beginning of a symbol to actually recognize the cursor position at all.
-This has also been improved and the cursor can now be at any spot within a symbol.
-
-Technically, the feature is misnamed.
-A better name would actually be \code{Goto Declaration}, since it jumps to the symbol declaration, not definition.
-LSP would even offer a dedicated handler for \code{textDocument/declaration} \cite{lspspec}.
-\intnote{ich würd das so lassen aebr technisch gesheen müssten wir genau das implementierte interface ändern, der rest ist eh gleiich xD vlt könnte mand as sogar noch schnell machen
-VSCode nennt das aber auch Go to Definition Müssen wir das überhaupt erwähnen? einfach streichen husthust? }
 
 \subsection{Rename}
 Rename is a feature that could only be added, since the symbol table provides all necessary information.
-Just like hover and goto, the feature itself is very simple.
-Again it requests the symbol table at the cursor posiiton from the symbol table.
-Then all occurences of that symbol are demanded and that is already all information needed.
-Finally, a proper LSP response has to be assembled and is sent back to the client.
 
-We also tried to providee as much user experience as possible for this feature, even if it is relatively simple.
+It was embraced to provide as much user experience as possible for this feature, even if it is relatively simple.
 In particular, this means if there is no renamable symbol at the cursor, the user is informed by a notification.
 The algorithm will also check, if the new symbol name is valid.
 This means, it must not start with an underscore or it must not be any reserved Dafny word.
 Also, we limited the allowed new name to alphanumerical characters, although wild unicode names would be allowed by Dafny.
 
-This could even be driven further. For example, it coul be checked, wheater a symbol with the same new name already exists.
+This could even be driven further.
+For example, it could be checked, whether a symbol with the same new name already exists.
 Functionality for this is already available by the symbol table, since something similar is needed by autocompletion.
 Furthermore, it is currently not checked, if the new symbol name starts with a number, which is prohibited.
 That is also something that could easily be added. \intnote{das sind so one-liner im code... könnten wir echt nochs chnell umsetzen}
 
-Since Dafny reserved words may change in the future, the wordlist is configurable for the enduser by adjusting a config file.
-The process targets more advanced useres and is described in the readme file.
+Since Dafny reserved words may change in the future, the wordlist is configurable for the end-user by adjusting a config file.
+The process targets more advanced users and is described in the readme file.
 
-Since the symbol table reports occurences accross imported file as well, the rename feature works fine accross multiple files.
+Since the symbol table reports occurrences across imported files as well, the rename feature works fine across the complete workspace.
+
+\intnote{abschnitt gefällt mir mnicht, evtl neu schreiben. ist einfach blabla mit 0 inhalt.}
 
 
 
@@ -260,59 +253,47 @@ bei der einfügung einer klasse nach "new" und bei einfügung von funktionen/met
 (krieg ich noch die anzeige von parametern hin? )
 
 \subsection{Symbol Table}
-\intnote{abschnitt 1 kopiert von chap 6, noch 'integrieren'}
+The symbol table was newly implemented during this project.
+However, the prototype contained some symbol information that was already existing inside the pre-existing project.
+That symbol table was only containing a list of strings though.
+It was a very primitive approach of a symbol table.\\
 
-Since we have object information (and not just strings anymore) with our self-written symbol table,
-the whole position to string parsing was dropped. \\
+The new symbol table contains proper objects.
+Related information, such as the parent symbol, is now directly accessible.
+Any string parsing could be completely omitted compared to the prototype.
+This leads to better performance and above all to reliable symbol references.\\
 
-In our old version we had to find out from the current cursor position which word in the code could be meant.
-Then we iterated over the whole symbol table and checked if there was a symbol with the same string as name.
-The first match was looked at as a meant symbol. \\
-
-Our new design eliminates all of this effort and avoidable assumptions.
-We access the currently marked symbol directly via the position data.
-String comparisons and corresponding string extractions are completely eliminated.
-This leads to better performance and above all to reliable symbol references.
-
-To enable efficient access to the entry points, we have opted for a key-value data structure.
-The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
-This hash structure enables us to access child symbols with a runtime of O(1).
-Since every symbol also has a link to it's parent, navigation in both ways can be done within O(1).
-
-\intnote{bis heir}
-
-All of the previous features, with the exception of auto completion, do not contain much logic theemselves.
+All of the previous features, with the exception of auto completion, do not contain much logic themselves.
 They just request information from the symbol table and report it back to the client.
-While the features are implemented quite robust, they only work as long as the symbol table provides proper information.
+While the features are implemented quite robust, they only work as long as the symbol table provides proper information.\\
 
 Whenever the symbol table fails, the underlying features will also produce nonsense.
-Thus, a correct symbol table is very important for a nice functionality.
+Thus, a correct symbol table is crucial for correct functionality.\\
 
 Dafny is a programming language offering a lot of features.
-Aside common object oriented features, also functional programatic features are present.
-Figuer \ref{fig:DafnyAST} shows all classes occuring inside the Dafny AST.
+Aside common object oriented features, also functional programmatic features are present.
+Figure \ref{fig:DafnyAST} shows all classes occurring inside the Dafny AST.
 The writers are well aware, that the text in this figure is too small to be read.
-The figure should  show how many AST-elements are actually present in Dafny.
+The figure should indicate the humungous amount of AST-elements present in Dafny.
 Many of them are not just inheriting from \code{Expression} or \code{Statement}, but from individual base classes.
-Thus, implementing the visitor for all of them would have been too time consuming.
-Since the bachelor thesis has a limited time frame, it was necessary to limit the amount of Dafny language features we support.
+Thus, implementing the visitor for all of them turned out to be massively time consuming.
+Since the bachelor thesis is bounded by a limited time frame, it was necessary to limit the amount of Dafny language features we support.
 We decided to lay our focus on the Dafny tutorial, which is done within the software engineering at HSR.
 This way, the basic concepts of Dafny are supported.
 However, as soon as the user starts to use more advanced language features, a symbol may be introduced within a scope that is not visited by the visitor.
 If the user is using that symbol later on inside a common method body, the symbol table generator will be unable to locate the symbol's declaration and thus fail.
-An overview of the supported expressions and statements was given in chapter \ref{section:analysis_dafnyASTStuff}.
+An overview of the supported expressions and statements was given in chapter \ref{section:analysis_dafnyASTStuff}.\\
 
-\intnote{würd hjier nciht schreiben, was genau failed, oder? weil das fägnt schon bei arrays oder listen an. iwo bei implemetnation ahben wir ja geschrieben, was wir analyisert ahebn.}
+\intnote{würd hjier nciht schreiben, was genau failed, oder? weil das fägnt schon bei arrays oder listen an. iwo bei implemetnation ahben wir ja geschrieben, was wir analyisert ahebn. was meinst du marcel?}
 
-It is subject of further development, to complete the symbol table.
+It is subject of further development to complete the symbol table.
+It is the first priority in further development of the language server.
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{results/symboltable_dafnyast.png}
     \caption{All Dafny AST Classes}
     \label{fig:dafnyASTOverview}
 \end{figure}
-
-
 
 \subsection{Platform Independence / Mono Support for macOS and Linux}
 \intnote{welcher titel ist besser?}
@@ -348,15 +329,16 @@ During development, the code was constantly cleaned up and dependencies were res
 
 While the project is quite large and has a lot of dependencies, they could be well organized.
 As seen in figure \ref{fig:dependency_graph}, all dependency are now pointing downwards, just as it should be.
-Within the picture, dependencies to the Resources project are excluded for more overview.
-The core layer of the project, containing \code{SymbolTable}, \code{Handler} and \code{Core}, have some sidewards dependencies, which could not be avoided completely, since these packages are strongly coupled.
+Within the picture, dependencies to the \code{Resources} package are excluded for more overview.
+The core layer of the project, containing \code{SymbolTable}, \code{Handler} and \code{Core}, have some sideward dependencies, which could not be avoided completely, since these packages are strongly coupled.
 
-Aside the grob architectural layout, many small refactorings were made to keep the code clean.
+Aside the broad architectural layout, many small refactorings were made to keep the code clean.
 This includes the creation of smaller classes and smaller methods with single responsibilities.
-A good example for this is the config reading, which was one single large class at first. \intnote{evtl lassen oder weg, ka wie ich das noch refactftore und ob überhaupt.}
+A good example for this is the config initialization, which was one single large class at first.
+After refactoring, it was split into small, well organized sub-classes.
 
-todo interfaces erwähnen. super für s testing. auch wenn ned optimale testabdeckung aus zeitgründen. letzteres evt ned erwähnen.
-aber isolation und gegen interfaces programmiert. 
+Any important classes, such as handlers, providers or classes related to the symbol table are programmed against interfaces.
+This allows for optimal testing, for example by implementing the same interface with a fake instance.
 
 \subsection{Client Architectural Improvements}
 todo
@@ -367,10 +349,15 @@ isolation von vscode komponenten
 kann so möglichst einfach auf andere IDEs migriert werden
 bsp atom... link dass es auch typescript und js verwendet...
 
-\subsection{Veroeffentlichung}
-todo
+\subsection{Veröffentlichung}
+\intnote{todo}
 - plugin live
 - rebase auf server machen
 - pull request dokumentieren -- signifikantes ergebnis -- man kanns verwenden
 
 beschreiben interface download, wie das ausgetaucht werden kann.
+bin hier nicht draus gekommen genau.
+fabian sagt: pullt es zu mir, weil ich muss noch mono machen
+corbat sagt: ja ihr müsst schreiben, dass ihr es pullt, weil dann zähtl es als public.
+
+!!vorsicht kapitel 8 hat auh noch n absatz übers deployment (ab zeile zirka 36)

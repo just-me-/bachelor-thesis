@@ -329,6 +329,11 @@ For example, if a module \code{M} contains a class \code{C}, and within the clas
 The \code{[]} operator was overloaded to make this as convenient as possible:\\
 \code{rootSymbol["M"]["C"]["foo"]}.\\
 
+To enable efficient access to the children of a symbol, we have opted for a key-value data structure.
+The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
+This hash structure enables access to a child symbol with a runtime of $O(1)$.
+Since every symbol also has a link to it's parent, navigation in both ways can be done within $O(1)$.
+
 While this is very fancy, the convenience comes at a price.
 Many properties do not apply for all kinds of symbols.
 Consider the following code segment:
