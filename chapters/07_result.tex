@@ -263,6 +263,27 @@ bei der einfügung einer klasse nach "new" und bei einfügung von funktionen/met
 (krieg ich noch die anzeige von parametern hin? )
 
 \subsection{Symbol Table}
+\intnote{abschnitt 1 kopiert von chap 6, noch 'integrieren'}
+
+Since we have object information (and not just strings anymore) with our self-written symbol table,
+the whole position to string parsing was dropped. \\
+
+In our old version we had to find out from the current cursor position which word in the code could be meant.
+Then we iterated over the whole symbol table and checked if there was a symbol with the same string as name.
+The first match was looked at as a meant symbol. \\
+
+Our new design eliminates all of this effort and avoidable assumptions.
+We access the currently marked symbol directly via the position data.
+String comparisons and corresponding string extractions are completely eliminated.
+This leads to better performance and above all to reliable symbol references.
+
+To enable efficient access to the entry points, we have opted for a key-value data structure.
+The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
+This hash structure enables us to access child symbols with a runtime of O(1).
+Since every symbol also has a link to it's parent, navigation in both ways can be done within O(1).
+
+\intnote{bis heir}
+
 All of the previous features, with the exception of auto completion, do not contain much logic theemselves.
 They just request information from the symbol table and report it back to the client.
 While the features are implemented quite robust, they only work as long as the symbol table provides proper information.
