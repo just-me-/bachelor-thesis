@@ -67,7 +67,8 @@ todo haben wir hier überall die laufzeitanalyse? pro feature?
 programmierug gegen interface drinne? todo (testbarkei, isolation)
 
 \subsubsection{Server Launch}
-As done in common practice, the \code{Main} function is kept very short. All it does is launching the language server, which is already handled by another class.
+As done in common practice, the \code{Main} function is kept very short.
+All it does is launching the language server, which is already handled by another class.
 
 \begin{lstlisting}[language=csharp, caption={Main Function}, captionpos=b, label={lst:main}]
 public static async Task Main(string[] args)
@@ -77,12 +78,18 @@ public static async Task Main(string[] args)
 }
 \end{lstlisting}
 
-The launch of the server itself is devided into four stages. First, preparational work is done. This happens already in the constructor of the language server. Preparation includes
+The launch of the server itself is devided into four stages.
+First, preparational work is done.
+This happens already in the constructor of the language server.
+Preparation includes
 \begin{itemize}
     \item Reading and processing config variables
     \item Setting up the logging framework
 \end{itemize}
-Secondly, the actual server is launched. The logger will directly be injected and all handlers are registred. In the third stage, once the server is running, a message sending service is instanciated to notify the client about the successful server start and, if any, errors occured during startup. Lastly, the console output stream is redirected to keep the langauge server stream clean.
+Secondly, the actual server is launched.
+The logger will directly be injected and all handlers are registred.
+In the third stage, once the server is running, a message sending service is instanciated to notify the client about the successful server start and, if any, errors occured during startup.
+Lastly, the console output stream is redirected to keep the langauge server stream clean.
 
 \begin{lstlisting}[language=csharp, caption={Starting the Language Server}, captionpos=b, label={lst:serverstart}]
 public async Task StartServer()
@@ -100,30 +107,58 @@ Within the tools package, a variety of services can be found that do not necessa
 
 \textbf{Config Initializer}\\
 \intnote{kann man hier so subsubsubchapter machen? geht das iwie? sons tienfach so lassen oder?}
-This class is called prior to the server launch and initializes a few config settings. The settings are stored within the static class \code{Commons/LanguageServerconfig.cs}. The config initializer will first of all set hard coded default values to avoid any kind of null pointer exceptions. Afterwards, the file \code{Config/LanguageServerConfig.json} is parsed with Newtonsoft's Json.NET library \cite{jsondotnet}. Any available values will be written to the static configuration class. Unkown or illegal values will not be set and errors are added to a error reporter. Finally, the launch arguments are parsed, again overwritting the config settings if applicable or reporting errors otherwise. A simple argument parser was implemented manually. Alternatively, a library could have been used for this task such as \cite{clparser}. The config initalizer is implemented exception safe. This means that it will run to completion and at wrost just provide default values. Errors can later be extracted from the \code{InitializationErrors} property.\\
+This class is called prior to the server launch and initializes a few config settings.
+The settings are stored within the static class \code{Commons/LanguageServerconfig.cs}.
+The config initializer will first of all set hard coded default values to avoid any kind of null pointer exceptions.
+Afterwards, the file \code{Config/LanguageServerConfig.json} is parsed with Newtonsoft's Json.NET library \cite{jsondotnet}.
+Any available values will be written to the static configuration class.
+Unkown or illegal values will not be set and errors are added to a error reporter.
+Finally, the launch arguments are parsed, again overwritting the config settings if applicable or reporting errors otherwise.
+A simple argument parser was implemented manually.
+Alternatively, a library could have been used for this task such as \cite{clparser}.
+The config initalizer is implemented exception safe.
+This means that it will run to completion and at wrost just provide default values.
+Errors can later be extracted from the \code{InitializationErrors} property.\\
 
 \textbf{LoggerCreator}\\
 This class simply sets up a Serilog \cite{serilog} logger. For this purpose, it will already read from the static config class \code{Commons/LanguageServerconfig.cs} the information what the minimum loglevel is and where to locate the logfile.\\
 
 \textbf{MessageSenderService}\\
-This is a simple class accepting a \code{ILanguageServer} in the constructor. Afterwards, it provides methods to send notifications to the client. Simliar to logging, methods for each severity level are available, such as \code{public void SendError(string msg)}.\\
+This is a simple class accepting a \code{ILanguageServer} in the constructor.
+Afterwards, it provides methods to send notifications to the client.
+Simliar to logging, methods for each severity level are available, such as \code{public void SendError(string msg)}.\\
 
 \textbf{ReservedWordsProvider}\\
-This is a class reporting simply offering a method returning a set of words, that are not suited for identifiers. This is, for example, 'method', 'class', or 'return'. The class tries to read and parse \code{Config/ReservedDafnyWords.json}, which can be user adjusted in case the Dafny specification changes. If the file cannot be read or has a wrong format, a hard coded default list is used which was taken out from the Dafny Reference Manual \cite{dafnyReferenceManual}.\\
+This is a class reporting simply offering a method returning a set of words, that are not suited for identifiers.
+This is, for example, 'method', 'class', or 'return'.
+The class tries to read and parse \code{Config/ReservedDafnyWords.json}, which can be user adjusted in case the Dafny specification changes.
+If the file cannot be read or has a wrong format, a hard coded default list is used which was taken out from the Dafny Reference Manual \cite{dafnyReferenceManual}.\\
 
 While this component is specifically used solely for the \code{rename}-Feature, it was extracted to be also available at other spots if required for future features.\\
 
 \subsubsection{Handler}
-Handlers are passed to the language server and are called whenever the language server receives a corresponding request. Services, such logging or workspace management, can be injected and are thus available for the handler. Omnisharp directly defines interfaces, which have to be used for the handler implementation. For example, the interface \code{IDefinitionHandler} requires the class to implement a \code{Handle} method. Everytime the server receives a \code{textDocument/Definitions} request, this \code{Handle} method will be called. The parameter and return types are specific per request. Goto Definition would pass a textdocument location as input, namely the cursor position, and it expects a \code{LocationLink} as response, namely where the cursor should jump to. Own requests can be realized according to chapter \ref{chapter:customlspmsg} by defining an own interface. \\
+Handlers are passed to the language server and are called whenever the language server receives a corresponding request.
+Services, such logging or workspace management, can be injected and are thus available for the handler.
+Omnisharp directly defines interfaces, which have to be used for the handler implementation.
+For example, the interface \code{IDefinitionHandler} requires the class to implement a \code{Handle} method.
+Everytime the server receives a \code{textDocument/Definitions} request, this \code{Handle} method will be called.
+The parameter and return types are specific per request.
+Goto Definition would pass a textdocument location as input, namely the cursor position, and it expects a \code{LocationLink} as response, namely where the cursor should jump to.
+Own requests can be realized according to chapter \ref{chapter:customlspmsg} by defining an own interface. \\
 
 All handlers require two additional methods, aside the actual \code{Handle}:
 \begin{itemize}
-    \item GetRegistrationOptions: Is called when the handler is registred. It allows to set a document selector. This is, that the handler is only active for '.dfy' files.
+    \item GetRegistrationOptions: Is called when the handler is registred.
+    It allows to set a document selector.
+    This is, that the handler is only active for '.dfy' files.
     \item SetCapability: Allows to set handler-specific capabilities, such as if the rename-handler will also support a 'prepare rename' feature.
 \end{itemize}
-The code for these methods is always identical and was thus extracted to a generic base class. The generic type parameter refers to the kind of cabability, necessary for the \code{SetCapability} method. This could be, for example, \code{RenameCapability} which has the metnioned bool property about the preparation support.\\
+The code for these methods is always identical and was thus extracted to a generic base class.
+The generic type parameter refers to the kind of cabability, necessary for the \code{SetCapability} method.
+This could be, for example, \code{RenameCapability} which has the metnioned bool property about the preparation support.\\
 
-To keep all this boilerplate code separated from the core logic, the actual \code{Handle} method will in most cases just create a provider instance, where all core logic is placed, and forward its result. For example, the full code of handling a compilation looks as shown below.
+To keep all this boilerplate code separated from the core logic, the actual \code{Handle} method will in most cases just create a provider instance, where all core logic is placed, and forward its result.
+For example, the full code of handling a compilation looks as shown below.
 
 \begin{lstlisting}[language=csharp, caption={Handling Compilation}, captionpos=b, label={lst:handlecompilation}]
 public async Task<CompilerResults> Handle(CompilerParams request, CancellationToken cancellationToken)
@@ -142,23 +177,35 @@ public async Task<CompilerResults> Handle(CompilerParams request, CancellationTo
 }
 \end{lstlisting}
 
-This is a typical structure of handler. It requests the injected workspace manager for the file and passes it to the core logic provider. Finally, the result is returned as a result. In case of an error, a message is sent to the user and the error is logged within the \code{HandleError} method.\\
+This is a typical structure of handler.
+It requests the injected workspace manager for the file and passes it to the core logic provider.
+Finally, the result is returned as a result.
+In case of an error, a message is sent to the user and the error is logged within the \code{HandleError} method.\\
 
-Some handlers take additional actions, such as awaiting the result of the provider, and then sending user feedback according to the outcome. This way, the message sending service does not have to be passed downwards to the core logic component.
+Some handlers take additional actions, such as awaiting the result of the provider, and then sending user feedback according to the outcome.
+This way, the message sending service does not have to be passed downwards to the core logic component.
 
 \subsubsection{Workspace}
-The workspace is a component representing any opened files by the client. Thus, it naturally consists only of a single property. This is a dictionary, mapping a file-location to an internal file-representation:
+The workspace is a component representing any opened files by the client.
+Thus, it naturally consists only of a single property.
+This is a dictionary, mapping a file-location to an internal file-representation:
 
 \begin{lstlisting}[language=csharp, caption={Workspace Property}, captionpos=b, label={lst:workspaceproperty}]
 private readonly ConcurrentDictionary<Uri, FileRepository> _files
 \end{lstlisting}
 
-It offers methods to retrieve files and to update them.  Since updates can be down in two different kinds, incremental or full, the update method is overloaded.
+It offers methods to retrieve files and to update them.
+Since updates can be down in two different kinds, incremental or full, the update method is overloaded.
 
-More interesting is the class \code{FileRepository}, which is used as the internal representation of a file. It of course contains the source code. However, this is not done directly as a string property, but wrapped in a class \code{PhysicalFile}. Thus, the actual representation on the hard disk is separated even further. The \code{PhysicalFile} class can then also take responibility for applying file updates.
+More interesting is the class \code{FileRepository}, which is used as the internal representation of a file.
+It of course contains the source code.
+However, this is not done directly as a string property, but wrapped in a class \code{PhysicalFile}.
+Thus, the actual representation on the hard disk is separated even further.
+The \code{PhysicalFile} class can then also take responibility for applying file updates.
 \intnote{bild hier unbedingt mit workspace -> filerepo -> physfile/translationresult/symobltablemanager und methoden die hier beschrieben werden}.
 
-Aside the file content, each \code{FileRepository} will also contain \code{TranslationResults}. \code{TranslationResults} is a wrapper class for anything provided by the Dafny backend:
+Aside the file content, each \code{FileRepository} will also contain \code{TranslationResults}.
+\code{TranslationResults} is a wrapper class for anything provided by the Dafny backend:
 \begin{itemize}
     \item Could the file be parsed?
     \item Could it be verified?
@@ -168,7 +215,9 @@ Aside the file content, each \code{FileRepository} will also contain \code{Trans
     \item What internal compilation results could be produced for later reuse?
 \end{itemize}
 
-Last but not least, the newly implemented symbol table is also attached to the file repository. Thus, all information about a file is accessible from within the File Repository. To obtain all of these results, the class simply invokes the \code{SymbolTableGenerator} and the \code{DafnyTranslationUnit}.
+Last but not least, the newly implemented symbol table is also attached to the file repository.
+Thus, all information about a file is accessible from within the File Repository.
+To obtain all of these results, the class simply invokes the \code{SymbolTableGenerator} and the \code{DafnyTranslationUnit}.
 
 \begin{lstlisting}[language=csharp, caption={Handling Compilation}, captionpos=b, label={lst:handlecompilation}]
 public interface FileRepository
@@ -183,18 +232,30 @@ public interface FileRepository
 
 
 \subsubsection{DafnyAccess}
-Dafny Access it the package invoking the Dafny backend to obtain verification results. The core class in this package is the \code{DafnyTranslationUnit}. It was partially taken over from the preexisting projects, but as part of this bachelor thesis it was refactored and simplified.
+Dafny Access it the package invoking the Dafny backend to obtain verification results.
+The core class in this package is the \code{DafnyTranslationUnit}.
+It was partially taken over from the preexisting projects, but as part of this bachelor thesis it was refactored and simplified.
 
-In the constructor, the translation unit accepts a \code{PhysicalFile}. The class then offers a single public method \code{public TranslationResults Verify()}. Within the method, the following sequence of events occurs:
+In the constructor, the translation unit accepts a \code{PhysicalFile}.
+The class then offers a single public method \code{public TranslationResults Verify()}.
+Within the method, the following sequence of events occurs:
 \begin{enumerate}
-    \item It is checkd that the instance has never been used before. This is, since the error reporter must be empty. Otherwise, errors would be reported multiple times.
-    \item Next, Dafny is configured. This includes the registration of the Dafny error reporter and setting any options to default. The only non-default option is that the engine is supposed to generate a model file, which can later be used for counter example calculation. The configuration is shown in \ref{lst:setupdafnyoptions}.
-    \item The Dafny parser is called. This step will report any syntax errors.
-    \item The Dafny Resolver is called, if parsing was successful. This step will do semantic checks, such as type checks.
+    \item It is checkd that the instance has never been used before.
+    This is, since the error reporter must be empty.
+    Otherwise, errors would be reported multiple times.
+    \item Next, Dafny is configured.
+    This includes the registration of the Dafny error reporter and setting any options to default.
+    The only non-default option is that the engine is supposed to generate a model file, which can later be used for counter example calculation.
+    The configuration is shown in \ref{lst:setupdafnyoptions}.
+    \item The Dafny parser is called.
+    This step will report any syntax errors.
+    \item The Dafny Resolver is called, if parsing was successful.
+    This step will do semantic checks, such as type checks.
     \item If successful, the precompiled \code{DafnyProgram} will be split into \code{BoogieProgram}s.
     \item The Boogie Execution Engine is invoked to perform logical correctness checks on the \code{BoogieProgram}s.
     \item Any errors that were reported are collected, converted and provided in the field \code{\_diagnosticElements}
-    \item All results are wrapped by the \code{TranslationResult} class, providing the diagnostics, the dafny program and the boogie programs. Also, within the property \code{TranslationStatus}, it is remarked how far the verification and translation process succeeded.
+    \item All results are wrapped by the \code{TranslationResult} class, providing the diagnostics, the dafny program and the boogie programs.
+    Also, within the property \code{TranslationStatus}, it is remarked how far the verification and translation process succeeded.
 \end{enumerate}
 
 \intnote{evtl bild, so ablaufdiagramm}
@@ -215,7 +276,12 @@ private void SetUpDafnyOptions()
 
 \subsection{Symbol Table}
 This package provides four components:
-\intnote{Ich finde diese Aufzählungen haben wenig Aussage. Zusätzlich noch ein Klassendiagramm mässiges Bild mit Typ. Im Text noch beschreiben "was das ist/tut". todo}\\
+
+\intnote{Ich finde diese Aufzählungen haben wenig Aussage.
+Zusätzlich noch ein Klassendiagramm mässiges Bild mit Typ. edit: ja- kommt alles noch xD. bilder hab ich noch nicht gemacht :P cor bat findet aufzähleungen aber geil, drum müssenw ri damit nicht sparen
+Im Text noch beschreiben "was das ist/tut".
+todo}\\
+
 \begin{itemize}
     \item Symbol Information
     \item Symbol Table Generation
@@ -224,7 +290,10 @@ This package provides four components:
 \end{itemize}
 
 \textbf{Symbol Information}
-This is a component that summarizes all information about a symbol. Aside the name, this also includes the location, the parent, the declaration, children, and so forth. The class contains a lot of properties, but in exchange, it provides any information that is required. The most important properties are:
+This is a component that summarizes all information about a symbol.
+Aside the name, this also includes the location, the parent, the declaration, children, and so forth.
+The class contains a lot of properties, but in exchange, it provides any information that is required.
+The most important properties are:
 \begin{itemize}
     \item Name
     \item File
@@ -234,18 +303,28 @@ This is a component that summarizes all information about a symbol. Aside the na
     \item Link to Parent Symbol
     \item Link to Declaration Symbol
     \item Hash with all Children Symbols (Only Declarations)
-    \item List with all Descendants (Any symbol occuring in the body)
+    \item List with all Descendants (Any symbol occurring in the body)
     \item List with all Usages of the symbol
     \item BaseClasses
     \item The associated module
     \item Link to the associated default class for quick access.
 \end{itemize}
-The provided properties are supposed to make work with the symbols as comfortable as possible. For example, if a symbol's definition cannot be found, the proeprty with the associated default class can be used to search the symbol there. This is convenient, since the default class is in the global namespace and not a direct ancestor of a symbol.
+The provided properties are supposed to make work with the symbols as comfortable as possible.
+For example, if a symbol's definition cannot be found, the proeprty with the associated default class can be used to search the symbol there.
+This is convenient, since the default class is in the global namespace and not a direct ancestor of a symbol.
 
-Technically, the symbol table is more a tree, then table. The data structure is double linked. Each symbol knows about its descendants, but also about its ancestor. Navigating to either one can thus be done in O(1). If the name of a descendant is known, navigating to the symbol can also be done in O(1) due to the hash map. For exmaple, if a module 'M' contains a class 'C', and within the class there is a method 'foo', one can simply start from the root symbol and navigate through the hash maps. The \code{[]} was overloaded to make this as convenient as possible:\\
+Technically, the symbol table is more a tree, then table.
+The data structure is double linked.
+Each symbol knows about its descendants, but also about its ancestor.
+Navigating to either one can thus be done in O(1).
+If the name of a descendant is known, navigating to the symbol can also be done in O(1) due to the hash map.
+For exmaple, if a module 'M' contains a class 'C', and within the class there is a method 'foo', one can simply start from the root symbol and navigate through the hash maps.
+The \code{[]} was overloaded to make this as convenient as possible:\\
 \code{rootSymbol["M"]["C"]["foo"]}.\\
 
-While this is very fancy, the convenience comes at a price. Many properties do not apply for all kinds of symbol. Consider the following code segment:
+While this is very fancy, the convenience comes at a price.
+Many properties do not apply for all kinds of symbol.
+Consider the following code segment:
 
 \begin{lstlisting}[language=dafny, caption={Example Code Regarding Symbol Information}, captionpos=b, label={lst:aldbkajds}]
 method foo() {
@@ -254,23 +333,60 @@ method foo() {
 }
 \end{lstlisting}
 
-The symbol 'foo' profits by almost all properties. It can have children (the variable x), it has some parent, it can be used. Since foo is a method declaration, the declaration porperty of the symbol does not make sense. In this case, it actually just points to itself. The declaration of x in the second line will have many null values within the symbol information. While the parent is foo, it can not have any children. Since it is a variable definiton, it can have usages though. The final usage of x in the last line (which we also consider a symbol), does not even have usages, since it is a usage itself. Thus many properties are just null for that symbol.
+The symbol 'foo' profits by almost all properties.
+It can have children (the variable x), it has some parent, it can be used.
+Since foo is a method declaration, the declaration porperty of the symbol does not make sense.
+In this case, it actually just points to itself.
+The declaration of x in the second line will have many null values within the symbol information.
+While the parent is foo, it can not have any children.
+Since it is a variable definiton, it can have usages though.
+The final usage of x in the last line (which we also consider a symbol), does not even have usages, since it is a usage itself.
+Thus many properties are just null for that symbol.
 
 As a consequence, operating on the symbol table must be done with possible null reference expections in mind.
 
-Aside the properties, the \code{SymbolInformation} also offers a public method. This method will check if a certain location is wrapped by the symbol. This namely answers the question, if for example line 5, column 2 is within the symbol's body.
+Aside the properties, the \code{SymbolInformation} also offers a public method.
+This method will check if a certain location is wrapped by the symbol.
+This namely answers the question, if for example line 5, column 2 is within the symbol's body.
 
 \textbf{Symbol Table Creation}
-The symbol table generator accepts a precompiled dafny program in the constructor. It should be available after the dafny translation unit has been executed. The generator offers a public method \code{GenerateSymbolTable}. IT will then first of all create a virtual root symbol. Any other symbols will be attached to the root node as descendants. The root node is also the final return value.\\
+The symbol table generator accepts a precompiled dafny program in the constructor.
+It should be available after the dafny translation unit has been executed.
+The generator offers a public method \code{GenerateSymbolTable}.
+IT will then first of all create a virtual root symbol.
+Any other symbols will be attached to the root node as descendants.
+The root node is also the final return value.\\
 
-Then, all modules (similar to \Csharp or C++ namespaces) will be extracted out of the dafny program. The modules will be sorted by depth, so that top level modules will be treated first and nested modules can be attched properly later on.
+Then, all modules (similar to \Csharp or C++ namespaces) will be extracted out of the dafny program.
+The modules will be sorted by depth, so that top level modules will be treated first and nested modules can be attched properly later on.
 
-Once the modules are sorted by depth, the algorithm iterates over each of the modules. The proper parent symbol will be extracted. For a top level module, this is just the root symbol. Otherwise, for nested modules, the parent module will be located. Finally, the module will accept the declaration visitor. The visitor is described later. Once it completed, all declarations are registred in the symbol table. A second iteration is then started, using the deep visitor, which will ignore delcarations but run through all method bodies and take care of symbol usages.
+Once the modules are sorted by depth, the algorithm iterates over each of the modules.
+The proper parent symbol will be extracted.
+For a top level module, this is just the root symbol.
+Otherwise, for nested modules, the parent module will be located.
+Finally, the module will accept the declaration visitor.
+The visitor is described later.
+Once it completed, all declarations are registred in the symbol table.
+A second iteration is then started, using the deep visitor, which will ignore delcarations but run through all method bodies and take care of symbol usages.
 
 \textbf{Visitor}
-As already mentioned, the whole symbol table generation is realized using the visitor pattern. For that, Dafny code had to be adjusted to offer a \code{Accept(Visitor v)} metod. This method will basically just navigate through the internal dafny symbol representation. For example, when visiting a method, one would like to register the method itself. This is done by the expression \code{v.Visit(this)}. However, the method also contains an ensures statement, which may contain variables or such. Thus, all statements within the 'ensures' clause have to be visited. The Accept-Method will now just forward the call, using \code{foreach (var e in this.EnsureExpressions) {e.Accept(v)}}. The same applies for method parameters and other items like the requires clause. Finally, the body of the method is to visit using \code{foreach (var stmt in this.Body) {stmt.Accept(v)}}. Once everything is done, the scope of the method is left by calling \code{v.Leave(this)}.\\
+As already mentioned, the whole symbol table generation is realized using the visitor pattern.
+For that, Dafny code had to be adjusted to offer a \code{Accept(Visitor v)} metod.
+This method will basically just navigate through the internal dafny symbol representation.
+For example, when visiting a method, one would like to register the method itself.
+This is done by the expression \code{v.Visit(this)}.
+However, the method also contains an ensures statement, which may contain variables or such.
+Thus, all statements within the 'ensures' clause have to be visited.
+The Accept-Method will now just forward the call, using \code{foreach (var e in this.EnsureExpressions) {e.Accept(v)}}.
+The same applies for method parameters and other items like the requires clause.
+Finally, the body of the method is to visit using \code{foreach (var stmt in this.Body) {stmt.Accept(v)}}.
+Once everything is done, the scope of the method is left by calling \code{v.Leave(this)}.\\
 
-If you recall the last section, it was said that two runs are actually performed. One to capture all declarations, and one to visit all method bodies. Thus, the visitor is having a boolean \code{GoesDeep}, which decideds if bodies like occuring at a method are visited at all. The final Accept method for a method looks as shown below. The method is shortened, there are more clauses like for example the requires clause.
+If you recall the last section, it was said that two runs are actually performed.
+One to capture all declarations, and one to visit all method bodies.
+Thus, the visitor is having a boolean \code{GoesDeep}, which decideds if bodies like occuring at a method are visited at all.
+The final Accept method for a method looks as shown below.
+The method is shortened, there are more clauses like for example the requires clause.
 
 
 \begin{lstlisting}[language=csharp, caption={Accepting a Visitor}, captionpos=b, label={lst:visitoraccept}]
@@ -291,13 +407,25 @@ public override void Accept(Visitor v)
   v.Leave(this);
 }
 \end{lstlisting}
-Note that the method is marked with the override keyword. This is, since every AST-Element is either a statement or an expression, among others. In case we left out a speicific AST element, just a general accept method is defined for statements, as well as expressions. However, for AST elements that we support, a more specific method is supposed to be used. (hmm abschnitt weg? is gebrabbel)
+Note that the method is marked with the override keyword.
+This is, since every AST-Element is either a statement or an expression, among others.
+In case we left out a speicific AST element, just a general accept method is defined for statements, as well as expressions.
+However, for AST elements that we support, a more specific method is supposed to be used. (hmm abschnitt weg? is gebrabbel)
 
-On the other hand of the visitor, there is the actual Visitor. The visitor now has to implement \code{Visit} methods for each of the AST elements that it is supposed to visit, for example our \code{Method} from the preceding example.\\
+On the other hand of the visitor, there is the actual Visitor.
+The visitor now has to implement \code{Visit} methods for each of the AST elements that it is supposed to visit, for example our \code{Method} from the preceding example.\\
 
-The Visitor itself will now actually build up the symbol table. For that, it stores the current scope in a property. For example, when visiting a method, the parent scope is always some kind of class that was visisted before. When the method is finally visisted, the property 'parent' can just be set with the scope the visitior is in. Since the method itself will have it's own body, the new scope can then be set to a method. This will attach all symbols to the method. Once the method is done, \code{Leave()} is called, which will reset the scope to the class.\\
+The Visitor itself will now actually build up the symbol table.
+For that, it stores the current scope in a property.
+For example, when visiting a method, the parent scope is always some kind of class that was visisted before.
+When the method is finally visisted, the property 'parent' can just be set with the scope the visitior is in.
+Since the method itself will have it's own body, the new scope can then be set to a method.
+This will attach all symbols to the method.
+Once the method is done, \code{Leave()} is called, which will reset the scope to the class.\\
 
-The Visit method of the first visitor, which only takes care of declarations, will itself just create a symbol, and attach it to the current scope. All required information can be taken from the AST element that is visited. This includes the name, the position, and so on.\\
+The Visit method of the first visitor, which only takes care of declarations, will itself just create a symbol, and attach it to the current scope.
+All required information can be taken from the AST element that is visited.
+This includes the name, the position, and so on.\\
 
 \begin{lstlisting}[language=csharp, caption={Visiting a Method}, captionpos=b, label={lst:visitorvisit1}]
 public override void Visit(Method o)
@@ -321,15 +449,29 @@ public override void Visit(Method o)
 }
 \end{lstlisting}
 
-The \code{CreateSymbol} method will set all properties accordingly. That means, a symbol that can have children will be initialized with a list for children, while a symbol that cannot have children will just have a null entry there. Note that the scope of the visitor is set to the method for future visitations.
+The \code{CreateSymbol} method will set all properties accordingly.
+That means, a symbol that can have children will be initialized with a list for children, while a symbol that cannot have children will just have a null entry there.
+Note that the scope of the visitor is set to the method for future visitations.
 
-The second visitor will also visit declarations, but no longer create a symbol for them. Instead, just the proper scope will be set. The second visitor will now also visit method bodies. Within the body, it will encounter local variables. These were not caught by the first visistor, but this is ok, since local variables are not accessible before they weren't declared.  Furthermore, symbol usages such as method calls or variable usages are now encountered. The visitor now has the responsibility, to create proper symbols for these. Since these are symbol usages, it is not sufficient to just create a symbol and attach it to the parent scope. The following additional tasks have to be done:
+The second visitor will also visit declarations, but no longer create a symbol for them.
+Instead, just the proper scope will be set.
+The second visitor will now also visit method bodies.
+Within the body, it will encounter local variables.
+These were not caught by the first visistor, but this is ok, since local variables are not accessible before they weren't declared.
+Furthermore, symbol usages such as method calls or variable usages are now encountered.
+The visitor now has the responsibility, to create proper symbols for these.
+Since these are symbol usages, it is not sufficient to just create a symbol and attach it to the parent scope.
+The following additional tasks have to be done:
 \begin{itemize}
     \item Where am I declared?
     \item Add usage to my declaration
 \end{itemize}
 
-To find the declaration, the symbol table navigator can already be used. It is discussed below. The navigator will just iterate from parent to parent and will return the first symbol, that is a declaraiton, and matches the name. Challenges occured when a symbol is defined in global scope or in a base class. Both difficulties were resolved by adding separate checks for them.
+To find the declaration, the symbol table navigator can already be used.
+It is discussed below.
+The navigator will just iterate from parent to parent and will return the first symbol, that is a declaraiton, and matches the name.
+Challenges occured when a symbol is defined in global scope or in a base class.
+Both difficulties were resolved by adding separate checks for them.
 
 Once the declaration is found, it is simple to add the just newly created symbol as one of the declaration's usages.
 
@@ -343,10 +485,12 @@ protected ISymbol FindDeclaration(string target, ISymbol scope, Kind kind)
     return navigator.BottomUpFirst(scope, filter);
 }
 \end{lstlisting}
-This snippet assigns the navigator to move upwards in scope and serach for a symbol, that is a declaration and matches in name and kind. If found, the proper symbol must be the according declaration.
+This snippet assigns the navigator to move upwards in scope and serach for a symbol, that is a declaration and matches in name and kind.
+If found, the proper symbol must be the according declaration.
 
 \textbf{Symbol Table Navigator}
-To operate on the (partially) constructed symbol table, a separate component to navigate was created. It has basically two procedures.
+To operate on the (partially) constructed symbol table, a separate component to navigate was created.
+It has basically two procedures.
 Remember that the data structure of the symbol table is basically a double linked tree.
 
 \begin{itemize}
@@ -360,10 +504,22 @@ Remember that the data structure of the symbol table is basically a double linke
 \intnote{Keine apostriche als abkürzungen. keine "you" sondern indirekte ansprachen. one.} \\
 
 
-Both options are implemented so that they can return a single, first match, or any symbols that match a criterion. To illustrate this, let us have a look at two examples.
+Both options are implemented so that they can return a single, first match, or any symbols that match a criterion.
+To illustrate this, let us have a look at two examples.
 \begin{itemize}
-    \item You want to know what symbol is at the cursor position. You call \code{TopDown} and pass the rootSymbol, as well as the cursor position as arguments. The rootSymbol hast 3 modules attached to it. One ranging from line 1 to 20, another ranging from line 21 to 40. The algorithm will now decide, in which of the two modules a further search is worthwile. If the cursor is located at line 25, it will continue to search in the second module. This can simply be done by calling the same function recursively, handing the second module as the entry point for the recursive search. Within the recursive call, the proper class will be found, and so on. Default namespaces and default clases had to be treated separately for this case.
-    \item To build up autocompletion suggestions, you want to know what declarations are available at the symbol you found just before. Thus, you navigate to the parent symbol, and then you collect all children of that symbol. Then, again, go to the next parent and continue like that until the rootSymbol is reached. Again, the problem can be solved using recursion.
+    \item You want to know what symbol is at the cursor position.
+    You call \code{TopDown} and pass the rootSymbol, as well as the cursor position as arguments.
+    The rootSymbol hast 3 modules attached to it.
+    One ranging from line 1 to 20, another ranging from line 21 to 40.
+    The algorithm will now decide, in which of the two modules a further search is worthwile.
+    If the cursor is located at line 25, it will continue to search in the second module.
+    This can simply be done by calling the same function recursively, handing the second module as the entry point for the recursive search.
+    Within the recursive call, the proper class will be found, and so on.
+    Default namespaces and default clases had to be treated separately for this case.
+    \item To build up autocompletion suggestions, you want to know what declarations are available at the symbol you found just before.
+    Thus, you navigate to the parent symbol, and then you collect all children of that symbol.
+    Then, again, go to the next parent and continue like that until the rootSymbol is reached.
+    Again, the problem can be solved using recursion.
 \end{itemize}
 Note that this navigation can be executed very fast.
 
@@ -378,16 +534,24 @@ Note that this navigation can be executed very fast.
 
 
 \textbf{Symbol Table Manager}
-The manager is a rather simple component and can be used as an access point for the user of the symbol table. It is constructed by handing over a root symbol of a fully generated symbol table. It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}. That method will then just create a navigator and use the (maybe rather complex navigator) to provide the user with the desired result.
+The manager is a rather simple component and can be used as an access point for the user of the symbol table.
+It is constructed by handing over a root symbol of a fully generated symbol table.
+It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}.
+That method will then just create a navigator and use the (maybe rather complex navigator) to provide the user with the desired result.
 
 
 \subsubsection{Core}
-In this package, the actual task of providing results for the server is done. Often, not much code is necessary, since the symbol table provides all necessary information. In this subchapter, a few features are explained more in detail.
+In this package, the actual task of providing results for the server is done.
+Often, not much code is necessary, since the symbol table provides all necessary information.
+In this subchapter, a few features are explained more in detail.
 
 \textbf{Goto Definition}\\
-Goto Definition is a very simple feature once the symbol table is created. As parameters, it receives a location in a file. All this provider does, is ask the \code{SymbolTaleManger} what symbol is at that position, jumps to the declaration of that symbol, and converts the declaration position to the proper response format.
+Goto Definition is a very simple feature once the symbol table is created.
+As parameters, it receives a location in a file.
+All this provider does, is ask the \code{SymbolTaleManger} what symbol is at that position, jumps to the declaration of that symbol, and converts the declaration position to the proper response format.
 
-To provide a better usabilty, it does a few further checks, such as checking if the symbol already was a definition or if no result could be found at all. The results are stored in an \code{Outcome} property, which the handler can use to send proper client feedback.
+To provide a better usabilty, it does a few further checks, such as checking if the symbol already was a definition or if no result could be found at all.
+The results are stored in an \code{Outcome} property, which the handler can use to send proper client feedback.
 
 \begin{lstlisting}[language=csharp, caption={Providing Goto Definition}, captionpos=b, label={lst:gotoCore}]
 public LocationOrLocationLinks GetDefinitionLocation(Uri uri, int line, int col)
@@ -414,12 +578,19 @@ public LocationOrLocationLinks GetDefinitionLocation(Uri uri, int line, int col)
 \end{lstlisting}
 
 \textbf{DiagnosticProvider}
-This component is called everytime a document is updated. It accepts a \code{FileRepository} as an argument. Within the repository, the translation results are stored, including the diagnostics. This component will read the diagnostic, convert them to an LSP-suitable format, add usability information, and finally send the result back to the client.
+This component is called everytime a document is updated.
+It accepts a \code{FileRepository} as an argument.
+Within the repository, the translation results are stored, including the diagnostics.
+This component will read the diagnostic, convert them to an LSP-suitable format, add usability information, and finally send the result back to the client.
 
 \intnote{}
 
 \textbf{HoverProvider}
-This component ist very simple. It just requests the \code{SymbolTableManager} to provide the symbol at the hover location. The hover location is passed as an argument within the request. Afterwards, basic information about the symbol is assembled and returned. That information includes \begin{itemize}
+This component ist very simple.
+It just requests the \code{SymbolTableManager} to provide the symbol at the hover location.
+The hover location is passed as an argument within the request.
+Afterwards, basic information about the symbol is assembled and returned.
+That information includes \begin{itemize}
     \item A quick summary, including the name and the location
     \item Symbol Kind
     \item Symbol Type
@@ -428,16 +599,23 @@ This component ist very simple. It just requests the \code{SymbolTableManager} t
 \end{itemize}
 
 \textbf{RenameProvider}
-Rename is another feature that profits strongly by the symbol table. Again the feature requests the symbol at the cursor. Afterwards, it jumps to it's declaration. The declaration has all usages of the symbol stored, and thus, all occurences are known. The provider will now just assemble a \code{WorkspaceEdit} and return it. The \code{WorkspaceEdit} contains the new name and as well all \code{Range}s, where the name has to be applied.
+Rename is another feature that profits strongly by the symbol table.
+Again the feature requests the symbol at the cursor.
+Afterwards, it jumps to it's declaration.
+The declaration has all usages of the symbol stored, and thus, all occurences are known.
+The provider will now just assemble a \code{WorkspaceEdit} and return it.
+The \code{WorkspaceEdit} contains the new name and as well all \code{Range}s, where the name has to be applied.
 
-Additionally, the rename provider performs a few checks, if the new name is valid. The checks are
+Additionally, the rename provider performs a few checks, if the new name is valid.
+The checks are
 \begin{itemize}
     \item Name must not start with and underscore
     \item Name must not be a reserved word, such as 'method'
     \item Name must not contain any other then alphanumerical dinger or underscores
 \end{itemize}
 
-The last check is stronger than it needs to be, but since special characters are extremely uncommon in programming, it is well suitable. It was mainly implemented to prohibit brackets in names.
+The last check is stronger than it needs to be, but since special characters are extremely uncommon in programming, it is well suitable.
+It was mainly implemented to prohibit brackets in names.
 
 
 Eigentliche logik. implementiert interface. Die Features ev einzln druch, msus man fast, hat ja vieles interessantes, z.b. so diagnostic conversion (wobie xcdas bei dafny access is)
@@ -457,7 +635,11 @@ reicht daten für codelens popup an den client wieter; ruft vs code feature auf.
 beide aspekte werden durch integration tests abgedeckt
 
 \textbf{Compilation}\\
-Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the FileRepository. This also includes the precompiled \code{DafnyProgram}. The compilation provider will take advantage of that and use the precompiled item, and just hand it forwards to the compiler engine. Prior to the compilation, custom compilation arguments are installed if the user provided any. The process is fully integrated into the DAfny backend by using
+Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the FileRepository.
+This also includes the precompiled \code{DafnyProgram}.
+The compilation provider will take advantage of that and use the precompiled item, and just hand it forwards to the compiler engine.
+Prior to the compilation, custom compilation arguments are installed if the user provided any.
+The process is fully integrated into the DAfny backend by using
 
 \begin{lstlisting}[language=csharp, caption={Calling the Dafny Compiler}, captionpos=b, label={lst:dafnycompiler}]
 DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwriter);
@@ -466,9 +648,19 @@ DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwr
 The provider will check, if any errors occured and return the outcome within a wrapper class.
 
 \textbf{Counter Example}\\
-This feature bases on the model file, which is generated during verification. The model file is a key-value store generated by Boogie. It contains several states. Each state tracks the content of variables during different stages of the proof. Of interest is primarily the \textit{initial} state, since this one tells how the variables need to be set at the beginning to achieve a counter example.
+This feature bases on the model file, which is generated during verification.
+The model file is a key-value store generated by Boogie.
+It contains several states.
+Each state tracks the content of variables during different stages of the proof.
+Of interest is primarily the \textit{initial} state, since this one tells how the variables need to be set at the beginning to achieve a counter example.
 
-This provider reads the model file, uses the Boogie backend to convert into a useful format. Afterwards it extracts the initial state from the model. Out of the remaining model, all key-value-pairs containing useful information are extracted, assembled and returned. The component will also transform information into a more human readable format, e.g. $((- 12)) \rightarrow -12$. Furthermore, many values are internal boogie references and cannot be resolved. These just look like \code{T@U!val!12}. Such values are replaced with the text \code{[Object Reference]}.
+This provider reads the model file, uses the Boogie backend to convert into a useful format.
+Afterwards it extracts the initial state from the model.
+Out of the remaining model, all key-value-pairs containing useful information are extracted, assembled and returned.
+The component will also transform information into a more human readable format, e.g. $((- 12)) \rightarrow -12$.
+Furthermore, many values are internal boogie references and cannot be resolved.
+These just look like \code{T@U!val!12}.
+Such values are replaced with the text \code{[Object Reference]}.
 
 
 
@@ -488,11 +680,15 @@ In particular auto completion, go to definition, CodeLens, hover information and
 Due to the structure of our Symbol table (which is updated after every change in a Dafny file)
 the basic information is provided by references.
 Each symbol carries references to its child simbols, to the parent symbol, to the original declaration and much more information.
-All these references were prepared when the symbol table was created. You can therefore call them immediately (runtime O(1)).  \intnote{Das steh talles schon oben...}
+All these references were prepared when the symbol table was created.
+You can therefore call them immediately (runtime O(1)).  \intnote{Das steh talles schon oben...}
 
 The difficulty lies in finding the "entry symbol".
 
-The navigation component described above is used for this. The system uses the cursor position to find the deepest symbol that encloses the cursor position. This symbol is the entry point. And to find this symbol, the longest runtime is required for the features - apart from the creation of the actual symbol table of course.
+The navigation component described above is used for this.
+The system uses the cursor position to find the deepest symbol that encloses the cursor position.
+This symbol is the entry point.
+And to find this symbol, the longest runtime is required for the features - apart from the creation of the actual symbol table of course.
 
 \textbf{Das hier nach results (klassischer vorher nachher verlgeich)}
 
@@ -508,18 +704,23 @@ We access the currently marked symbol directly via the position data.
 String comparisons and corresponding string extractions are completely eliminated.
 This leads to better performance and above all to reliable symbol references.
 
-To enable efficient access to the entry points, we have opted for a key-value data structure. The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
-This hash structure enables us to access child symbols with a runtime of O(1). Since every symbol also has a link to it's parent, navigation in both ways can be done within O(1).
+To enable efficient access to the entry points, we have opted for a key-value data structure.
+The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
+This hash structure enables us to access child symbols with a runtime of O(1).
+Since every symbol also has a link to it's parent, navigation in both ways can be done within O(1).
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing}
 
-This chapter provides a general overview of the testing. It is split into unit, integration and system tests. To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
+This chapter provides a general overview of the testing.
+It is split into unit, integration and system tests.
+To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
 
 \subsubsection{Unit Tests}
-Our core logic components all use an interface. When using components, programming is done exclusively against the corresponding interface. \\
+Our core logic components all use an interface.
+When using components, programming is done exclusively against the corresponding interface. \\
 
 This encapsulation of components allows essential core logic to be efficiently covered by unit tests. \\
 
@@ -528,12 +729,18 @@ Due to the fast run-through they are a very good support in the ongoing developm
 If an error creeps in due to a change, it will be detected immediately by the existing tests.
 If an error needs to be corrected or a function needs to be extended, a Test-Driven-Development approach can be used to work in a goal-oriented manner. \\
 
-In our unit tests, primarily isolated and more complex logic blocks are tested. These are not only covered by a Code Coverage metric, as described in the chapter "Project Management" todo REFERENZ, but we were also busy covering borderline cases by testing. TODO DAS IST NICHT DAS KORREKTE WORT FÜR GRENWERTTESTS(?) \\
+In our unit tests, primarily isolated and more complex logic blocks are tested.
+These are not only covered by a Code Coverage metric, as described in the chapter "Project Management" todo REFERENZ, but we were also busy covering edge cases by testing.
 
-Of course the interaction of the components is also tested. This will be discussed in the following chapter regarding integration tests.
+Of course the interaction of the components is also tested.
+This will be discussed in the following chapter regarding integration tests.
 
 \subsubsection{Integration Tests}
-As described in chapter \ref{chapter:designTests}, a very nice test architecture was builded for integration tests. Each feature could be tested by creating a base class. The base class usually contains one method \code{Run} and another one \code{Verify}. The first one uses the inherited client-server infrastructure, opens a Dafny file, sends the according request, and collects the results. The following example is representative for such a method:
+As described in chapter \ref{chapter:designTests}, a very nice test architecture was builded for integration tests.
+Each feature could be tested by creating a base class.
+The base class usually contains one method \code{Run} and another one \code{Verify}.
+The first one uses the inherited client-server infrastructure, opens a Dafny file, sends the according request, and collects the results.
+The following example is representative for such a method:
 
 \begin{lstlisting}[language=csharp, caption={Finding a Declaration}, captionpos=b, label={lst:visitorfinddecl}]
 public void Run(string testfile, int lineInEditor, int colInEditor, string newText = "newText")
@@ -550,9 +757,14 @@ public void Run(string testfile, int lineInEditor, int colInEditor, string newTe
 }
 \end{lstlisting}
 
-The \code{Verify} method will just compare the results against the provided expectation. Often, rather complex data structures with a lot of nested classes come into play. To be able to compare them easily, most of them are just converted to a string representation, which can easily be dealt with. This was done using extension methods located in the \code{TestCommons} project.\\
+The \code{Verify} method will just compare the results against the provided expectation.
+Often, rather complex data structures with a lot of nested classes come into play.
+To be able to compare them easily, most of them are just converted to a string representation, which can easily be dealt with.
+This was done using extension methods located in the \code{TestCommons} project.\\
 
-A test itself is created very easily with all this infrastructure. One simply inherits from the base class, and most tests can be written in just a few lines. For example, a rename test could look like this:
+A test itself is created very easily with all this infrastructure.
+One simply inherits from the base class, and most tests can be written in just a few lines.
+For example, a rename test could look like this:
 
 \begin{lstlisting}[language=csharp, caption={Sample Integration Test}, captionpos=b, label={lst:sampleintegrationtest}]
 [Test]
@@ -570,9 +782,11 @@ public void LocalVariableUsage()
 }
 \end{lstlisting}
 
-Note that the test is kept as concise as possible. The tester does not even have to care about the result provided by \code{Run}, since that method will store the result inside a class member and clean it after the test is done.\\
+Note that the test is kept as concise as possible.
+The tester does not even have to care about the result provided by \code{Run}, since that method will store the result inside a class member and clean it after the test is done.\\
 
-Since all tests base on actual Dafny files, a dedicated subfolder was created to store them. All files can be referenced globally from within the \code{TestCommons} project, where also the base class for all integration tests is located.
+Since all tests base on actual Dafny files, a dedicated subfolder was created to store them.
+All files can be referenced globally from within the \code{TestCommons} project, where also the base class for all integration tests is located.
 
 
 
