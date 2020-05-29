@@ -69,17 +69,17 @@ But if we assert that a factorial number can never be zero, verification can be 
 
 function Factorial(n: nat): nat
 {
-    if n == 0 then 1 else n * Fact(n-1)
+    if n == 0 then 1 else n * Factorial(n-1)
 }
 
 lemma FactorialIsPositive(n: nat)
-ensures Fact(n) != 0
+ensures Factorial(n) != 0
 {}
 
 function Foo(n: nat): float
 {
     FactorialIsPositive(n);
-    100 / Fact(n)
+    100 / Factorial(n)
 }
 \end{lstlisting}
 
@@ -123,7 +123,7 @@ If the actual text of the preceding semester thesis is targeted, it will be call
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{02_oldBAvsSA.png}
-    \caption{Architecture before (left) and after (right) the preceding term project}
+    \caption{Architecture before (left) and after (right) the prototype was created}
     \label{fig:oldBAvsSA}
 \end{figure}
 

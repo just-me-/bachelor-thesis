@@ -87,7 +87,7 @@ Core components like the status bar are also included in this package.\\
 This package contains small logic extensions like the execution of compiled Dafny files.
 The UI package accesses this package.\\
 
-{\bf StringResources} \textendash{} \intnote{resource mit einem s - evtl im code auch noch korrigieren}
+{\bf StringResources} \textendash{} \intnote{resource mit einem s - das ist im code auch falsch und müsstest du noch korrigieren.}
 All string resources and command identifiers are defined in this package.
 It is used by the UI package. \\
 
@@ -127,7 +127,7 @@ Instance variables were set to private visibility.
 Constructors were not included for simplicity.
 The contents of type interfaces and string resources were also omitted for clarity.
 
-This distribution has certain upward dependencies, which is not optimal.
+This distribution has certain upward dependencies, which is not optimal. \intnote{Frage: warum zeichnest ud das ui package nicht einfach oberhalb, dann zeigt der pfeil nach unten? oder... This distribution has a seeming upwards dependency, but this is just because the graphic was drawn this way to save space doer sowas.}
 The UI package accesses the server package.
 Nevertheless, we have decided on this grouping,
 so that the server access functionality is encapsulated.
@@ -207,9 +207,8 @@ export interface ICompilerResult {
 
 
 \subsection{Server}
-\intnote{noch ne übersicht figure iwo, wie figure 9 SA - todo}
 This subsection documents the architectural layout of the server.
-The server consists of \intnote{eight?} different packages:
+The server consists of eight different packages:
 \begin{itemize}
     \item Main: Starting of the language server
     \item Handler: Components handling LSP requests
@@ -221,7 +220,15 @@ The server consists of \intnote{eight?} different packages:
     \item Resources: Strings and filesystem resources.
 \end{itemize}
 
-The packages are discussed in a detailed matter below.\\
+Figure \ref{fig:server_overview} shows a broad overview of the server layering.
+The packages are discussed in a detailed matter below.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{design/server1_overview.png}
+    \caption{Server Overview}
+    \label{fig:server_overview}
+\end{figure}
 
 \subsubsection{Main Component}
 The server's responsibility is to offer a language server that is able to reply to a client's request.
@@ -245,9 +252,9 @@ The actual challenge is formed by the implementation of the \code{Handle} method
 Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server implementation.
 Be aware that this illustration is highly simplified for a better understanding.\\
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=12.5cm]{serverdesign/01_basic_idea}
+    \includegraphics[width=12.5cm]{design/server2_basic_idea.png}
     \caption{Basic Server Concept}
     \label{fig:server_basic_idea}
 \end{figure}
@@ -290,9 +297,9 @@ To request information about a file, or to update a file, a component \code{Work
 It contains a dictionary, linking a file identity (as URI) to a \code{FileRepository}.
 It offers a method to update a file, but also to get information about a file.\\
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=10cm]{serverdesign/03_workspace.png}
+    \includegraphics[width=10cm]{design/server3_workspace.png}
     \caption{Workspace Component}
     \label{fig:server_workspace}
 \end{figure}
@@ -308,9 +315,7 @@ The \code{PhysicalFile} will contain a variety of 'helper'-methods, such as gett
 These do not play a central role and are not further discussed.
 All \code{Update} methods are generic or overloaded, so that they are available for incremental text changes sent by the client, but also for full text mode.
 
-\intnote{todo bild. FileRepo mit was halt da drin is. und workspace und alles.}
-
-\subsubsection{Dafny Translation Unit}
+\subsubsection{Dafny Access}
 This component is responsible to access Dafny's backend.
 The core class in this package is the \linebreak \code{DafnyTranslationUnit}.
 It receives a \code{PhysicalFile} in the constructor.
@@ -320,17 +325,22 @@ All of this information is stored in the \code{TranslationResults} wrapper class
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=12.5cm]{serverdesign/02_DTU.png}
+    \includegraphics[width=12.5cm]{design/server4_dtu.png}
     \caption{Dafny Translation Unit}
     \label{fig:server_dtu}
 \end{figure}
-\intnote{ist die lesbarkeit nur bei mir so schlecht der skalierten grafiken? habs mal etwas grösser gemacht.}
-\intnote{toto evtl doch noch den converter bei commons reinfügen der die diagnostics rumwuselt (evtl)}
 
 
-Excluded from the figure are some converter methods, that convert \code{Diagnostics}, such as warnings and errors, to an uniform format.
+Excluded from the figure are some extension methods, that convert \code{Diagnostics}, such as warnings and errors, to an uniform format.
 Dafny and Boogie report their errors in different ways and formats, which made collecting them relatively complex.
-To counteract that, simple converter extensions were written to unify any occurring error representations.\\
+To counteract that, simple converter extensions were written to unify any occurring error representations.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=12.5cm]{design/server4b_diag.png}
+    \caption{Dafny Translation Unit}
+    \label{fig:server_dtu}
+\end{figure}
 
 
 
@@ -373,13 +383,17 @@ It stores the root symbol and invokes the navigator to provide easy access to th
 
 All four components are highly coupled.
 The dependencies are not drawn in the following figure.
-All four classes are programmed against an interface.
+All four classes are programmed against an interface.\\
 
-\intnote{noch ergänzen dass navigator von nem symbol asu was macht aber der manager immer über die ganze table geht falls wir das nicht mehr ändern}
+Note that the manager is based to operate on the complete, finished symbol table.
+Thus it contains the root symbol as a class field.
+The navigator on the other hand offers operations that start from a specific entrypoint, which has to be handed as an argument.
+That start symbol may be the root symbol, or it can be a certain scope that was obtained elsewhere.
+
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{serverdesign/04_symboltable.png}
+    \includegraphics[width=\textwidth]{design/server5_symboltable.png}
     \caption{SymbolTable Component}
     \label{fig:server_st}
 \end{figure}
@@ -390,11 +404,16 @@ There is one class for each feature, for example \code{RenameProvider} or \code{
 The provider is invoked by the handler.
 By the separation of a provider and a handler, any Omnisharp duties, such as registration of capabilities is separated by the actual core logic.
 The necessary parameters are forwarded from the handler to the provider.
-Most often, this is the \code{FileRepository}, which the handler requested from the \code{WorkspaceManager}.
+Often, this is the \code{FileRepository}, which the handler requested from the \code{WorkspaceManager}.
 This way, the provider has access to all precompiled results, including the symbol table.
 Each provider implements a specific interface, so that fakes can easily be created for unit testing.
 
-\intnote{bild, alle kapitel 1 bild. }
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{design/server6_core.png}
+    \caption{Core Package Excerpt with RenameProvider}
+    \label{fig:server_core}
+\end{figure}
 
 \subsubsection{Resources}
 String resources, such as error messages, were extracted to a specific resource package.
@@ -402,8 +421,8 @@ This way, they are easy to maintain and adjustable at a central place.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{serverdesign/resources.png}
-    \caption{Short dings of a Resource Definition File}
+    \includegraphics[width=10cm]{design/server7_resources.png}
+    \caption{Short Cutout of a Resource Definition File}
     \label{fig:server_resources}
 \end{figure}
 
@@ -429,6 +448,13 @@ Since several tasks were done within that class, it was split into five differen
 Since the final config setting are accessed from multiple stages inside the code, the actual language server config is located inside the \code{Commons} package.
 It would be the sixth class related to the config initialization.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm]{design/server7_config.png}
+    \caption{Configuration Initialization Layout.}
+    \label{fig:server_config}
+\end{figure}
+
 
 \subsubsection{Workflow Overview}
 %Sourcecode des flowgraphen:
@@ -445,7 +471,7 @@ This information is forwarded to the provider, which calculates the result and r
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{serverdesign/05_overview.png}
+    \includegraphics[width=10cm]{design/workflow1_regular.png}
     \caption{Overview}
     \label{fig:server_overview}
 \end{figure}
@@ -458,7 +484,7 @@ Now, it forwards the repository to the \code{VerificationProvider}, which extrac
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{serverdesign/06_update.png}
+    \includegraphics[width=10cm]{design/workflow2_update.png}
     \caption{Updating a File}
     \label{fig:server_update}
 \end{figure}

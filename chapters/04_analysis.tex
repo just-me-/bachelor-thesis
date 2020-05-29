@@ -1,7 +1,5 @@
 \section{Analysis}
 
-\intnote{Die andern hatten in ihrer arbeit noch:  Für jedes Features. Was tut es, warum implementieren, wer profitiert davon. sollen wir das auch machen? ja }
-
 \label{section:analysis}
 Since this bachelor thesis is a sequel of the preceding semester thesis, work could be directly continued.
 Many topics were already analyzed during the semester thesis.
@@ -18,10 +16,10 @@ That means, that once a language server is available, the user is free in the ch
 The user can then use a variety of features, as long as the language server is capable to handle them.
 Those features can for example be
 \begin{itemize}
-    \item auto completion
-    \item hover information
-    \item rename
-    \item go to definition
+    \item Auto completion
+    \item Hover information
+    \item Rename
+    \item Go to definition
 \end{itemize}
 and much more. A full list can be found within the LSP specificiation \cite{lspspec}.
 Custom requests, for example \textit{compile} or \textit{counterExample} can also be added to the LSP \cite{lspWiki}.
@@ -100,7 +98,8 @@ Note the JSON-based message format.\\
 \end{lstlisting}
 
 \subsubsection{LSP Standard and Individual Extensions}
-\intnote{Beschreibung von "Default LSP Sachen" und was wir erweitert haben. Olaf Zimmernmann. Verweis auf Kapitel Custom LSP Messages - ist gut so oder?}\\
+\intnote{Beschreibung von "Default LSP Sachen" und was wir erweitert haben. Olaf Zimmernmann. Verweis auf Kapitel Custom LSP Messages -
+imho reicht das wie es ist. würde da nix erzwingen sonst wirkt es so reingewürgt. steht ja fix in \ref{section:analysis:lsp} + nachher unten in custom lsp msg.}\\
 
 \subsection{OmniSharp}
 \label{section:analysis:omnisharp}
@@ -147,7 +146,7 @@ The following three items have to be specified:
 \end{itemize}
 
 
-The parameter and response types can be custom classes and more flexibility. \intnote{allow for - is that correct english? naja. huge. maximum. great. das sind alle sso worte gwesen, die er bei der SA nicht toll fand. - more.}
+The parameter and response types can be custom classes and more flexibility.
 The following skeleton code demonstrates how a custom request handler can be implemented:
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspcustomhandler}]
@@ -170,7 +169,7 @@ public class MyHandler : ICounterExampleHandler
 
 \subsection{Visual Studio Code Plugin}
 To provide a plugin for Visual Studio code, a custom extension must be programmed.
-To get a rough understanding of how to build such an extension, and how to run and debug an own plugin, we already worked through a tutorial during our STUDIENARBEIT todo.
+To get a rough understanding of how to build such an extension, and how to run and debug an own plugin, we already worked through a tutorial during the preceding semester thesis.
 In the tutorial "Your First Extension” basic concepts for own plugins were learned \cite{vscode-first-extension}.
 Examples for integrating a Language Server were found on the advanced examples page "Extension Guides" \cite{vscode-extensions}. \\
 
@@ -393,7 +392,6 @@ This behaviour can be summarized with the following three rules:
 \end{itemize}
 
 During analysis of this problem, the following recursive algorithm was created to solve the problem of finding a symbols relevant declaration.
-\intnote{ist code - ja. ist aber ein ANALYSE wie man das problem lösen kann - gemacht wurde es dann ja sowieso anders. kann man also imho sehr wohl hier lassen}
 
 \begin{lstlisting}[language=csharp, caption={Finding Symbol Definition}, captionpos=b, label={lst:findsymbol}]
 private Symbol FindDeclaration(Symbol target, Symbol scope)
@@ -413,13 +411,6 @@ private Symbol FindDeclaration(Symbol target, Symbol scope)
 \end{lstlisting}
 The code had to be adjusted later on, to also respect inherited symbols and to also check inside the default scope.
 If all declarations are known, the algorithm does already work for symbols defined after the first usage.
-
-
-\intnote{Corbat: @if und dann if als variable ist kein gültiger indentifiyer in dafny.
-Noch weitere versprochene doku in der agenda?
-findest du das relevant?
-interessiert mich jetzt nicht so primär, dass ich kein if identifier nutzen darf. will er das wirklich hören? :O }\\
-
 
 \subsection{Symbol Table}
 Whenever source code is compiled into an executable assembly, the first step is to \textit{parse} the code.
@@ -533,7 +524,7 @@ This component will be called \textit{symbol table} throughout this thesis, alth
 %%%%
 
 \subsection{Visitor}
-To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gof}. \intnote{gof undefined heisst es. darf ich da keine ISBN angeben?}
+To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}.
 The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
 The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
 
@@ -669,6 +660,7 @@ However, refactoring the code of Dafny itself is one of the possible extension p
 \subsection{Supported Features and Needed Improvements / Bisherige FUnktionen und nötige Verbesserungen}
 \label{section:analysis:features}
 
+
 In our existing work we have already realized a number of features.
 In the outlook, we have noted what improvements would be appropriate.
 This chapter describes the corresponding starting positions and the necessary improvements.
@@ -676,7 +668,7 @@ It also describes how we intend to implement these improvements.
 
 \subsubsection{Syntax Highlighting}
 The syntax highlighting is realized through a given Dafny grammar file.
-The following screenshot \ref{fig:analysis_syntax_highlighting} shows how syntax highlighting looks inside Visual Studio Code. \\
+Screenshot \ref{fig:analysis_syntax_highlighting} shows how syntax highlighting looks inside Visual Studio Code. \\
 
 As you can see, keywords like method, returns, requires and ensures are marked in purple. Types like int are printed in blue and comments become green. Symbols, such as classes and methods, are displayed in a brownish color. Just these simple rules increase the readability significantly.
 
@@ -687,16 +679,16 @@ As you can see, keywords like method, returns, requires and ensures are marked i
     \label{fig:analysis_syntax_highlighting}
 \end{figure}
 
-In the current public plugin an update was made to the grammer file \cite{syntax_update}.
+In the current public plugin an update was made to the grammar file \cite{syntax_update}.
 Among other things, new keywords are now recognized and visually marked, such as "expect".
 This update will be applied to the Dafny grammar file for our plugin version as well.
 
 \subsubsection{Verification}
-The verification feature underlines logical errors in the user's code. An example is shown in the following figure \ref{fig:analysis_verification}.
+The verification feature underlines logical errors in the user's code. An example is shown in figure \ref{fig:analysis_verification}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/verification}
+    \includegraphics[width=10cm]{analysis/verification}
     \caption{Postcondition Violation}
     \label{fig:analysis_verification}
 \end{figure}
@@ -719,7 +711,7 @@ The user has two options to initiate compilation: He can just compile his softwa
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/compile}
+    \includegraphics[width=10cm]{analysis/compile}
     \caption{User Notification on Compile Errors}
     \label{fig:analysis_compile}
 \end{figure}
@@ -738,7 +730,7 @@ The precondition is commented. Without this requirement, the postcondition can b
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/counter_example}
+    \includegraphics[width=10cm]{analysis/counter_example}
     \caption{Demonstration of Counter Examples}
     \label{fig:analysis_counter_example}
 \end{figure}
@@ -763,7 +755,7 @@ As an example, if one would have a Dafny code snippet like below, the best and o
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/analysis_completion_1}
+    \includegraphics[width=10cm]{analysis/analysis_completion_1}
     \caption{Auto Completion for Instance of Class C}
     \label{fig:analysis_completion_1}
 \end{figure}
@@ -772,7 +764,7 @@ In addition auto completion is also able to provide general completion suggestio
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/analysis_completion_2}
+    \includegraphics[width=10cm]{analysis/analysis_completion_2}
     \caption{General Suggestions with Symbol Types}
     \label{fig:analysis_completion_2}
 \end{figure}
@@ -804,7 +796,7 @@ In the following figure \ref{fig:analysis_goto_1}, you can see how a user would 
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/analysis_goto_1}
+    \includegraphics[width=10cm]{analysis/analysis_goto_1}
     \caption{Go to Definition via Context Menu}
     \label{fig:analysis_goto_1}
 \end{figure}
@@ -813,7 +805,7 @@ Please note that in the current version, the cursor has to be on the left side o
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/analysis_goto_2}
+    \includegraphics[width=10cm]{analysis/analysis_goto_2}
     \caption{Cursor Position after go to Definition}
     \label{fig:analysis_goto_2}
 \end{figure}
@@ -826,7 +818,7 @@ Then the position of this symbol is jumped to. \\
 Similar to auto completion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
 
 \subsubsection{CodeLens}
-todo manchmal code lens manchmal codelens \\
+todo manchmal code lens manchmal codelens \\ code lens ist reichtig
 
 Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol. As an example, the class C has been instantiated twice and the method m was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
 
@@ -834,7 +826,7 @@ Unfortunately, clicking the grey references is not yet supported. This should op
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/analysis_codelens}
+    \includegraphics[width=10cm]{analysis/analysis_codelens}
     \caption{CodeLens Example}
     \label{fig:analysis_codelens}
 \end{figure}
@@ -843,7 +835,7 @@ The current implementation of CodeLens does not have an optimal runtime. For eac
 
 With the new symbol table, each symbol knows how often and where it has been used.
 Therefore, we only have to iterate through the symbol table once.
-Furthermore, the iteration can be limited exclusivly to  declarations.
+Furthermore, the iteration can be limited exclusively to  declarations.
 
 
 \subsection{Continuous Integration (CI)}
@@ -851,7 +843,7 @@ Furthermore, the iteration can be limited exclusivly to  declarations.
 
 %%%%%%CI%&%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
-\intnote{Analyse ist "was haben wir erreicht", Implementation "was haben wir getan, umgesetzt, verbessert", Project Management ist "darum haben wirs getan, für qualität". einverstanden? }
+\intnote{Analyse ist "was haben wir erreicht", Implementation "was haben wir getan, umgesetzt, verbessert", Project Management ist "darum haben wirs getan, für qualität". einverstanden?}
 
 todo machen 
 
@@ -872,7 +864,7 @@ On the server side, the project was automatically built by the CI server using \
 Our own unit tests, as well as tests provided by Dafny could as well be automatically executed using the nUnit console runner.
 Integration testing and code analysis by SonarQube remained pending \cite{sa}.
 
-\subsubsection{Targeted Solution - Achieved Solution}
+\subsubsection{Achieved Solution}
 According to our research, a major problem was that the scanner for SonarQube can only analyze one language at a time \cite{sonar-supports-only-one-language}.
 This means, that the TypeScript code in the client and the \CsharpWithSpace code in the server cannot be analyzed simultaneously.
 Furthermore, in the pre-existing Dafny project, single Java files appear, too.
@@ -889,7 +881,7 @@ The available statistics are very helpful for code reviews.\\
 
 \begin{figure}[H]
     \centering
-    \includegraphics{sonarexamaple.png}
+    \includegraphics[width=\textwidth]{sonarexamaple.png}
     \caption{Example of a Useful Sonar Finding}
     \label{fig:sonarexample}
 \end{figure}
