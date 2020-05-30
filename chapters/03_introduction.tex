@@ -129,45 +129,45 @@ At HSR, Dafny is taught within the course \textit{Software Engineering}.
 Students have to make their first steps in Dafny, using a simple tutorial.
 To provide the students with the necessary support, they shall profit by common IDE features like
 \begin{itemize}
-    \item Error highlighting
-    \item Compile and run
-    \item Auto completion
+    \item Syntax highlighting to make the readability more pleasant
+    \item Error highlighting to correct faulty code efficiently
+    \item Compile and run to run Dafny programs and check the output
+    \item Auto completion to code efficiently
+    \item Go to definition to be able to view definitions quickly
+    \item Showin counter examples to efficiently remedy faulty pre and post conditions
+    \item Code Lens to count the usages of classes and functions
 \end{itemize}
 
-On the other hand, the plugin shall also be used in a professional environment.
-Thus, more advanced features have to be supported.
-To facilitate the development of further features, the code shall be refactored to achieve a clean state.
-This especially involves a clear architectural layout with dependencies that only point downwards.
-
-Aside a clean architecture, a major goal is the creation of a custom symbol table.
-This is necessary to make features like \textit{go to definition} or \textit{auto completion} possible at all.
-It also allows the development of further features.
-For example, if every the symbol table provides information about the scope-depth, the indentation width can be deduced for a feature like auto formatting.\\
+Some of these functions have already been implemented in a certain base implementation in our prototype.
+But almost all these features need to be improved.
+A more detailed extension of feature richness is discussed in the analysis part of this paper.
+This shall be realized by the implementation of an custom symbol table. \\
 
 The symbol table shall further contain a well organized tree structure, so that navigation can be done efficiently.
 Each symbol shall have direct links to it's parent, children and declaration for very fast access.
-Compared to the prototype, the pre-existing implementations can be extracted into the symbol table, reducing the lines of code (LOC) and increasing performance.
+Compared to the prototype, the pre-existing implementations can be extracted into the symbol table,
+reducing the lines of code (LOC) and increasing performance. \\
 
+Additionally, new features based on the symbol table will be added.
+This includes especially the hover information.
+Further optional features are automated contract generation and refactorings like extract method. \\
 
-Ziele, Aufgabenstellung
-Plattform Independence
-Setup, easy installation
-UsabilityTest Code
-IDE Independence, Wiederverwendbarkeit
-Feature Richness
-Einfache Erweiterbarkeit
-....
-Ziele: project cleanup
-Repository Splitting
-Merge Back ready state (Rebase)
-General Code cleanup
-SonarQUbe run, fixes
-clean loggin
-features verbessern gemäs SA als AUsblicke festgelegt
-symbol table implementieren, um gotodefinition zu verbessern sowie künftige Features
+On the other hand, the plugin shall also be used in a professional environment.
+Thus, more advanced features have to be supported in the future.
+For example, if the new symbol table provides information about the scope-depth, the indentation width can be deduced for a feature like auto formatting.\\
 
-optional: neue features
-hover information
-codelens
-refactorings like extract method
-automated contract generation
+To facilitate the development of further features, the code shall be refactored to achieve a clean state.
+This especially involves a clear architectural layout with dependencies that only point downwards.
+This should make it as easy as possible for other developers to enrich the existing Dafny Language Server with additional features. \\
+
+In addition, process optimizations should make the work for future developers easier.
+This includes the recording of Sonarqube for the Dafyn Language Server as well as a clean logging,
+which should be helpful for troubleshooting - especially for performance problems. \\
+
+Furthermore, our plugin should reach a stable state and be published in the VS Code Market place.
+So for Dafny developers at the end of our work an essential added value results from our thesis.
+Therefore our plugin has to be platform independent and easy to install. \\
+
+The IDE independent Dafny language server should get a merge back ready state.
+This means that the server is extracted separately from the client into a separate git repository.
+So at the end of the work a rebase of the Dafny server should be possible. 
