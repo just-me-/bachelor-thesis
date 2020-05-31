@@ -15,7 +15,7 @@ It establishes a connection to the server using the language server protocol.\\
 The client is supposed to be very simple and only responsible for UI tasks, while as much logic as possible should be implemented at the server side.
 This allows to implement support for other IDE's with as little effort as possible.\\
 
-In the following, it is discussed how this lightweight design of the client has been achieved.
+In the following, it is discussed how this lightweight design of the client will be achieved.
 Furthermore, the separation into components is also explained.
 
 \subsubsection{Initial Situation}
@@ -87,7 +87,7 @@ Core components like the status bar are also included in this package.\\
 This package contains small logic extensions like the execution of compiled Dafny files.
 The UI package accesses this package.\\
 
-{\bf StringResources} \textendash{} \intnote{resource mit einem s - das ist im code auch falsch und müsstest du noch korrigieren.}
+{\bf StringResources} \textendash{} \intnote{resource mit einem s - das ist im code auch falsch und müsstest du noch korrigieren. Jepp. in den grafiken auch. kommt noch später}
 All string resources and command identifiers are defined in this package.
 It is used by the UI package. \\
 
@@ -127,7 +127,7 @@ Instance variables were set to private visibility.
 Constructors were not included for simplicity.
 The contents of type interfaces and string resources were also omitted for clarity.
 
-This distribution has certain upward dependencies, which is not optimal. \intnote{Frage: warum zeichnest ud das ui package nicht einfach oberhalb, dann zeigt der pfeil nach unten? oder... This distribution has a seeming upwards dependency, but this is just because the graphic was drawn this way to save space doer sowas.}
+This distribution has certain upward dependencies, which is not optimal. \intnote{Frage: warum zeichnest ud das ui package nicht einfach oberhalb, dann zeigt der pfeil nach unten? oder... This distribution has a seeming upwards dependency, but this is just because the graphic was drawn this way to save space doer sowas. Weile s eins hoch und eins runter gibt. das kann man ned anders zeichnen ohne dass eins hoch und eins runter geht. das wird bei der implementation behoben. und begründet. }
 The UI package accesses the server package.
 Nevertheless, we have decided on this grouping,
 so that the server access functionality is encapsulated.
