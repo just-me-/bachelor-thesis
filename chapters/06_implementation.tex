@@ -848,17 +848,28 @@ This tool would run under Linux and analyze .NET Framework projects.
 Unfortunately, this project was archived and has not been maintained for almost 10 years \cite{monocov}.
 
 Since we would not gain much value with sonar code coverage, we decided not to pursue this approach any further.
-The coverage information is provided by the ReSharper extension \textit{dotCover} \cite{dotcover} to the developers.\\
+The coverage information is provided by the ReSharper extension \textit{dotCover} \cite{dotcover} to the developers.
 
 \subsubsection{Client End-to-End Tests}
 The end-to-end tests base on a lot of dependencies, such as a headless instance of Visual Studio Code.
 In consultation with our supervisors, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
-This can be justified with the client only containing a minimal amount of logic.
+This can be justified with the client only containing a minimal amount of logic that is required for the visual representation.
 Any other logic was moved to the server.
 
 \subsubsection{Static Program Analysis and Formatting for TypeScript}
-developer documentation \cite{dev}
+During development it became apparent that it would be useful to check the correct formatting
+for the TypeScript code from the client in the CI.
+Various tools are used locally, which automatically format the syntax correctly when saved.
+These tools are described in the developer documentation \cite{dev}.
+However, if someone does not install these tools,
+and the code is not formatted according to the definition,
+the CI pipeline will fail. \\
 
+Prettier was selected for this function.
+Alternatively, ESLint would have been an option \cite{eslint}.
+This would also have automatically integrated a static code analysis in the CI.
+However, we decided to use a combination of SonarLint and Prettier,
+so that the local analysis tool is matched to SonarQube \cite{dev}.
 
 \subsubsection{Docker}
 For an easier testability of the CI, we installed Docker locally.
