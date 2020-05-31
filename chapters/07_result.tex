@@ -1,11 +1,32 @@
 \section{Results}
 \label{section:results}
 
-\intnote{Da fehlt Kapitel Features. Nein ist da. Ist nur nicht in unterkapitel aufgeteilt da ich das doof finde wenn ein subchapte 95prozent vom platz beansprucht. Es hat 1 Kapitel pro feature. ... 15 unterkapitel und es werden noch mehr; das sind zu viele ohne unterkapitel features mein ich, ned?}
+für benutzer, programmierer vo dafny
+für pugin / anguage server weiterentickler
+plugin ide support andere
+persönliches ziel - mehrwert der arbeit für die gesellschaft; veröffentlichung
+---
 
 
-In this chapter, the achieved results of the project are described and critically reflected.
-The current version of the plugin supports the following features:
+As described in our objectives, our work has three basic stakeholders. \\
+
+On the one hand there are the students of the HSR, who want to develop with Dafny.
+For these students a usefull plugin should be offered to make the development with Dafny source code easier. \\
+
+On the other hand, it is the developers who want to further develop our Language Server in order to offer additional features to users.
+This category also includes developers who want to make other IDE's compatible with new plugins for Dafny in addition to VS code.
+For developers the further development should be kept as simple as possible. \\
+
+Last but not least, we - the authors of this thesis - also belong to the interest group.
+Since we wanted to make a contribution to society with our work,
+it was always a big concern for us to achieve a stable version of the plugin, which we can also publish.
+This way Dafny developers can get a real use for the plugin. \\
+
+The following subchapters describe the results achieved and further prospects for each target group.
+
+\subsection{Features for Dafny Developers}
+In this subchapter, the achieved feature set of the project is described and critically reflected.
+The current version of the plugin supports the following features for Dafny developers in VS Code:
 \begin{enumerate}
     \item Syntax Highlighting
     \item Code Verification
@@ -16,15 +37,10 @@ The current version of the plugin supports the following features:
     \item Rename
     \item Code Lens
     \item Autocompletion
-    \item mehr?
+    \item mehr? todo
 \end{enumerate}
 
-Aside the features, also architectural improvements are discussed,
-which increase maintainability and facilitate future extensions of the project.
-
-\intnote{todo: ziele waren. einfacher für andere entwickler unsere abreit weiter zu entwickeln (server) - dazu gehören SonarQube und Log für Performance lecks , aber auch andere ide (isolation) , VS Code Marked Place, server rebasable, platformunabhängikeit, plugin easy isntallation (download server) }
-
-\subsection{Accessibility}
+\subsubsection{Accessibility}
 Some of the features are just active by default, namely syntax highlighting and code verification.
 The user perceives these features without any actions necessary.\\
 
@@ -53,7 +69,7 @@ These include:
     \item Editing the language server config
 \end{itemize}
 
-\subsection{Syntax Highlighting}
+\subsubsection{Syntax Highlighting}
 \label{section:result:syntaxhighgliht}
 Syntax highlighting is realized by a given Dafny grammar file.
 The file contains regex expressions defining the highlights.
@@ -73,8 +89,7 @@ Types like int are printed in blue and comments become green.
 Symbols, such as classes and methods, are displayed in a brownish color.
 Just these simple rules increase the readability significantly.
 
-
-\subsection{Verification}
+\subsubsection{Verification}
 Verification was already implemented in the prototype, too.
 At the start of the project, the feature held some major flaws.
 It only reported logical errors.
@@ -99,7 +114,7 @@ The feature directly invokes Dafny's compile engine, thus works quite solid and 
     \label{fig:result_warnd_info}
 \end{figure}
 
-\subsection{Compile}
+\subsubsection{Compile}
 The compile feature is strongly connected to the verification process.
 Prior to compilation, the whole Dafny project has to be verified anyway.
 Thus, since verification yields a precompiled \code{DafnyProgram}, the buffered result can be used to invoke the Dafny compiler.
@@ -140,7 +155,7 @@ If the executable is launched manually within another console outside of Visual 
 The effect just occurs the first time an executable is launched.
 The reason for that could not be investigated.
 
-\subsection{Counter Example}
+\subsubsection{Counter Example}
 Providing counter examples was already possible in the prototype.
 A major flaw was, that the representation of the counter example was quite complex and not intuitively readable.
 Thus, it was a goal to ease the counter example representation.\\
@@ -170,8 +185,7 @@ The default colors are chosen with respect to the user's base color theme of VSC
 The counter example will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
 If the user switches between windows, the counter example state is buffered, so that once the user switches back to the original window, the counter example will be shown again.
 
-
-\subsection{Hover Information}
+\subsubsection{Hover Information}
 Hover information displays a set of information, whenever the user hovers with the mouse cursor over a code symbol.
 The feature itself was very simple to implement, since it receives all necessary information from the symbol table.
 It was additionally implemented as an exemplary feature, to show off how easy some LSP functionality can now be implemented using the new symbol table.
@@ -186,7 +200,7 @@ For example, in figure \ref{fig:hover} the user can actually find out, where his
     \label{fig:hover}
 \end{figure}
 
-\subsection{Go to Definition}
+\subsubsection{Go to Definition}
 Compared to the prototype, go to definition has been significantly improved.
 Prior to this bachelor thesis, the feature just scanned all code for the first name-match and reported it as the definition.
 This did neither work if multiple symbols with the same name occurred, nor if the declaration was placed after the first usage in the code.
@@ -219,7 +233,7 @@ It is also possible to go to the definition of \code{this}-Expressions, which wi
 The feature works also across code that is not within a block statement, for example for expressions occurring inside an \code{ensures}-clause.
 
 
-\subsection{Rename}
+\subsubsection{Rename}
 Rename is a feature that could only be added, since the symbol table provides all necessary information.
 
 It was embraced to provide as much user experience as possible for this feature, even if it is relatively simple.
@@ -243,8 +257,8 @@ Since the symbol table reports occurrences across imported files as well, the re
 
 
 
-\subsection{CodeLens}
-todo überall bilder bzw platzhalter bilder einfügen . 
+\subsubsection{CodeLens}
+todo überall bilder bzw platzhalter bilder einfügen .
 
 
 todo
@@ -255,7 +269,10 @@ bessere anzeige, bessere laufzeit
 2 plural
  klick auf grauer text, popup geht auf. man kann sofort wie man es von codelens erwartet zu den verwendeten positionen springen sprich diese einsehen.
 
-\subsection{Automatic Code Completion}
+besser: acuh  includes files ohne main supporten.
+zwei varianten in implmenentation beschreiben; hier referenzieren
+
+\subsubsection{Automatic Code Completion}
 todo
 Basecase (aktueller scope)
 punkt - für das symbol verfügbare methoden und variablen werden vorgeschlagen
@@ -264,8 +281,17 @@ new - nur klassen im aktuellen scope werden angezeigt
 bei der einfügung einer klasse nach "new" und bei einfügung von funktionen/methoden nach punkt werden klammern gesetzt.
 
 (krieg ich noch die anzeige von parametern hin? )
+xcode sachen sind IDE abhängig. vscode bietet das nicht. man könnte diese funktion aber jedoch selbst
+mit relativ hohem aufwand implementieren. beschreiben in implementation.
+es is tnich tuaszuschliessen, dass dies jedoch in anderen ide's mit einem api aufruf der ide relativ simpel möglich ist.
+es ist auch nicht auszuschliessen, dass vs code in zukunft ein ähniches feature selbst noch implementieren wird.
+"language server bietet info für parameter - todo stimmt das?"
 
-\subsection{Symbol Table}
+\subsection{Simplicity of Further Development}
+Aside the features, also architectural improvements are discussed,
+which increase maintainability and facilitate future extensions of the project.
+
+\subsubsection{Symbol Table}
 The symbol table was newly implemented during this project.
 However, the prototype contained some symbol information that was already existing inside the pre-existing project.
 That symbol table was only containing a list of strings though.
@@ -308,7 +334,51 @@ It is the first priority in further development of the language server.
     \label{fig:dafnyASTOverview}
 \end{figure}
 
-\subsection{Platform Independence / Mono Support for macOS and Linux}
+\subsubsection{Server Architectural Improvements}
+At the beginning of the thesis, the server's dependency graph was quite a mess.
+During development, the code was constantly cleaned up and dependencies were resolved.
+
+While the project is quite large and has a lot of dependencies, they could be well organized.
+As seen in figure \ref{fig:dependency_graph}, all dependency are now pointing downwards, just as it should be.
+Within the picture, dependencies to the \code{Resources} package are excluded for more overview.
+The core layer of the project, containing \code{SymbolTable}, \code{Handler} and \code{Core}, have some sideward dependencies, which could not be avoided completely, since these packages are strongly coupled.
+
+Aside the broad architectural layout, many small refactorings were made to keep the code clean.
+This includes the creation of smaller classes and smaller methods with single responsibilities.
+A good example for this is the config initialization, which was one single large class at first.
+After refactoring, it was split into small, well organized sub-classes.
+
+Any important classes, such as handlers, providers or classes related to the symbol table are programmed against interfaces.
+This allows for optimal testing, for example by implementing the same interface with a fake instance.
+
+\subsubsection{Client Architectural Improvements}
+todo
+Cleaner, kleinere componenten, bessere isolation
+verwendung von interfaces, kapselung. falls logik künftig eingefügt wird und man tests schreiben möchte; geht dank interfaces relativ gut.
+
+isolation von vscode komponenten
+kann so möglichst einfach auf andere IDEs migriert werden
+bsp atom... link dass es auch typescript und js verwendet...
+
+
+\subsection{Publication of the Plugin}
+
+
+\subsubsection{Veröffentlichung}
+\intnote{todo}
+- plugin live
+- rebase auf server machen
+- pull request dokumentieren -- signifikantes ergebnis -- man kanns verwenden
+
+beschreiben interface download, wie das ausgetaucht werden kann.
+bin hier nicht draus gekommen genau.
+fabian sagt: pullt es zu mir, weil ich muss noch mono machen
+corbat sagt: ja ihr müsst schreiben, dass ihr es pullt, weil dann zähtl es als public.
+
+!!vorsicht kapitel 8 hat auh noch n absatz übers deployment (ab zeile zirka 36)
+
+
+\subsubsection{Platform Independence / Mono Support for macOS and Linux}
 \intnote{welcher titel ist besser? platfrîrm hier, mono bei implementation todo}
 Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
 Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
@@ -334,43 +404,3 @@ mangelnde zeit daher nicht gemacht. als ausblick festhalten.
 \cite{sa}
 \cite{mono-slack}
 \cite{mono-git}
-
-
-\subsection{Server Architectural Improvements}
-At the beginning of the thesis, the server's dependency graph was quite a mess.
-During development, the code was constantly cleaned up and dependencies were resolved.
-
-While the project is quite large and has a lot of dependencies, they could be well organized.
-As seen in figure \ref{fig:dependency_graph}, all dependency are now pointing downwards, just as it should be.
-Within the picture, dependencies to the \code{Resources} package are excluded for more overview.
-The core layer of the project, containing \code{SymbolTable}, \code{Handler} and \code{Core}, have some sideward dependencies, which could not be avoided completely, since these packages are strongly coupled.
-
-Aside the broad architectural layout, many small refactorings were made to keep the code clean.
-This includes the creation of smaller classes and smaller methods with single responsibilities.
-A good example for this is the config initialization, which was one single large class at first.
-After refactoring, it was split into small, well organized sub-classes.
-
-Any important classes, such as handlers, providers or classes related to the symbol table are programmed against interfaces.
-This allows for optimal testing, for example by implementing the same interface with a fake instance.
-
-\subsection{Client Architectural Improvements}
-todo
-Cleaner, kleinere componenten, bessere isolation
-verwendung von interfaces, kapselung. falls logik künftig eingefügt wird und man tests schreiben möchte; geht dank interfaces relativ gut.
-
-isolation von vscode komponenten
-kann so möglichst einfach auf andere IDEs migriert werden
-bsp atom... link dass es auch typescript und js verwendet...
-
-\subsection{Veröffentlichung}
-\intnote{todo}
-- plugin live
-- rebase auf server machen
-- pull request dokumentieren -- signifikantes ergebnis -- man kanns verwenden
-
-beschreiben interface download, wie das ausgetaucht werden kann.
-bin hier nicht draus gekommen genau.
-fabian sagt: pullt es zu mir, weil ich muss noch mono machen
-corbat sagt: ja ihr müsst schreiben, dass ihr es pullt, weil dann zähtl es als public.
-
-!!vorsicht kapitel 8 hat auh noch n absatz übers deployment (ab zeile zirka 36)
