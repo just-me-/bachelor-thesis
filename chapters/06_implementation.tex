@@ -800,3 +800,68 @@ Auswertung der Tests; Kernpunkte und Verbesserungsvorschlägather
 Drauf eingehen, welches Feedback umgesetzt wurde, welches nicht, warum, outlooks.
 
 Tests in den Anhang aufnehmen!! Und dann hier entsprechend referenzieren.
+
+\subsection{Continuous Integration (CI)}
+To optimize the CI process is an important part of our thesis.
+Since we expect that our language server as well as the Dafny client plugin will be further developed by other developers,
+the CI is a primary component of automated quality assurance. \\
+
+This includes that the CI pipeline will fail if certain quality attributes are not met.
+These include, in particular, successful completion of automated tests,
+static code analysis and formatting control of the TypeScript code. \\
+
+More details on the quality aspects are described in chapter \ref{section:project_management} \nameref{section:project_management}.
+This chapter describes how the planned improvements for the CI process from chapter \ref{section:analysis:CI} were implemented.
+
+\subsubsection{SonarQube}
+According to our research, a major problem was that the scanner for SonarQube can only analyze one language at a time \cite{sonar-supports-only-one-language}.
+This means, that the TypeScript code in the client and the \CsharpWithSpace code in the server cannot be analyzed simultaneously.
+Furthermore, in the pre-existing Dafny project, single Java files appear, too.
+This led to further conflicts in the Sonar analysis \cite{sa}.\\
+
+As a simple solution, we decided to separate the client (VSCode plugin) and server (Dafny Language Server) into two separate git repositories.
+This not only simplifies the CI process but also ensures a generally better and clearer separation. \\
+
+As a result, the client could still be easily analyzed with the previous Sonar scanner.
+Regarding the server, a special Sonar scanner for MSBuild had to be installed, which publishes the analysis in a dedicated SonarCloud project \cite{dev}.
+The available statistics are very helpful for code reviews.\\
+
+As a little extra, not only our Dafny language server part is analyzed by Sonar,
+but the whole Dafny project.
+From the bugs, vulnerabillities, code duplications and code smells revealed
+by this analysis, the whole GitHub team working on the Dafny project can benefit. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth-2cm]{sonarexamaple.png}
+    \caption{Example of a Useful Sonar Finding}
+    \label{fig:sonarexample}
+\end{figure}
+
+
+Unfortunately, the code coverage by tests is not analyzed.
+Searching for an alternative, \textit{OpenCover} was found as a very common tool for code coverage analysis in \Csharp.
+Unfortunately, it only runs under Windows  \cite{opencover}.
+The CI server bases on Linux, though.
+During our research we came across \textit{monocov} \cite{monocov}.
+This tool would run under Linux and analyze .NET Framework projects.
+Unfortunately, this project was archived and has not been maintained for almost 10 years \cite{monocov}.
+
+Since we would not gain much value with sonar code coverage, we decided not to pursue this approach any further.
+The coverage information is provided by the ReSharper extension \textit{dotCover} \cite{dotcover} to the developers.\\
+
+\subsubsection{Client End-to-End Tests}
+The end-to-end tests base on a lot of dependencies, such as a headless instance of Visual Studio Code.
+In consultation with our supervisors, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
+This can be justified with the client only containing a minimal amount of logic.
+Any other logic was moved to the server.
+
+\subsubsection{Static Program Analysis and Formatting for TypeScript}
+developer documentation \cite{dev}
+
+
+\subsubsection{Docker}
+For an easier testability of the CI, we installed Docker locally.
+This allowed us to resolve CI issues locally and platform-independently (through the Docker Client) in case of problems.
+More details are stated in the developer documentation \cite{dev}.
+The documentation found there helps future developers to easily and efficiently test changes to the docker container locally. \\

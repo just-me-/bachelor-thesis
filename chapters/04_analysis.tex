@@ -5,7 +5,7 @@ Since this bachelor thesis is a sequel of the preceding semester thesis, work co
 Many topics were already analyzed during the semester thesis.
 To provide the reader with a comprehensive knowledge base about Dafny and the language server protocol (LSP), some chapters out of the semester thesis will be repeated in the following subsections.
 New within this bachelor thesis was the studies of the Dafny-specific compilation process.
-It was especially necessary to gain an overview of the existing abstract syntax tree nodes.
+It was especially necessary to gain an overview of the existing abstract syntax tree nodes for building the new symbol table.
 
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
@@ -43,6 +43,44 @@ The LSP supports three types of messages.
 \end{itemize}
 Each message type can be sent from both sides.
 
+\subsubsection{Language Features}
+Besides different kinds of communication
+like text synchronization and diagnostics,
+there is the group "Language Features" which is especially interesting
+for feature extensions like auto complete and hover information. \\
+
+As figure \ref{fig:lsplanguagefeatures} shows, there is a long list of laguage features specific messages \cite{lspspec}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{04_lsplanguagefeatures.png}
+    \caption{List of Language Features Interfaces}
+    \label{fig:lsplanguagefeatures}
+\end{figure}
+
+In addition to the basically standardized LSP, we are also dependent on the interfaces implemented in OmniSharp \cite{lspspec}.
+Just because the interfaces are defined in the standard does not necessarily mean that they have already been implemented in OmniSharp.
+
+The following interfaces will be particularly relevant for our work.
+\begin{itemize}
+    \item Notification: One-way message, for example for a window notification.
+    \item Request: A message that expects a response.
+    \item Response: The response to a request.
+\end{itemize}
+
+Certain functions, which we need for the Dafny plugin,
+are not offered in a standardized way.
+Fortunately the LSP can be extended with your own requests. This concerns the following features:
+\begin{itemize}
+    \item Compile: Informs the server about the file to compile and compilation arguments.
+          As a result, the server delivers to the client the information whether an error occurred during the compilation,
+          whether an executable was created and a text message.
+    \item Counter Example: The client sends the file to be compiled to the server and receives in
+          response position data and variables for each Counter Example found for the file.
+\end{itemize}
+
+How exactly the custom LSP messages must be implemented is discussed in the chapter \ref{chapter:customlspmsg}.
+
 \subsubsection{Communication Example}
 The basic concept of the LSP is to inform the server about any client action.
 For example, when the user is opening a document, the notification \code{textdocument/didOpen} is sent.
@@ -55,7 +93,7 @@ If errors are found, the server is able to send a \code{textDocument/publishDiag
 The client may now underline the erroneous code range \cite{lspspec}.
 Since the protocol is standardized, the client supporting the LSP is natively able to handle the diagnostics notification, without any actions necessary by a developer.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth/2]{03_lspmsgexample.png}
     \caption{Example Communication}
@@ -65,8 +103,7 @@ Since the protocol is standardized, the client supporting the LSP is natively ab
 \subsubsection{Message Example}
 The following message is a \code{textDocument/publishDiagnostics} notification as it appears in the example above.
 It states that on line 4, from character 12 to 17, there is an assertion violation.
-Note the JSON-based message format.\\
-
+Note the JSON-based message format.
 
 \begin{lstlisting}[language=json, caption={LSP Message Example}, captionpos=b, label={lst:lspjsonmsg}]
 [12:45:29 DBG] Read response body
@@ -96,10 +133,6 @@ Note the JSON-based message format.\\
    }
 }
 \end{lstlisting}
-
-\subsubsection{LSP Standard and Individual Extensions}
-\intnote{Beschreibung von "Default LSP Sachen" und was wir erweitert haben. Olaf Zimmernmann. Verweis auf Kapitel Custom LSP Messages -
-imho reicht das wie es ist. würde da nix erzwingen sonst wirkt es so reingewürgt. steht ja fix in \ref{section:analysis:lsp} + nachher unten in custom lsp msg.}\\
 
 \subsection{OmniSharp}
 \label{section:analysis:omnisharp}
@@ -177,12 +210,10 @@ Creating a simple plugin extension, generates the folder structure shown in figu
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=100mm]{analysis/vs_code_extension_file_structure}
+    \includegraphics[width=\textwidth]{analysis/vs_code_extension_file_structure}
     \caption{VSCode Extension File Structure}
     \label{fig:vs_code_extension_file_structure}
 \end{figure}
-Davor ein Bild. \\
-Mehr dazu in Abbildung
 
 The primary components are the two TypeScript files for the extension manifest and the extension source code. \\
 
@@ -220,11 +251,10 @@ This ensures the usability of the plugin when published via the VSCode Marked Pl
 \subsection{Dafny Language Features}
 With regard to the symbol table, the Dafny language had to be studied more in detail.
 For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes.
-Concepts like these are highly relevant for the construction of a symbol table.
+Concepts like these are highly relevant for the construction of a symbol table. \\
 
 To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the \textit{Dafny Reference Manual} \cite{dafnyReferenceManual}.
 This chapter discusses the most relevant Dafny language concepts with regard to the symbol table.
-
 
 \subsubsection{Modules}
 Dafny code can be organized by modules.
@@ -451,7 +481,7 @@ The symbol table contains that information and is connected to the AST, for exam
 With the help of the symbol table, it can be figured that the name segment \code{i} is of type int.
 The two concepts are strongly coupled.
 
-\subsubsection{Requirements for the symbol table}
+\subsubsection{Requirements for the Symbol Table}
 To be able to implement the required feature set for this project, the following questions must be answered by the symbol table or the AST, respectively.
 \begin{itemize}
     \item Cursor position
@@ -482,7 +512,6 @@ To be able to implement the required feature set for this project, the following
             \item What is the context; what was just typed before (e.g. a dot or the keyword \code{new})
         \end{itemize}
 \end{itemize}
-
 
 \subsubsection{Dafny Symbols}
 In an optimal case, Dafny's own implementation of its symbol table and AST would already contain all of this information.
@@ -657,9 +686,8 @@ Since the time frame of the bachelor thesis is limited, resources should rather 
 However, refactoring the code of Dafny itself is one of the possible extension points for this project.
 
 
-\subsection{Supported Features and Needed Improvements / Bisherige FUnktionen und nötige Verbesserungen}
+\subsection{Feature Functionalities and Improvements }
 \label{section:analysis:features}
-
 
 In our existing work we have already realized a number of features.
 In the outlook, we have noted what improvements would be appropriate.
@@ -674,7 +702,7 @@ As you can see, keywords like method, returns, requires and ensures are marked i
 
 \begin{figure}[H]
     \centering
-    \includegraphics{analysis/syntax_highlighting}
+    \includegraphics[width=\textwidth/2]{analysis/syntax_highlighting}
     \caption{Syntax Highlighting}
     \label{fig:analysis_syntax_highlighting}
 \end{figure}
@@ -688,7 +716,7 @@ The verification feature underlines logical errors in the user's code. An exampl
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{analysis/verification}
+    \includegraphics[width=\textwidth]{analysis/verification}
     \caption{Postcondition Violation}
     \label{fig:analysis_verification}
 \end{figure}
@@ -805,8 +833,8 @@ Please note that in the current version, the cursor has to be on the left side o
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{analysis/analysis_goto_2}
-    \caption{Cursor Position after go to Definition}
+    \includegraphics[width=7cm]{analysis/analysis_goto_2}
+    \caption{Cursor Position After Go to Definition}
     \label{fig:analysis_goto_2}
 \end{figure}
 
@@ -818,7 +846,10 @@ Then the position of this symbol is jumped to. \\
 Similar to auto completion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
 
 \subsubsection{CodeLens}
-todo manchmal code lens manchmal codelens \\ code lens ist reichtig
+todo manchmal code lens manchmal codelens \\ code lens ist reichtig \\
+hier schreiben sie CodeLens:
+https://code.visualstudio.com/blogs/2017/02/12/code-lens-roundup
+ist eig egal welches. einfach einheitlich am ende ;)
 
 Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol. As an example, the class C has been instantiated twice and the method m was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
 
@@ -826,7 +857,7 @@ Unfortunately, clicking the grey references is not yet supported. This should op
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{analysis/analysis_codelens}
+    \includegraphics[width=9cm]{analysis/analysis_codelens}
     \caption{CodeLens Example}
     \label{fig:analysis_codelens}
 \end{figure}
@@ -837,81 +868,38 @@ With the new symbol table, each symbol knows how often and where it has been use
 Therefore, we only have to iterate through the symbol table once.
 Furthermore, the iteration can be limited exclusively to  declarations.
 
-
-\subsection{Continuous Integration (CI)}
-
-
 %%%%%%CI%&%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
-\intnote{Analyse ist "was haben wir erreicht", Implementation "was haben wir getan, umgesetzt, verbessert", Project Management ist "darum haben wirs getan, für qualität". einverstanden?}
-
-todo machen 
-
 \subsection{Continuous Integration (CI)}
-Continuous integration is a very important part for code quality and collaboration.
+\label{section:analysis:CI}
+
+Continuous integration is a very important part for code quality and collaboration
+as you will read in chapter \ref{section:project_management} \nameref{section:project_management}.
 Unfortunately, setting up the CI process in the preceding semester project\cite{sa} took almost until the end of the project.
 
-According to the project plan, we wanted to resolve all CI-issues at the beginning of the bachelor thesis, so that we can then profit by a supportive workflow.
+This chapter describes the initial situation, the desired objectives and the targets achieved regarding CI to optimize our workflow.
 
-This chapter describes the initial situation, the desired objectives and the targets achieved regarding CI.
+\subsubsection{SonarQube}
+SonarQube makes static code analysis and reports bugs and vulnerabilities.
+On the client side, code was analyzed sucessfully with SonarQube by the CI process.
+If the code contained any TypeScript errors, an error was thrown and the build failed \cite{sa}.\\
 
-\subsubsection{Initial Situation}
-On the client side, code was analyzed with SonarQube by the CI process.
-If the code contained any TypeScript errors, an error was thrown and the build failed \cite{sa}.
-The end-to-end tests, provided by the pre-existing project could not be integrated, due to their heavy dependencies.\\
+Integration testing and code analysis on the server side by SonarQube remained pending \cite{sa}.
+By splitting the client and server parts into separate git repositories,
+it should be easier to isolate, analyze and fix the remaining probem of a missing SonarQube report for the language server part.
+
+\subsubsection{Tests}
+The client's end-to-end tests, provided by the pre-existing project could not be integrated, due to their heavy dependencies.
+For headless client tests, a solution to the problem or an alternative solution is to be found through a new analysis. \\
 
 On the server side, the project was automatically built by the CI server using \textit{MSBuild}.
 Our own unit tests, as well as tests provided by Dafny could as well be automatically executed using the nUnit console runner.
-Integration testing and code analysis by SonarQube remained pending \cite{sa}.
-
-\subsubsection{Achieved Solution}
-According to our research, a major problem was that the scanner for SonarQube can only analyze one language at a time \cite{sonar-supports-only-one-language}.
-This means, that the TypeScript code in the client and the \CsharpWithSpace code in the server cannot be analyzed simultaneously.
-Furthermore, in the pre-existing Dafny project, single Java files appear, too.
-This led to further conflicts in the Sonar analysis \cite{sa}.\\
-
-As a simple solution, we decided to separate the client (VSCode plugin) and server (Dafny Language Server) into two separate git repositories.
-This not only simplifies the CI process but also ensures a generally better and clearer separation. \\
-
-As a result, the client could still be easily analyzed with the previous Sonar scanner.
-Regarding the server, a special Sonar scanner for MSBuild had to be installed, which publishes the analysis in a dedicated SonarCloud project \cite{dev}.
-The available statistics are very helpful for code reviews.\\
-
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{sonarexamaple.png}
-    \caption{Example of a Useful Sonar Finding}
-    \label{fig:sonarexample}
-\end{figure}
-
-
-Unfortunately, the code coverage by tests is not analyzed.
-Searching for an alternative, \textit{OpenCover} was found as a very common tool for code coverage analysis in \Csharp.
-Unfortunately, it only runs under Windows  \cite{opencover}.
-The CI server bases on Linux, though.
-During our research we came across \textit{monocov} \cite{monocov}.
-This tool would run under Linux and analyze .NET Framework projects.
-Unfortunately, this project was archived and has not been maintained for almost 10 years \cite{monocov}.
-
-Since we would not gain much value with sonar code coverage, we decided not to pursue this approach any further.
-The coverage information is provided by the ReSharper extension \textit{dotCover} \cite{dotcover} to the developers.\\
-
-The end-to-end tests base on a lot of dependencies, such as a headless instance of Visual Studio Code.
-In consultation with our supervisors, we have removed these tests from the client project and replaced them with own specially written integration tests on the server side.
-This can be justified with the client only containing a minimal amount of logic.
-Any other logic was moved to the server.
 
 \subsubsection{Docker}
 The CI server bases on a Docker distribution.
-Docker's lightweight virtualization is ideally suited to run the CI environment.
+Docker's lightweight virtualization is ideally suited to run the CI environment.\\
 
-For an easier testability of the CI, we also installed Docker locally.
-This allowed us to resolve CI issues locally and platform-independently (through the Docker Client) in case of problems.
-More details are stated in the developer documentation \cite{dev}.\\
-
-Docker also realizes the principle "Cattle, not pets" with docker.  \intnote{hier noch irgend eine cite adden wo das prinzip definiert wird... hab nur grad stackoverflow gefunden, was zitierfähiges wäre nett. sonst wirkt es fast etwas verpsielt für eine BA, nich?}
+Docker also realizes the principle "Cattle, not pets" with docker \cite{pets-vs-cattle}.
 Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used.
 This way, the dependent packages will always be up to date and security patches and the like are automatically deployed.\\
 
@@ -920,23 +908,15 @@ All of these have to be installed in specific release versions by the CI server.
 This is, since Dafny relies on specific deployments of these products.
 See the developer documentation for more details \cite{dev}.\\
 
-\subsubsection{2do - Kapitelaufteilung komisch}
-Ich hab hier jetzt in der Analyse auch schon die Lösung vorabgegriffen. Sollen wir das splitten? Bricht das nicht den Lesefluss? Evt besprechen.
-ja es is iwie komisch. auch unten habenw ir ja noch testing und blabla... kann man evtl so ein CI Kapitel vlt sogar machen? grml.
+During our previous thesis, adjustments to the Dcker image were very cumbersome.
+For each change a separate commit to test the change was created and pushed as pipeline to GitLab.
+On the one hand this was very time-consuming as each pipeline had to be run through remotely,
+on the other hand this resulted in an unpleasant commit history. \\
 
+To test changes more efficiently and allow local testing without commits, a developer-friendly way should be found and documented.
+
+\subsection{notizen von tom, visitor pattern}
 todo
-
-
-\subsection{notizen von marcel}
-
-$\rightarrow$ Gedanken zum Updaten sind wichtig. Evt ned alles implementieren aber dokumentieren.... Effizienz. Ned alles neu Builden
-wenn in einem File nur ein Zeichen geändert wird auf einer Linie etc. $\rightarrow$ Ausblick.
-
-Und Testing in einem grossen Dafny Project wär evt auch noch ganz nice... ein paar Performance-Tests und so?  \\t: die sind iwo.
-Und die dann mit dem Plugin aus der Studienarbeit vergleichen? Und dem alten-alten Plugin? Käme bestimmt jut an.
-
-
-\subsection{notizen von tom}
 gleich nachm schreiben, was mir onch so durch den kopf geht:
 \begin{itemize}
     \item Optional: Bildchen für Visitor pattern, wo man sieht (links) Acceptor, macht so den flow, udn rechts 2-3 vidistor wo man sieht, dass die die action machen.
