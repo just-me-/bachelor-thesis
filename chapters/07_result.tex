@@ -1,13 +1,6 @@
 \section{Results}
 \label{section:results}
 
-für benutzer, programmierer vo dafny
-für pugin / anguage server weiterentickler
-plugin ide support andere
-persönliches ziel - mehrwert der arbeit für die gesellschaft; veröffentlichung
----
-
-
 As described in our objectives, our work has three basic stakeholders. \\
 
 On the one hand there are the students of the HSR, who want to develop with Dafny.
@@ -395,33 +388,37 @@ Any Windows user can install it, try it out and leave feedback.
 This chapter describes the release of the plugin and the associated possibilities.
 
 \subsubsection{Rebase of the Dafny Language Server to the Dafny Project}
-Our Dafny language server has reached a point where it can be merged back into the original Dafny project.
+Our Dafny language server has reached a point where it can be merged back into the original Dafny project \cite{dafny_lang_github}.
 However, since there is still a problem with platform independence, no rebase was carried out with regard to the server in part.
 As soon as the Language server can be successfully started with mono, nothing stands in the way of a rebase.
 
 \subsubsection{Publishing of the Client Plugin}
+Our plugin does not replace the old plugin, but supplements the plugin store as its own new preview plugin \cite{our-dafny-plugin}.
+The publication in the plugin store happens automatically. \\
 
+We rebased our GitLab repository to a GitHub repository.
+In the original GitHub CI process, the pipeline \code{release-marketplace}
+was adapted for the plugin store release by Fabian Hauser \cite{our-dafny-plugin-github-publish}.
+Once the rebase from Dafny language server to the Dafny project is done,
+the preview plugin can replace the original plugin.
+Since the repository already exists in GitHub, the effort is minimal.
 
-\cite{our-dafny-plugin}
-dafny_lang_builds
-dafny_lang_github
-our-dafny-plugin
-our-dafny-plugin-github-publish
+\subsubsection{Download of the Dafny Language Server}
+In the original plugin, the Dafny project was downloaded via the release builds of GitHub \cite{dafny_lang_builds}.
 
---
+As discussed in chapter \ref{section:implementation:mono} \nameref{section:implementation:mono},  todo !!!!!! #####
+we have written an interface for this original process.
 
-Download of the Dafny language server
+Once the rebase from Dafny language server to the Dafny project is done,
+the client can download the download the Dafny language server
+(which will be included in the Dafny project) as it was inizially done.
+Due to the written interface the component can be exchanged with minimal effort. \\
 
+The current download component downloads the Dafny language server from a private server \cite{client-serverStringResources}.
 
-
-\subsubsection{Veröffentlichung}
-
-
-beschreiben interface download, wie das ausgetaucht werden kann.
-bin hier nicht draus gekommen genau.
-fabian sagt: pullt es zu mir, weil ich muss noch mono machen
-corbat sagt: ja ihr müsst schreiben, dass ihr es pullt, weil dann zähtl es als public.
-
+We decided on this simple variant in order to keep the effort for this temporary solution as low as possible.
+Alternatively, this process could have been automated with the GitLab CI using the GitLab API \cite{gitlab-api} to download the CI artifacts
+or the artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}.
 
 \subsubsection{Platform Independence}
 Um ein möglichst breites Publikum mit unserem Plugin anzusprechen, war uns von Anfang an corss plattrofm support sehr wichtig.
