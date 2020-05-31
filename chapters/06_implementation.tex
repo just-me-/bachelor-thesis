@@ -63,7 +63,10 @@ This would make it easier to maintain these values. \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
 
+todo roadmap kapitel überblick einleitung
+
 \subsubsection{Server Launch}
+todo "corbat-platsch"
 As done in common practice, the \code{Main} function is kept very short.
 All it does is launching the language server, which is already handled by another class.
 
@@ -115,7 +118,7 @@ Finally, the launch arguments are parsed, again overwriting the config settings 
 A simple argument parser was implemented manually.
 Alternatively, a library could have been used for this task such as \cite{clparser}.
 The config initializer is implemented exception safe.
-Tt will run to completion and at worst just provide default values.
+This will run to completion and at worst just provide default values.
 Errors can later be extracted from the \code{ErrorReporter}.
 Each task is done by a dedicated component.\\
 
@@ -139,7 +142,7 @@ The class tries to read and parse \code{Config/ReservedDafnyWords.json}, which c
 If the file cannot be read or has a wrong format, a hard coded default list is used which was taken out from the Dafny Reference Manual \cite{dafnyReferenceManual}.
 A HashSet was used to provide fast access to the set.\\
 
-While this component is specifically used solely for the \code{rename}-Feature, it was extracted to be also available at other spots if required for future features.\\
+While this component is specifically used solely for the \code{rename}-Feature, it was extracted to be also available at other spots if required for future features.
 
 \subsubsection{Handler}
 Handlers are passed to the language server and are called whenever the language server receives a corresponding request.
@@ -292,6 +295,7 @@ This package provides four components:
 \end{itemize}
 
 \textbf{Symbol Information}
+todo uml
 This is a component that summarizes all information about a symbol.
 Aside the name, this also includes the location, the parent, the declaration, children, and so forth.
 The class contains a lot of properties, but in exchange, it provides any information that is required.
@@ -555,7 +559,7 @@ This algorithm is also visiting just a single tree branch, thus requiring $O(log
 The navigator offers further methods to visit the whole tree if that is desired by the caller.
 The method \code{TopDownAll} will visit all branches, not just the one wrapping a certain location.
 Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used if possible.\\
-\intnote{wozu brauchen wir die eig?}
+\intnote{wozu brauchen wir die eig? war ursprünglich der modul wrapper}
 
 
 
@@ -657,6 +661,7 @@ Wir supporten drei cases; nennen. Beschreiben.
 Ablauf. Diagramme wie in der SA sind nützlich. das mag olaf bestimmt. \\
 
 PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
+das vom papier digitalisieren todo 
 
 \textbf{Code Lens}\\
 todo
@@ -776,7 +781,7 @@ All files can be referenced globally from within the \code{TestCommons} project,
 
 
 
-
+todo (?)
 \textbf{m}
 \textbf{m}
 \textbf{m}

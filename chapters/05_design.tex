@@ -127,8 +127,8 @@ Instance variables were set to private visibility.
 Constructors were not included for simplicity.
 The contents of type interfaces and string resources were also omitted for clarity.
 
-This distribution has certain upward dependencies, which is not optimal. \intnote{Frage: warum zeichnest ud das ui package nicht einfach oberhalb, dann zeigt der pfeil nach unten? oder... This distribution has a seeming upwards dependency, but this is just because the graphic was drawn this way to save space doer sowas. Weile s eins hoch und eins runter gibt. das kann man ned anders zeichnen ohne dass eins hoch und eins runter geht. das wird bei der implementation behoben. und begründet. }
-The UI package accesses the server package.
+This distribution has certain upward dependencies, which is not optimal.
+The UI package accesses the server package and part of the server package accesses the UI package.
 Nevertheless, we have decided on this grouping,
 so that the server access functionality is encapsulated.
 
@@ -213,11 +213,11 @@ The server consists of eight different packages:
     \item Main: Starting of the language server
     \item Handler: Components handling LSP requests
     \item Core: Contains provider-classes that supply the handlers with the necessary information
-    \item WorkspaceManager: Represents the user workspace with its buffered files.
+    \item WorkspaceManager: Represents the user workspace with its buffered files
     \item SymbolTable: Handles anything related to the symbol table (creation, navigation, access)
-    \item Tools: Individual, isolated services needed across the project.
-    \item Commons: Classes accessed from multiple components, such as the language server configuration.
-    \item Resources: Strings and filesystem resources.
+    \item Tools: Individual, isolated services needed across the project
+    \item Commons: Classes accessed from multiple components, such as the language server configuration
+    \item Resources: Strings and filesystem resources
 \end{itemize}
 
 Figure \ref{fig:server_overview} shows a broad overview of the server layering.
@@ -240,7 +240,7 @@ Listing \ref{lst:serverstart} shows a simplified example with two handlers for t
 LanguageServer.From(options => options
     .WithHandler<TextDocumentSyncTaskHandler>()
     .WithHandler<RenameTaskHandler>()
-    \ddots
+    ...
 );
 \end{lstlisting}
 
@@ -418,13 +418,16 @@ Each provider implements a specific interface, so that fakes can easily be creat
 \subsubsection{Resources}
 String resources, such as error messages, were extracted to a specific resource package.
 This way, they are easy to maintain and adjustable at a central place.
+A similar system of centralization of string resources is followed as with the client.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{design/server7_resources.png}
+    \includegraphics[width=\textwidth]{design/server7_resources.png}
     \caption{Short Cutout of a Resource Definition File}
     \label{fig:server_resources}
 \end{figure}
+
+todo grafik welche ressourcengruppen vorhanden sind. am ende kurz screenshot oder auflistung vom directory
 
 \subsubsection{Tools}
 Some responsibilities were extracted into dedicated classes.
@@ -455,6 +458,9 @@ It would be the sixth class related to the config initialization.
     \label{fig:server_config}
 \end{figure}
 
+todo aufzeigen welche config bzw welche art von configs dem server übergeben werden können
+trennung von config und ressources aufzeigen.
+
 
 \subsubsection{Workflow Overview}
 %Sourcecode des flowgraphen:
@@ -471,7 +477,7 @@ This information is forwarded to the provider, which calculates the result and r
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{design/workflow1_regular.png}
+    \includegraphics[width=\textwidth]{design/workflow1_regular.png}
     \caption{Overview}
     \label{fig:server_overview}
 \end{figure}
@@ -484,7 +490,7 @@ Now, it forwards the repository to the \code{VerificationProvider}, which extrac
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{design/workflow2_update.png}
+    \includegraphics[width=\textwidth]{design/workflow2_update.png}
     \caption{Updating a File}
     \label{fig:server_update}
 \end{figure}
@@ -607,6 +613,12 @@ Tests can easily be organized into classes \textendash{} considering compilation
     \caption{Test Architecture on the Basis of Compilation}
     \label{fig:testArchitecture}
 \end{figure}
+
+todo ich finde solche genauen zhalnen und angaben zur test maschine gehören nicht zum design
+sondern eher implementation, nicht? sprich testing der implementation .
+"For reproducibility, nUnits randomizer was used"
+- wurde benutzt. dh ist ja nicht mehr planung sondern realisierung
+
 
 \subsubsection{Performance Measurement}
 To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
