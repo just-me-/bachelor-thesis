@@ -102,8 +102,15 @@ Those errors could finally directly be extracted out of the Dafny error reportin
 Thus, the user is now informed not only about logical errors, but also about syntax errors.
 Furthermore, warnings and information diagnostics are now also reported.
 Reporting warnings something the pre-existing project did not do and was actually already issued on the official Dafny git repository \cite{dafny_noWarnings}.
-With the symbol table, it is now also possible to underline complete code blocks, instead of just single symbols which were barely visible at the beginning of the project.
-This shows well how the quality of the tool could be improved.\\
+With the symbol table, it is now also possible to underline complete code blocks, instead of just single symbols which were barely visible at the beginning of the project as you can see in figure \ref{fig:error_whole_block}.
+This shows well how the quality of the tool could be improved.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=9cm]{results/error_whole_block.png}
+    \caption{Underlinding Before (Top) and After (Buttom)}
+    \label{fig:error_whole_block}
+\end{figure}
 
 The feature directly invokes Dafny's compile engine, thus works quite solid and scales automatically with future Dafny features.
 
@@ -141,7 +148,7 @@ To obtain compilation results, the console output of the sub-process was parsed 
 That solution was obviously not integrated at all.
 The current implementation improved that significantly, is now completely integrated, both, in terms of invocation and result reporting.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{results/compile_contextMenu_feedback.png}
     \caption{Compilation Context Menu and User Feedback}
@@ -168,20 +175,30 @@ Furthermore, any unreadable representations such as \code{**myVar} or \code{TU!V
 To allow the user to catch the information at first sight, obsolete brackets are also removed, and the minus sign is directly moved to the number.
 The expression \code{((- 23))} is therefore reformatted into \code{-23}, making the term much more perceivable.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{results/ce_beforeafter.png}
-    \caption{Counter Example Representation before (top) and after (bottom)}
+    \includegraphics[width=12cm]{results/ce_beforeafter.png}
+    \caption{Counter Example Representation Before (Top) and After (Bottom)}
     \label{fig:ce_beforeafter}
 \end{figure}
 
 Figure \ref{fig:ce_beforeafter} shows a comparison of the counter example feature between the initial state and at the end of the project.
 The representation is much cleaner and easier to immerse.
-Also note, that more room is given so that is does not have a clumsy effect on the user's eye. \intnote{die HCID Trulla reffen? Mehr raum?}
+Also note, that more room is given so that is does not have a clumsy effect on the user's eye. \\
 
 This feature was also improved on the client side.
 The user has the option to configure the color scheme of the counter example representation, if he does not like the default colors.
 The default colors are chosen with respect to the user's base color theme of VSCode (dark or light mode).
+As in figure \ref{fig:ce_beforeafter} the light theme is shown,
+the following figure \ref{fig:ce_dark} shows the dark mode colors.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=8cm]{results/ce_dark.png}
+    \caption{Counter Example Dark Theme}
+    \label{fig:ce_dark}
+\end{figure}
+
 The counter example will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
 If the user switches between windows, the counter example state is buffered, so that once the user switches back to the original window, the counter example will be shown again.
 
@@ -193,9 +210,9 @@ Similar to hover information, other features like text highlighting can be added
 Hover may not provide much useful information to the user, but it is still a nice gimmick.
 For example, in figure \ref{fig:hover} the user can actually find out, where his \code{field} is declared if he is unsure.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \includegraphics{results/hover.png}
+    \includegraphics[width=\textwidth/2]{results/hover.png}
     \caption{Hover Information Example}
     \label{fig:hover}
 \end{figure}
@@ -214,8 +231,9 @@ The cursor can now be at any character within a symbol.\\
 Technically, the feature is misnamed.
 A better name would actually be \code{Go to Declaration}, since it jumps to the symbol declaration, not definition.
 LSP would even offer a dedicated handler for this, \code{textDocument/declaration} \cite{lspspec}.
-\intnote{ich würd das so lassen aebr technisch gesheen müssten wir genau das implementierte interface ändern, der rest ist eh gleiich xD vlt könnte mand as sogar noch schnell machen
-VSCode nennt das aber auch Go to Definition (ja, weil der deinition handler implemented ist xD) Müssen wir das überhaupt erwähnen? einfach streichen husthust? erwähnen würd ich es aber tatsächlich, weil ich find das jetzt nicht so tragisch /schlimm. aber ich schau nächste woche mal noch, je nachdem ist das wirklich eine 2min arbeit. aber wenn dann alle grafiken und bla anders isnd, n ja. mal schauen.}
+Since VS Code names the short cut „Go to Definition“, since the definition handler was implemented, we named that feature in our previouse theses in the same way.
+We kept the name to maintain the consistency of our work.
+But perhaps a rename would be appropriate. todo das ist jetzt eig so geschriebn fast schon wieder implementation (begründung) statt result... \\
 
 To increase the user experience with this feature, notifications are sent to the user if an error occurred or the requested symbol was already a declaration.r
 \begin{figure}[h]
@@ -225,37 +243,42 @@ To increase the user experience with this feature, notifications are sent to the
     \label{fig:goto}
 \end{figure}
 
-\intnote{die msg tut iwie nich xD is aber my bad hab da noch was geändert kürzlich. punkt 2: vscode reported das grad selber bei return null, damüssen wir unsere eigene notification eig net bringen.}
+\intnote{die msg tut iwie nich xD is aber my bad hab da noch was geändert kürzlich. punkt 2: vscode reported das grad selber bei return null, damüssen wir unsere eigene notification eig net bringen. todo}
 
 Jumps can also be done across different files.
-If the proper file is not opened, VSCode will just open it inside the workspace.
+If the proper file is not opened, VS Code will just open it inside the workspace.
 It is also possible to go to the definition of \code{this}-Expressions, which will just jump to the class definition.
 The feature works also across code that is not within a block statement, for example for expressions occurring inside an \code{ensures}-clause.
 
-
 \subsubsection{Rename}
 Rename is a feature that could only be added, since the symbol table provides all necessary information.
+If the user wants to execute a rename, all dependent symbols are automatically marked correctly as you see in figure \ref{fig:rename}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{results/rename}
+    \caption{Rename of a Symbol}
+    \label{fig:rename}
+\end{figure}
 
 It was embraced to provide as much user experience as possible for this feature, even if it is relatively simple.
 In particular, this means if there is no renamable symbol at the cursor, the user is informed by a notification.
 The algorithm will also check, if the new symbol name is valid.
 This means, it must not start with an underscore or it must not be any reserved Dafny word.
-Also, we limited the allowed new name to alphanumerical characters, although wild unicode names would be allowed by Dafny.
+Also, we limited the allowed new name to alphanumerical characters, although wild unicode names would be allowed by Dafny.\\
 
 This could even be driven further.
 For example, it could be checked, whether a symbol with the same new name already exists.
 Functionality for this is already available by the symbol table, since something similar is needed by autocompletion.
 Furthermore, it is currently not checked, if the new symbol name starts with a number, which is prohibited.
-That is also something that could easily be added. \intnote{das sind so one-liner im code... könnten wir echt nochs chnell umsetzen}
+That is also something that could easily be added. \intnote{das sind so one-liner im code... könnten wir echt nochs chnell umsetzen}\\
 
 Since Dafny reserved words may change in the future, the wordlist is configurable for the end-user by adjusting a config file.
-The process targets more advanced users and is described in the readme file.
+The process targets more advanced users and is described in the readme file.\\
 
-Since the symbol table reports occurrences across imported files as well, the rename feature works fine across the complete workspace.
+Because the symbol table reports occurrences across imported files as well, the rename feature works fine across the complete workspace.
 
-\intnote{abschnitt gefällt mir mnicht, evtl neu schreiben. ist einfach blabla mit 0 inhalt.}
-
-
+\intnote{abschnitt gefällt mir mnicht, evtl neu schreiben. ist einfach blabla mit 0 inhalt. - find ich eig ned. }
 
 \subsubsection{CodeLens}
 todo überall bilder bzw platzhalter bilder einfügen .
@@ -352,55 +375,65 @@ Any important classes, such as handlers, providers or classes related to the sym
 This allows for optimal testing, for example by implementing the same interface with a fake instance.
 
 \subsubsection{Client Architectural Improvements}
-todo
-Cleaner, kleinere componenten, bessere isolation
-verwendung von interfaces, kapselung. falls logik künftig eingefügt wird und man tests schreiben möchte; geht dank interfaces relativ gut.
+The client was completely restructured.
+Isolated, small, preferably encapsulated components were programmed.
+Components are now no longer directly dependent on each other but program against interfaces.
+Modules were created and these export only the most necessary interfaces and components to the outside.
+If complex logic would have to be implemented for the client at a later date due to new features,
+this encapsulation by interfaces is ideal for writing tests. \\
 
-isolation von vscode komponenten
-kann so möglichst einfach auf andere IDEs migriert werden
-bsp atom... link dass es auch typescript und js verwendet...
-
+This resulted in less encapsulation and higher coherence.
+These two motivations also encouraged the complete isolation of VS Code modules.
+We isolated the VS code components in a separate module if possible.
+This minimizes the effort to migrate the plugin to another IDE.
 
 \subsection{Publication of the Plugin}
+To make our new Dafny plugin easy for Dafny developers to install and use,
+it has been published in the Visual Studio Marketplace as a preview version \cite{our-dafny-plugin}.
+Any Windows user can install it, try it out and leave feedback.
+
+This chapter describes the release of the plugin and the associated possibilities.
+
+\subsubsection{Rebase of the Dafny Language Server to the Dafny Project}
+Our Dafny language server has reached a point where it can be merged back into the original Dafny project.
+However, since there is still a problem with platform independence, no rebase was carried out with regard to the server in part.
+As soon as the Language server can be successfully started with mono, nothing stands in the way of a rebase.
+
+\subsubsection{Publishing of the Client Plugin}
+
+
+\cite{our-dafny-plugin}
+dafny_lang_builds
+dafny_lang_github
+our-dafny-plugin
+our-dafny-plugin-github-publish
+
+--
+
+Download of the Dafny language server
+
 
 
 \subsubsection{Veröffentlichung}
-\intnote{todo}
-- plugin live
-- rebase auf server machen
-- pull request dokumentieren -- signifikantes ergebnis -- man kanns verwenden
+
 
 beschreiben interface download, wie das ausgetaucht werden kann.
 bin hier nicht draus gekommen genau.
 fabian sagt: pullt es zu mir, weil ich muss noch mono machen
 corbat sagt: ja ihr müsst schreiben, dass ihr es pullt, weil dann zähtl es als public.
 
-!!vorsicht kapitel 8 hat auh noch n absatz übers deployment (ab zeile zirka 36)
+
+\subsubsection{Platform Independence}
+Um ein möglichst breites Publikum mit unserem Plugin anzusprechen, war uns von Anfang an corss plattrofm support sehr wichtig.
+Wie im Kapitel xxx beschrieben, mussten wir unglücklicherweise von .NET Core auf .Net Framework umsteigen
+wegen Dafny. Unser Language server hatte Schwierigkeiten damit, sich mit mono korrekt ausführen zu lassen. \\
+
+Leider konnte das Problem nicht binnend vernünftiger Zeit gelöst werden, und wurde bis zum Ende leider nicht abgeschlossen.
+Somit ist unser Language server - und somit auch das Plugin - zum aktuellen Stand leider nicht auf macOS oder Linux korrekt ausführbar. \\
+
+Die Platformunabhängigkeit war ein essenzielles Ziel und bleibt leider ausstehend.
+Daher kann unser Plugin als Konsequenz das bestehende Plugin nicht ablösen,
+sondern wurde als separate, als Beta Version ausgezeichnete installation veröffentlicht.
 
 
-\subsubsection{Platform Independence / Mono Support for macOS and Linux}
-\intnote{welcher titel ist besser? platfrîrm hier, mono bei implementation todo}
-Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
-Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
-(warum in der SA; plficht wegen dafny core. was ist mono)
-
-todo
-
-Leider funktionierts nicht.
-Anssaetze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
-github issues: allgemein probleme mit lunux/mac weil primaer auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle)
-
-ansatz in die implementation rein
-ergebnis "wir habens probiert", die nächsten machen dass dann
-
-- ms build wegen sonar, probleme in der SA mit core
-dotnet build sollen wir umstellen...
-unerer eig core fähig
-danfy braucht bei der SA framework.. abhängigkeiten machten alles kaput, mit manuel nicht fixen können, framework genommen
-inwzsichen ist diese dafny konsole / server weg weil wir das fancy gemacht haben
-evt bestehen diese abhängigkeiten gar nicht mehr; umstellung auf core könnte leicht sein
-mangelnde zeit daher nicht gemacht. als ausblick festhalten.
-
-\cite{sa}
-\cite{mono-slack}
-\cite{mono-git}
+chapter \ref{section:implementation:mono} \nameref{section:implementation:mono}

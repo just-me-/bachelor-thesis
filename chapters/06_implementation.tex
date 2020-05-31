@@ -661,7 +661,7 @@ Wir supporten drei cases; nennen. Beschreiben.
 Ablauf. Diagramme wie in der SA sind nützlich. das mag olaf bestimmt. \\
 
 PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
-das vom papier digitalisieren todo 
+das vom papier digitalisieren todo
 
 \textbf{Code Lens}\\
 todo
@@ -698,9 +698,33 @@ These just look like \code{T@U!val!12}.
 Such values are replaced with the text \code{[Object Reference]}.\\
 
 
+\subsection{Mono Support for macOS and Linux}
+\label{section:implementation:mono}
 
+Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
+Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
+(warum in der SA; plficht wegen dafny core. was ist mono)
 
+todo
 
+Leider funktionierts nicht.
+Anssaetze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
+github issues: allgemein probleme mit lunux/mac weil primaer auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle)
+
+ansatz in die implementation rein
+ergebnis "wir habens probiert", die nächsten machen dass dann
+
+- ms build wegen sonar, probleme in der SA mit core
+dotnet build sollen wir umstellen...
+unerer eig core fähig
+danfy braucht bei der SA framework.. abhängigkeiten machten alles kaput, mit manuel nicht fixen können, framework genommen
+inwzsichen ist diese dafny konsole / server weg weil wir das fancy gemacht haben
+evt bestehen diese abhängigkeiten gar nicht mehr; umstellung auf core könnte leicht sein
+mangelnde zeit daher nicht gemacht. als ausblick festhalten.
+
+\cite{sa}
+\cite{mono-slack}
+\cite{mono-git}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing}
