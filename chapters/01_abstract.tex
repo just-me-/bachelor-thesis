@@ -20,12 +20,9 @@ The symbol table is supposed to open a wide range for further development.\\
 \textbf{Result}\\
 A symbol table was created using the visitor pattern.
 Every symbol contains information about its parent, its children and its declaration.
-Navigation within the symbol hierarchy is kept very simple.
+This keeps navigation within the symbol hierarchy very simple.
 The implemented features go to definition, rename, code lens, hover information and auto completion benefit by the symbol table and are no longer required to contain complex algorithms.
 The offerings of the symbol table can be accessed for future extensions, such as auto formatting or code highlighting.\\
 
-
-\intnote{284 von empfohlenen etwa 200 worte. ist io, den unteren abschnitt könnte man aber auh weglöschen oder? wirkt so etwas "reingedrückt". oder ansonsten noch erwähnen dass der prototype "nun einsatzfähig" gemacht wurde?}
-
 Aside features based on the symbol table, pre-existing functionality was revisited as well.
-The prototype was extended to support multiple files in a workspace, use buffered compilation results to be more performant, and increase user experience in general.
+The prototype achieved a quality to now be ready for distribution as a preview version on the Visual Studio Code market place.

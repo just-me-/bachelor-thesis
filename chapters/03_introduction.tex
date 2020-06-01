@@ -8,7 +8,7 @@ This mainly concerns Dafny and the language server protocol (LSP).
 \subsection{Dafny}
 \label{section:introduction:dafny}
 Dafny is a compiled language optimized to prove formal correctness \cite{dafnyWiki}.
-It bases on \textit{Boogie}, which uses the \textit{Z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}.
+It bases on \textit{Boogie} \cite{boogie}, which uses the \textit{Z3} \cite{z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}.
 That means, a programmer can define a precondition - a fact that is just given at the start of the code.
 The postcondition on the other hand is a statement that must be true after the code has been executed.
 Just as the precondition, the postcondition are both defined by the programmer.
@@ -16,7 +16,7 @@ In other words, it can be proven, that under a given premise, the code will mani
 Dafny will formally ensure this.
 If it is not guaranteed that the postcondition holds, an error is stated.\\
 
-The following code snippet shows an example.
+Listing \ref{lst:simpleDafnyExample} shows an example.
 The value \code{a} is given, but it is required to be positive.
 This is the precondition.
 In the method body, the variable \code{b} is assigned the negative of \code{a}.
@@ -32,13 +32,14 @@ ensures b < 0
 This example is of course trivial.
 In a real project, correctness is not always that obvious.
 With Dafny, a programmer can be sure if the program is correct in a logical way.
-Since the proof is done with formal, mathematical methods, the correctness is guaranteed.\\
+Since the proof is done with formal, mathematical methods, correctness is guaranteed.\\
 
 If Dafny is unable to perform a proof, the user can assist by creating lemmas.
 Lemmas are mathematical statements.
 For example, a lemma could be that a factorial number is never zero.
-If we define a simple function \code{Factorial}, and afterwards divide through the result of \code{Factorial}, Dafny will state that this might be a division by zero error.
+If we define a simple function \code{Factorial}, and later divide through the result of \code{Factorial}, Dafny will state that this might be a division by zero error.
 But if we assert that a factorial number can never be zero, verification can be completed successfully.
+This is illustrated in listing \ref{lst:lemma}.
 \begin{lstlisting}[language=dafny, caption={Lemmas}, captionpos=b, label={lst:lemma}]
 
 function Factorial(n: nat): nat
@@ -62,16 +63,16 @@ function Foo(n: nat): float
 The language server protocol (LSP) was created to unify communication between an integrated development environment (IDE) and a language server.
 It specifies requests, such as auto completion, rename or go to definition.
 If the user performs an action like rename, the IDE will send the proper request to the language server.
-The message format is specified by the LSP and bases on JSON.
+The message format is specified by the LSP and bases on JSON.\\
 
 The language server is responsible to calculate a proper result.
 For the example of a rename request, the answer contains the information where to apply the renaming.
 It is the task of the server to analyze the source code and provide a rename response with respect to language specific rules.\\
 
 Since the language server is independent of the client, a language server can be used from within multiple IDE's.
-To provide support for another IDE, just the client has to be coded.
+To provide support for another IDE, just the client has to be adjusted.
 Since all logic is contained within the server, this can be done with minimal effort.
-A developer only has to set up the connection to the language server and has to implement the display logic for the newly supported IDE.
+A developer only has to set up the connection to the language server and has to implement UI-tasks for the newly supported IDE.
 
 The most important requests the LSP supports incorporate:
 \begin{itemize}
@@ -91,8 +92,8 @@ This request is not natively supported by the LSP.
 However, own custom requests and data responses can easily be added to the LSP.
 These have to be handled separately within the client though, since the LSP is not automatically displaying the result. \\
 
-Because of these advantages our work is based on this protocol.
-Exactly which features have to be implemented in the LSP is discussed in the analysis part of this thesis.
+Because of these advantages, the project is based on this protocol.
+In chapter \ref{section:analysis}, it is discussed, which features will be implemented in the underlying project.
 
 \subsection{Initial Solution and Motivation}
 \label{section:introduction:initialsolution}
@@ -108,13 +109,13 @@ Functionality was therefore limited to the Dafny console output.
 Due to the preparation of this console output and subsequent preparation for LSP communication,
 it was very complex and time consuming to implement additional features. \\
 
-Marcel Hess and Thomas Kistler continued the development of the project within a semester project \cite{sa}.
+Marcel Hess and Thomas Kistler continued the development of the project within a semester thesis \cite{sa}.
 The language server was migrated to \CsharpWithSpace and could be integrated into the Dafny backend
 as you can see in figure \ref{fig:oldBAvsSA}.
-Any Dafny functionality was directly accessible and the proprietary JSON-interface, as well as console parsing, could be omitted.
-All features were reimplemented to satisfy the new architectural layout.
+Any Dafny functionality was made directly accessible and the proprietary JSON-interface, as well as console parsing, could be omitted.
+All features were re-implemented to satisfy the new architectural layout.
 The result of this semester thesis will be referred as the \textit{prototype}.
-If the actual text of the preceding semester thesis is targeted, it will be called the \textit{preceding semester project} throughout this text.
+If the actual text of the preceding semester thesis is targeted, it will be called the \textit{preceding semester thesis} throughout this text.
 
 \begin{figure}[ht]
     \centering
@@ -129,27 +130,25 @@ At HSR, Dafny is taught within the course \textit{Software Engineering}.
 Students have to make their first steps in Dafny, using a simple tutorial.
 To provide the students with the necessary support, they shall profit by common IDE features like
 \begin{itemize}
-    \item Syntax highlighting to make the readability more pleasant
+    \item Syntax highlighting to make readability more pleasant
     \item Error highlighting to correct faulty code efficiently
     \item Compile and run to run Dafny programs and check the output
     \item Auto completion to code efficiently
     \item Go to definition to be able to view definitions quickly
-    \item Showin counter examples to efficiently remedy faulty pre and post conditions
-    \item Code Lens to count the usages of classes and functions
+    \item Showing counter examples to efficiently remedy faulty pre- and postconditions
+    \item Code lens to count the usages of classes and functions
 \end{itemize}
 
-Some of these functions have already been implemented in a certain base implementation in our prototype.
+Some of these functions have already been implemented in a basic variant in the prototype.
 But almost all these features need to be improved.
-A more detailed extension of feature richness is discussed in the analysis part of this paper.
-This shall be realized by the implementation of an custom symbol table. \\
-
-The symbol table shall further contain a well organized tree structure, so that navigation can be done efficiently.
+This shall be realized by the implementation of a custom symbol table for features that base on code symbol navigation.
+The symbol table shall contain a well organized tree structure, so that navigation can be done efficiently.
 Each symbol shall have direct links to it's parent, children and declaration for very fast access.
 Compared to the prototype, the pre-existing implementations can be extracted into the symbol table,
 reducing the lines of code (LOC) and increasing performance. \\
 
-Additionally, new features based on the symbol table will be added.
-This includes especially the hover information.
+Additionally, new features based on the symbol table can be added.
+This targets especially hover information and renaming.
 Further optional features are automated contract generation and refactorings like extract method. \\
 
 On the other hand, the plugin shall also be used in a professional environment.
@@ -158,16 +157,16 @@ For example, if the new symbol table provides information about the scope-depth,
 
 To facilitate the development of further features, the code shall be refactored to achieve a clean state.
 This especially involves a clear architectural layout with dependencies that only point downwards.
-This should make it as easy as possible for other developers to enrich the existing Dafny Language Server with additional features. \\
+This should make it as easy as possible for other developers to enrich the existing Dafny language server with additional features. \\
 
 In addition, process optimizations should make the work for future developers easier.
-This includes the recording of Sonarqube for the Dafyn Language Server as well as a clean logging,
-which should be helpful for troubleshooting - especially for performance problems. \\
+This includes the recording of SonarQube for the Dafny language server as well as a clean logging,
+which should be helpful for troubleshooting.\\
 
-Furthermore, our plugin should reach a stable state and be published in the VS Code Market place.
-So for Dafny developers at the end of our work an essential added value results from our thesis.
-Therefore our plugin has to be platform independent and easy to install. \\
+Furthermore, our plugin should reach a stable state and be published into the VS Code Market place.
+Dafny developers shall profit by an increased value compared to the pre-existing solution.
+The plugin has to be platform independent and easy to install. \\
 
-The IDE independent Dafny language server should get a merge back ready state.
-This means that the server is extracted separately from the client into a separate git repository.
-So at the end of the work a rebase of the Dafny server should be possible. 
+The IDE-independent Dafny language server should be ready to be merged back into the original Dafny repository.
+This means that the server has to be extracted into a separate git repository, separated from the client.
+At the end of the project, a pull request into the Dafny repository should be possible.

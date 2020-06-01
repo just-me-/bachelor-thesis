@@ -1,37 +1,33 @@
 \section{Management Summary}
 \label{section:management_summary}
 This chapter contains a brief overview of the bachelor thesis at hand.
-First the technologies Dafny and Language Server protocol were explained to understand the initial solution.
+First, the technologies \textit{Dafny} and \textit{language server protocol} are explained to provide the necessary context.
 This is followed by a presentation of the objectives, results achieved and future prospects.
 
 \subsection{Dafny}
-\label{section:introduction:dafny}
+\label{section:management_summary:dafny}
 Dafny is formal programming language.
-Our work should make it easier for Dafny developers to write programs in Dafny. \\
-
-Dafny offers optimizations for proofs as an advantages over other programming languages.
 Within the Dafny code, a developer has the option to state a so called precondition.
 This is a fact that must be true at the beginning of the code.
 Once the code has been executed, the developer may state a postcondition.
 The postcondition is, contrary to the precondition, something that is true at the end of code.
 Dafny contains an internal engine to automatically proof postconditions.
 This means, given the precondition holds, the code will manipulate data only thus far, so that also the postcondition is valid.
-Dafny's specialty is that it was optimized for such proofs.
+Dafny offers optimizations for such proofs as an advantage over other programming languages.
 
 \subsection{Language Server Protocol}
 The language server protocol (LSP) is a specification for communication.
 It regulates data exchange between an IDE and a so called language server.
-This ensures a separation between IDE and the actual language support in the Language Server for a programming language (such as Dafny).
-With this standard protocol, the same language server can be easily integrated by different IDEs. \\
+This ensures a separation between the integrated development environment (IDE) and the actual programming language support of the language server.
+With this standardized protocol, a language server can be accessed by different IDEs. \\
 
-Our Dafny Plugin was developed for the IDE "Visual Studio Code".
-Visual Studio Code is for example used by programmers to write Dafny code.
-The code is then transferred to the language server, using a format specified by the LSP.
+A plugin for the IDE "Visual Studio Code" was implemented during this bachelor thesis.
+Once a user writes Dafny code using the plugin, the code is then transferred to the language server.
 The language server is now responsible to analyze the code and provide proper replies to the editor, whenever the editor requests something.
 A request could for example be to show information about a variable.
 The server has to provide all the necessary information to the IDE.\\
 
-As a result of using çthe LSP we make it possible that Dafny can be supported for other IDEs with minimal effort.
+As a result of using the LSP, it is possible that Dafny can be supported by other IDE's with minimal effort.
 
 \subsection{Initial Solution}
 \label{section:management_summary:initialsolution}
@@ -40,9 +36,9 @@ The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{corre
 The language server and the Dafny backends were separated into two different components.
 This had the disadvantage that they had to communicate over a proprietary interface.
 This solution was not optimal, since the Dafny backend was not accessed directly.
-This led to the fact that implementations of new features are very time consuming. \\
+Implementing new features was very time consuming. \\
 
-In the preceding semester project \cite{sa}, the language server was merged into the Dafny backend, so that the proprietary interface was no longer necessary.
+In the preceding semester project \cite{sa}, the language server was merged into the Dafny backend, so that the proprietary interface became obsolete.
 Dafny could be accessed directly by the new software architecture.
 Within this bachelor thesis, the work of the existing solution will be continued.
 
@@ -56,21 +52,21 @@ To provide the students with the necessary support, they shall profit by common 
     \item Compile and run to run Dafny programs and check the output
     \item Auto completion to code efficiently
     \item Go to definition to be able to view definitions quickly
-    \item Showin counter examples to efficiently remedy faulty pre and post conditions
+    \item Showing counter examples to efficiently remedy faulty pre- and postconditions
 \end{itemize}
 
 On the other hand, the plugin shall also be used in a professional environment in the future.
 Thus, more advanced features have to be supported.
 To facilitate the future development of such features, the codebase shall be refactored to achieve a clean and maintainable state.
-This especially involves a clean architectural layout with well-organized dependencies.\\
+This especially involves a clear-cut architectural layout with well-organized dependencies.\\
 
 Aside a clean architecture, a major goal is the creation of a custom symbol table.
-A symbol table contains information about items appearing in the Dafny code.
+A symbol can be a variable, a function or a class.
+The symbol table contains information about these items appearing in the Dafny code.
 It shall allow very simple navigation within the Dafny code, for example to locate the declaration of a variable.
 Once the symbol table is generated, navigation within the code will be very easy for the language server.
-This has the advantage, that many features can be realized with almost trivial logic.
+This has the advantage, that many features can be realized with almost no logic.
 For example, the feature \textit{go to definition} just has to ask the symbol table, where the definition of the symbol is.
-For example, a symbol can be a variable, function or class.
 
 Consequently, a well implemented symbol table will also facilitate the development of further features.
 
@@ -87,21 +83,21 @@ The following features are supported as planned:
     \item Compilation of Dafny code and execute
     \item Auto completion suggestion
     \item Go to definition
-    \item Providing of Counter Examples
+    \item Providing counter examples
 \end{itemize}
 
 Additionally the following functions could be implemented thanks to the new symbol table:
 \begin{itemize}
-    \item Code Lens counts the usages of classes and functions and lets the developer show the usages with one click
+    \item Code lens counts the usages of classes and functions and lets the developer show the usages with one click
     \item Renaming allows to rename symbols efficiently and reliably
     \item Hover information provide the developer with useful information about symbols
 \end{itemize}
 
-Dafny developers can now benefit by a plugin, which gained a lot of user experience, but also robustness compared to the initial solution.\\
+Dafny developers can now benefit by a plugin, which provides a great user experience, but also gained much robustness compared to the prototype.\\
 
 %%Dev Benefits.
 Aside the improvements in features, many internal aspects were also improved.
-This benefits all developers who want to extend the Danfy language server to offer more functionality to the Dafny plugin. \\
+This benefits developers who want to extend the Dafny language server in the future.\\
 
 A component called Dafny translation unit was completely re-visited and simplified.
 The component accesses any Dafny functionality.
@@ -135,11 +131,11 @@ Ideas include:
     \item Create clients for other IDE's
 \end{itemize}
 
-Aside the widening of the feature range, it is definitely necessary to complete the visitor.
+Aside the widening of the feature range, it is necessary to complete the visitor.
 The visitor is the component generating an internal symbol table within the language server.
 Currently, only the most important Dafny language features are supported.
 This was due to the limited time frame of the bachelor thesis.
 For example, custom datatypes\footnote{for example \code{datatype Tree<T> = Empty | Node(left : Tree, root : T, right : Tree)}}, as used in formal programming languages, are not supported.\\
 
-Nevertheless, the plugin is of a nice quality and is already deployed into the VSCode market place.
-Thus, students can work with it and make their first steps in the Dafny programming language using our Dafny plugin.
+Nevertheless, the plugin is of a nice quality and is ready for deployment into the VSCode market place, once multi-platform support is implemented.
+Thus, students can work with it and make their first steps in the Dafny programming language using our plugin.
