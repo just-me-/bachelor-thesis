@@ -274,19 +274,57 @@ Because the symbol table reports occurrences across imported files as well, the 
 \intnote{abschnitt gefällt mir mnicht, evtl neu schreiben. ist einfach blabla mit 0 inhalt. - find ich eig ned. }
 
 \subsubsection{CodeLens}
-todo überall bilder bzw platzhalter bilder einfügen .
+CodeLens is an excellent way for the developer to see which classes and methods were used how often - and where.
+In order to be able to assign the references reliably and
+also to consider the references across included files, the symbol table was necessary. \\
 
+As shown in figure \ref{fig:result_codelens_references},
+not only the references to the symbols are counted,
+but also dead code is lifted by a special text.
 
-todo
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Codelens Shows the Number of Uses}
+    \label{fig:result_codelens_references}
+\end{figure}
 
-bessere anzeige, bessere laufzeit
-0 -- kann gelöscht werden
-1 - ingular
-2 plural
- klick auf grauer text, popup geht auf. man kann sofort wie man es von codelens erwartet zu den verwendeten positionen springen sprich diese einsehen.
+If the user clicks on one of the reference texts, a popup window opens,
+as figure \ref{fig:result_codelens_references_popup} shows.
+On the right hand side of the popup window all references found are listed.
+If the user clicks on the corresponding references, the corresponding code
+location in the right file opens on the left side - at the location within the popup.
+This is very convenient for developers,
+because they no longer have to jump back and forth between files and you do not have to scroll unnecessarily
+through the code.
 
-besser: acuh  includes files ohne main supporten.
-zwei varianten in implmenentation beschreiben; hier referenzieren
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Codelens Shows References in Pop-up}
+    \label{fig:result_codelens_references_popup}
+\end{figure}
+
+Since no global symbol table is currently used for the entire workspace in the language server,
+references in included files are not displayed.
+This concerns all Dafny files that do not have their own main function and were included by other files. \\
+
+There are basically two ways to improve this: \\
+
+We recommend this first variant.
+Implement the global symbol table for the entire workspace.
+This not only improves runtime by giving the updatability of individual symbols,
+as described in chapter XXX, but automatically solves the problem.
+With a symbol table for the whole workspace and no longer per file,
+files automatically know if they are included by other files. \\
+
+The second variant is possible without the global symbol table, but involves some tinkering.
+If a file A is included in file B, an additional buffer within file A indicates that it was included by file B.
+Keeping all these references up to date is also connected with logical effort.
+Therefore, it is not advisable to implement the global and updateable symbol table.
+
+todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun.
+seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo 
 
 \subsubsection{Automatic Code Completion}
 todo
