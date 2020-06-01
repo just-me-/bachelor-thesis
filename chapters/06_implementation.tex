@@ -579,8 +579,7 @@ The manager is a rather simple component and can be used as an access point to p
 It is constructed with a root symbol of a fully generated symbol table and contains a navigator. \intnote{todo es würd echt sinn machen den navigator als klassenprop des managers, falls das unterzubringen is und schnell gemach sti}
 It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}.
 That method will use the navigator to provide the user with the desired result.
-Access to the rather complex navigator is encapsulated this way.\\
-
+Access to the rather complex navigator is encapsulated this way.
 
 \subsubsection{Core}
 In this package, the actual task of providing results for the server is done.
@@ -710,31 +709,48 @@ Such values are replaced with the text \code{[Object Reference]}.\\
 
 \subsection{Mono Support for macOS and Linux}
 \label{section:implementation:mono}
+One of the core objectives was to provide support for multiple platforms.
+This means that in addition to Windows, the platforms macOS and Linux should be also supported. \\
 
-Eines der Kernzeiele war es, Support fuer mehrere Plattformen zu bieten. Dh nebst Windows auch macOS und Linux.
-Da wir in unserer SA von Core auf Framework umsteigen musste, stand fest, dass wir mono fuer den Support auf Linux und macOS brauchen.
-(warum in der SA; plficht wegen dafny core. was ist mono)
+In our previous thesis we had to switch from .Net Core to .Net Framework \cite{sa}.
+The reason for this was that although OmniSharp was compatible as a Language Server .Net core,
+the Dafny core project was not \cite{sa}.
+Due to dependency problems, we also switched the new Dafny Language server to .Net Framework \cite{sa}. \\
 
-todo
+.Net core would have been easily supported by Linux and macOs.
+With .Net Framework, however, an \code{.exe} is generated as program compilation.
+Therefore you have to rely on mono on Unix based operating systems.
+Mono allows to execute \code{.exe} files on said systems \cite{mono}. \\
 
-Leider funktionierts nicht.
-Anssaetze die wir probiert haben. verschiedene mono versionen, angefragt im slack. antwort erhalten?
-github issues: allgemein probleme mit lunux/mac weil primaer auf windows und gar nicht auf mac getestet wird. (heikle aussage selbs tmit quelle)
+Unfortunately, in the course of our thesis we discovered that the Language server could not be started correctly with mono.
+The problem already occurred when trying to start the OmniSharp language server component. \\
 
-ansatz in die implementation rein
-ergebnis "wir habens probiert", die nächsten machen dass dann
+We tried several things to get even more specific details about the probem, after we found the specifig point of failure.
 
-- ms build wegen sonar, probleme in der SA mit core
-dotnet build sollen wir umstellen...
-unerer eig core fähig
-danfy braucht bei der SA framework.. abhängigkeiten machten alles kaput, mit manuel nicht fixen können, framework genommen
-inwzsichen ist diese dafny konsole / server weg weil wir das fancy gemacht haben
-evt bestehen diese abhängigkeiten gar nicht mehr; umstellung auf core könnte leicht sein
-mangelnde zeit daher nicht gemacht. als ausblick festhalten.
+\begin{itemize}
+    \item We have built a new try-catch around it - just in case. But the catch is not called because no exception is thrown.
+    \item Because we use Framework and not Core, we could not debug step by step on macOS.
+    \item Our manuel debugging with logging informations was not helpful since logging was not executed after the server start try.
+    \item We also tried to start a very simple Language Server - without the Dafny project - and could not execute it correctly with \code{msbuild}.
+    \item We tried diffrent mono versions: 6.6.0.166 (2019-08) and 6.8.0.105 (2020-02).
+\end{itemize}
 
-\cite{sa}
-\cite{mono-slack}
-\cite{mono-git}
+This made troubleshooting very difficult for us.
+Unfortunately, we could not find out why the OmniSharp server startup does not work correctly with mono.
+Unfortunately the OmniSharp community could not help us either \cite{mono-slack}.\\
+
+While researching GitHub issues, it turned out that there are fundamental problems with Linux and Mac, as OmniSharp developers primarily develop and test on windows \cite{mono-git}.
+
+In consultation with our supervisor, we then put the problem on hold after a certain amount of time had been used up.
+Later on, Fabian Hauser noticed that instead of \code{msbuild} we would have to switch to \code{dotnet build}.
+
+Since \code{msbuild} is required for our Sonar scanning and the limited time left,
+we decided not to take up the problem again in the last weeks. \\
+
+However, this would certainly be a good approach to solving the problem.
+Furthermore it should be possible to switch the actual Dafny language server back to .Net Core
+and leave only the Dafny core part on .Net Framework.
+Apart from the Dafny component no .Net Framework features are used. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing}
@@ -876,7 +892,6 @@ by this analysis, the whole GitHub team working on the Dafny project can benefit
     \caption{Example of a Useful Sonar Finding}
     \label{fig:sonarexample}
 \end{figure}
-
 
 Unfortunately, the code coverage by tests is not analyzed.
 Searching for an alternative, \textit{OpenCover} was found as a very common tool for code coverage analysis in \Csharp.

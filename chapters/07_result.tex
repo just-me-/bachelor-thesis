@@ -339,7 +339,8 @@ However, as soon as the user starts to use more advanced language features, a sy
 If the user is using that symbol later on inside a common method body, the symbol table generator will be unable to locate the symbol's declaration and thus fail.
 An overview of the supported expressions and statements was given in chapter \ref{section:analysis_dafnyASTStuff}.\\
 
-\intnote{würd hjier nciht schreiben, was genau failed, oder? weil das fägnt schon bei arrays oder listen an. iwo bei implemetnation ahben wir ja geschrieben, was wir analyisert ahebn. was meinst du marcel?}
+\intnote{würd hjier nciht schreiben, was genau failed, oder? weil das fägnt schon bei arrays oder listen an. iwo bei implemetnation ahben wir ja geschrieben, was wir analyisert ahebn. was meinst du marcel? hmm vor und nachteile xD kurz erwähnen
+"weil visitor nicht komplett implementiert, gehen einzelne Sprachfeatures wie beispielsweise Arrays oder Listen nicht korrekt"?}
 
 It is subject of further development to complete the symbol table.
 It is the first priority in further development of the language server.
@@ -421,16 +422,17 @@ Alternatively, this process could have been automated with the GitLab CI using t
 or the artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}.
 
 \subsubsection{Platform Independence}
-Um ein möglichst breites Publikum mit unserem Plugin anzusprechen, war uns von Anfang an corss plattrofm support sehr wichtig.
-Wie im Kapitel xxx beschrieben, mussten wir unglücklicherweise von .NET Core auf .Net Framework umsteigen
-wegen Dafny. Unser Language server hatte Schwierigkeiten damit, sich mit mono korrekt ausführen zu lassen. \\
+In order to reach the widest possible audience with our plugin,
+cross platform support was very important to us right from the start.
+As described in chapter \ref{section:implementation:mono} \nameref{section:implementation:mono},
+we unfortunately had to switch from .NET Core to .Net Framework
+about Dafny. Our language server had difficulties with mono to be executed correctly. \\
 
-Leider konnte das Problem nicht binnend vernünftiger Zeit gelöst werden, und wurde bis zum Ende leider nicht abgeschlossen.
-Somit ist unser Language server - und somit auch das Plugin - zum aktuellen Stand leider nicht auf macOS oder Linux korrekt ausführbar. \\
+Unfortunately, the problem could not be solved within a reasonable amount of time,
+and was unfortunately not completed by the end.
+Therefore our language server - and therefore also the plugin - is
+unfortunately not executable correctly on macOS or Linux. \\
 
-Die Platformunabhängigkeit war ein essenzielles Ziel und bleibt leider ausstehend.
-Daher kann unser Plugin als Konsequenz das bestehende Plugin nicht ablösen,
-sondern wurde als separate, als Beta Version ausgezeichnete installation veröffentlicht.
-
-
-chapter \ref{section:implementation:mono} \nameref{section:implementation:mono}
+Platform independence was an essential goal and is unfortunately pending in consultation with our supervisor.
+As a consequence, our plugin cannot replace the existing plugin,
+but was released as a separate plugin installation marked as preview version \cite{our-dafny-plugin}.
