@@ -1,11 +1,10 @@
 \section{Analysis}
-
 \label{section:analysis}
-Since this bachelor thesis is a sequel of the preceding semester thesis, work could be directly continued.
-Many topics were already analyzed during the semester thesis.
+Since this thesis is a sequel of the preceding semester thesis, work could be directly continued.
+Many topics were already analyzed in the prequel.
 To provide the reader with a comprehensive knowledge base about Dafny and the language server protocol (LSP), some chapters out of the semester thesis will be repeated in the following subsections.
-New within this bachelor thesis was the studies of the Dafny-specific compilation process.
-It was especially necessary to gain an overview of the existing abstract syntax tree nodes for building the new symbol table.
+The studies of the Dafny-specific compilation process was new to the bachelor thesis.
+It was especially necessary to gain an overview of the existing abstract syntax tree nodes to build the new symbol table.
 
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
@@ -23,14 +22,14 @@ Those features can for example be
 \end{itemize}
 and much more. A full list can be found within the LSP specification \cite{lspspec}.
 Custom requests, for example \textit{compile} or \textit{counterExample} can also be added to the LSP \cite{lspWiki}.
-The major advantage of this concept is that the IDE specific plugin can be kept very simple.
-The relevant information is delivered by the language server, which is IDE and language independent.
+The major advantage of this concept is that the plugin can be kept very simple.
+The relevant information is delivered by the language server, which is IDE-independent.
 Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates these benefits \cite{lspextensionguide}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{analysis/lspcommunication.png}
-    \caption{Communication Benefit of LSP}
+    \caption{Communication Benefit of LSP, https://code.visualstudio.com/api/language-extensions/language-server-extension-guide} \intnote{muss man das bild iwie speziell reffen? - so abstract mässig?}
     \label{fig:lspcommunication}
 \end{figure}
 
@@ -44,12 +43,9 @@ The LSP supports three types of messages.
 Each message type can be sent from both sides.
 
 \subsubsection{Language Features}
-Besides different kinds of communication
-like text synchronization and diagnostics,
-there is the group "Language Features" which is especially interesting
-for feature extensions like auto complete and hover information. \\
-
-As figure \ref{fig:lsplanguagefeatures} shows, there is a long list of laguage features specific messages \cite{lspspec}.
+Aside regular communication, such as text document synchronization,
+the language server protocol specifies a large number of language features.
+These are shown in figure \ref{fig:lsplanguagefeatures} \cite{lspspec}.
 
 \begin{figure}[H]
     \centering
@@ -58,35 +54,23 @@ As figure \ref{fig:lsplanguagefeatures} shows, there is a long list of laguage f
     \label{fig:lsplanguagefeatures}
 \end{figure}
 
-In addition to the basically standardized LSP, we are also dependent on the interfaces implemented in OmniSharp \cite{lspspec}.
-Just because the interfaces are defined in the standard does not necessarily mean that they have already been implemented in OmniSharp.
-
-The following interfaces will be particularly relevant for our work.
-\begin{itemize}
-    \item Notification: One-way message, for example for a window notification.
-    \item Request: A message that expects a response.
-    \item Response: The response to a request.
-\end{itemize}
-
-Certain functions, which we need for the Dafny plugin,
-are not offered in a standardized way.
-Fortunately the LSP can be extended with your own requests. This concerns the following features:
+Certain functions, which are needed for the Dafny plugin, are not offered by the standard.
+Fortunately the LSP can be extended with custom requests. This concerns the following features:
 \begin{itemize}
     \item Compile: Informs the server about the file to compile and compilation arguments.
-          As a result, the server delivers to the client the information whether an error occurred during the compilation,
-          whether an executable was created and a text message.
-    \item Counter Example: The client sends the file to be compiled to the server and receives in
-          response position data and variables for each Counter Example found for the file.
+          As a result, the server delivers a success or error message.
+    \item Counter Example: The client sends a file identificator to the server and receives
+           counter examples in response.
 \end{itemize}
 
-How exactly the custom LSP messages must be implemented is discussed in the chapter \ref{chapter:customlspmsg}.
+Custom LSP messages are further discussed in the chapter \ref{chapter:customlspmsg}.
 
 \subsubsection{Communication Example}
 The basic concept of the LSP is to inform the server about any client action.
 For example, when the user is opening a document, the notification \code{textdocument/didOpen} is sent.
 The message contains the URI of the opened document, so that the language server can load the source code.
 Whenever the user is typing, the notification \code{textDocument/didChange} is sent.
-It contains any changes that were made.
+It contains any changes that were made.\\
 
 The language server on the other hand can verify the opened or changed document and test it for errors.
 If errors are found, the server is able to send a \code{textDocument/publishDiagnostics} notification back to the client.
@@ -101,9 +85,9 @@ Since the protocol is standardized, the client supporting the LSP is natively ab
 \end{figure}
 
 \subsubsection{Message Example}
-The following message is a \code{textDocument/publishDiagnostics} notification as it appears in the example above.
+The following message in listing \ref{lst:lspjsonmsg} is a \code{textDocument/publishDiagnostics} notification as it appears in figure \ref{fig:lspmsgexample}.
 It states that on line 4, from character 12 to 17, there is an assertion violation.
-Note the JSON-based message format.
+Note the JSON-based message format.\\
 
 \begin{lstlisting}[language=json, caption={LSP Message Example}, captionpos=b, label={lst:lspjsonmsg}]
 [12:45:29 DBG] Read response body
@@ -137,13 +121,13 @@ Note the JSON-based message format.
 \subsection{OmniSharp}
 \label{section:analysis:omnisharp}
 To create a language server, a proper LSP implementation is required.
-OmniSharp offers support for \Csharp \cite{langserverdotorg} in the form of a NuGet package.
-They also offer a language server client that can be used for testing.
+OmniSharp offers support for \CsharpWithSpace \cite{langserverdotorg} in the form of a NuGet package.
+A language server client that can be used for testing is also offered.
 
 \subsubsection{Basic OmniSharp Usage}
 Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about Omnisharp's language server protocol implementation.
 The tutorial provides the user with all the required knowledge to set up a language server in \Csharp.
-Besides the setup of the server, it also illustrated how to create message handlers, for example for auto completions or document synchronization.
+Besides the setup of the server, it also illustrated how to create message handlers, for example for auto completions or document synchronization.\\
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspbasichandler}]
 public class AutoCompletion : ICompletionHandler
@@ -201,12 +185,12 @@ public class MyHandler : ICounterExampleHandler
 
 
 \subsection{Visual Studio Code Plugin}
-To provide a plugin for Visual Studio code, a custom extension must be programmed.
-To get a rough understanding of how to build such an extension, and how to run and debug an own plugin, we already worked through a tutorial during the preceding semester thesis.
-In the tutorial "Your First Extension” basic concepts for own plugins were learned \cite{vscode-first-extension}.
+To provide a plugin for Visual Studio Code, a custom extension must be programmed.
+To get a rough understanding of how to build such an extension, and how to run and debug an own plugin, a tutorial was already studied during the preceding semester thesis.
+In the tutorial "Your First Extension”, basic concepts for own plugins were learned \cite{vscode-first-extension}.
 Examples for integrating a Language Server were found on the advanced examples page "Extension Guides" \cite{vscode-extensions}. \\
 
-Creating a simple plugin extension, generates the folder structure shown in figure \ref{fig:vs_code_extension_file_structure}.
+Creating a simple plugin extension generates the folder structure shown in figure \ref{fig:vs_code_extension_file_structure}.
 
 \begin{figure}[H]
     \centering
@@ -218,38 +202,38 @@ Creating a simple plugin extension, generates the folder structure shown in figu
 The primary components are the two TypeScript files for the extension manifest and the extension source code. \\
 
 Basic plug-in configurations are specified in the manifest.
-These include, for example, the name of the plugin, the version,
-command registrations and the specification of which files the plugin should be active on. \\
+These include, for example
+\begin{itemize}
+    \item the name of the plugin,
+    \item the version,
+    \item command registrations,
+    \item the specification of which files the plugin should be active on.
+\end{itemize}
 
-The entry point for the program logic is in the extension source code.
-In principle this is a template method.
+The plugin launches by calling the method \code{activate} within \code{extension.ts}.
 
 \begin{lstlisting}[language=typescript, caption={extension.ts}, captionpos=b, label={lst:extension-file}]
 import * as vscode from 'vscode';
 
 // This method is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext) {
-  // Entry point
+  // entry point
 }
 \end{lstlisting}
 
-The logic contained in the client is reduced to the minimum necessary display of
-information and the basic registration of events such as the triggering of shortcuts.
+The logic contained in the client is supposed to be minimal.
 The primary logic is handled by the Dafny language server.
 To communicate with the language server, the language server must first be started locally as a process by the plugin. \\
 
-With the current version it is assumed that Dafny Language Server is automatically located in the appropriate directory.
-
-Since the Dafny language server is not part of the plugin delivery for the VS Code Marked Place,
-this is a problem for the plugin release.
-An automated download of the Dafny langauge server is currently missing. \\
-
-One goal of this bachelor thesis is to perform an automated download of the Dafny language server to the local machine of the user.
-This ensures the usability of the plugin when published via the VSCode Marked Place.
+In the prototype, it is assumed that the server is located in a specific directory relative to the client.
+Since the Dafny language server is not part of the plugin delivery to the VS Code Market Place,
+this is an issue for the plugin release.
+An automated download of the newest release of the Dafny language server was missing. 
+Therefore, a goal of this bachelor thesis was to perform an automated download of the Dafny language server to the local machine of the user.
 
 
 \subsection{Dafny Language Features}
-With regard to the symbol table, the Dafny language had to be studied more in detail.
+With regard to the symbol table, Dafny had to be studied more in detail.
 For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes.
 Concepts like these are highly relevant for the construction of a symbol table. \\
 
@@ -371,12 +355,11 @@ Dafny prohibits this language concept to be able to uniquely identify each metho
 This means, that within each module, each method name is unique.
 
 \subsubsection{Shadowing}
-
 Shadowing means that a class method redefines a variable that was already previously defined as a class member.
 This means that two variables with the same name exist.
 The local variable can be accessed via its name, but to access the class member, the programmer needs to write \code{this} in front of the variable name.\\
 
-One can even go further and redefine a local variable in a nested blockscope.
+One can even go further and redefine a local variable in a nested block scope.
 Consider the following code snippet.
 It defines a class with a member variable \code{a}.
 It is initialized with value $2$ in the class constructor.
@@ -523,7 +506,7 @@ For example, the question where \code{i} is declared is not answered.
 Also, some information is not even relevant for the language server.
 Within a binary statement, the operand is not of interest for example.\\
 
-The following screenshot shows all available properties and fields of a name segment.
+Screenshot \ref{fig:namesegment} shows all available properties and fields of a name segment.
 A name segment is just any occurrence of an identifier, for example of a variable or of a method.
 \begin{figure}[H]
     \centering
@@ -535,7 +518,7 @@ While \code{ResolvedExpression} looks like an interesting property, it just poin
 Thus, if a name segment is encountered, for example as the right hand side of an assignment, the AST node provided by Dafny does not contain any information about its origin.\\
 
 A better example may be on a higher level.
-Regarding the AST-element \code{method},
+Regarding the AST-element \code{method} in figure \ref{fig:method},
 it contains properties and methods for its body, but not exactly which name segments are declared inside that body.
 Also, there is no way to know where that method is used.
 
@@ -546,8 +529,9 @@ Also, there is no way to know where that method is used.
     \label{fig:method}
 \end{figure}
 
-To be in control, which information is stored, it was decided to implement an own symbol table / AST combination.
-This component will be called \textit{symbol table} throughout this thesis, although it will have a double linked tree structure, as we will see later.
+To be in control which information is stored, it was decided to implement an own symbol table / AST combination.
+This component will be called \textit{symbol table} throughout this thesis and the project source code, although it will have a double linked tree structure, as we will see later.
+\textit{Symbol Tree} would consequently be a more accurate name.
 
 
 %%%%
@@ -572,11 +556,11 @@ public void Accept(Visitor v) {
 }
 \end{lstlisting}
 
-Note that the navigational aspect - the foreach loop - is inside the accept method, but nothing is told about the visit operation.
+Note that the navigational aspect - the \code{foreach} loop - is inside the accept method, but nothing is told about the visit operation.
 The visitor can do whatever it wants with the node, for example print it to the console.
 To work with every node that may occur, the visitor must overload the \code{Visit(Node n)} method for each possible subclass of \code{Node}.
-Within a tree, these are usually just nodes and leaves.
-For a symbol table, possible node types are any kinds of expressions and statements.
+Within a tree, this usually just concerns nodes and leaves.
+For a symbol table, possible node types are any kind of expressions and statements.\\
 
 A visitor implementation could look like shown below.
 
@@ -605,27 +589,33 @@ These are
     \item Statement
     \item Declaration
 \end{itemize}
-Aside these, some AST-nodes are separated, such as \code{AssignmentRHS}, which is the right hand side of an assignment.
-\code{LocalVariable} is another example for an isolated class, that does not extend any base class.
+Aside these, some AST-nodes are isolated, such as \code{AssignmentRHS}, which is the right hand side of an assignment.
+\code{LocalVariable} is another example for a separated class, that does not extend any base class one would expect.
 Why this isolation of certain AST-nodes was made by Dafny could not be evaluated.
 Both items are technically expressions and could thus be subclasses of \code{Expression}.
+The following itemizations follow the structure given by Dafny.
 
 \subsubsection{Expressions}
 In this chapter, the most important expression types are explained.
 These are also the expressions that were implemented with a dedicated \code{Accept} and \code{Visit}-method.
 \begin{itemize}
-
     \item NameSegment: Any name of a variable or method.
+    \item IdentifierExpression: A single variable.
+    \item ExprDotName: An expression containing a dot as a locator, such as \code{myclass.mymethod()}.
     \item BinaryExpression: An expression with two operands, for example 'plus', or 'less than'.
     \item NegationExpression: The negation of a variable or literal, for example \code{-b}.
-    \item UnaryOpExpression: A unary expression, mostly connected to the "not"-Operator, for example \code{!someBoolean}.
+    \item UnaryExpression: An expression containing only one operand as a subexpression.
+    \item UnaryOpExpression: A unary expression with an Operator, mostly connected to the "not"-Operator, for example \code{!someBoolean}.
     \item ITEExpr: If-then-else expression, such as \code{if a < 0 then -a else a}
+    \item ThisExpr: the \code{this} referring to the own class instance.
     \item ParensExpression: Any expression surrounded by brackets.
+    \item ChainingExpression: Short syntax with a chain of operands like \code{a < b < c < d}.
     \item AutoGhostIdentifierExpr: A variable declaration can also contain an initial assignment as well. If so, the left hand side of the declaration is a ghost-identifer.
     \item LiteralExpression: Literals like numbers or strings.
     \item ApplySuffix: The brackets after a method. This expression just refers to the brackets, the actual arguments are stored within the method statement.
     \item MaybeFreeExpr: Occurs at ensure-clauses and contains a single subexpression.
     \item FrameExpr: Occurs at the modifies-clause and contains a list of subexpressions.
+    \item ConcreteSyntaxExpression: An expression containing a single subexpression.
     \item Formals: Arguments and return values of a method.
 \end{itemize}
 The reader notes himself, that many expressions contain other subexpressions.
@@ -635,19 +625,41 @@ The reader notes himself, that many expressions contain other subexpressions.
     \item BlockStmt: Anything surrounded by curly brackets.
     \item IfStmt: A classic if-statement. It contains an expression for the condition, a block statement for the then-block, and another, optional if-statement for the else-block.
     \item WhileStmt: A while-loop. It also contains a block statment for its body and an expression for the condition. Aside these, it also contains expressions for the loop invariants, variants and decrease-clauses.
-    \item Method: A method contains a block statement for its body. The arguments and return values are stored as formals.
-    \item Function: Analog to method.
+    \item AlternativeLoopStmt: An alternative while statement.
+    \item PredicateStmt: A Statement containing a boolean result. The statement contains a single expression.
+    \item AssertStmt: The assert statement contains an assertion expression.
+    \item PrintStmt: A print statement such as \code{print a}.
+    \item ProduceStmt: This node occurs at return values.
+    \item VarDeclStmt: A variable declaration.
+    \item UpdateStmt: An update statement, such as \code{a = 2}.
+    \item AssignSuchThatStmt: A subclass of an update stmt.
+    \item AssignOrReturnStmt: A statement occurring in methods without an explicit return value.
 \end{itemize}
 
 \subsubsection{Declarations}
 The following declarations were analyzed:
 \begin{itemize}
     \item ModuleDecl: The declaration of a module.
+    \item AliasModuleDecl: The declaraiton of an alias for an imported module.
     \item ClassDecl: A class declaration.
+    \item TraitDecl: A trait (abstract base class) declaration.
     \item Field: A variable member of a class.
     \item Method: A method member of a class.
+    \item Constructor: A constructor member of a class.
     \item Function: A function member of a class.
 \end{itemize}
+
+\subsubsection{Other}
+Other analyzed AST-elements include
+\begin{itemize}
+   \item NonGlobalVariable: A variable-type occurring in method parameters.
+   \item AssignmentRhs: The right hand side of an assignment.
+   \item ExprRhs: A right hand side containing an expression.
+   \item TypeRhs: A right hand side containing a type, such as \code{new MyClass()}.
+   \item LocalVariable: A locally defined variable.
+   \item ApplySuffix: The brackets after a method.
+\end{itemize}
+
 These form the most important AST-nodes.
 Dafny provides many more of them.
 Due to the limited time frame, not all of them could be analyzed.
@@ -680,25 +692,42 @@ However, there would also be individual disadvantages:
     \item By swapping out all lines of code, the top level of the git history would be disturbed for git blame.
 \end{itemize}
 
-It was decided to not carry out a refactoring.
+It was decided not to carry out a refactoring.
 It would be very time consuming and we would have to extend the refactoring to the whole Dafny project.
 Since the time frame of the bachelor thesis is limited, resources should rather be used at the own code segments and the core goals of the bachelor thesis, such as the implementation of the symbol table.
 However, refactoring the code of Dafny itself is one of the possible extension points for this project.
 
 
-\subsection{Feature Functionalities and Improvements }
+
+
+
+
+\subsection{Prototype}
 \label{section:analysis:features}
 
-In our existing work we have already realized a number of features.
-In the outlook, we have noted what improvements would be appropriate.
-This chapter describes the corresponding starting positions and the necessary improvements.
+\intnote{ ich hab zwei anmerkungen zu diesem kapitel:}
+1. bei reuslts steht exakt das gleiche. Hier steht (es ist X, wir werden es mit Y verbessern) und bei results steht (es war X, wir haben es mit Y verbessert). Sogar die screenshots sind faktisch identisch. Beides ist sozusagen von der SA copy pastd.
+ich weiss nicht wie corbat darauf reagiert - ob ihn sowas stört im sinne von 'is ja doppelt!' oder ob er es toll findet von wegne 'gut, dass die ausgangslage to nice dokumentiert ist udn die results auch, auch wenn es der gleiche inhalat ist'.
+wollen wir das an sitzung fragen?
+
+aus sicht experte / olaf:
+2. ich finde wir legen uns ein wenig selbst ein ei, aka nachdem ich das gelesen habe und dann reuslts gelesen habe, frage ich mich, was nun überhaupt besser geworden ist: syntax highlight z.b. is ja absolut gleich. verificaiton counter example compile etc etc alles gabs schon, completion auch, goto gabs, na gut paar bugs haben se gefixed, aber das wars schon? - in 3 monaten?
+meinst du nicht, es wirkt ein bisschen so?
+\intnote{anmerkungen end}
+
+
+In the prototype, some features were already implemented and possible extension points were mentioned.
+This chapter describes the state of the prototype as it was at the beginning of this bachelor thesis, as well as the necessary improvements.
 It also describes how we intend to implement these improvements.
 
 \subsubsection{Syntax Highlighting}
 The syntax highlighting is realized through a given Dafny grammar file.
 Screenshot \ref{fig:analysis_syntax_highlighting} shows how syntax highlighting looks inside Visual Studio Code. \\
 
-As you can see, keywords like method, returns, requires and ensures are marked in purple. Types like int are printed in blue and comments become green. Symbols, such as classes and methods, are displayed in a brownish color. Just these simple rules increase the readability significantly.
+As you can see, keywords like method, returns, requires and ensures are marked in purple.
+Types like int are printed in blue and comments become green.
+Symbols, such as classes and methods, are displayed in a brownish color.
+Just these simple rules increase the readability significantly.
 
 \begin{figure}[H]
     \centering
@@ -712,7 +741,8 @@ Among other things, new keywords are now recognized and visually marked, such as
 This update will be applied to the Dafny grammar file for our plugin version as well.
 
 \subsubsection{Verification}
-The verification feature underlines logical errors in the user's code. An example is shown in figure \ref{fig:analysis_verification}.
+The verification feature underlines logical errors in the user's code.
+An example is shown in figure \ref{fig:analysis_verification}.
 
 \begin{figure}[H]
     \centering
@@ -721,12 +751,16 @@ The verification feature underlines logical errors in the user's code. An exampl
     \label{fig:analysis_verification}
 \end{figure}
 
-The logical verification is permanently active. The user just has to type Dafny code and it will be verified. The current version only supports logical errors, not syntax errors.
+The logical verification is permanently active.
+The user just has to type Dafny code and it will be verified.
+The current version only supports logical errors, not syntax errors.\\
 
-Whenever an assertion or postcondition violation appears, the code block is underlined in red. The actual postcondition is underlined in yellow. The user can hover over the error to get additional information about the problem. \\
+Whenever an assertion or postcondition violation appears, the code block is underlined in red.
+The actual postcondition is underlined in yellow.
+The user can hover over the error to get additional information about the problem. \\
 
 In our thesis we want to extract the syntax errors from the Dafny diagnostic report and show them to the user as well.
- \intnote{todo evt noch kurz genauer schreiben "wie wir das erreichen wollten / planten zu erhalten die info"} \\
+Dafny works with so called \code{ErrorReporter}s, that should provide the necessary information.\\
 
 In addition, it is noticeable that only the curly opening parenthesis is underlined in case of errors concerning methods.
 This can easily be overlooked by the user.
@@ -735,7 +769,11 @@ With the previous version, this implementation would have been possible only by 
 With the planned renewal of the symbol table, we automatically have access to the information where the corresponding closing parenthesis of a code block is.
 
 \subsubsection{Compile}
-The user has two options to initiate compilation: He can just compile his software or he can additionally run it on a console. The commands are available as hotkeys, in the context menu or via the VSCode command bar. The client will save the document, send its URI, and the server will report back if compilation was successful. If any errors are present in the code, they are reported as a window notification as shown in figure \ref{fig:analysis_compile}. This includes syntax errors. If the compiled program can be run, a PowerShell instance is started directly inside Visual Studio Code.
+The user has two options to initiate compilation: He can just compile the software or he can additionally run it on a console inside VSCode.
+The commands are available as hotkeys, in the context menu or via the VSCode command bar.
+The client will save the document, send its URI, and the server will report back if compilation was successful.
+If any errors are present in the code, they are reported as a window notification as shown in figure \ref{fig:analysis_compile}.
+This includes syntax errors. If the compiled program can be run, a PowerShell instance is started directly inside Visual Studio Code.
 
 \begin{figure}[H]
     \centering
@@ -744,17 +782,18 @@ The user has two options to initiate compilation: He can just compile his softwa
     \label{fig:analysis_compile}
 \end{figure}
 
-Dafny allows to specify own arguments for compilation.
-We want to offer the plugin user the possibility to specify individual arguments for compilation. \\
-
+Dafny allows to specify own arguments for compilation, which our plugin should support, too.
 On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VS Code can be used for individual argument input for each compile.
-todo quellen auf die funktionen von der vs code api
+\intnote{todo quellen auf die funktionen von der vs code api}
 
 \subsubsection{Counter Example}
-To show a counter example, the user has again the choice between a hotkey, the context menu or using the command bar. The counter example is then shown as a VSCode design element. If the user is no longer interested in the counter example, there is another command to hide it. The suppression of the counter model is completely handled inside the client. \\
+To show a counter example, the user has again the choice between a hotkey, the context menu or using the command bar.
+The counter example is then shown as a VSCode design element.
+If the user is no longer interested in the counter example, there is another command to hide it.
+The suppression of the counter model is completely handled inside the client. \\
 
 The example in figure \ref{fig:analysis_counter_example} demonstrates a counter example.
-The precondition is commented. Without this requirement, the postcondition can be violated with y = 0.
+The precondition is commented. Without this requirement, the postcondition can be violated with \code{y = 0}.
 
 \begin{figure}[H]
     \centering
@@ -763,23 +802,20 @@ The precondition is commented. Without this requirement, the postcondition can b
     \label{fig:analysis_counter_example}
 \end{figure}
 
-In the current version the counter example is automatically hidden when the Dafny code is changed.
-Even if the file is changed in the workspace, the counter example is hidden. \\
+In the current version the counter example is automatically hidden when the code is edited.
+If the user switches to another tab in VSCode, the counter example is also deactivated. \\
 
-New client logic is to be used to store for which files the counter example is to be displayed.
-So the counterexample can be displayed to the user again, as soon as he switches back to the original dafny file.
-Furthermore an automatic update of the counter example should take place.
+New client logic has to be used to store for which files the counter example is active.
+The counterexample can be displayed to the user again, as soon as he switches back to the original Dafny file with the new logic.
+Furthermore, an automatic update of the counter example should take place whenever the user edits the code.\\
 
-If the user inserts additional lines above the display of the counter example.
-This shifts the counter example together with the associated code down by the corresponding number of lines. \\
-
-In the future, the Language Server will parse the counterexample.
-This allows for the extraction of useful information for the user.
-This provides a clear and concise display and increases user friendliness.
+The representation of the counter example shall also be improved.
+A clear and concise display and increased user friendliness is targeted.\\
 
 \subsubsection{Auto Completion for Identifiers}
-Whenever a valid interim result of a Dafny file is sent to the server, the file symbol table is created and buffered.
-As an example, if one would have a Dafny code snippet like below, the best and only match would be method m. This is exactly what is suggested for the user as you can see in figure \ref{fig:analysis_completion_1}.
+Whenever a valid interim result of a Dafny file is sent to the server, a naive file symbol table is created and buffered.
+As an example, if one would have a Dafny code snippet like below, the best and only match would be method \code{m}.
+This is exactly what is suggested for the user as you can see in figure \ref{fig:analysis_completion_1}.
 
 \begin{figure}[H]
     \centering
@@ -788,7 +824,10 @@ As an example, if one would have a Dafny code snippet like below, the best and o
     \label{fig:analysis_completion_1}
 \end{figure}
 
-In addition auto completion is also able to provide general completion suggestions if one is not typing a word. In this case, just all available symbols are proposed. This is illustrated below in figure \ref{fig:analysis_completion_1}. Please also note that every symbol type (i.e. methods, classes and variables) has its own icon.
+In addition, auto completion is also able to provide general completion suggestions if one is not typing a word.
+In this case, just all available symbols are proposed.
+This is illustrated below in figure \ref{fig:analysis_completion_1}.
+Please also note that every symbol type (i.e. methods, classes and variables) have their own icons.
 
 \begin{figure}[H]
     \centering
@@ -798,29 +837,25 @@ In addition auto completion is also able to provide general completion suggestio
 \end{figure}
 
 Unfortunately, both implemented versions are neither very reliable nor very performant.
-Autocompletion was implemented via string matching.
+Auto completion was implemented via string matching.
 That means, if the auto completion is called after a dot, the word before the dot is extracted from the source code.
-Afterwards the complete symboltable is iterated through and as soon as a symbol with the matching name is found,
+Afterwards the complete symbol table is iterated through and as soon as a symbol with the matching name is found,
 it is assumed that this symbol is the originally declared symbol.
-If there is a symbol with the same name in different scope areas in a larger project,
-the autoocmpletion would no longer function properly. \\
+If there are multiple symbols with the same name, or if the declaration takes place after the first usage,
+the auto completion would no longer work properly. \\
 
-For the general suggestions, simply all the symbols found are suggested.
-This means that also symbols are suggested which are not visible in the current scope. \\
+For general suggestions, simply all symbols are suggested.
+This includes symbols not visible in the current scope. \\
 
-As we now receive the originally required information through our new symbol table,
-the auto completion is to be rebuilt so that it functions reliably. \\
+Auto completion has to be rebuilt so that it functions reliably and correct.
+This is only possible by the implementation of a proper symbol table.\\
 
-Symbols can be reliably identified based on the position data in the new symbol table.
-Furthermore, the tree structure of the symbol table for auto completion allows us to use only
-to suggest the characters in the currently available character in the current scope. \\
-
-In addition, it would be very useful for users if the autocompletion is called after a "new"
+In addition, it would be very useful for users if the autocompletion is triggered after a \code{new}
 keyword and only available classes are automatically listed. This can be achieved by type filtering the symbols.
 
 \subsubsection{Go to Definition}
-With the "Go to Definition" feature, a user can simply use the context menu or hit F12 to go to the definition of the used symbol.
-In the following figure \ref{fig:analysis_goto_1}, you can see how a user would like to jump to the definition of the method m.
+With the "Go to Definition" feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
+In figure \ref{fig:analysis_goto_1}, an example is shown.
 
 \begin{figure}[H]
     \centering
@@ -829,7 +864,8 @@ In the following figure \ref{fig:analysis_goto_1}, you can see how a user would 
     \label{fig:analysis_goto_1}
 \end{figure}
 
-Please note that in the current version, the cursor has to be on the left side of the symbol's keyword. Once pressed, the cursor jumps instantly to the definition of the desired symbol as it is shown in the following figure \ref{fig:analysis_goto_2}.
+Please note that in the current version, the cursor has to be on the left side of the symbol's keyword.
+Once pressed, the cursor jumps instantly to the definition of the desired symbol as it is shown in the following figure \ref{fig:analysis_goto_2}.
 
 \begin{figure}[H]
     \centering
@@ -838,17 +874,19 @@ Please note that in the current version, the cursor has to be on the left side o
     \label{fig:analysis_goto_2}
 \end{figure}
 
-Go to definition uses a similar logic to autocompletion and is therefore just as unreliable.
+Go to definition uses a similar logic to auto completion and is therefore just as unreliable.
 The name of the currently selected word is read from the cursor position.
 Afterwards the whole symbol table is iterated through - the first symbol with the same name is assumed to be the declaration.
 Then the position of this symbol is jumped to. \\
 
 Similar to auto completion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
 
-\subsubsection{CodeLens}
-Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol. As an example, the class C has been instantiated twice and the method m was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
+\subsubsection{Code Lens}
+Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol.
+As an example, the class \code{C} has been instantiated twice and the method \code{m} was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
 
-Unfortunately, clicking the grey references is not yet supported. This should open a popup box in which the corresponding uses are shown.
+Unfortunately, clicking the grey references is not yet supported.
+This should open a popup box in which the corresponding uses are shown.
 
 \begin{figure}[H]
     \centering
@@ -857,11 +895,16 @@ Unfortunately, clicking the grey references is not yet supported. This should op
     \label{fig:analysis_codelens}
 \end{figure}
 
-The current implementation of CodeLens does not have an optimal runtime. For each symbol found, each symbol in the symbol table is iterated again to compare whether one symbol is a use of the other symbol. This results in a quadratic runtime. \\
+The current implementation of code lens does not have an optimal runtime.
+For each symbol, the whole symbol table is iterated again to compare whether one symbol is a use of the other symbol.
+This results in a quadratic runtime. \\
 
 With the new symbol table, each symbol knows how often and where it has been used.
 Therefore, we only have to iterate through the symbol table once.
-Furthermore, the iteration can be limited exclusively to  declarations.
+Furthermore, the iteration can be limited exclusively to declarations.
+
+
+
 
 %%%%%%CI%&%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -870,25 +913,27 @@ Furthermore, the iteration can be limited exclusively to  declarations.
 
 Continuous integration is a very important part for code quality and collaboration
 as you will read in chapter \ref{section:project_management} \nameref{section:project_management}.
-Unfortunately, setting up the CI process in the preceding semester project\cite{sa} took almost until the end of the project.
+Unfortunately, setting up the CI process in the prototype took almost until the end of the project
+and was not very successful.
 
-This chapter describes the initial situation, the desired objectives and the targets achieved regarding CI to optimize our workflow.
+This chapter describes the initial situation and the desired objectives regarding CI to optimize our workflow.
 
 \subsubsection{SonarQube}
 SonarQube makes static code analysis and reports bugs and vulnerabilities.
-On the client side, code was analyzed sucessfully with SonarQube by the CI process.
+On the client side, code was analyzed successfully with SonarQube by the CI process.
 If the code contained any TypeScript errors, an error was thrown and the build failed \cite{sa}.\\
 
 Integration testing and code analysis on the server side by SonarQube remained pending \cite{sa}.
 By splitting the client and server parts into separate git repositories,
-it should be easier to isolate, analyze and fix the remaining probem of a missing SonarQube report for the language server part.
+it should be easier to isolate, analyze and fix the remaining problem of a missing SonarQube report for the language server part.
 
 \subsubsection{Tests}
-The client's end-to-end tests, provided by the pre-existing project could not be integrated, due to their heavy dependencies.
-For headless client tests, a solution to the problem or an alternative solution is to be found through a new analysis. \\
+The client's end-to-end tests, provided by the prototype could not be integrated, due to their heavy dependencies.
+This issue has to be re-visited at a given time. \\
 
 On the server side, the project was automatically built by the CI server using \textit{MSBuild}.
-Our own unit tests, as well as tests provided by Dafny could as well be automatically executed using the nUnit console runner.
+Unit tests were executed using the \textit{nUnit} console runner \cite{nunit}.
+Dafny-internal tests are run using the runner \textit{lit} \cite{lit}.
 
 \subsubsection{Docker}
 The CI server bases on a Docker distribution.
@@ -903,23 +948,14 @@ All of these have to be installed in specific release versions by the CI server.
 This is, since Dafny relies on specific deployments of these products.
 See the developer documentation for more details \cite{dev}.\\
 
-During our previous thesis, adjustments to the Dcker image were very cumbersome.
-For each change a separate commit to test the change was created and pushed as pipeline to GitLab.
-On the one hand this was very time-consuming as each pipeline had to be run through remotely,
-on the other hand this resulted in an unpleasant commit history. \\
+While working on the prototype, adjustments to the Docker image were very cumbersome.
+For each change, a separate commit was made to test if the pipeline would run to success.
+On the one hand this was very time-consuming as the completion of each pipeline hat to be awaited on the CI server,
+on the other hand this resulted in an unpleasant commit history. 
+To test changes more efficiently and allow local testing without commits,
+a developer-friendly way should be found and documented.
 
-To test changes more efficiently and allow local testing without commits, a developer-friendly way should be found and documented.
-
-\subsection{notizen von tom, visitor pattern}
-todo
-gleich nachm schreiben, was mir onch so durch den kopf geht:
-\begin{itemize}
-    \item Optional: Bildchen für Visitor pattern, wo man sieht (links) Acceptor, macht so den flow, udn rechts 2-3 vidistor wo man sieht, dass die die action machen.
-\end{itemize}
-
-todo
-müssen wir evt noch iwo bei der analyse oder eher bei implementation "Security Aspects" rein tun?
-und dann iwie schreiben "since its not realy a remote server, a local process, one can only hack himself"
-==> spezielle sichterheitshinweise bei sonar qube wegen zB regex ignoriert etc. nicht super defensiv programming.
-oder kommt das sogar in den proejktplan?
-ich hätte gedacht ehesten in die analyse aber so wirklich iwo reinquetschen seh  ich grad ned wo.
+\subsubsection{Security Aspects}
+The Sonar report states some issues that the usage of launch arguments may be unsafe.
+However, since server and plugin run on the same machine, no active threat to a remote system exists.
+Thus, a special focus on application security is not necessary.
