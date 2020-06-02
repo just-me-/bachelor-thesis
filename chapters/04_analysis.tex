@@ -726,7 +726,7 @@ The logical verification is permanently active. The user just has to type Dafny 
 Whenever an assertion or postcondition violation appears, the code block is underlined in red. The actual postcondition is underlined in yellow. The user can hover over the error to get additional information about the problem. \\
 
 In our thesis we want to extract the syntax errors from the Dafny diagnostic report and show them to the user as well.
-todo evt noch kurz genauer schreiben "wie wir das erreichen wollten / planten zu erhalten die info" \\
+ \intnote{todo evt noch kurz genauer schreiben "wie wir das erreichen wollten / planten zu erhalten die info"} \\
 
 In addition, it is noticeable that only the curly opening parenthesis is underlined in case of errors concerning methods.
 This can easily be overlooked by the user.
@@ -846,11 +846,6 @@ Then the position of this symbol is jumped to. \\
 Similar to auto completion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
 
 \subsubsection{CodeLens}
-todo manchmal code lens manchmal codelens \\ code lens ist reichtig \\
-hier schreiben sie CodeLens:
-https://code.visualstudio.com/blogs/2017/02/12/code-lens-roundup
-ist eig egal welches. einfach einheitlich am ende ;)
-
 Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol. As an example, the class C has been instantiated twice and the method m was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
 
 Unfortunately, clicking the grey references is not yet supported. This should open a popup box in which the corresponding uses are shown.
@@ -927,4 +922,4 @@ müssen wir evt noch iwo bei der analyse oder eher bei implementation "Security 
 und dann iwie schreiben "since its not realy a remote server, a local process, one can only hack himself"
 ==> spezielle sichterheitshinweise bei sonar qube wegen zB regex ignoriert etc. nicht super defensiv programming.
 oder kommt das sogar in den proejktplan?
-ich hätte gedacht ehesten in die analyse aber so wirklich iwo reinquetschen seh  ich grad ned wo. 
+ich hätte gedacht ehesten in die analyse aber so wirklich iwo reinquetschen seh  ich grad ned wo.

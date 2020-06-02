@@ -5,7 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Client}
 The implementation of the client could be done relatively well as planned.
-The whole code could be broken down into the individual components defined in the analysis phase.  todo design?? analyse?
+The whole code could be broken down into the individual components defined in the analysis phase.   \intnote{todo design?? analyse?}
 
 \subsubsection{Better Encapsulation Through Interfaces and Modules}
 During the implementation process how sometimes very confusing imports of modules and components arose.
@@ -46,20 +46,36 @@ but rather at a central location.
 This would make it easier to maintain these values.
 
 \subsubsection{Encapsulation of the VS Code Components}
-- vs kapselung
-einfache migration auf andere IDE ermoeglicht
+ \intnote{einfache migration auf andere IDE ermoeglicht
+
+die exportierten module:
+bei einer migration müssen einfach die vscode module durch die module der neuen ide beim export ersetzt werden.
+die exportierten modulnamen wurden daher extra neutral gewählt.
+
+für bestimmte komponenten können wrapper klassen als adapter geschrieben werden, falls von
+der anderen/neuen IDE keine äquivalente klasse zur verfügung steht.
+
+dies  wird durch dieses prinzip der kapselung ermöglicht.
+programierer für neeu IDE muss fürs neue Plugin lediglich dieses eine modul anpassen.
+der languageserver sowie die restlichen client komponenten kännen dann 1.1 verwendet werden.
+
+davon ausgenommen sind natürlich allgemeine plugin veröffentlichungs konfigurationen, wie konkret
+das package.js von visual studio code.
+
+disclaimer: natürlich muss die plugin entwicklung für die ide typescirpt supporten.
+ist das der fall? welche sprache verwendet eclipse, atom (java.. auch ts?),}
 
 \subsubsection{Download of the Dafny Language Server}
 \label{section:implementation:client:download}
-GitLab Pages (Fabian gm Meeting... hust erwaehnen)
+ \intnote{GitLab Pages (Fabian gm Meeting... hust erwaehnen)
 Interfaces geschrieben, versucht API zu nehmen, ging ned also server
 dank interface austauschbar
 interface altem tool nachempfunden. teils namen passender gewaehlt.
 
-beschreiben interface download, wie das ausgetaucht werden kann.
+beschreiben interface download, wie das ausgetaucht werden kann.}
 
 \subsubsection{Customizable Through Configuration}
-config
+ \intnote{config - sollte neu dann auch noch durch gereiht werden oder über vscode_kapselung zur verfügung gestellt werden
 man kann alles konfigurieren. support fuer dark mode.,
 counter example  - light und dark mode.. custom colors.
 compile (args)
@@ -70,16 +86,25 @@ sonstige config und so sachen wurden zentralisiert. gm code review.
 todo hier nochmals jedes modul einzeln aufzeigen, was die aufgabe ist, welche interfaces und komponenten nach aussen exportiert werden
 => oder ist das überflüssig? hmm... keine überschneidungen mit dem design / analyse
 
+nachfolgend werden die einzelnen module aufgezeigt.
+die grün dargestellten teile des moduls werden nach aussen exportiert und können von anderen modulen verwendet werden.
+die gelben/roten/orange teile werden nicht nach aussen exportiert und sind innerhalb des moduls gekapselt.
+
+interface bild vom design als abgespeckte variante hier nochmals einbinden oder nicht? ka mal gucken. eher weniger wens 1.1 das gleiche ist. braucht unnötig platz. wär aber gut zur einleitung / lesefluss.
+
+Sonderheut vom DOenload und dessen interface gleich hier in den einzelnen beschreibungen aufnehmen (Sprich im modul vom server beschreiben!!) dann haben wir das auch gleich erledigt.}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
 
-todo roadmap kapitel überblick einleitung
+ \intnote{todo roadmap kapitel überblick einleitung}
 
 \subsubsection{Server Launch}
-todo "corbat-platsch"
+ \intnote{todo "corbat-platsch"}
 As done in common practice, the \code{Main} function is kept very short.
 All it does is launching the language server, which is already handled by another class.
 
@@ -308,7 +333,7 @@ This package provides four components:
 \end{itemize}
 
 \textbf{Symbol Information}
-todo uml
+ \intnote{todo uml}
 This is a component that summarizes all information about a symbol.
 Aside the name, this also includes the location, the parent, the declaration, children, and so forth.
 The class contains a lot of properties, but in exchange, it provides any information that is required.
@@ -543,10 +568,27 @@ Remember that the data structure of the symbol table is basically a double linke
 \item BottomUp: Starting from a node, the navigator moves upwards the tree and searches a specific symbol, as seen in the previous chapter.
 \end{itemize}
 
-\intnote{2do Bild von nem baum und dann wie es so hoch und runter geht, Beispiel, Visualisierung einbauen fuer die Laufzeitanalyse.} \\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{TopDown (left) and ButtomUp (right) Visualized}
+    \label{fig:impl_symboltablenav}
+\end{figure}
 
 Both options are implemented so that they can return a single, first match, or any symbols that match a criterion.
-To illustrate this, two examples are considered:\\
+To illustrate this, two examples are shown in figure \ref{fig:impl_symboltablenav}.
+With this type of tree inspection, the runtime is reduced, as it is no longer necessary to visit every symbol.
+
+For the special case that the symbol table tree for a Dafny program was built very flat
+(a Dafny program, which only uses the default scope with a main method)
+the worst case runtime is still \code(O(n)) as you can see in figure \ref{fig:impl_symboltablenav_o_of_n}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Dafny Code (left) Which Generates a Flat Symbol Table (right)}
+    \label{fig:impl_symboltablenav_o_of_n}
+\end{figure}
 
 \textbf{What symbol is at the current cursor position?}\\
 \code{TopDown} is called.
@@ -575,8 +617,6 @@ Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used i
 \intnote{wozu brauchen wir die eig? war ursprünglich der modul wrapper}
 
 
-
-
 \textbf{Symbol Table Manager}\\
 The manager is a rather simple component and can be used as an access point to perform operations on the symbol table.
 It is constructed with a root symbol of a fully generated symbol table and contains a navigator. \intnote{todo es würd echt sinn machen den navigator als klassenprop des managers, falls das unterzubringen is und schnell gemach sti}
@@ -584,13 +624,15 @@ It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int l
 That method will use the navigator to provide the user with the desired result.
 Access to the rather complex navigator is encapsulated this way.
 
-\subsubsection{Core}
+\subsection{Core}
+ \intnote{Teils wird von BlaProvider gesprochen, teils kein Provider todo}
+
 In this package, the actual task of providing results for the server is done.
 Often, not much code is necessary, since the symbol table provides all necessary information.
 The classes in this package are called \textit{providers}.
 A few of them are explained more in detail.\\
 
-\textbf{Go to Definition}\\
+\subsubsection{Go to Definition}
 Go to definition is a very simple feature once the symbol table is created.
 As parameters, the provider receives a location inside a file.
 All it has to do is request what symbol is at this position from the \code{SymbolTableManger}.
@@ -625,14 +667,14 @@ public LocationOrLocationLinks GetDefinitionLocation(Uri uri, int line, int col)
 }
 \end{lstlisting}
 
-\textbf{DiagnosticProvider}\\
+\subsubsection{DiagnosticProvider}
 This component is invoked every time a document is updated.
 It accepts a \code{FileRepository} as an argument.
 Within the repository, the translation results are stored, including the diagnostics.
 This component will read the diagnostic, convert them to an LSP-suitable format, add usability information, and finally send the result back to the client.
-Since this is just a conversion of already calculated \code{TranslationResults} by the \code{DafnyTranslationUnit}, the runtime of this provider is neglectable.\\
+Since this is just a conversion of already calculated \code{TranslationResults} by the \code{DafnyTranslationUnit}, the runtime of this provider is neglectable.
 
-\textbf{HoverProvider}\\
+\subsubsection{HoverProvider}
 This component is very simple.
 It requests the \code{SymbolTableManager} to provide the symbol at the hover location - again this will require $O(logn)$ time.
 The hover location is passed as an argument within the request.
@@ -645,9 +687,9 @@ That information includes
     \item Parent symbol
     \item Declaration origin
 \end{itemize}
-and is instantly available, not adding any runtime penalties.\\
+and is instantly available, not adding any runtime penalties.
 
-\textbf{RenameProvider}
+\subsubsection{RenameProvider}
 Rename is another feature that profits strongly by the symbol table.
 Again the feature requests the symbol at the cursor in $O(logn)$.
 Afterwards, it jumps to it's declaration in $O(1)$.
@@ -664,24 +706,160 @@ The checks are
 \end{itemize}
 
 The last check is more restrictive than it needs to be, but since special characters are extremely uncommon in programming, it is well suitable.
-It was mainly implemented to prohibit brackets in names.\\
+It was mainly implemented to prohibit brackets in names.
 
-\textbf{Completion}\\
-todo
-Recht komplex
-Wir supporten drei cases; nennen. Beschreiben.
-Ablauf. Diagramme wie in der SA sind nützlich. das mag olaf bestimmt. \\
+\subsubsection{Completion}
+\label{section:implementation:core:completion}
+The automatic code completion is an essential feature of every IDE and is a great help for the developer to write code efficiently.
+Making good suggestions to the user is a complex matter. \\
 
+Through the implementation of our new symbol table, it is easy for us to find symbols in the current scope.
+With the help of the "Symbol Table Navigator"
+it is also possible to efficiently filter the proposals by conditions,
+which can be transferred as delegates. \\
+
+The main difficulty and thus the logical complexity of the auto completion
+is therefore no longer the actual collection of symbol suggestions,
+but the evaluation of what kind of suggestions the user wants in the current context
+and extracting a symbol as entry point for the symbol table navigator component. \\
+
+For our auto completion, we support three fundamentally different types of user desire.
+To find out the user's desire, the following approach is taken.
+First the cursor position is used to determine the current code position in the Dafny source file.
+Then it is checked if there is a dot in front of the cursos position,
+or a \code{new} keyword followed by a space was found.
+Depending on whether one of the two triggers was found,
+a decision is made between the three user desires, as shown in figure \ref{fig:get_users_desire}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Evaluating Users Desire - PAP/Ablaufsdiagramm/Flussdiagramm}
+    \label{fig:get_users_desire}
+\end{figure}
+
+\textbf{Proposals for the Object Instance}\\
+If a dot was found at the position of the curser, the word before the dot is also extracted from the code line.
+The position of the cursors is then used to determine the entry.
+
+The symbol table is searched using the navigator:
+the symbol that encloses the current cursor position is searched.
+For example, if the user is typing in the method \code{myMethod}, the symbol for \code{myMethod} is returned. \\
+
+The symbol table is then searched for the extracted string,
+which was located before the dot, using the found entry point.
+The symbol that has exactly the right name is searched.
+During the search, the navigator starts in the innermost scope and then moves up one level until a suitable symbol is found. \\
+
+If a matching symbol is found, the corresponding symbol is now
+for example the object instance of a class named \code{myClass}.
+Using the references in the symbol table, the symbol of the class can be accessed from the instance.
+All methods and variables are now returned as auto completion suggestions. \\
+
+For the sake of clarity, the described process was visualized in the following
+Dafny code example \intnote{xxx
+in figure xx} as a sequence diagram.
+
+\begin{lstlisting}[language=dafny, caption={tmptodo.dfy}, captionpos=b, label={lst:tmptodo}]
+class myClass {
+   var ABC: int;
+   constructor () { }
+   method myMethod() { /* do something */ }
+}
+method Main() {
+   var abc := new ClassC();
+   abc.
+}
+\end{lstlisting}
+
+todo snipped in IDE screenshotten, cleich auch die resultate listen als screenshot rechts davon
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Sequence Diagram for Object Instances}
+    \label{fig:object_completion_diagram}
+\end{figure}
+
+\textbf{Class Suggestions}\\
+If it is assumed that the user only wants classes proposed, the following approach is followed.
+
+As with the proposals for an object instance,
+the completion provider first looks for an access symbol via the cursor position.
+The symbol that encloses the current cursor position with the smallest span is used as the entry symbol.
+This symbol is found by the symbol navigator
+Then iteration is performed from the inner scope
+to the outermost scope and all symbols found are returned as as completion suggestions.
+The list is already filtered during iteration by a passed delegate for class symbols only.
+
+ \intnote{todo habe ich jeweils prädicate oder delegate geschrieben für die filterung? auch beim result iwo) }
+
+ \intnote{todo wird irgend wo beim visitor manager dingens beschrieben, dass zu oberst dann nochmals runter ins default package und in die default klasse gegeagen wird um die "nicht benannten" symbole / default scope zu holen? }
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Sequence Diagram for Class Suggestions}
+    \label{fig:new_completion_diagram}
+\end{figure}
+
+\textbf{All Available Symbols as Default}\\
+If it is assumed that the user would like to have all symbols proposed in the current context,
+the procedure is basically the same as for the proposals for class suggestions.
+The only difference is that no filter predicates are passed to the symbol navigator. Therefore, all types of symbols are suggested.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Sequence Diagram for all Symbols in Scope}
+    \label{fig:default_completion_diagram}
+\end{figure}
+
+\code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" bestimmt. \\
 PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
-das vom papier digitalisieren todo
+das vom papier digitalisieren todo}
 
-\textbf{Code Lens}\\
+\textbf{Automatic Insertion of Brackets}\\
+Since in Dafny round brackets have to be set when calling a method or initializing a class,
+these brackets are automatically inserted as a user help
+if a symbol of type method or class is selected in auto completion. \\
+
+ \intnote{todo dies konnte realisiert werden mit xxx von LSP. }
+Whenever a symbol of type class or method is added to the list of auto completion suggestions,
+an opening and closing bracket is added to the text to be inserted.
+
+ \intnote{todo beschreiben mit welchem parameter das im symbol information vom completion gemacht werden konnte. namen un dinsert text iwas. todo nur für dot completion oder für alle methoden u klassen? }
+
+\textbf{Insert Parameter Placeholders}\\
+todo hier weiter.... . todotodo2do
+
+xcode sachen sind IDE abhängig. vscode bietet das nicht. man könnte diese funktion aber jedoch selbst
+mit relativ hohem aufwand implementieren. beschreiben in implementation.
+es is tnich tuaszuschliessen, dass dies jedoch in anderen ide's mit einem api aufruf der ide relativ simpel möglich ist.
+es ist auch nicht auszuschliessen, dass vs code in zukunft ein ähniches feature selbst noch implementieren wird.
+
+ \intnote{tido irgend welche quellen raussuchen. vs code api oder so.}
+
+ \textbf{Getting Information About Method Parameters}\\
+
+ weil place holder nicht geht, diesen fall nicht unterstützt, wäre aber
+ als isolierte info gut implementiertbar; dann als hover information oder in die info box von auto completion.
+ Konstruktor einer klasse
+ (krieg ich noch die anzeige von parametern hin? )
+ "language server bietet info für parameter - todo stimmt das?"
+
+ Parameter von Methoden könte man als Liste aufbauen iund implementieren;
+ wie list von childs.
+
+\subsubsection{Code Lens}
 todo
 komplett server seitig nicht übers lsp möglich, weild er client die 'lens' aktion auslöst.
 reicht daten für codelens popup an den client wieter; ruft vs code feature auf.
-beide aspekte werden durch integration tests abgedeckt\\
+beide aspekte werden durch integration tests abgedeckt
 
-\textbf{Compilation}\\
+durchreichen, client muss vscode api aufrufen
+
+\subsubsection{Compilation}
 Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the \code{FileRepository}.
 This includes the precompiled \code{dafnyProgram}.
 The compilation provider will take advantage of that and use the precompiled item, and just forward it to the compiler engine.
@@ -692,9 +870,9 @@ The process is fully integrated into the Dafny backend by using the following co
 DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwriter);
 \end{lstlisting}
 
-The provider will check if any errors occurred and return the outcome within a wrapper class.\\
+The provider will check if any errors occurred and return the outcome within a wrapper class.
 
-\textbf{Counter Example}\\
+\subsubsection{Counter Example}
 This feature bases on the model file, which is generated during verification.
 The model file is a key-value store generated by Boogie.
 It contains several states.
@@ -735,6 +913,7 @@ We tried several things to get even more specific details about the probem, afte
     \item Our manuel debugging with logging informations was not helpful since logging was not executed after the server start try.
     \item We also tried to start a very simple Language Server - without the Dafny project - and could not execute it correctly with \code{msbuild}.
     \item We tried diffrent mono versions: 6.6.0.166 (2019-08) and 6.8.0.105 (2020-02).
+    \item We tested on macOS as well on Linux.
 \end{itemize}
 
 This made troubleshooting very difficult for us.
@@ -773,7 +952,9 @@ If an error creeps in due to a change, it will be detected immediately by the ex
 If an error needs to be corrected or a function needs to be extended, a Test-Driven-Development approach can be used to work in a goal-oriented manner. \\
 
 In our unit tests, primarily isolated and more complex logic blocks are tested.
-These are not only covered by a Code Coverage metric, as described in the chapter "Project Management" todo REFERENZ, but we were also busy covering edge cases by testing.
+These are not only covered by a Code Coverage metric, as described in the chapter "Project Management"
+\ref{section:project_management} \nameref{section:project_management},
+but we were also busy covering edge cases by testing.
 
 Of course the interaction of the components is also tested.
 This will be discussed in the following chapter regarding integration tests.
@@ -833,7 +1014,7 @@ All files can be referenced globally from within the \code{TestCommons} project,
 
 
 
-todo (?)
+ \intnote{todo (?)}
 \textbf{m}
 \textbf{m}
 \textbf{m}
@@ -844,7 +1025,7 @@ todo (?)
 
 \subsection{Usability Test}
 
-todo
+\intnote{todo}
 
 erkentnisse notieren. was machbar, war nicht. was haben wir noch geschafft. vorher nachher screen.
 zb hover information fix machbar. button meint corbat ned nötig. evt link auf vs code dokumentation für button play.

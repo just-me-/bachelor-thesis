@@ -30,7 +30,7 @@ The current version of the plugin supports the following features for Dafny deve
     \item Rename
     \item Code Lens
     \item Autocompletion
-    \item mehr? todo
+    \item  \intnote{mehr? todo}
 \end{enumerate}
 
 \subsubsection{Accessibility}
@@ -226,7 +226,7 @@ A better name would actually be \code{Go to Declaration}, since it jumps to the 
 LSP would even offer a dedicated handler for this, \code{textDocument/declaration} \cite{lspspec}.
 Since VS Code names the short cut „Go to Definition“, since the definition handler was implemented, we named that feature in our previouse theses in the same way.
 We kept the name to maintain the consistency of our work.
-But perhaps a rename would be appropriate. todo das ist jetzt eig so geschriebn fast schon wieder implementation (begründung) statt result... \\
+But perhaps a rename would be appropriate.  \intnote{todo das ist jetzt eig so geschriebn fast schon wieder implementation (begründung) statt result...} \\
 
 To increase the user experience with this feature, notifications are sent to the user if an error occurred or the requested symbol was already a declaration.r
 \begin{figure}[h]
@@ -311,6 +311,7 @@ This concerns all Dafny files that do not have their own main function and were 
 
 There are basically two ways to improve this: \\
 
+\textbf{Global Symbol Table}\\
 We recommend this first variant.
 Implement the global symbol table for the entire workspace.
 This not only improves runtime by giving the updatability of individual symbols,
@@ -318,28 +319,75 @@ as described in chapter XXX, but automatically solves the problem.
 With a symbol table for the whole workspace and no longer per file,
 files automatically know if they are included by other files. \\
 
+\textbf{Buffer "included by" Information}\\
 The second variant is possible without the global symbol table, but involves some tinkering.
 If a file A is included in file B, an additional buffer within file A indicates that it was included by file B.
 Keeping all these references up to date is also connected with logical effort.
 Therefore, it is not advisable to implement the global and updateable symbol table.
 
-todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun.
-seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo 
+ \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun.
+seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo}
 
 \subsubsection{Automatic Code Completion}
-todo
-Basecase (aktueller scope)
-punkt - für das symbol verfügbare methoden und variablen werden vorgeschlagen
-new - nur klassen im aktuellen scope werden angezeigt
+The code suggestions for automatic completion is a very useful feature for Dafny developers.
+It lists the available symbols in the current context on request.
 
-bei der einfügung einer klasse nach "new" und bei einfügung von funktionen/methoden nach punkt werden klammern gesetzt.
+Compared to our previous thesis, we could significantly improve the function.
+Instead of displaying all found symbols in the opened file as before,
+we can now use the new symbol table to consider the current scope for suggestions. \\
 
-(krieg ich noch die anzeige von parametern hin? )
-xcode sachen sind IDE abhängig. vscode bietet das nicht. man könnte diese funktion aber jedoch selbst
-mit relativ hohem aufwand implementieren. beschreiben in implementation.
-es is tnich tuaszuschliessen, dass dies jedoch in anderen ide's mit einem api aufruf der ide relativ simpel möglich ist.
-es ist auch nicht auszuschliessen, dass vs code in zukunft ein ähniches feature selbst noch implementieren wird.
-"language server bietet info für parameter - todo stimmt das?"
+Our aut ocompletion support three basic types of proposals which are shown below.\\
+
+\textbf{Proposals for the Object Instance}\\
+If the user writes a dot after a symbol,
+auto completion looks for the symbol before the dot in the symbol table.
+The available functions and variables are then proposed for the symbol found.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Auto Completion After Dot}
+    \label{fig:result_completion_dot}
+\end{figure}
+
+For example, if an instance of class A has been created,
+and then you want to access available contents of class A via the point operator
+(for example \code{myInstanceOfClassA.}),
+methods and variables of class A are proposed as shown in figure \ref{fig:result_completion_dot}. \\
+
+\textbf{Class Suggestions}\\
+If the keyword \code{new} is placed in front of the cursor position, followed by a space, when executing an auto completion,
+the proposals are limited to available classes in the current scope as shown in figure \ref{fig:result_completion_new}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Auto Completion After Keyword "new"}
+    \label{fig:result_completion_new}
+\end{figure}
+
+\textbf{All Available Symbols as Default}\\
+If none of the above cases apply to the current context,
+all available symbols in the current scope are listed as default when calling auto completion
+as shown in figure \ref{fig:result_completion_all}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Auto Completion for all Symbols in Scope}
+    \label{fig:result_completion_all}
+\end{figure}
+
+\textbf{Additional Usabillity Suggar}\\
+As a little extra to increase the usability, when inserting a suggested function or method,
+automatically opening and closing brackets are added to the Dafny source code.
+ \intnote{todo immer oder nur nach einem punkt?} \\
+
+However, when inserting methods and classes no parameter placeholders are inserted in the current state,
+as you know it from other IDE's like XCode.
+Technically it would be possible, as described in chapter
+\ref{section:implementation:core:completion} \nameref{section:implementation:core:completion}.
+This would further enhance the user-friendliness as proved in the usability test.
 
 \subsection{Simplicity of Further Development}
 Aside the features, also architectural improvements are discussed,
