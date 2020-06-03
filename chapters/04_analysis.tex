@@ -228,7 +228,7 @@ To communicate with the language server, the language server must first be start
 In the prototype, it is assumed that the server is located in a specific directory relative to the client.
 Since the Dafny language server is not part of the plugin delivery to the VS Code Market Place,
 this is an issue for the plugin release.
-An automated download of the newest release of the Dafny language server was missing. 
+An automated download of the newest release of the Dafny language server was missing.
 Therefore, a goal of this bachelor thesis was to perform an automated download of the Dafny language server to the local machine of the user.
 
 
@@ -715,6 +715,20 @@ aus sicht experte / olaf:
 meinst du nicht, es wirkt ein bisschen so?
 \intnote{anmerkungen end}
 
+\intnote{anmerkungen antwort}
+1. so ist nun mal der aufbau von ner wissenschaftlichen arbeit, erst mal ziele definieren,w as man erreichen will. dann analyse des ist zustands und ggf was man daran noch verbessern muss. bei der implementation tut man dann beschreiben wie man dieses ziel erreicht hat. und was man erreicht hat. und beim result tut dann dass erreichte nochmals grob zusammen fassen und mit dem ursprünglichen ziel/einleitung/geplanten vergleichen - und ausblicke setzen von nicht erreichtem oder was man noch erreichen könnte.
+
+2. ja, di efeatures gab es schon, aber waren ja nicht wirklich brauch bar.
+ich habs jetzt grad ned mehr am stück präsent. aber wenns zu wenig grossen unterschied gibt:
+einfach noch drastischer beschreiben wie unnütz unsere features waren, auto completion hat ja wirklich nur nach strings gesucht.
+und das ist mit der symbol tabelle nun zuverlässiger, besser, effizienter, brauchbar. evt diese abhhebung noch besser / klarer rausheben.
+
+stichworte die wir in diesem zusammenhang noch beschriben sollten / auf meiner papiertoto sind.. evt gibts die bereits iwo evt einfach noch nicht gelesen / ned mehr präsent:
+
+support für multiple files. das hatten wir ja üüüüüberhaupt nicht vorher hatten wir extra noch an der google präsi am anfang erwähnt. da tat gar nix mehr. jetzt funktioniert include und so wuuuunderbar, dank symbyol tabelle.
+
+doku globale symboltabele; wie wir das für den ganzen workspace egplant haben
+
 
 In the prototype, some features were already implemented and possible extension points were mentioned.
 This chapter describes the state of the prototype as it was at the beginning of this bachelor thesis, as well as the necessary improvements.
@@ -951,7 +965,7 @@ See the developer documentation for more details \cite{dev}.\\
 While working on the prototype, adjustments to the Docker image were very cumbersome.
 For each change, a separate commit was made to test if the pipeline would run to success.
 On the one hand this was very time-consuming as the completion of each pipeline hat to be awaited on the CI server,
-on the other hand this resulted in an unpleasant commit history. 
+on the other hand this resulted in an unpleasant commit history.
 To test changes more efficiently and allow local testing without commits,
 a developer-friendly way should be found and documented.
 
