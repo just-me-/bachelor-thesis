@@ -817,7 +817,7 @@ The only difference is that no filter predicates are passed to the symbol naviga
 
 \code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" bestimmt. \\
 PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
-das vom papier digitalisieren todo}
+das vom papier digitalisieren todo\\}
 
 \textbf{Automatic Insertion of Brackets}\\
 Since in Dafny round brackets have to be set when calling a method or initializing a class,
@@ -831,33 +831,160 @@ an opening and closing bracket is added to the text to be inserted.
  \intnote{todo beschreiben mit welchem parameter das im symbol information vom completion gemacht werden konnte. namen un dinsert text iwas. todo nur für dot completion oder für alle methoden u klassen? }
 
 \textbf{Insert Parameter Placeholders}\\
-todo hier weiter.... . todotodo2do
+From certain IDE's such as XCode,
+you are used to seeing placeholders for the parameters and their types in auto completion
+when you select a method from the suggestions \cite{sa}.
 
-xcode sachen sind IDE abhängig. vscode bietet das nicht. man könnte diese funktion aber jedoch selbst
-mit relativ hohem aufwand implementieren. beschreiben in implementation.
-es is tnich tuaszuschliessen, dass dies jedoch in anderen ide's mit einem api aufruf der ide relativ simpel möglich ist.
-es ist auch nicht auszuschliessen, dass vs code in zukunft ein ähniches feature selbst noch implementieren wird.
+That is why we wanted to implement such a convenient feature for our auto completion as well. \\
 
- \intnote{tido irgend welche quellen raussuchen. vs code api oder so.}
+Unfortunately we had to realize that the VS Code API
+does not offer a comparable function that we could simply call,
+as was the case with CodeLens, for example \cite{vscodeAPI}.
 
- \textbf{Getting Information About Method Parameters}\\
+Nor does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}. \\
 
- weil place holder nicht geht, diesen fall nicht unterstützt, wäre aber
- als isolierte info gut implementiertbar; dann als hover information oder in die info box von auto completion.
- Konstruktor einer klasse
- (krieg ich noch die anzeige von parametern hin? )
- "language server bietet info für parameter - todo stimmt das?"
+That there is no simple way to implement this feature does not mean that it cannot be implemented.
+But the effort for the implementation in VS Code would be exceptionally high.
+Therefore we have decided not to support this feature.
+The idea is described below. \\
 
- Parameter von Methoden könte man als Liste aufbauen iund implementieren;
- wie list von childs.
+As with CodeLens, you could send additional data to the client
+for the auto completion objects - namely the parameters and their types for methods.
+Whenever a completion is inserted, a callback function can be called within the client.
+This function could then additionally insert the parameters as text in the code and register
+event listeners on keyboard keys like \textit{TAB}.
+Using \textit{TextEdits}, the registered function would then jump to the next placeholder parameter
+each time \textit{TAB} is pressed and mark it, so that the user can easily replace it with his own code.
+This logic is relatively complex and the exact VS Code API calls to it have not been researched. \\
+
+Also, just because VS Code does not yet offer an API to perform such \textit{TAB} jumps between parameters,
+does not mean that other IDE's, for which Dafny support will be offered later,
+do not offer such a function.
+In the future, VS Code might even add such a function. \\
+
+\textbf{Getting Information About Method Parameters} \\
+Since the desired implementation of placeholder parameters was not easy to implement,
+we have generally neglected the information for parameters.
+
+However, the usability test has shown that text information about which method
+receives which parameters would be very helpful for users.
+Offering such assistance is possible with relatively little effort.
+However, the structure of the symbol table has to be slightly modified,
+which is why we have not included this feature in the functional scope for time reasons,
+as there would have been no time for the necessary unit tests.
+
+Nevertheless, in the following the idea is recorded to enable other developers to implement this feature.\\
+
+Already now in our visitor, all sub symbols of a symbol are stored as an array within the symbol
+as \code{List<ISymbol> Children} when building the symbol table.
+For example, a method stores all contained variable declarations as an array of child symbols. \\
+
+When building the symbol table,
+the visitor must now be minimally adjusted so that parameters
+of a method are now also visited and stored in an array.
+That is it - afterwards the parameters of an auto-completion method are available. \\
+
+When constructing the completion elements,
+the information field \code{CompletionItem} can contain besides
+the type of the symbol now the parameters to be passed as help text in \code{Detail} too. \\
+
+This function is of course not only limited to methods but can also be applied to class constructors.
 
 \subsubsection{Code Lens}
-todo
-komplett server seitig nicht übers lsp möglich, weild er client die 'lens' aktion auslöst.
-reicht daten für codelens popup an den client wieter; ruft vs code feature auf.
-beide aspekte werden durch integration tests abgedeckt
+The CodeLens function is divided into two primary tasks.
 
-durchreichen, client muss vscode api aufrufen
+Firstly, the grey help text in the IDE maintenance of methods and classes
+shows how often the method or class has already been used.
+
+Secondly, the user can click on the gray help text and a popup window displays all code snippeds
+that use the method or class.
+This allows the developer to efficiently jump between different places within a file
+and across multiple files without having to switch between the files themselves or scroll much within a file. \\
+
+\textbf{Number of References} \\
+To get the display,
+which methods and classes were used how often and thus also to mark dead code
+as it is displayed in figure \ref{fig:codelens_show_ref_number},
+no big effort is necessary thanks to the new symbol table.\\
+
+Via the symbol manager all declarations for the currently opened file a.
+Subsequently, the uses are counted for each symbol.
+This is stored in the symbol table for each symbol in the list \code{Usages}. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{CodeLens shows Number of Counted Referances}
+    \label{fig:codelens_show_ref_number}
+\end{figure}
+
+\textbf{Popup Windows with Code Snippeds} \\
+The popup that opens when you click on the grey text
+with the counted references, as shown in figure \ref{fig:codelens_show_popup},
+is basically a client feature offered by VS Code \cite{vscodeAPI}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{CodeLens shows Popup with Code Snippeds}
+    \label{fig:codelens_show_popup}
+\end{figure}
+
+In the client the logic is minimal.
+Only the function \code{VSCodeCommandStrings.ShowReferences},
+offered by VS Code, is called \cite{vscodeAPI}. \\
+
+The complete logic and the preparation of the data is already done in the language server.
+Basicly for each symbol declaration, the CodeLens object is enriched with further information
+as shown in the following code snipped as listing \ref{lst:codelens-prep}.
+
+\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:codelens-prep}]
+var args = new
+{
+    Uri = _uri,
+    Position = position, // where to show the CodeLens popup
+    Locations = locations // what should be in the pop up displayed
+};
+Command command = new Command
+{
+    Title = msgTitle,
+    Name = "dafny.showReferences",
+    Arguments = new JArray(JsonConvert.SerializeObject(args))
+};
+return new CodeLens
+{
+    Data = _uri,
+    Range = range,
+    Command = command
+};
+\end{lstlisting}
+ \intnote{todo merke grad dass showreferences ein übersehenes magic string ist... in ressourcen auslagern? todo}
+
+For each code lens element, for example a method, a \code{Command} object is also appended.
+The stored \code{Name} within this \code{Command}
+is the function name called when at the client the \code{Command}
+(which is the actual grey text with the reference information) is clicked. \\
+
+In addition, the \code{Command} is given the required reference positions as arguments.
+These reference positions are referenced in the CodeLens popup as code snippeds.  \\
+
+If the function \code{dafny.showReferences} is called in the client,
+the method \code{VSCodeCommandStrings.ShowReferences} from the VS Code API is called
+and the arguments prepared in sevrer are passed. \\
+
+Because the whole logic for CodeLens is in the server,
+integration tests and unit tests can be written on the server side for this feature.\\
+
+\textbf{Support for File Includation} \\
+CodeLens basically works very well with regard to support over multiple files.
+But only if other files are included.
+In case the currently opened file is included by another file,
+CodeLens does not know that the included symbols are used by a third Dafny program. \\
+
+This problem should solve itself once a global symbol table for the complete workspace has been implemented.
+Symbols then also know about uses and references of the whole workspace.
+More information about the global symbol table is described in chapter x.
+ \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun. seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo}
 
 \subsubsection{Compilation}
 Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the \code{FileRepository}.
@@ -1024,20 +1151,104 @@ All files can be referenced globally from within the \code{TestCommons} project,
 
 
 \subsection{Usability Test}
+Since we have been developing and using our plugin for many months,
+it is sometimes difficult to differentiate the results.
 
-\intnote{todo}
+Therefore we have designed a usability test and found a test person to perform this test \cite{interview-remo}.
+The test person, Remo Herzog, was chosen because he is programming in an environment based on VS Code
+and therefore is well integrated into the corresponding VS Code universe. \\
 
-erkentnisse notieren. was machbar, war nicht. was haben wir noch geschafft. vorher nachher screen.
-zb hover information fix machbar. button meint corbat ned nötig. evt link auf vs code dokumentation für button play.
+The goal of this test was primarily to find out if the features
+we implemented were implemented as a VS Code Plugin user would expected them to be integrated into the VS Code IDE,
+and which features were expected to be different in terms of display and triggering. \\
 
-Entgegen der ursprünglichen Annahme, nicht "alt und neu" als vergleich testen lassen (fehlende probanden)
-Testing der allgemeinen Benutzbarkeit unserer Features (verständlichkeit, nützlichkeit)
-Testing der VSCOde Universe Integration (VSCOde Benutzer)
+The general usefulness would also be discussed and feedback for further improvements was collected.
+These improvements are discussed in this chapter.
 
-Auswertung der Tests; Kernpunkte und Verbesserungsvorschlägather
-Drauf eingehen, welches Feedback umgesetzt wurde, welches nicht, warum, outlooks.
+\subsubsection{Code Documentation for Classes and Methods}
+If you drive over symbols and the hover information is displayed,
+and if the auto completion is listing symbols,
+a code documentation is missing in the corresponding info boxes.
+It would be desirable to have a code documentation for methods and classes,
+which is displayed additionally with the mentioned features. \\
 
-Tests in den Anhang aufnehmen!! Und dann hier entsprechend referenzieren.
+This feature could be realized with the new symbol table. The approach would be the following:
+
+Through the feature CodeLens all declarations of methods and classes are already known.
+For each of these symbols the correct position in the Dafny source code could be read out
+and with a regular expression found code documentation comments could be read out.
+The documentation text, read out by the pattern matching, can then be stored in the corresponding symbol as code documentation.
+This information can then be sent to the client via the LSP and displayed,
+for example in the case of auto completion or hover information,
+as a \code{documentation} element \cite{vscodeAPI}.
+
+\subsubsection{Cleaner Hover Information}
+The information which is displayed in a symbol during a hover event was felt to be somewhat confusing.
+Sometimes the terms like \code{kind} were not clear.
+At best, some text would be appropriate.
+Texts could be minimized by a better grouping.
+Less text with the same information content.\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Hover Before (left) and Cleaner Version (right)}
+    \label{fig:placeholder_ref}
+\end{figure}
+
+\ref{fig:placeholder_ref}
+Durch das erhaltene Feedback, wurde der Hover klarer strutkuriert, wie in Abbildung xxx gezeigt....
+ \intnote{Todo unrelevantes löschen, positionen in llammern setzen }
+
+\subsubsection{Automatic Triggering of Auto Completion}
+If a dot is typed while typing, auto completion suggestions are automatically expected.
+You should not have to press \code{control + space} as trigger.
+
+In addition, the suggested methods lacked to inform about the supported parameters.
+With regard to the parameters, this has already been discussed in chapter  \intnote{Todo}. \\
+
+\intnote{... todo das sollte hoffentlich noch machbar sein mit dem lsp trigger character....
+wenigstens etwas noch einbauen oO}
+Durch blablabla konnte ein automatisches triggern der autocompletion nach einem dot aktiviert werden.
+
+\subsubsection{Error Message Without Brackets}
+todo iwie mit den eckigen klammern hat verwirrt. dann kommt teils ({) statt {
+das evt reduzieren oder eleganter lösen...
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Error Message before (top) and after (bottom)}
+    \label{fig:cleaner_error_msg}
+\end{figure}
+
+Cleaner...:
+\ref{fig:cleaner_error_msg}
+
+\subsubsection{Compile Improvements}
+Some plugins have a small green play icon in the upper right corner of the IDE for compilation,
+which can be pressed. This is not offered by TypeScript, but by the Python support plugin for VS Code \cite{interview-remo}.
+This play button has been missed during the usability test. \\
+
+We could also add this icon for Dafny. If the button is clicked, a compile and run is triggered.
+Similar to the UI elements for the Dafny statusbar,
+a button can be created by the VS Code API \cite{vscodeAPI}.
+It can be assigned an icon and a click action. \\
+
+When running the Dafny program,
+a lot of text messages are displayed,
+which distract from the relevant output.
+So the absolute path to the process and then the absolute path to the exe is displayed.
+
+ Since, as shown in figure \ref{fig:long_compile_output}, the paths are mostly identical,
+ it would make sense to reduce the output by specifying relative paths for the exe to be executed.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Output to be Improved}
+    \label{fig:long_compile_output}
+\end{figure}
 
 \subsection{Continuous Integration (CI)}
 To optimize the CI process is an important part of our thesis.
