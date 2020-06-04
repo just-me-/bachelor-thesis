@@ -205,6 +205,47 @@ export interface ICompilerResult {
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsection{Visitor for Dafny to Build the Symboltable}
+ \intnote{offen gesagt nicht sicher wo in dem design wir den unterbringen wollen. vor dem server als eigenes? nach dem server als eigenes? innerhalb des servers aber am anfang? würd dazu tendieren... aber dann wirkts etwas "platsch" mässig wenn man damit beginnt. andererseits bauen ja die design konzepte vom symbol table manager und co darauf auf,oder? ka. was meinst du? }
+
+To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}.
+The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
+The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
+
+Consider any tree based data structure.
+Every node in the tree is supposed to offer an \code{Accept(Visitor v)} method.
+This method will accept the visitor, this is, it will execute the visitor's operation on the node itself.
+Further, it will also call the \code{accept}-methods of its child nodes.
+Thus, a typical implementation of an acceptor would look like this:
+
+\begin{lstlisting}[language=csharp, caption={Example for Accept}, captionpos=b, label={lst:accept}]
+public void Accept(Visitor v) {
+    v.Visit(this);
+    foreach (Node child in this.Children) {
+        child.Accept(v);
+    }
+}
+\end{lstlisting}
+
+Note that the navigational aspect - the \code{foreach} loop - is inside the accept method, but nothing is told about the visit operation.
+The visitor can do whatever it wants with the node, for example print it to the console.
+To work with every node that may occur, the visitor must overload the \code{Visit(Node n)} method for each possible subclass of \code{Node}.
+Within a tree, this usually just concerns nodes and leaves.
+For a symbol table, possible node types are any kind of expressions and statements.\\
+
+A visitor implementation could look like shown below.
+
+\begin{lstlisting}[language=csharp, caption={Example for Visitor}, captionpos=b, label={lst:visitor}]
+public class Printer : Visitor {
+    public override void Visit(Node n) {
+        Console.WriteLine("Node: " + n.ToString());
+    }
+    public override void Visit(Leaf n) {
+        Console.WriteLine("Leaf: " + n.ToString());
+    }
+}
+\end{lstlisting}
+
 
 \subsection{Server}
 This subsection documents the architectural layout of the server.
@@ -433,9 +474,11 @@ A similar system of centralization of string resources is followed as with the c
 Some responsibilities were extracted into dedicated classes.
 For example, one class in this package is responsible for delivering a list of reserved Dafny words, that cannot be used as identifiers.
 Another one is responsible to create a proper logger, which can then be used throughout the language server.
-All these auxiliary classes were collected within the \code{Tools} package.\\
+All these auxiliary classes were collected within the \code{Tools} package.
 
 \subsection{Tools.ConfigInitializer}
+ \intnote{ist das nicht auch ein unterkapitel von tools?}
+
 The setup of the language server settings is using five different classes.
 To keep packages concise, a sub-package was created just for config initialization.
 

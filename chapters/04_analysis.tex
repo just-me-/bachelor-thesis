@@ -536,44 +536,10 @@ This component will be called \textit{symbol table} throughout this thesis and t
 
 %%%%
 
-\subsection{Visitor}
-To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}.
-The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
-The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
+\subsection{Analysis of the Existing Dafny Visitor Component}
+ \intnote{In diesem Kapitel nur die Analyse "was hatte Dafny bisher, warum unbrauchbar"}
+  \intnote{Was der Visitor ist und wie wir den implementieren und warum genau kommt im design}
 
-Consider any tree based data structure.
-Every node in the tree is supposed to offer an \code{Accept(Visitor v)} method.
-This method will accept the visitor, this is, it will execute the visitor's operation on the node itself.
-Further, it will also call the \code{accept}-methods of its child nodes.
-Thus, a typical implementation of an acceptor would look like this:
-
-\begin{lstlisting}[language=csharp, caption={Example for Accept}, captionpos=b, label={lst:accept}]
-public void Accept(Visitor v) {
-    v.Visit(this);
-    foreach (Node child in this.Children) {
-        child.Accept(v);
-    }
-}
-\end{lstlisting}
-
-Note that the navigational aspect - the \code{foreach} loop - is inside the accept method, but nothing is told about the visit operation.
-The visitor can do whatever it wants with the node, for example print it to the console.
-To work with every node that may occur, the visitor must overload the \code{Visit(Node n)} method for each possible subclass of \code{Node}.
-Within a tree, this usually just concerns nodes and leaves.
-For a symbol table, possible node types are any kind of expressions and statements.\\
-
-A visitor implementation could look like shown below.
-
-\begin{lstlisting}[language=csharp, caption={Example for Visitor}, captionpos=b, label={lst:visitor}]
-public class Printer : Visitor {
-    public override void Visit(Node n) {
-        Console.WriteLine("Node: " + n.ToString());
-    }
-    public override void Visit(Leaf n) {
-        Console.WriteLine("Leaf: " + n.ToString());
-    }
-}
-\end{lstlisting}
 
 \subsection{Dafny Expression and Statement Types}
 \label{section:analysis_dafnyASTStuff}
