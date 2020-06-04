@@ -1,9 +1,6 @@
 \section{Abstract}
 \label{section:abstract}
 
- \intnote{Stand aktuell: 1998 / 2000 Zeichen}
- \intnote{mit 3 kleinen bildern könnte man 3400 zeichen, aber die kurze version gefällt mir eig eh besser.}
-
 \textbf{Initial Situation}\\
 Dafny is a formal programming language to proof a program's correctness.
 In a preceding bachelor thesis, a plugin for Visual Studio Code had been created to access Dafny-specific static analysis features.
@@ -13,12 +10,13 @@ In a preceding term project, the language server was integrated into the Dafny b
 
 \textbf{Objective}\\
 This bachelor thesis continues the preceding term project and contains two major goals.
-Firstly, the previously implemented prototype has to be improved in usability, stability and reliability.
-Secondly, a symbol table has to be implemented to facilitate the development of symbol-oriented functionality like rename or auto completion.
+First, the previously implemented prototype has to be improved in usability, stability and reliability.
+Second, a symbol table has to be implemented to facilitate the development
+of symbol-oriented functionality like rename or auto completion.
 The symbol table is supposed to open a wide range for further development.\\
 
 \textbf{Result}\\
-A symbol table was created using the visitor pattern.
+A symbol table was created with an adaptive data structure.
 Every symbol contains information about its parent, its children and its declaration.
 This keeps navigation within the symbol hierarchy very simple.
 The implemented features go to definition, rename, code lens, hover information and auto completion benefit by the symbol table and are no longer required to contain complex algorithms.
