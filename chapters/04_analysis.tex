@@ -565,74 +565,63 @@ Aside these, some AST-nodes are isolated, such as \code{AssignmentRHS}, which is
 \code{LocalVariable} is another example for a separated class, that does not extend any base class one would expect.
 Why this isolation of certain AST-nodes was made by Dafny could not be evaluated.
 Both items are technically expressions and could thus be subclasses of \code{Expression}.
-The following itemizations follow the structure given by Dafny.
+Figures \ref{fig:dafny_expr}, \ref{fig:dafny_stmt}, \ref{fig:dafny_decl} and \ref{fig:dafny_vars} follow the structure given by Dafny and present the AST-elements that were analyzed.
+These are also the nodes a dedicated \code{Accept} and \code{Visit}-method was implemented for.\\
 
-\subsubsection{Expressions}
-In this chapter, the most important expression types are explained.
-These are also the expressions that were implemented with a dedicated \code{Accept} and \code{Visit}-method.
-\begin{itemize}
-    \item NameSegment: Any name of a variable or method.  \intnote{Monospace for class names}
-    \item IdentifierExpression: A single variable.
-    \item ExprDotName: An expression containing a dot as a locator, such as \code{myclass.mymethod()}.
-    \item BinaryExpression: An expression with two operands, for example 'plus', or 'less than'.
-    \item NegationExpression: The negation of a variable or literal, for example \code{-b}.
-    \item UnaryExpression: An expression containing only one operand as a subexpression.
-    \item UnaryOpExpression: A unary expression with an Operator, mostly connected to the "not"-Operator, for example \code{!someBoolean}.
-    \item ITEExpr: If-then-else expression, such as \code{if a < 0 then -a else a}
-    \item ThisExpr: the \code{this} referring to the own class instance.
-    \item ParensExpression: Any expression surrounded by brackets.
-    \item ChainingExpression: Short syntax with a chain of operands like \code{a < b < c < d}.
-    \item AutoGhostIdentifierExpr: A variable declaration can also contain an initial assignment as well. If so, the left hand side of the declaration is a ghost-identifer.
-    \item LiteralExpression: Literals like numbers or strings.
-    \item ApplySuffix: The brackets after a method. This expression just refers to the brackets, the actual arguments are stored within the method statement.
-    \item MaybeFreeExpr: Occurs at ensure-clauses and contains a single subexpression.
-    \item FrameExpr: Occurs at the modifies-clause and contains a list of subexpressions.
-    \item ConcreteSyntaxExpression: An expression containing a single subexpression.
-    \item Formals: Arguments and return values of a method.
-\end{itemize}
+Since most of them are self-explanatory, only chosen nodes are explained.
+
+\pagebreak
+
+\textbf{Expressions}\\
+\begin{figure}[H]
+    \centering
+    \includegraphics{expressiontypes/expr.png}
+    \caption{Dafny Expression Types}
+    \label{fig:dafny_expr}
+\end{figure}
+
 The reader notes himself, that many expressions contain other subexpressions.
+For example, a \code{IdentifierExpr} is nothing more than containing a \code{NameSegment}.\\
 
-\subsubsection{Statements}
- \intnote{Laborious, but can you give a code example for every node?}
+An interesting node is \code{AutoGhostIdentifierExpr}.
+It occurs, whenever a variable declaration also contains its initialization, for example \code{var a := 2}.
+Internally, this declaration is represented as \code{var a : int; a := 2}.
+As we see now, the second \code{a} is a pseudo-veriable, or how Dafny calls it, a \textit{AutoGhostIdentifier}.\\
 
-\begin{itemize}
-    \item BlockStmt: Anything surrounded by curly brackets.
-    \item IfStmt: A classic if-statement. It contains an expression for the condition, a block statement for the then-block, and another, optional if-statement for the else-block.
-    \item WhileStmt: A while-loop. It also contains a block statment for its body and an expression for the condition. Aside these, it also contains expressions for the loop invariants, variants and decrease-clauses.
-    \item AlternativeLoopStmt: An alternative while statement.
-    \item PredicateStmt: A Statement containing a boolean result. The statement contains a single expression.
-    \item AssertStmt: The assert statement contains an assertion expression.
-    \item PrintStmt: A print statement such as \code{print a}.
-    \item ProduceStmt: This node occurs at return values.
-    \item VarDeclStmt: A variable declaration.
-    \item UpdateStmt: An update statement, such as \code{a = 2}.
-    \item AssignSuchThatStmt: A subclass of an update stmt.
-    \item AssignOrReturnStmt: A statement occurring in methods without an explicit return value.
-\end{itemize}
+\code{ComprehensionExpression} contains a variety of sublcasses, such as the \code{ForallExpr}, \code{SetComprehension} and \code{LambdaExpr}.
+All of these contain bound variables (the parameters of the lambda for example) and an expression afterwards.\\
+\code{|a|} denots the size of the set \code{a}.\\
 
-\subsubsection{Declarations}
-The following declarations were analyzed:
-\begin{itemize}
-    \item ModuleDecl: The declaration of a module.
-    \item AliasModuleDecl: The declaraiton of an alias for an imported module.
-    \item ClassDecl: A class declaration.
-    \item TraitDecl: A trait (abstract base class) declaration.
-    \item Field: A variable member of a class.
-    \item Method: A method member of a class.
-    \item Constructor: A constructor member of a class.
-    \item Function: A function member of a class.
-\end{itemize}
+\pagebreak
+\textbf{Statements}\\
+\begin{figure}[H]
+    \centering
+    \includegraphics{expressiontypes/stmt.png}
+    \caption{Dafny Statement Types}
+    \label{fig:dafny_stmt}
+\end{figure}
 
-\subsubsection{Other}
-Other analyzed AST-elements include
-\begin{itemize}
-   \item NonGlobalVariable: A variable-type occurring in method parameters.
-   \item AssignmentRhs: The right hand side of an assignment.
-   \item ExprRhs: A right hand side containing an expression.
-   \item TypeRhs: A right hand side containing a type, such as \code{new MyClass()}.
-   \item LocalVariable: A locally defined variable.
-   \item ApplySuffix: The brackets after a method.
-\end{itemize}
+An intersting statement is \code{AssignSuchThat}.
+Here, Dafny chooses what to assign, such that the condition holds.
+The programmer does not know exactly, which number will be assigned.\\
+
+\textbf{Declarations}\\
+\begin{figure}[H]
+    \centering
+    \includegraphics{expressiontypes/decls.png}
+    \caption{Dafny Declaration Types}
+    \label{fig:dafny_decl}
+\end{figure}
+
+\pagebreak
+\textbf{Other}
+\begin{figure}[H]
+    \centering
+    \includegraphics{expressiontypes/vars.png}
+    \caption{Dafny Various Types}
+    \label{fig:dafny_vars}
+\end{figure}
+
 
 These form the most important AST-nodes.
 Dafny provides many more of them.
@@ -673,34 +662,8 @@ However, refactoring the code of Dafny itself is one of the possible extension p
 
 
 
-\subsection{Prototype Functionality and Weaknesses to Improve}
+\subsection{Prototype Functionality and Flaws to Improve}
 \label{section:analysis:features}
-
-\intnote{ ich hab zwei anmerkungen zu diesem kapitel:}
-1. bei reuslts steht exakt das gleiche. Hier steht (es ist X, wir werden es mit Y verbessern) und bei results steht (es war X, wir haben es mit Y verbessert). Sogar die screenshots sind faktisch identisch. Beides ist sozusagen von der SA copy pastd.
-ich weiss nicht wie corbat darauf reagiert - ob ihn sowas stört im sinne von 'is ja doppelt!' oder ob er es toll findet von wegne 'gut, dass die ausgangslage to nice dokumentiert ist udn die results auch, auch wenn es der gleiche inhalat ist'.
-wollen wir das an sitzung fragen?
-
-aus sicht experte / olaf:
-2. ich finde wir legen uns ein wenig selbst ein ei, aka nachdem ich das gelesen habe und dann reuslts gelesen habe, frage ich mich, was nun überhaupt besser geworden ist: syntax highlight z.b. is ja absolut gleich. verificaiton counter example compile etc etc alles gabs schon, completion auch, goto gabs, na gut paar bugs haben se gefixed, aber das wars schon? - in 3 monaten?
-meinst du nicht, es wirkt ein bisschen so?
-\intnote{anmerkungen end}
-
-\intnote{anmerkungen antwort}
-1. so ist nun mal der aufbau von ner wissenschaftlichen arbeit, erst mal ziele definieren,w as man erreichen will. dann analyse des ist zustands und ggf was man daran noch verbessern muss. bei der implementation tut man dann beschreiben wie man dieses ziel erreicht hat. und was man erreicht hat. und beim result tut dann dass erreichte nochmals grob zusammen fassen und mit dem ursprünglichen ziel/einleitung/geplanten vergleichen - und ausblicke setzen von nicht erreichtem oder was man noch erreichen könnte.
-
-2. ja, di efeatures gab es schon, aber waren ja nicht wirklich brauch bar.
-ich habs jetzt grad ned mehr am stück präsent. aber wenns zu wenig grossen unterschied gibt:
-einfach noch drastischer beschreiben wie unnütz unsere features waren, auto completion hat ja wirklich nur nach strings gesucht.
-und das ist mit der symbol tabelle nun zuverlässiger, besser, effizienter, brauchbar. evt diese abhhebung noch besser / klarer rausheben.
-
-stichworte die wir in diesem zusammenhang noch beschriben sollten / auf meiner papiertoto sind.. evt gibts die bereits iwo evt einfach noch nicht gelesen / ned mehr präsent:
-
-support für multiple files. das hatten wir ja üüüüüberhaupt nicht vorher hatten wir extra noch an der google präsi am anfang erwähnt. da tat gar nix mehr. jetzt funktioniert include und so wuuuunderbar, dank symbyol tabelle.
-
-doku globale symboltabele; wie wir das für den ganzen workspace egplant haben
-
-
 In the prototype, some features were already implemented and possible extension points were mentioned.
 This chapter describes the state of the prototype as it was at the beginning of this bachelor thesis, as well as the necessary improvements.
 It also describes how we intend to implement these improvements.
