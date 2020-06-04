@@ -26,7 +26,7 @@ The plugin is quite robust and will recover from exceptional states.
 If something goes completely wrong, an option to restart the language server is available.\\
 
 Due to timely reasons, the major flaw of the project is, that the symbol table (in particular: the visitor) could not be implemented completely.
-This allows only for a limited usability of the plugin, namely for the supported Dafny language features as stated in chapter \ref{section:analysis_dafnyASTStuff}.
+This allows only for a limited usability of the plugin, namely for the supported Dafny language features as stated in section \ref{section:analysis_dafnyASTStuff}.
 However, completing the visitor is not necessarily complex, but rather a diligence task.
 The reason we couldn't complete the visitor was just the limited time frame of the bachelor thesis.
 When time is fixed, scope has to be variable \cite{keller}, thus we needed to cut out some Dafny language features from the visitor.
@@ -76,7 +76,7 @@ The language server protocol \cite{lspspec} offers a lot more than what is curre
 Many of these features can now easily be implemented, since the symbol table offers all information required.
 Indeed, many of the following features can be implemented in just a few minutes to hours.\\
 
-In chapter \ref{chapter:ding} it was already mentioned, that 'textDocument/documentHighlight' \cite{lspspec} is already completely supported by the symbol table.
+In section \ref{chapter:ding} it was already mentioned, that 'textDocument/documentHighlight' \cite{lspspec} is already completely supported by the symbol table.
 The feature highlights all occurrences of a symbol, given a certain text position.
 The developer just has to request the symbol at the text position, which is passed by the client.
 Then, all occurrences have to be requested, by just calling \code{symbol.GetAllOccurences()}.

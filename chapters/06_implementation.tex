@@ -190,7 +190,7 @@ For example, the interface \code{IDefinitionHandler} requires the class to imple
 Every time the server receives a \code{textDocument/Definitions} request, this \code{Handle} method will be called.
 The parameter and return types are specific per request.
 Go to Definition would pass a text document location as input, namely the cursor position, and it expects a \code{LocationLink} as response, namely where the cursor should jump to.
-Own requests can be realized according to chapter \ref{chapter:customlspmsg} by defining an own interface.\\
+Own requests can be realized according to section \ref{chapter:customlspmsg} by defining an own interface.\\
 
 All handlers require two additional methods, aside the actual \code{Handle}:
 \begin{itemize}
@@ -565,7 +565,7 @@ Remember that the data structure of the symbol table is basically a double linke
 
 \begin{itemize}
 \item TopDown: Starting from a node, the navigator dives downwards and searches a specific symbol.
-\item BottomUp: Starting from a node, the navigator moves upwards the tree and searches a specific symbol, as seen in the previous chapter.
+\item BottomUp: Starting from a node, the navigator moves upwards the tree and searches a specific symbol, as seen in the previous section.
 \end{itemize}
 
 \begin{figure}[H]
@@ -983,7 +983,7 @@ CodeLens does not know that the included symbols are used by a third Dafny progr
 
 This problem should solve itself once a global symbol table for the complete workspace has been implemented.
 Symbols then also know about uses and references of the whole workspace.
-More information about the global symbol table is described in chapter x.
+More information about the global symbol table is described in section xxx.
  \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun. seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo}
 
 \subsubsection{Compilation}
@@ -1063,7 +1063,7 @@ Apart from the Dafny component no .Net Framework features are used.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing}
 
-This chapter provides a general overview of the testing.
+This section provides a general overview of the testing.
 It is split into unit, integration and system tests.
 To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
 
@@ -1084,10 +1084,10 @@ These are not only covered by a Code Coverage metric, as described in the chapte
 but we were also busy covering edge cases by testing.
 
 Of course the interaction of the components is also tested.
-This will be discussed in the following chapter regarding integration tests.
+This will be discussed in the following section regarding integration tests.
 
 \subsubsection{Integration Tests}
-As described in chapter \ref{chapter:designTests}, a very nice test architecture was builded for integration tests.
+As described in section \ref{chapter:designTests}, a very nice test architecture was builded for integration tests.
 Each feature could be tested by creating a base class.
 The base class usually contains one method \code{Run} and another one \code{Verify}.
 The first one uses the inherited client-server infrastructure, opens a Dafny file, sends the according request, and collects the results.
@@ -1205,7 +1205,7 @@ If a dot is typed while typing, auto completion suggestions are automatically ex
 You should not have to press \code{control + space} as trigger.
 
 In addition, the suggested methods lacked to inform about the supported parameters.
-With regard to the parameters, this has already been discussed in chapter  \intnote{Todo}. \\
+With regard to the parameters, this has already been discussed in section  \intnote{Todo}. \\
 
 \intnote{... todo das sollte hoffentlich noch machbar sein mit dem lsp trigger character....
 wenigstens etwas noch einbauen oO}
@@ -1260,7 +1260,7 @@ These include, in particular, successful completion of automated tests,
 static code analysis and formatting control of the TypeScript code. \\
 
 More details on the quality aspects are described in chapter \ref{section:project_management} \nameref{section:project_management}.
-This chapter describes how the planned improvements for the CI process from chapter \ref{section:analysis:CI} were implemented.
+This section describes how the planned improvements for the CI process from chapter \ref{section:analysis:CI} were implemented.
 
 \subsubsection{SonarQube}
 According to our research, a major problem was that the scanner for SonarQube can only analyze one language at a time \cite{sonar-supports-only-one-language}.

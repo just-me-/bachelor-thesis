@@ -17,10 +17,10 @@ Since we wanted to make a contribution to society with our work,
 it was always a big concern for us to achieve a stable version of the plugin, which we can also publish.
 This way Dafny developers can get a real use for the plugin. \\
 
-The following subchapters describe the results achieved and further prospects for each target group.
+The following section describe the results achieved and further prospects for each target group.
 
 \subsection{Features for Dafny Developers}
-In this subchapter, the achieved feature set of the project is described and critically reflected.
+In this section, the achieved feature set of the project is described and critically reflected.
 The current version of the plugin supports the following features for Dafny developers in VS Code:
 \begin{enumerate}
     \item Syntax Highlighting
@@ -317,7 +317,7 @@ There are basically two ways to improve this: \\
 We recommend this first variant.
 Implement the global symbol table for the entire workspace.
 This not only improves runtime by giving the updatability of individual symbols,
-as described in chapter XXX, but automatically solves the problem.
+as described in section XXX, but automatically solves the problem.
 With a symbol table for the whole workspace and no longer per file,
 files automatically know if they are included by other files. \\
 
@@ -425,7 +425,7 @@ We decided to lay our focus on the Dafny tutorial, which is done within the soft
 This way, the basic concepts of Dafny are supported.
 However, as soon as the user starts to use more advanced language features, a symbol may be introduced within a scope that is not visited by the visitor.
 If the user is using that symbol later on inside a common method body, the symbol table generator will be unable to locate the symbol's declaration and thus fail.
-An overview of the supported expressions and statements was given in chapter \ref{section:analysis_dafnyASTStuff}.\\
+An overview of the supported expressions and statements was given in section \ref{section:analysis_dafnyASTStuff}.\\
 
 \intnote{würd hjier nciht schreiben, was genau failed, oder? weil das fägnt schon bei arrays oder listen an. iwo bei implemetnation ahben wir ja geschrieben, was wir analyisert ahebn. was meinst du marcel? hmm vor und nachteile xD kurz erwähnen
 "weil visitor nicht komplett implementiert, gehen einzelne Sprachfeatures wie beispielsweise Arrays oder Listen nicht korrekt"?}
@@ -495,7 +495,7 @@ Since the repository already exists in GitHub, the effort is minimal.
 \subsubsection{Download of the Dafny Language Server}
 In the original plugin, the Dafny project was downloaded via the release builds of GitHub \cite{dafny_lang_builds}.
 
-As discussed in chapter \ref{section:implementation:client:download} \nameref{section:implementation:client:download},
+As discussed in section \ref{section:implementation:client:download} \nameref{section:implementation:client:download},
 we have written an interface for this original process.
 
 Once the rebase from Dafny language server to the Dafny project is done,

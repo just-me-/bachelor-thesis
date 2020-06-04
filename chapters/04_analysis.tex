@@ -2,7 +2,7 @@
 \label{section:analysis}
 Since this thesis is a sequel of the preceding semester thesis, work could be directly continued.
 Many topics were already analyzed in the prequel.
-To provide the reader with a comprehensive knowledge base about Dafny and the language server protocol (LSP), some chapters out of the semester thesis will be repeated in the following subsections.
+To provide the reader with a comprehensive knowledge base about Dafny and the language server protocol (LSP), some sections out of the semester thesis will be repeated in the following subsections.
 The studies of the Dafny-specific compilation process was new to the bachelor thesis.
 It was especially necessary to gain an overview of the existing abstract syntax tree nodes to build the new symbol table.
 
@@ -31,7 +31,7 @@ Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates th
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{analysis/lspcommunication.png}
-    \caption{Communication Benefit of LSP, Image from visualstudio.com \cite{lspextensionguide}} 
+    \caption{Communication Benefit of LSP, Image from visualstudio.com \cite{lspextensionguide}}
     \label{fig:lspcommunication}
 \end{figure}
 
@@ -65,7 +65,7 @@ Fortunately the LSP can be extended with custom requests. This concerns the foll
            counter examples in response.
 \end{itemize}
 
-Custom LSP messages are further discussed in the chapter \ref{chapter:customlspmsg}.
+Custom LSP messages are further discussed in section \ref{chapter:customlspmsg}.
 
 \subsubsection{Communication Example}
 The basic concept of the LSP is to inform the server about any client action.
@@ -240,7 +240,7 @@ For example, shadowing describes the existence of multiple variables with the sa
 Concepts like these are highly relevant for the construction of a symbol table. \\
 
 To be aware of which such concepts are supported - or prohibited - by Dafny, we studied the \textit{Dafny Reference Manual} \cite{dafnyReferenceManual}.
-This chapter discusses the most relevant Dafny language concepts with regard to the symbol table.
+This section discusses the most relevant Dafny language concepts with regard to the symbol table.
 
 \subsubsection{Modules}
 Dafny code can be organized by modules.
@@ -901,7 +901,7 @@ as you will read in chapter \ref{section:project_management} \nameref{section:pr
 Unfortunately, setting up the CI process in the prototype took almost until the end of the project
 and was not very successful.
 
-This chapter describes the initial situation and the desired objectives regarding CI to optimize our workflow.
+This section describes the initial situation and the desired objectives regarding CI to optimize our workflow.
 
 \subsubsection{SonarQube}
 SonarQube makes static code analysis and reports bugs and vulnerabilities.
