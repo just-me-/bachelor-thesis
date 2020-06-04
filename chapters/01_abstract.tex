@@ -12,7 +12,7 @@ In our preceding term project, the language server was integrated into the Dafny
 This bachelor thesis continues the preceding term project and contains two major goals.
 First, the previously implemented prototype has to be improved in usability, stability and reliability.
 Second, a symbol table has to be implemented to facilitate the development
-of symbol-oriented functionality like rename or auto completion.
+of symbol-oriented functionality like Rename or AutoCompletion.
 The symbol table is supposed to open a wide range for further development.\\
 
 \textbf{Result}\\
@@ -20,7 +20,7 @@ A symbol table was created with an adaptive data structure.
 Every symbol contains information about its parent, its children and its declaration.
 This keeps navigation within the symbol hierarchy very simple.
 The implemented features GoToDefinition, Rename, CodeLens, HoverInformation and AutoCompletion benefit from the symbol table and are no longer required to contain complex algorithms.
-The data structures of the symbol table can be used by future extensions, such as auto formatting or code highlighting.\\
+The data structures of the symbol table can be used by future extensions, such as AutoFormatting or CodeHighlighting.\\
 
 Besides features based on the symbol table, pre-existing functionality was revisited as well.
-The implementation achives a quality level ready to be released as a preview version on the Visual Studio Code marketplace. 
+The implementation achives a quality level ready to be released as a preview version on the Visual Studio Code marketplace.
