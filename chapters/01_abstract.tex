@@ -3,10 +3,10 @@
 
 \textbf{Initial Situation}\\
 Dafny is a formal programming language to proof a program's correctness.
-In a preceding bachelor thesis, a plugin for Visual Studio Code had been created to access Dafny-specific static analysis features.
-The plugin communicates with a language server, using Microsoft's language server protocol, which standardizes communication between an integrated development environment (IDE) and a language server.
-The language server itself used to access the Dafny library, which features the backend of the Dafny language analysis, through a proprietary JSON-interface.
-In a preceding term project, the language server was integrated into the Dafny backend to render the JSON-interface obsolete.\\
+In a preceding bachelor thesis, a plugin for Visual Studio Code has been created to access Dafny-specific static analysis features.
+The plugin communicates with a language server using Microsoft's language server protocol, which standardizes communication between an integrated development environment (IDE) and a language server.
+The language server itself used to access the Dafny library, which features the backend of the Dafny language analysis through a proprietary JSON-interface.
+In our preceding term project, the language server was integrated into the Dafny backend to render the JSON-interface obsolete.\\
 
 \textbf{Objective}\\
 This bachelor thesis continues the preceding term project and contains two major goals.
@@ -19,8 +19,8 @@ The symbol table is supposed to open a wide range for further development.\\
 A symbol table was created with an adaptive data structure.
 Every symbol contains information about its parent, its children and its declaration.
 This keeps navigation within the symbol hierarchy very simple.
-The implemented features go to definition, rename, code lens, hover information and auto completion benefit by the symbol table and are no longer required to contain complex algorithms.
-The offerings of the symbol table can be accessed for future extensions, such as auto formatting or code highlighting.\\
+The implemented features GoToDefinition, Rename, CodeLens, HoverInformation and AutoCompletion benefit from the symbol table and are no longer required to contain complex algorithms.
+The data structures of the symbol table can be used by future extensions, such as auto formatting or code highlighting.\\
 
-Aside features based on the symbol table, pre-existing functionality was revisited as well.
-The prototype achieved a quality to now be ready for distribution as a preview version on the Visual Studio Code market place.
+Besides features based on the symbol table, pre-existing functionality was revisited as well.
+The implementation achives a quality level ready to be released as a preview version on the Visual Studio Code marketplace. 
