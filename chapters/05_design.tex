@@ -2,10 +2,15 @@
 This chapter contains discussions of fundamental design decisions that were made.
 It is primarily divided into client and server architecture.
 
+ \intnote{corbat; Bessere Erklärung was in diesem Kapitel folgt: Technologies,}
+
+
 \subsection{Technologies}
 The choice of technologies is determined by external circumstances.
 The client will be written in TypeScript, since this is required for VSCode plugins \cite{vscodeAPI}.
 The server will be written in \CsharpWithSpace using .NET Framework 4.6.1, since Dafny is already coded in this configuration and direct integration is the key goal of the project.
+
+ \intnote{Note on new version? (.NET Framework 4.6.1)}
 
 
 \subsection{Client}
@@ -206,6 +211,9 @@ export interface ICompilerResult {
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Visitor for Dafny to Build the Symboltable}
+\cite{Corbat: Kapitel Symbol Table Design fehlt noch. Ist das ein Unterkapitel davon? ist der visitor ein unter kapitel von symbol table design? }
+
+
  \intnote{offen gesagt nicht sicher wo in dem design wir den unterbringen wollen. vor dem server als eigenes? nach dem server als eigenes? innerhalb des servers aber am anfang? würd dazu tendieren... aber dann wirkts etwas "platsch" mässig wenn man damit beginnt. andererseits bauen ja die design konzepte vom symbol table manager und co darauf auf,oder? ka. was meinst du? }
 
 To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}.
@@ -542,6 +550,8 @@ Now, it forwards the repository to the \code{VerificationProvider}, which extrac
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Integration Tests}
+ \intnote{corbat: kommt in die implementation. vollständig. da haben wir schon ein kapitel; mergen.}
+
 \label{chapter:designTests}
 Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's language server client \cite{omnisharpClient}.
 Each test starts a language server and a language client, then they connect to each other.

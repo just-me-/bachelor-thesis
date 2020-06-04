@@ -6,6 +6,8 @@ To provide the reader with a comprehensive knowledge base about Dafny and the la
 The studies of the Dafny-specific compilation process was new to the bachelor thesis.
 It was especially necessary to gain an overview of the existing abstract syntax tree nodes to build the new symbol table.
 
+ \intnote{Prepare reader for content in the chapter. Give an overview of the sections and state which are copied.}
+
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
 The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{lspWiki}.
@@ -433,7 +435,7 @@ The AST is a tree, that contains information about the scope of symbols.
 Consider the following code snippet.
 
 \begin{lstlisting}[language=dafny, caption={AST Demo Snippet}, captionpos=b, label={lst:astsnipped}]
-while(i<5) {
+while(i < 5) {
     i := i + 1;
     print i;
 }
@@ -466,6 +468,10 @@ The two concepts are strongly coupled.
 
 \subsubsection{Requirements for the Symbol Table}
 To be able to implement the required feature set for this project, the following questions must be answered by the symbol table or the AST, respectively.
+
+ \intnote{Why do you need this information.}
+
+
 \begin{itemize}
     \item Cursor position
     \begin{itemize}
@@ -565,7 +571,7 @@ The following itemizations follow the structure given by Dafny.
 In this chapter, the most important expression types are explained.
 These are also the expressions that were implemented with a dedicated \code{Accept} and \code{Visit}-method.
 \begin{itemize}
-    \item NameSegment: Any name of a variable or method.
+    \item NameSegment: Any name of a variable or method.  \intnote{Monospace for class names}
     \item IdentifierExpression: A single variable.
     \item ExprDotName: An expression containing a dot as a locator, such as \code{myclass.mymethod()}.
     \item BinaryExpression: An expression with two operands, for example 'plus', or 'less than'.
@@ -587,6 +593,8 @@ These are also the expressions that were implemented with a dedicated \code{Acce
 The reader notes himself, that many expressions contain other subexpressions.
 
 \subsubsection{Statements}
+ \intnote{Laborious, but can you give a code example for every node?}
+ 
 \begin{itemize}
     \item BlockStmt: Anything surrounded by curly brackets.
     \item IfStmt: A classic if-statement. It contains an expression for the condition, a block statement for the then-block, and another, optional if-statement for the else-block.
