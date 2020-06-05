@@ -384,8 +384,6 @@ While this component is specifically used solely for the \code{rename}-Feature, 
 
 
 
-%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
-
 
 
 \subsection{Symbol Table}
@@ -752,23 +750,25 @@ Figure \ref{fig:wraps} shows the distinction between the three methods.
 
 
 
+
 \subsection{Features}
 \label{section:imp:features}
 As it was stated in the previous sections, many features just query the symbol table and assemble the information to a proper result format.
 This is especially the case for Rename, GoToDefinition and HoverInformation.
-These features are thus not described in detail.
-However, some features, especially AutoCompletion, involve a bit more complexity.
+An example was given while explaining the \code{Core}-package of the server implementation.
+These features are thus not described in detail any further, since they are nearly trivial.
+However, other features, especially AutoCompletion, CodeLens and the ones not depending on the symbol table involve a bit more complexity.
 In this chapter, these special cases are described.
 
-\subsubsection{Completion}
+\subsubsection{AutoCompletion}
 \label{section:implementation:core:completion}
 The automatic code completion is an essential feature of every IDE and is a great help for the developer to write code efficiently.
 Making good suggestions to the user is a complex matter. \\
 
-Through the implementation of our new symbol table, it is easy for us to find symbols in the current scope.
+Through the new symbol table, it is easy for us to find symbols in the current scope.
 With the help of the "Symbol Table Navigator"
 it is also possible to efficiently filter the proposals by conditions,
-which can be transferred as delegates. \\
+which can be transferred as predicates. \\
 
 The main difficulty and thus the logical complexity of the AutoCompletion
 is therefore no longer the actual collection of symbol suggestions,
@@ -777,9 +777,8 @@ and extracting a symbol as entry point for the symbol table navigator component.
 
 For our AutoCompletion, we support three fundamentally different types of user desire.
 To find out the user's desire, the following approach is taken.
-First the cursor position is used to determine the current code position in the Dafny source file.
-Then it is checked if there is a dot in front of the cursos position,
-or a \code{new} keyword followed by a space was found.
+First, the cursor position is used to determine the current code position in the Dafny source file.
+Then, it is checked if there is a dot or "\code{new }" in front of the cursor position.
 Depending on whether one of the two triggers was found,
 a decision is made between the three user desires, as shown in figure \ref{fig:get_users_desire}.
 
@@ -791,26 +790,20 @@ a decision is made between the three user desires, as shown in figure \ref{fig:g
 \end{figure}
 
 \textbf{Proposals for the Object Instance}\\
-If a dot was found at the position of the curser, the word before the dot is also extracted from the code line.
-The position of the cursors is then used to determine the entry.
-
-The symbol table is searched using the navigator:
-the symbol that encloses the current cursor position is searched.
+If a dot was found at the position of the cursor, the word before the dot is also extracted from the code line.
+First of all, the navigator has to find the enclosing scope at the cursor.
+For that, it is important to use the wrapping method, that checks if the cursor is within the body of a symbol, not just within the symbol's identifier.
+A proper method was implemented which does that.
+Afterwards, the related class belonging to the symbol before the dot is searched.
+During the search, the navigator starts in the scope at the cursor, and then moves up one level until a suitable symbol is found.
 For example, if the user is typing in the method \code{myMethod}, the symbol for \code{myMethod} is returned. \\
 
-The symbol table is then searched for the extracted string,
-which was located before the dot, using the found entry point.
-The symbol that has exactly the right name is searched.
-During the search, the navigator starts in the innermost scope and then moves up one level until a suitable symbol is found. \\
+If a matching symbol is found, for example a class named \code{myClass}, all methods and fields defined inside \code{myClass}
+can be extracted using the symbols properties.
+These are now returned as AutoCompletion suggestions. \\
 
-If a matching symbol is found, the corresponding symbol is now
-for example the object instance of a class named \code{myClass}.
-Using the references in the symbol table, the symbol of the class can be accessed from the instance.
-All methods and variables are now returned as AutoCompletion suggestions. \\
-
-For the sake of clarity, the described process was visualized in the following
-Dafny code example \intnote{xxx
-in figure xx} as a sequence diagram.
+For clarity, the described process is visualized in the following
+Dafny code example \intnote{xxx in figure xx} as a sequence diagram.
 
 \begin{lstlisting}[language=dafny, caption={tmptodo.dfy}, captionpos=b, label={lst:tmptodo}]
 class myClass {
@@ -837,16 +830,16 @@ todo snipped in IDE screenshotten, cleich auch die resultate listen als screensh
 If it is assumed that the user only wants classes proposed, the following approach is followed.
 
 As with the proposals for an object instance,
-the completion provider first looks for an access symbol via the cursor position.
-The symbol that encloses the current cursor position with the smallest span is used as the entry symbol.
-This symbol is found by the symbol navigator
+the completion provider first looks for an access symbol at the cursor position.
 Then iteration is performed from the inner scope
-to the outermost scope and all symbols found are returned as as completion suggestions.
-The list is already filtered during iteration by a passed delegate for class symbols only.
+to the outermost scope and all symbols found are returned as completion suggestions.
+The list is filtered already during iteration by a passed predicate for class symbols only.
 
  \intnote{todo habe ich jeweils prädicate oder delegate geschrieben für die filterung? auch beim result iwo) }
-
- \intnote{todo wird irgend wo beim visitor manager dingens beschrieben, dass zu oberst dann nochmals runter ins default package und in die default klasse gegeagen wird um die "nicht benannten" symbole / default scope zu holen? }
+\intnote{ja, passt. ich hab prädikat geschrieben dann gibts keine missverstänidsse ala "also string genommen ist ein delegate mimi und eig wäre es eine instanz des edelegates mimi"}
+ \intnote{todo wird irgend wo beim visitor manager dingens beschrieben,
+ dass zu oberst dann nochmals runter ins default package und in die default klasse gegeagen wird um die "nicht benannten"
+ symbole / default scope zu holen? ja, check.}
 
 \begin{figure}[H]
     \centering
@@ -857,8 +850,9 @@ The list is already filtered during iteration by a passed delegate for class sym
 
 \textbf{All Available Symbols as Default}\\
 If it is assumed that the user would like to have all symbols proposed in the current context,
-the procedure is basically the same as for the proposals for class suggestions.
-The only difference is that no filter predicates are passed to the symbol navigator. Therefore, all types of symbols are suggested.
+the procedure is basically the same as before.
+The only difference is that no filter is passed to the symbol navigator.
+Therefore, all types of symbols are suggested.
 
 \begin{figure}[H]
     \centering
@@ -867,38 +861,30 @@ The only difference is that no filter predicates are passed to the symbol naviga
     \label{fig:default_completion_diagram}
 \end{figure}
 
-\code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" bestimmt. \\
+\code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" xD bestimmt. \\
 PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
 das vom papier digitalisieren todo\\}
 
-\textbf{Automatic Insertion of Brackets}\\
-Since in Dafny round brackets have to be set when calling a method or initializing a class,
-these brackets are automatically inserted as a user help
-if a symbol of type method or class is selected in AutoCompletion. \\
+\textbf{Insertion of Parameter Placeholders}\\
+Just like in other programming languages, Dafny invokes methods and constructors by round brackets.
+It was our goal to automatically propose those brackets.
+This goal could easily be achieved.
+Whenever a constructor or method is chosen as an AutoCompletion suggestion,
+an opening and closing bracket is added to the text to be inserted. \\
 
- \intnote{todo dies konnte realisiert werden mit xxx von LSP. }
-Whenever a symbol of type class or method is added to the list of AutoCompletion suggestions,
-an opening and closing bracket is added to the text to be inserted.
-
- \intnote{todo beschreiben mit welchem parameter das im symbol information vom completion gemacht werden konnte. namen un dinsert text iwas. todo nur für dot completion oder für alle methoden u klassen? }
-
-\textbf{Insert Parameter Placeholders}\\
 From certain IDE's such as XCode,
 you are used to seeing placeholders for the parameters and their types in AutoCompletion
 when you select a method from the suggestions \cite{sa}.
+That is why we wanted to implement such a convenient feature for our AutoCompletion as well.
+Unfortunately we had to realize that this feature is not yet supported natively by the VS Code API \cite{vscodeAPI}.
+Neither does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}. \\
 
-That is why we wanted to implement such a convenient feature for our AutoCompletion as well. \\
-
-Unfortunately we had to realize that the VS Code API
-does not offer a comparable function that we could simply call,
-as was the case with CodeLens, for example \cite{vscodeAPI}.
-
-Nor does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}. \\
-
-That there is no simple way to implement this feature does not mean that it cannot be implemented.
+That there is no simple way to implement this feature does not mean that it cannot be done.
 But the effort for the implementation in VS Code would be exceptionally high.
 Therefore we have decided not to support this feature.
-The idea is described below. \\
+However, the symbol table stores a parameter list for every method, constructor, and function.
+Thus, the symbol table is ready to support the functionality.
+The complete idea how the feature could be implemented is described below. \\
 
 As with CodeLens, you could send additional data to the client
 for the AutoCompletion objects - namely the parameters and their types for methods.
@@ -906,8 +892,7 @@ Whenever a completion is inserted, a callback function can be called within the 
 This function could then additionally insert the parameters as text in the code and register
 event listeners on keyboard keys like \textit{TAB}.
 Using \textit{TextEdits}, the registered function would then jump to the next placeholder parameter
-each time \textit{TAB} is pressed and mark it, so that the user can easily replace it with his own code.
-This logic is relatively complex and the exact VS Code API calls to it have not been researched. \\
+each time \textit{TAB} is pressed and mark it, so that the user can easily replace it with his own code. \\
 
 Also, just because VS Code does not yet offer an API to perform such \textit{TAB} jumps between parameters,
 does not mean that other IDE's, for which Dafny support will be offered later,
@@ -915,54 +900,28 @@ do not offer such a function.
 In the future, VS Code might even add such a function. \\
 
 \textbf{Getting Information About Method Parameters} \\
-\intnote{hier ev noch was zu updaten aka ist eig einfach verfügbar blabla?}
-Since the desired implementation of placeholder parameters was not easy to implement,
-we have generally neglected the information for parameters.
-
-However, the usability test has shown that text information about which method
-receives which parameters would be very helpful for users.
-Offering such assistance is possible with relatively little effort.
-However, the structure of the symbol table has to be slightly modified,
-which is why we have not included this feature in the functional scope for time reasons,
-as there would have been no time for the necessary unit tests.
-
-Nevertheless, in the following the idea is recorded to enable other developers to implement this feature.\\
-
-Already now in our visitor, all sub symbols of a symbol are stored as an array within the symbol
-as \code{List<ISymbol> Children} when building the symbol table.
-For example, a method stores all contained variable declarations as an array of child symbols. \\
-
-When building the symbol table,
-the visitor must now be minimally adjusted so that parameters
-of a method are now also visited and stored in an array.
-That is it - afterwards the parameters of an auto-completion method are available. \\
+Usability test has shown that text information about which method
+receives which parameters would still be very helpful for users.
+The information provided by the symbol table could be used for that.
 
 When constructing the completion elements,
-the information field \code{CompletionItem} can contain besides
-the type of the symbol now the parameters to be passed as help text in \code{Detail} too. \\
+the field \code{CompletionItem} can contain additional details.
+Those details could hold the parameter list.
+This way, the user could be informed about them.\\
 
-This function is of course not only limited to methods but can also be applied to class constructors.
 
 \subsubsection{CodeLens}
-The CodeLens function is divided into two primary tasks.
+The CodeLens functionality is divided into two primary tasks.
 
-Firstly, the grey help text in the IDE maintenance of methods and classes
-shows how often the method or class has already been used.
+First, it is shown how often the method or class has already been used.
 
-Secondly, the user can click on the gray help text and a popup window displays all code snippeds
-that use the method or class.
-This allows the developer to efficiently jump between different places within a file
-and across multiple files without having to switch between the files themselves or scroll much within a file. \\
+Second, the user can click on the text and a popup window displays all symbol usages.
+This allows the developer to efficiently jump between different places within a workspace.\\
 
 \textbf{Number of References} \\
-To get the display,
-which methods and classes were used how often and thus also to mark dead code
-as it is displayed in figure \ref{fig:codelens_show_ref_number},
-no big effort is necessary thanks to the new symbol table.\\
-
-Via the symbol manager all declarations for the currently opened file a.
-Subsequently, the uses are counted for each symbol.
-This is stored in the symbol table for each symbol in the list \code{Usages}. \\
+To get the reference count, no big effort is necessary thanks to the new symbol table.
+It contains a list of \code{Usages}, which can easily be counted.
+This way, it can also expose dead code, which has never been used as seen in \ref{fig:codelens_show_ref_number}. \\
 
 \begin{figure}[H]
     \centering
@@ -971,32 +930,34 @@ This is stored in the symbol table for each symbol in the list \code{Usages}. \\
     \label{fig:codelens_show_ref_number}
 \end{figure}
 
-\textbf{Popup Windows with Code Snippeds} \\
+\textbf{Popup Windows with Code Snippets} \\
 The popup that opens when you click on the grey text
-with the counted references, as shown in figure \ref{fig:codelens_show_popup},
-is basically a client feature offered by VS Code \cite{vscodeAPI}.
+with the reference counter is a client feature.
+It is offered by VS Code \cite{vscodeAPI}.
+Unfortunately, this is something that cannot be extracted completely to the server.
+The logic required within the client is trivial, though.
+Only the function \code{VSCodeCommandStrings.ShowReferences},
+offered by VS Code, is called \cite{vscodeAPI}.
+The popup display is shown in figure \ref{fig:codelens_show_popup}. \\
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{CodeLens shows Popup with Code Snippeds}
+    \caption{CodeLens shows Popup with Code Snippets}
     \label{fig:codelens_show_popup}
 \end{figure}
 
-In the client the logic is minimal.
-Only the function \code{VSCodeCommandStrings.ShowReferences},
-offered by VS Code, is called \cite{vscodeAPI}. \\
-
-The complete logic and the preparation of the data is already done in the language server.
-Basicly for each symbol declaration, the CodeLens object is enriched with further information
-as shown in the following code snipped as listing \ref{lst:codelens-prep}.
+The preparation of the data is already done in the language server.
+For each symbol declaration, the CodeLens object is enriched with further information.
+The client just has to display them.
+This is shown in listing \ref{lst:codelens-prep}.
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:codelens-prep}]
 var args = new
 {
     Uri = _uri,
-    Position = position, // where to show the CodeLens popup
-    Locations = locations // what should be in the pop up displayed
+    Position = position,  // where to show the CodeLens popup
+    Locations = locations // what should be displayed inside the popup
 };
 Command command = new Command
 {
@@ -1013,61 +974,67 @@ return new CodeLens
 \end{lstlisting}
  \intnote{todo merke grad dass showreferences ein übersehenes magic string ist... in ressourcen auslagern? todo}
 
-For each CodeLens element, for example a method, a \code{Command} object is also appended.
-The stored \code{Name} within this \code{Command}
-is the function name called when at the client the \code{Command}
-(which is the actual grey text with the reference information) is clicked. \\
+To each CodeLens element, a \code{Command} object is also appended.
+The command's name is the function called at the client, when the grey text is clicked.\\
 
-In addition, the \code{Command} is given the required reference positions as arguments.
-These reference positions are referenced in the CodeLens popup as code snippeds.  \\
+In addition, the \code{Command} is given the positions it should display inside the popup.  \\
 
 If the function \code{dafny.showReferences} is called in the client,
 the method \code{VSCodeCommandStrings.ShowReferences} from the VS Code API is called
-and the arguments prepared in sevrer are passed. \\
+and the arguments prepared in server are passed through. \\
 
 Because the whole logic for CodeLens is in the server,
-integration tests and unit tests can be written on the server side for this feature.\\
+integration tests and unit tests were written on the server side for this feature.\\
 
 \textbf{Support for File Includation} \\
-CodeLens basically works very well with regard to support over multiple files.
+CodeLens works very well over multiple files.
 But only if other files are included.
 In case the currently opened file is included by another file,
-CodeLens does not know that the included symbols are used by a third Dafny program. \\
+CodeLens does not know that it gets used by a third Dafny program. \\
 
-This problem should solve itself once a global symbol table for the complete workspace has been implemented.
-Symbols then also know about uses and references of the whole workspace.
+This problem should solve itself once a global symbol table for the complete workspace has been implemented,
+instead of a single table per file.
+Symbols will then be aware of usages across the complete workspace.
 More information about the global symbol table is described in section xxx.
- \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun. seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo}
+
+ \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun. seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo -- is noch nicht... wäre was für results}
 
 \subsubsection{Compilation}
-Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the \code{FileRepository}.
-This includes the precompiled \code{dafnyProgram}.
-The compilation provider will take advantage of that and use the precompiled item, and just forward it to the compiler engine.
+Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in a \code{FileRepository}.
+This includes the precompiled \code{dafnyProgram}, which is then available for further reuse.
+The compilation provider will take advantage of that and use the precompiled item, and just forward it to the Dafny compiler engine.
 Prior to the compilation, custom compilation arguments are installed, if the user provided any.
-The process is fully integrated into the Dafny backend by using the following code line.\\
+The process is fully integrated into the Dafny backend.
+The compiler invocation can be seen in listing \ref{lst:dafnycompiler}.\\
 
 \begin{lstlisting}[language=csharp, caption={Calling the Dafny Compiler}, captionpos=b, label={lst:dafnycompiler}]
 DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwriter);
 \end{lstlisting}
 
-The provider will check if any errors occurred and return the outcome within a wrapper class.
+The provider will check if any errors occurred during the process and return the outcome within a wrapper class.
+The handler can then read the outcome and send a proper message to the user.
 
 \subsubsection{CounterExample}
 This feature bases on the model file, which is generated during verification.
 The model file is a key-value store generated by Boogie.
-It contains several states.
+It contains several 'states'.
 Each state tracks the content of variables during different stages of the proof.
-Of interest is primarily the \textit{initial} state, since this one contains the information how variables need to be set at the initially to achieve a CounterExample.\\
+Of interest is primarily the \textit{initial} state, since this one contains the information how variables
+need to be set initially to achieve a CounterExample.\\
 
-This provider reads the model file and uses the Boogie backend to convert into a useful format.
+The CounterExample provider reads the model file and uses the Boogie backend to convert it into a useful format, which is called \code{ILanguageSpecificModel}.
 Afterwards, it extracts the initial state from the model.
-Out of the remaining model, all key-value-pairs containing useful information are extracted, assembled and returned.
-The component will also transform information into a more human readable format, e.g. $((- 12)) \rightarrow -12$.
-Furthermore, many values are internal Boogie references and cannot be resolved.
+Out of the remaining state, all key-value-pairs are extracted, filtered, assembled and returned.
+Many values are internal Boogie references and cannot be resolved.
 These just look like \code{T@U!val!12}.
-Such values are replaced with the text \code{[Object Reference]}.\\
+Such values are replaced with the text \code{[Object Reference]}.
+Values providing no information at all are completely removed from the CounterExample.
+The component will also transform information into a more human readable format, e.g. \code{((- 12)) $\rightarrow$ -12}.\\
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
