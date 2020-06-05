@@ -23,7 +23,7 @@ Those features can for example be
     \item GoToDefinition
 \end{itemize}
 and much more. A full list can be found within the LSP specification \cite{lspspec}.
-Custom requests, for example \textit{compile} or \textit{counterExample} can also be added to the LSP \cite{lspWiki}.
+Custom requests, for example \textit{compile} or \textit{CounterExample} can also be added to the LSP \cite{lspWiki}.
 The major advantage of this concept is that the plugin can be kept very simple.
 The relevant information is delivered by the language server, which is IDE-independent.
 Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates these benefits .
@@ -61,8 +61,8 @@ Fortunately the LSP can be extended with custom requests. This concerns the foll
 \begin{itemize}
     \item Compile: Informs the server about the file to compile and compilation arguments.
           As a result, the server delivers a success or error message.
-    \item Counter Example: The client sends a file identificator to the server and receives
-           counter examples in response.
+    \item CounterExample: The client sends a file identificator to the server and receives
+           CounterExamples in response.
 \end{itemize}
 
 Custom LSP messages are further discussed in section \ref{chapter:customlspmsg}.
@@ -151,7 +151,7 @@ Aside the official LSP specification, this collection is very helpful to perceiv
 
 \subsubsection{Custom LSP Messages}
 \label{chapter:customlspmsg}
-The current problem domain does not only require premade LSP messages like AutoCompletions or diagnostics, but also custom requests such as \code{counterExample}, which is Dafny-specific.
+The current problem domain does not only require premade LSP messages like AutoCompletions or diagnostics, but also custom requests such as \code{CounterExample}, which is Dafny-specific.
 Such a message is not natively supported by the language server protocol.
 Since no example or documentation could be found on custom messages, Martin Bj\"orkstr\"om was contacted in the OmniSharp Slack channel \cite{omnisharpslack}.
 Mr. Bj\"orkstr\"om and his team were able to quickly provide the solution for this issue.\\
@@ -159,7 +159,7 @@ Mr. Bj\"orkstr\"om and his team were able to quickly provide the solution for th
 The server can simply register custom handlers by implementing the correct interfaces.
 The following three items have to be specified:
 \begin{itemize}
-    \item Name of the message, e.g. \code{counterExample}
+    \item Name of the message, e.g. \code{CounterExample}
     \item Parameter type, e.g. \code{CounterExampleParams}
     \item Response type, e.g. \code{CounterExampleResults}
 \end{itemize}
@@ -172,7 +172,7 @@ The following skeleton code demonstrates how a custom request handler can be imp
 public class CounterExampleParams : IRequest<CounterExampleResults> { [\dots] }
 public class CounterExampleResults { [\dots] }
 
-[Serial, Method("counterExample")]
+[Serial, Method("CounterExample")]
 public interface ICounterExampleHandler : IJsonRpcRequestHandler<CounterExampleParams, CounterExampleResults> { }
 
 public class MyHandler : ICounterExampleHandler
@@ -734,30 +734,30 @@ Dafny allows to specify own arguments for compilation, which our plugin should s
 On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VS Code can be used for individual argument input for each compile.
 \intnote{todo quellen auf die funktionen von der vs code api}
 
-\subsubsection{Counter Example}
-To show a counter example, the user has again the choice between a hotkey, the context menu or using the command bar.
-The counter example is then shown as a VSCode design element.
-If the user is no longer interested in the counter example, there is another command to hide it.
+\subsubsection{CounterExample}
+To show a CounterExample, the user has again the choice between a hotkey, the context menu or using the command bar.
+The CounterExample is then shown as a VSCode design element.
+If the user is no longer interested in the CounterExample, there is another command to hide it.
 The suppression of the counter model is completely handled inside the client. \\
 
-The example in figure \ref{fig:analysis_counter_example} demonstrates a counter example.
+The example in figure \ref{fig:analysis_counter_example} demonstrates a CounterExample.
 The precondition is commented. Without this requirement, the postcondition can be violated with \code{y = 0}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/counter_example}
-    \caption{Demonstration of Counter Examples}
+    \caption{Demonstration of CounterExamples}
     \label{fig:analysis_counter_example}
 \end{figure}
 
-In the current version the counter example is automatically hidden when the code is edited.
-If the user switches to another tab in VSCode, the counter example is also deactivated. \\
+In the current version the CounterExample is automatically hidden when the code is edited.
+If the user switches to another tab in VSCode, the CounterExample is also deactivated. \\
 
-New client logic has to be used to store for which files the counter example is active.
-The counterexample can be displayed to the user again, as soon as he switches back to the original Dafny file with the new logic.
-Furthermore, an automatic update of the counter example should take place whenever the user edits the code.\\
+New client logic has to be used to store for which files the CounterExample is active.
+The CounterExample can be displayed to the user again, as soon as he switches back to the original Dafny file with the new logic.
+Furthermore, an automatic update of the CounterExample should take place whenever the user edits the code.\\
 
-The representation of the counter example shall also be improved.
+The representation of the CounterExample shall also be improved.
 A clear and concise display and increased user friendliness is targeted.\\
 
 \subsubsection{AutoCompletion for Identifiers}

@@ -143,7 +143,7 @@ This section describes where and why the client still contains logic.\\
 
 {\bf Server Connection} \textendash{}
 Handling of the connection to the language server and sending API requests.
-In addition, the client has a simple logic that certain server requests (such as updating the counter example)
+In addition, the client has a simple logic that certain server requests (such as updating the CounterExample)
 are sent at most twice per second. \\
 
 {\bf Execute Compiled Dafny Files} \textendash{}
@@ -179,10 +179,10 @@ This allows the user to switch seamlessly between Dafny files in VSCode
 without having the server to send the status bar information
 (like the number of errors in the Dafny file) each time.\\
 
-{\bf Counter Example} \textendash{}
-Similarly to the status bar, counter example results are also buffered.
-For each Dafny file in the workspace, a buffer stores whether the user wants to see the counter example or not.
-This way the counter example is hidden when the user switches to another file
+{\bf CounterExample} \textendash{}
+Similarly to the status bar, CounterExample results are also buffered.
+For each Dafny file in the workspace, a buffer stores whether the user wants to see the CounterExample or not.
+This way the CounterExample is hidden when the user switches to another file
 and automatically shown again when switching back to the original Dafny file.
 
 \subsubsection{Types in TypeScript}

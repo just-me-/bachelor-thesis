@@ -26,7 +26,7 @@ The current version of the plugin supports the following features for Dafny deve
     \item Syntax Highlighting
     \item Code Verification
     \item Compilation
-    \item Counter Example
+    \item CounterExample
     \item Hover Information
     \item GoToDefinition
     \item Rename
@@ -157,15 +157,15 @@ If the executable is launched manually within another console outside of Visual 
 The effect just occurs the first time an executable is launched.
 The reason for that could not be investigated.
 
-\subsubsection{Counter Example}
-Providing counter examples was already possible in the prototype.
-A major flaw was, that the representation of the counter example was quite complex and not intuitively readable.
-Thus, it was a goal to ease the counter example representation.\\
+\subsubsection{CounterExample}
+Providing CounterExamples was already possible in the prototype.
+A major flaw was, that the representation of the CounterExample was quite complex and not intuitively readable.
+Thus, it was a goal to ease the CounterExample representation.\\
 
 For this, the related \code{model.bvd} file was studied.
 It is quite a  cryptic file and getting a comprehensive understanding of it would be very complex.
 However, an \code{inital state} was located which seemed exactly that part of information, that the user is interested in.
-Thus, unlike previous in versions, only that \code{initial state} is considered in counter examples.
+Thus, unlike previous in versions, only that \code{initial state} is considered in CounterExamples.
 Furthermore, any unreadable representations such as \code{**myVar} or \code{TU!Val23} were omitted.
 To allow the user to catch the information at first sight, obsolete brackets are also removed, and the minus sign is directly moved to the number.
 The expression \code{((- 23))} is therefore reformatted into \code{-23}, making the term much more perceivable.
@@ -173,16 +173,16 @@ The expression \code{((- 23))} is therefore reformatted into \code{-23}, making 
 \begin{figure}[H]
     \centering
     \includegraphics[width=12cm]{results/ce_beforeafter.png}
-    \caption{Counter Example Representation Before (Top) and After (Bottom)}
+    \caption{CounterExample Representation Before (Top) and After (Bottom)}
     \label{fig:ce_beforeafter}
 \end{figure}
 
-Figure \ref{fig:ce_beforeafter} shows a comparison of the counter example feature between the initial state and at the end of the project.
+Figure \ref{fig:ce_beforeafter} shows a comparison of the CounterExample feature between the initial state and at the end of the project.
 The representation is much cleaner and easier to immerse.
 Also note, that more room is given so that is does not have a clumsy effect on the user's eye. \\
 
 This feature was also improved on the client side.
-The user has the option to configure the color scheme of the counter example representation, if he does not like the default colors.
+The user has the option to configure the color scheme of the CounterExample representation, if he does not like the default colors.
 The default colors are chosen with respect to the user's base color theme of VSCode (dark or light mode).
 As in figure \ref{fig:ce_beforeafter} the light theme is shown,
 the following figure \ref{fig:ce_dark} shows the dark mode colors.
@@ -190,12 +190,12 @@ the following figure \ref{fig:ce_dark} shows the dark mode colors.
 \begin{figure}[H]
     \centering
     \includegraphics[width=8cm]{results/ce_dark.png}
-    \caption{Counter Example Dark Theme}
+    \caption{CounterExample Dark Theme}
     \label{fig:ce_dark}
 \end{figure}
 
-The counter example will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
-If the user switches between windows, the counter example state is buffered, so that once the user switches back to the original window, the counter example will be shown again.
+The CounterExample will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
+If the user switches between windows, the CounterExample state is buffered, so that once the user switches back to the original window, the CounterExample will be shown again.
 
 \subsubsection{Hover Information}
 Hover information displays a set of information, whenever the user hovers with the mouse cursor over a code symbol.
