@@ -459,8 +459,6 @@ While this component is specifically used solely for the \code{rename}-Feature, 
 
 
 
-%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
-
 
 
 \subsection{Symbol Table}
@@ -475,7 +473,7 @@ The symbol table was designed to handle four different tasks:
 \end{itemize}
 
 \subsubsection{Symbol Information}
-This is a component that summarizes all information about a symbol.
+Obtaining information about a symbol was realized by a wrapper class.
 Logic was extracted from this class as far as possible to keep it short and concise.
 As we have seen in chapter \ref{chapter:design}, this class needs to contain a lot of properties.
 The most important properties are:
@@ -496,24 +494,22 @@ The most important properties are:
     \item Link to the associated default class for quick access.
 \end{itemize}
 
-The provided properties are supposed to facilitate working with the symbol table.
-For example, if a symbol's definition cannot be found with regular methods, the property with the associated default class can be accessed to search the symbol there.
+The provided properties are supposed to facilitate working with the symbol tree.
+For example, if a symbol's definition cannot be found with regular methods,
+the property with the associated default class can be accessed to search the symbol there.
 No separate logic to find the default class is necessary.
 This is advantageous, since the default class is in the global namespace and not a direct ancestor of a symbol.\\
-
-Technically, the symbol table is more of a tree, then a table.
-The data structure is double linked.
-Each symbol knows about its descendants, but also about its ancestor.
-Navigating to either one can thus be done in $O(1)$.
-If the name of a descendant is known, navigating to the symbol can also be done in $O(1)$ due to the hash map.
-For example, if a module \code{M} contains a class \code{C}, and within the class there is a method \code{foo}, one can simply start from the root symbol and navigate through the hash maps.
-The \code{[]} operator was overloaded to make this as convenient as possible:\\
-\code{rootSymbol["M"]["C"]["foo"]}.\\
 
 To enable efficient access to the children of a symbol, we have opted for a key-value data structure.
 The key is the child symbol's name, the value the actual \code{SymbolInformation} object.
 This hash structure enables access to a child symbol with a runtime of $O(1)$.
-Since every symbol also has a link to it's parent, navigation in both ways can be done within $O(1)$.\\
+For example, if a module \code{M} contains a class \code{C}, and within the class there is a method \code{foo},
+one can simply start from the root symbol and navigate through the hash maps in constant time.
+The \code{[]} operator was overloaded to make this as convenient as possible:\\
+\code{rootSymbol["M"]["C"]["foo"]}.\\
+
+Technically, the symbol table is more of a double linked tree, then a table.
+To be consistent, the structure will be called symbol table.\\
 
 While this is very fancy, the convenience comes at a price.
 Many properties do not apply for all kinds of symbols.
@@ -527,17 +523,20 @@ method foo() {
 \end{lstlisting}
 
 The symbol \code{foo} profits by almost all properties.
-It can have children (the variable x), it has some parent, it can be used.
-Since foo is a method declaration, the declaration property of the symbol does not make sense.
-In this case, it actually just points to itself.
+It can have children (the variable x), it has some parent, and it can be used elsewhere in the code.
+Since \code{foo} is a method declaration, the declaration property of the symbol does not make sense.
+In this case, it just points to itself.
+This way, features like GoToDefinition will just jump to the same symbol, which is the expected behavior.
+
 The declaration of \code{x} in the second line will have many null values within the symbol information.
 While the parent is \code{foo}, it can not have any children.
-Since it is a variable definition, it can have usages though.
-The final usage of \code{x} in the last line (which we also consider a symbol), does not even have usages, since it is a usage itself.
-Thus many properties are just null for that symbol.\\
+Since it is a variable definition, it still can have usages though.
 
-Unused properties are just set to \code{null}.
-This causes the risk of \code{NullPointerExceptions}, but should save a lot of memory compared to empty lists.\\
+The final usage of \code{x} in the last line (which we also consider a symbol), does not even have usages, since it is a usage itself.
+Thus many properties are null for that last symbol.\\
+
+Unused properties are set to \code{null}.
+This causes the risk of \code{NullPointerExceptions}, but should save a lot of memory compared to empty lists or dictionaries.\\
 
 \subsubsection{Symbol Table Creation}
 The symbol table generator accepts a precompiled Dafny program in the constructor.
@@ -546,37 +545,37 @@ It will first of all create a virtual root symbol.
 Any other symbols will be attached to the root node as descendants.
 The root node is also the final return value.\\
 
-Then, all modules (similar to \CsharpWithSpace or C++ namespaces) will be extracted out of the Dafny program.
+All modules (similar to \CsharpWithSpace or C++ namespaces) will be extracted out of the Dafny program using functionality provided by Dafny.
 The modules will be sorted by depth, so that top level modules will be treated first and nested modules can be attached properly later on.\\
 
-Once the modules are sorted by depth, the algorithm iterates over each of the modules.
-The proper parent symbol will be extracted.
+Once the modules are sorted by depth, the algorithm iterates over each of them.
+The proper parent symbol will be deduced.
 For a top level module, this is just the root symbol.
 Otherwise, for nested modules, the parent module will be located.
-Finally, the module will accept the declaration visitor.
-The visitor is described later.
+Once the module is attached to the proper parent, the module will accept the declaration-visitor, which is described below.
 Once it has completed, all symbol declarations are registered in the symbol table.
-A second iteration is then started, using a visitor, which will ignore declarations but run through all method bodies and take care of symbol usages.\\
+A second iteration is then started, using another visitor, which will ignore declarations but run through all method bodies
+and take care of symbol usages.\\
 This way, symbols that are declared after the first usage can be found as well.\\
 
-\textbf{Visitor}\\
+\textbf{Visitors}\\
 As already mentioned, the whole symbol table generation is realized using the visitor pattern.
 For that, Dafny code had to be adjusted to offer a \code{Accept(Visitor v)} method.
 This method will basically just navigate through the internal Dafny symbol representation.
 For example, when visiting a method, one would like to register the method itself.
 This is done by the expression \code{v.Visit(this)}.
-However, the method also contains a Dafny \code{ensures} statement, which may contain further variables.
+However, a Dafny-\code{method} also contains a Dafny-\code{ensures} statement, which may contain further symbols.
 Thus, all statements within the \code{ensures} clause have to be visited.
 The \code{Accept}-method will now just forward the call, using \code{foreach (var e in this.EnsureStatements) {e.Accept(v)}}.
-The same applies for method parameters and other items like the requires clause.
+The same applies for method parameters and other items like the \code{requires} clause.
 Finally, the body of the method is to visit using \code{foreach (var stmt in this.Body) {stmt.Accept(v)}}.
 Once everything is done, the scope of the method is left by calling \code{v.Leave(this)}.\\
 
-If you recall the last section, it was said that two runs are performed.
+If you recall the paragraph before the last one, it was said that two runs are performed.
 One to capture all declarations, and one to visit all method bodies.
 Thus, the visitor is having a boolean property \code{GoesDeep}, which decides if method bodies are visited or not.
 The final \code{Accept} method for a method looks as shown in listing \ref{lst:visitoraccept}.
-The method is shortened, there are more clauses like for example the requires clause.
+The method is shortened, there are more clauses like for example the \code{requires} clause.
 
 
 \begin{lstlisting}[language=csharp, caption={Accepting a Visitor}, captionpos=b, label={lst:visitoraccept}]
@@ -589,7 +588,7 @@ public override void Accept(Visitor v)
     {
       ens.Accept(v);
     }
-    foreach (var stmt in this.Body.Body)
+    foreach (var stmt in this.Body)
     {
       stmt.Accept(v);
     }
@@ -599,26 +598,41 @@ public override void Accept(Visitor v)
 \end{lstlisting}
 
 Note that the method is marked with the override keyword.
-This is, since every AST-Element is either a statement or an expression, among others.
-In case a specific AST element is not treated separately, a general accept method is defined for statements, as well as expressions.
-However, for supported AST elements, a more specific method is supposed to be used.\\
+This is, since every AST-Element is either a statement, a definition or a declaration, among others.
+A virtual \code{Accept} method was implemented for these top level classes, which uses a default implementation.
+In case a specific AST element got forgotten by us, it will just use the default implementation, which is shown in listing \ref{lst:defaultAccept}.
+
+\begin{lstlisting}[language=csharp, caption={Default Accept}, captionpos=b, label={lst:defaultaccept}]
+    public virtual void Accept(Visitor v)
+    {
+      v.Visit(this);
+      v.Leave(this);
+    }
+\end{lstlisting}
 
 On the other hand of the acceptor, there is the actual visitor.
-The visitor has to implement \code{Visit} methods for each of the AST elements that it is supposed to visit, for example our \code{Method} from the preceding example.\\
+The visitor has to implement \code{Visit} methods for each of the AST elements
+that it is supposed to visit, for example the class \code{Method} from the preceding example.\\
 
-The Visitor itself will now actually build up the symbol table.
+The visitor itself will build up the symbol table.
 For that, it stores the current scope in a property.
-For example, when visiting a method, the parent scope is always some kind of class that was visited before.
-The visitor will now create a symbol for the method, and the property 'parent' can just be set with the scope the visitor has stored - the class mentioned before.
-Since the method itself will have it's own body, the new scope can then be set to the method.
-All symbols that will be visited afterwards - which is anything inside the method - are then attached to the method.
-Once the method is done, \code{Leave()} is called, which will reset the scope to the parent class for the next item to be visited.\\
+At the beginning this is the module the iteration was started with.
+When visiting a method, the current scope is always some kind of class that was visited before.
 
-The \code{Visit}-method in listing \ref{lst:visitorvisit1} of the first visitor, which only takes care of declarations, will just create a symbol, and attach it to the proper scope.
-All required information is taken from the AST element that is visited.
+The visitor will create a symbol for every element it is visiting.
+To do so, all the properties we have seen earlier need to be filled.
+The property \code{parent} can just be set with the scope the visitor has stored.
+Since the method itself will have its own body, the new scope will then be set to the method-symbol, which is just being created.
+All symbols that will be visited afterwards - which is anything inside the method - are then attached to the method.
+Once the method is done, \code{Leave()} is called, which will reset the scope to the parent scope for the next item to be visited.\\
+
+Let's continue the example of visiting a \code{method}.
+This is a declaration, and thus will be treated by the first visitor, which will register all declarations outside method bodies.
+The \code{Visit}-method is shown in listing \ref{lst:visitorvisit1}.
+Take note how the symbol is created: All required information is taken from the AST element \code{Method o} that is visited.
 This includes the name, the position, and so on.\\
 
-\begin{lstlisting}[language=csharp, caption={Visiting a Method}, captionpos=b, label={lst:visitorvisit1}]
+\begin{lstlisting}[language=csharp, caption={Visiting a Method, First Visitor}, captionpos=b, label={lst:visitorvisit1}]
 public override void Visit(Method o)
 {
     var symbol = CreateSymbol(
@@ -641,43 +655,86 @@ public override void Visit(Method o)
 \end{lstlisting}
 
 The \code{CreateSymbol} method will set all properties accordingly.
-That means, a symbol that can have children will be initialized with a list for children, while a symbol that cannot have children will just have a null entry there.
-Note that the scope of the visitor is set to the method for future visitations.\\
+That means, a symbol that can have children will be initialized with a list for children,
+while a symbol that cannot have children will just have a null entry there.
+Note that the end of the method, the scope is set to the just created symbol for future visitations.\\
 
-The second visitor will also visit declarations, but no longer create a symbol for them.
-Instead, the already created symbol is located and set as the proper scope.
-Once a method body is encountered, it will now also be visited.
-Within the body, local variables exist.
-Despite local variables being declarations, they were not handled by the first visitor, which is actually responsible for declarations.
-However, this is fine, since local variables are not accessible before they were not declared.
-Furthermore, symbol usages such as method calls or variable usages are now encountered.
-The visitor has to create proper symbols for these.
-Since these are symbol usages, it is not sufficient to just create a symbol and attach it to the parent scope.
-The following additional tasks have to be done:
-\begin{itemize}
-    \item Where is the symbol declared?
-    \item Add usage to the symbol's declaration
-\end{itemize}
+The second visitor, which is responsible for method bodies and symbol usages,
+will also visit declarations.
+The visitor has actually no choice to skip them, since the \code{Accept}-method decide what is visited in which order.
+However, the second visitor no longer creates a symbol for them.
+Instead, the already created symbol is located and set as the environmental scope.
+The \code{Visit}-method thus gets reduced to listing \ref{lst:visitor2method}
 
-To find the declaration, the symbol table navigator can already be used.
-The navigator will just iterate from parent to parent and will return the first symbol, that is a declaration and matches the name.
-Challenges occurred when a symbol is defined in global scope or in a inherited base class.
-Both difficulties were resolved by adding separate checks for them.
-Once the declaration is found, it is simple to add the just newly created symbol as one of the declaration's usages.\\
-
-The main challenge of the whole visitor implementation was to find a symbols declaration.
-The task could be extracted to the navigator as seen in listing \ref{lst:visitorfinddecl}.
-
-\begin{lstlisting}[language=csharp, caption={Finding a Declaration}, captionpos=b, label={lst:visitorfinddecl}]
-protected ISymbol FindDeclaration(string target, ISymbol scope, Kind kind)
+\begin{lstlisting}[language=csharp, caption={Visiting a Method, Second Visitor}, captionpos=b, label={lst:visitor2method}]
+public override void Visit(Method o)
 {
-    INavigator navigator = new SymbolTableNavigator();
-    bool filter(ISymbol s) => s.Name == target && s.IsDeclaration && s.Kind == kind;
-    return navigator.BottomUpFirst(scope, filter);
+    var preDeclaredSymbol = FindDeclaration(o.Name, SurroundingScope, Kind.Method);
+    SetScope(preDeclaredSymbol);
 }
 \end{lstlisting}
 
-This snippet assigns the navigator to move upwards to tree, starting from the scope the visitor is just operating in.
+To find that pre-declared symbol, the symbol table navigator is invoked.
+It will just iterate from parent to parent and returns the first symbol, that is a declaration and matches the name.
+Challenges occurred when a symbol is defined in global scope or in a inherited base class.
+Both difficulties were resolved by adding separate checks for them.
+This is completely done by the \code{Navigator} component and not part of the visitor.
+
+The second visitor will now also visit method bodies, since the \code{GoesDeep} property is set to true.
+The \code{Accept} method as seen in listing \ref{lst:visitoraccept} is no longer stopping, once the body is treated.
+Within the body, local variables exist.
+Despite local variables being declarations, they were not handled by the first visitor, which is actually responsible for declarations.
+However, this is fine, since local variables are not accessible before they were not declared.
+Furthermore, symbol \textit{usages} such as method calls or variable usages are now encountered.
+The visitor will create proper symbols for these.
+Since these are symbol usages, it is not sufficient to just create a symbol and attach it to the parent scope.
+The following additional tasks have to be accomplished:
+\begin{itemize}
+    \item Where is the symbol declared?
+    \item Add a usage to the symbol's declaration
+\end{itemize}
+
+To find the declaration, the symbol table navigator is called again just as before.
+Once the declaration is known, it is trivial to set the according properties.
+
+\subsubsection{Symbol Table Navigator}
+To operate on the (partially) constructed symbol table, a separate component to navigate was created.
+It has basically two procedures.
+Remember that the data structure of the symbol table is basically a double linked tree.
+
+\begin{itemize}
+\item TopDown: Starting from a node, the navigator dives downwards and searches a specific symbol.
+\item BottomUp: Starting from a node, the navigator climbs upwards the tree and searches a specific symbol.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{TopDown (left) and ButtomUp (right) Visualized}
+    \label{fig:impl_symboltablenav}
+\end{figure}
+
+Both options are implemented so that they can return a single, first match, or all symbols that match a criterion.
+To illustrate this, two examples are shown in figure \ref{fig:impl_symboltablenav}.
+With this type of tree inspection, the runtime is reduced, as it is no longer necessary to visit every symbol.
+
+For the special case that the symbol table tree for a Dafny program was built very flat
+(a Dafny program, which only uses the default scope with a main method)
+the worst case runtime is still $O(n)$ as you can see in figure \ref{fig:impl_symboltablenav_o_of_n}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Dafny Code (left) Which Generates a Flat Symbol Table (right)}
+    \label{fig:impl_symboltablenav_o_of_n}
+\end{figure}
+
+The navigator overcomes the following challenges.
+
+
+\textbf{Where is the definition of a symbol}\\
+This challenge uses the bottom-up procedure.
+It is started from whatever scope the visitor is working on.
 In every scope, the navigator will iterate over all symbols and search one, that is a declaration and matches in name and kind.
 For example, if we start inside a method, every symbol already visited in that method will be checked.
 If no matching declaration was found, the navigator will move to the parent of the method, which must be a class.
@@ -696,74 +753,76 @@ It is executed for every occurring symbol, thus the building of the symbol table
     \label{fig:findDecl}
 \end{figure}
 
-
-\intnote{ZwischenfragE: Ist der ganze Bums hier zu lang?????? ist ja eewig hoy shit wtf}
-
-\subsubsection{Symbol Table Navigator}
-To operate on the (partially) constructed symbol table, a separate component to navigate was created.
-It has basically two procedures.
-Remember that the data structure of the symbol table is basically a double linked tree.
-
-\begin{itemize}
-\item TopDown: Starting from a node, the navigator dives downwards and searches a specific symbol.
-\item BottomUp: Starting from a node, the navigator moves upwards the tree and searches a specific symbol, as seen in the previous section.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{TopDown (left) and ButtomUp (right) Visualized}
-    \label{fig:impl_symboltablenav}
-\end{figure}
-
-Both options are implemented so that they can return a single, first match, or any symbols that match a criterion.
-To illustrate this, two examples are shown in figure \ref{fig:impl_symboltablenav}.
-With this type of tree inspection, the runtime is reduced, as it is no longer necessary to visit every symbol.
-
-For the special case that the symbol table tree for a Dafny program was built very flat
-(a Dafny program, which only uses the default scope with a main method)
-the worst case runtime is still \code(O(n)) as you can see in figure \ref{fig:impl_symboltablenav_o_of_n}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Dafny Code (left) Which Generates a Flat Symbol Table (right)}
-    \label{fig:impl_symboltablenav_o_of_n}
-\end{figure}
-
 \textbf{What symbol is at the current cursor position?}\\
-\code{TopDown} is called.
-The rootSymbol and the current cursor position are handed as arguments.
-The rootSymbol has 3 modules attached to it.
-One ranging from line 1 to 20, another ranging from line 21 to 40.
-The algorithm will now decide, in which of the two modules a further search is worth wile.
-If the cursor is located at line 25, it will continue to search in the second module.
-This can simply be done by calling the same function recursively, handing the second module as the entry point for the recursive search.
-Within the recursive call, the proper class will be found, and so on.
+For this task, top-down navigation is used.
+Starting from the root symbol, for each child it is checked if it wraps the position.
+If not, the symbol is ignored.
+But if so, iteration is recursively called on that child.
+Reagarding image \ref{fig:topdwon}, imagine we hand the blue line as the cursor position.
+The algorith will then decide, that the cursor position is within module M.
+Afterwards, it will check all children of \code{M}.
+It will find out, that class \code{Z} is not surfacing the cursor position, and move to the next one.
+When checking on class \code{C}, wrapping is successfull, thus the next iteration will be done within \code{C}.
+Finally, variable c will be returned as the best match.
 Default namespaces and default classes had to be treated separately for this case.
 Since the tree is moved along a single branch, the runtime for this process is $O(logn)$.\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/topDownPaintFTW.png}
+    \caption{Top Down Navigation}
+    \label{fig:findDecl}
+\end{figure}
+
 
 \textbf{What AutoCompletion suggestions are indicated?}\\
 To build up autocompletion suggestions, all declarations available at a certain locations must be figured.
 First of all, the previous \code{TopDown} algorithm is used to find the current location.
-Then, all declarations in the current scope are requested.
-Afterwards, the algorithm moves to the parent scope, and will again search for all declarations.
-This process is repeated until the root scope is reached.
-Again, the problem can be solved using recursion.
-This algorithm is also visiting just a single tree branch, thus requiring $O(logn)$ time.\\
+Then, all declarations in the current scope are requested, by using \code{BottomUp} again and requesting everything that is a declaration.
+This algorithm is diving once into the tree, and going once backup, thus requiring $O(logn)$ time.\\
 
 The navigator offers further methods to visit the whole tree if that is desired by the caller.
 The method \code{TopDownAll} will visit all branches, not just the one wrapping a certain location.
-Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used if possible.\\
+Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used if possible.
+We took advantage of that method to print a complete symbol tree during debugging.
 
 
 
-\textbf{Symbol Table Manager}\\
+\subsubsection{Symbol Table Manager}
 The manager is a rather simple component and can be used as an access point to perform operations on the symbol table.
 It is constructed with a root symbol of a fully generated symbol table and contains a navigator.
-It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}.
+It then offers methods such as \code{ISymbol GetSymbolAtPosition(Uri file, int line, int character)}.
 That method will use the navigator to provide the user with the desired result.
 Access to the rather complex navigator is encapsulated this way.
+
+\subsubsection{Symbol Table Utilities}
+If a symbol wraps a certain position was first of all a member method of \code{ISymbolInformation}.
+However, the class \code{SymbolInformation} got very long this way and testing against the interface was hard.
+Thus we decided to extract this very important logic to a dedicated component, which we could test without any effort.
+The utilities class offers three distinct types of \code{DoesWrap}-methods.
+\begin{itemize}
+    \item Is a position wrapped by the entire range of a symbol?
+    \item Is a position wrapped just by the body of a symbol?
+    \item Is a position wrapped just by the identifier of a symbol?
+\end{itemize}
+This differentiation was necessary, since for GoToDefinition, only the identifier range matters.
+But for AutoCompletion, the body in which the cursor is matters.
+Lastly, clauses like \code{ensures} are inbetween those two.
+Figure \ref{fig:wraps} shows the distinction between the three methods.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=5cm]{implementation/wraps.png}
+    \caption{Top Down Navigation}
+    \label{fig:findDecl}
+\end{figure}
+
+\begin{itemize}
+    \item Green: wrapped by the identifier range
+    \item Yellow: wrapped by the body range
+    \item Red: wrapped by the entire symbol range
+\end{itemize}
+
 
 
 
@@ -771,19 +830,20 @@ Access to the rather complex navigator is encapsulated this way.
 \label{section:imp:features}
 As it was stated in the previous sections, many features just query the symbol table and assemble the information to a proper result format.
 This is especially the case for Rename, GoToDefinition and HoverInformation.
-These features are thus not described in detail.
-However, some features, especially AutoCompletion, involve a bit more complexity.
+An example was given while explaining the \code{Core}-package of the server implementation.
+These features are thus not described in detail any further, since they are nearly trivial.
+However, other features, especially AutoCompletion, CodeLens and the ones not depending on the symbol table involve a bit more complexity.
 In this chapter, these special cases are described.
 
-\subsubsection{Completion}
+\subsubsection{AutoCompletion}
 \label{section:implementation:core:completion}
 The automatic code completion is an essential feature of every IDE and is a great help for the developer to write code efficiently.
 Making good suggestions to the user is a complex matter. \\
 
-Through the implementation of our new symbol table, it is easy for us to find symbols in the current scope.
+Through the new symbol table, it is easy for us to find symbols in the current scope.
 With the help of the "Symbol Table Navigator"
 it is also possible to efficiently filter the proposals by conditions,
-which can be transferred as delegates. \\
+which can be transferred as predicates. \\
 
 The main difficulty and thus the logical complexity of the AutoCompletion
 is therefore no longer the actual collection of symbol suggestions,
@@ -792,9 +852,8 @@ and extracting a symbol as entry point for the symbol table navigator component.
 
 For our AutoCompletion, we support three fundamentally different types of user desire.
 To find out the user's desire, the following approach is taken.
-First the cursor position is used to determine the current code position in the Dafny source file.
-Then it is checked if there is a dot in front of the cursos position,
-or a \code{new} keyword followed by a space was found.
+First, the cursor position is used to determine the current code position in the Dafny source file.
+Then, it is checked if there is a dot or "\code{new }" in front of the cursor position.
 Depending on whether one of the two triggers was found,
 a decision is made between the three user desires, as shown in figure \ref{fig:get_users_desire}.
 
@@ -806,26 +865,20 @@ a decision is made between the three user desires, as shown in figure \ref{fig:g
 \end{figure}
 
 \textbf{Proposals for the Object Instance}\\
-If a dot was found at the position of the curser, the word before the dot is also extracted from the code line.
-The position of the cursors is then used to determine the entry.
-
-The symbol table is searched using the navigator:
-the symbol that encloses the current cursor position is searched.
+If a dot was found at the position of the cursor, the word before the dot is also extracted from the code line.
+First of all, the navigator has to find the enclosing scope at the cursor.
+For that, it is important to use the wrapping method, that checks if the cursor is within the body of a symbol, not just within the symbol's identifier.
+A proper method was implemented which does that.
+Afterwards, the related class belonging to the symbol before the dot is searched.
+During the search, the navigator starts in the scope at the cursor, and then moves up one level until a suitable symbol is found.
 For example, if the user is typing in the method \code{myMethod}, the symbol for \code{myMethod} is returned. \\
 
-The symbol table is then searched for the extracted string,
-which was located before the dot, using the found entry point.
-The symbol that has exactly the right name is searched.
-During the search, the navigator starts in the innermost scope and then moves up one level until a suitable symbol is found. \\
+If a matching symbol is found, for example a class named \code{myClass}, all methods and fields defined inside \code{myClass}
+can be extracted using the symbols properties.
+These are now returned as AutoCompletion suggestions. \\
 
-If a matching symbol is found, the corresponding symbol is now
-for example the object instance of a class named \code{myClass}.
-Using the references in the symbol table, the symbol of the class can be accessed from the instance.
-All methods and variables are now returned as AutoCompletion suggestions. \\
-
-For the sake of clarity, the described process was visualized in the following
-Dafny code example \intnote{xxx
-in figure xx} as a sequence diagram.
+For clarity, the described process is visualized in the following
+Dafny code example \intnote{xxx in figure xx} as a sequence diagram.
 
 \begin{lstlisting}[language=dafny, caption={tmptodo.dfy}, captionpos=b, label={lst:tmptodo}]
 class myClass {
@@ -852,16 +905,16 @@ todo snipped in IDE screenshotten, cleich auch die resultate listen als screensh
 If it is assumed that the user only wants classes proposed, the following approach is followed.
 
 As with the proposals for an object instance,
-the completion provider first looks for an access symbol via the cursor position.
-The symbol that encloses the current cursor position with the smallest span is used as the entry symbol.
-This symbol is found by the symbol navigator
+the completion provider first looks for an access symbol at the cursor position.
 Then iteration is performed from the inner scope
-to the outermost scope and all symbols found are returned as as completion suggestions.
-The list is already filtered during iteration by a passed delegate for class symbols only.
+to the outermost scope and all symbols found are returned as completion suggestions.
+The list is filtered already during iteration by a passed predicate for class symbols only.
 
  \intnote{todo habe ich jeweils prädicate oder delegate geschrieben für die filterung? auch beim result iwo) }
-
- \intnote{todo wird irgend wo beim visitor manager dingens beschrieben, dass zu oberst dann nochmals runter ins default package und in die default klasse gegeagen wird um die "nicht benannten" symbole / default scope zu holen? }
+\intnote{ja, passt. ich hab prädikat geschrieben dann gibts keine missverstänidsse ala "also string genommen ist ein delegate mimi und eig wäre es eine instanz des edelegates mimi"}
+ \intnote{todo wird irgend wo beim visitor manager dingens beschrieben,
+ dass zu oberst dann nochmals runter ins default package und in die default klasse gegeagen wird um die "nicht benannten"
+ symbole / default scope zu holen? ja, check.}
 
 \begin{figure}[H]
     \centering
@@ -872,8 +925,9 @@ The list is already filtered during iteration by a passed delegate for class sym
 
 \textbf{All Available Symbols as Default}\\
 If it is assumed that the user would like to have all symbols proposed in the current context,
-the procedure is basically the same as for the proposals for class suggestions.
-The only difference is that no filter predicates are passed to the symbol navigator. Therefore, all types of symbols are suggested.
+the procedure is basically the same as before.
+The only difference is that no filter is passed to the symbol navigator.
+Therefore, all types of symbols are suggested.
 
 \begin{figure}[H]
     \centering
@@ -882,38 +936,30 @@ The only difference is that no filter predicates are passed to the symbol naviga
     \label{fig:default_completion_diagram}
 \end{figure}
 
-\code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" bestimmt. \\
+\code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" xD bestimmt. \\
 PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
 das vom papier digitalisieren todo\\}
 
-\textbf{Automatic Insertion of Brackets}\\
-Since in Dafny round brackets have to be set when calling a method or initializing a class,
-these brackets are automatically inserted as a user help
-if a symbol of type method or class is selected in AutoCompletion. \\
+\textbf{Insertion of Parameter Placeholders}\\
+Just like in other programming languages, Dafny invokes methods and constructors by round brackets.
+It was our goal to automatically propose those brackets.
+This goal could easily be achieved.
+Whenever a constructor or method is chosen as an AutoCompletion suggestion,
+an opening and closing bracket is added to the text to be inserted. \\
 
- \intnote{todo dies konnte realisiert werden mit xxx von LSP. }
-Whenever a symbol of type class or method is added to the list of AutoCompletion suggestions,
-an opening and closing bracket is added to the text to be inserted.
-
- \intnote{todo beschreiben mit welchem parameter das im symbol information vom completion gemacht werden konnte. namen un dinsert text iwas. todo nur für dot completion oder für alle methoden u klassen? }
-
-\textbf{Insert Parameter Placeholders}\\
 From certain IDE's such as XCode,
 you are used to seeing placeholders for the parameters and their types in AutoCompletion
 when you select a method from the suggestions \cite{sa}.
+That is why we wanted to implement such a convenient feature for our AutoCompletion as well.
+Unfortunately we had to realize that this feature is not yet supported natively by the VS Code API \cite{vscodeAPI}.
+Neither does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}. \\
 
-That is why we wanted to implement such a convenient feature for our AutoCompletion as well. \\
-
-Unfortunately we had to realize that the VS Code API
-does not offer a comparable function that we could simply call,
-as was the case with CodeLens, for example \cite{vscodeAPI}.
-
-Nor does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}. \\
-
-That there is no simple way to implement this feature does not mean that it cannot be implemented.
+That there is no simple way to implement this feature does not mean that it cannot be done.
 But the effort for the implementation in VS Code would be exceptionally high.
 Therefore we have decided not to support this feature.
-The idea is described below. \\
+However, the symbol table stores a parameter list for every method, constructor, and function.
+Thus, the symbol table is ready to support the functionality.
+The complete idea how the feature could be implemented is described below. \\
 
 As with CodeLens, you could send additional data to the client
 for the AutoCompletion objects - namely the parameters and their types for methods.
@@ -921,8 +967,7 @@ Whenever a completion is inserted, a callback function can be called within the 
 This function could then additionally insert the parameters as text in the code and register
 event listeners on keyboard keys like \textit{TAB}.
 Using \textit{TextEdits}, the registered function would then jump to the next placeholder parameter
-each time \textit{TAB} is pressed and mark it, so that the user can easily replace it with his own code.
-This logic is relatively complex and the exact VS Code API calls to it have not been researched. \\
+each time \textit{TAB} is pressed and mark it, so that the user can easily replace it with his own code. \\
 
 Also, just because VS Code does not yet offer an API to perform such \textit{TAB} jumps between parameters,
 does not mean that other IDE's, for which Dafny support will be offered later,
@@ -930,54 +975,28 @@ do not offer such a function.
 In the future, VS Code might even add such a function. \\
 
 \textbf{Getting Information About Method Parameters} \\
-\intnote{hier ev noch was zu updaten aka ist eig einfach verfügbar blabla?}
-Since the desired implementation of placeholder parameters was not easy to implement,
-we have generally neglected the information for parameters.
-
-However, the usability test has shown that text information about which method
-receives which parameters would be very helpful for users.
-Offering such assistance is possible with relatively little effort.
-However, the structure of the symbol table has to be slightly modified,
-which is why we have not included this feature in the functional scope for time reasons,
-as there would have been no time for the necessary unit tests.
-
-Nevertheless, in the following the idea is recorded to enable other developers to implement this feature.\\
-
-Already now in our visitor, all sub symbols of a symbol are stored as an array within the symbol
-as \code{List<ISymbol> Children} when building the symbol table.
-For example, a method stores all contained variable declarations as an array of child symbols. \\
-
-When building the symbol table,
-the visitor must now be minimally adjusted so that parameters
-of a method are now also visited and stored in an array.
-That is it - afterwards the parameters of an auto-completion method are available. \\
+Usability test has shown that text information about which method
+receives which parameters would still be very helpful for users.
+The information provided by the symbol table could be used for that.
 
 When constructing the completion elements,
-the information field \code{CompletionItem} can contain besides
-the type of the symbol now the parameters to be passed as help text in \code{Detail} too. \\
+the field \code{CompletionItem} can contain additional details.
+Those details could hold the parameter list.
+This way, the user could be informed about them.\\
 
-This function is of course not only limited to methods but can also be applied to class constructors.
 
 \subsubsection{CodeLens}
-The CodeLens function is divided into two primary tasks.
+The CodeLens functionality is divided into two primary tasks.
 
-Firstly, the grey help text in the IDE maintenance of methods and classes
-shows how often the method or class has already been used.
+First, it is shown how often the method or class has already been used.
 
-Secondly, the user can click on the gray help text and a popup window displays all code snippeds
-that use the method or class.
-This allows the developer to efficiently jump between different places within a file
-and across multiple files without having to switch between the files themselves or scroll much within a file. \\
+Second, the user can click on the text and a popup window displays all symbol usages.
+This allows the developer to efficiently jump between different places within a workspace.\\
 
 \textbf{Number of References} \\
-To get the display,
-which methods and classes were used how often and thus also to mark dead code
-as it is displayed in figure \ref{fig:codelens_show_ref_number},
-no big effort is necessary thanks to the new symbol table.\\
-
-Via the symbol manager all declarations for the currently opened file a.
-Subsequently, the uses are counted for each symbol.
-This is stored in the symbol table for each symbol in the list \code{Usages}. \\
+To get the reference count, no big effort is necessary thanks to the new symbol table.
+It contains a list of \code{Usages}, which can easily be counted.
+This way, it can also expose dead code, which has never been used as seen in \ref{fig:codelens_show_ref_number}. \\
 
 \begin{figure}[H]
     \centering
@@ -986,32 +1005,34 @@ This is stored in the symbol table for each symbol in the list \code{Usages}. \\
     \label{fig:codelens_show_ref_number}
 \end{figure}
 
-\textbf{Popup Windows with Code Snippeds} \\
+\textbf{Popup Windows with Code Snippets} \\
 The popup that opens when you click on the grey text
-with the counted references, as shown in figure \ref{fig:codelens_show_popup},
-is basically a client feature offered by VS Code \cite{vscodeAPI}.
+with the reference counter is a client feature.
+It is offered by VS Code \cite{vscodeAPI}.
+Unfortunately, this is something that cannot be extracted completely to the server.
+The logic required within the client is trivial, though.
+Only the function \code{VSCodeCommandStrings.ShowReferences},
+offered by VS Code, is called \cite{vscodeAPI}.
+The popup display is shown in figure \ref{fig:codelens_show_popup}. \\
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{CodeLens shows Popup with Code Snippeds}
+    \caption{CodeLens shows Popup with Code Snippets}
     \label{fig:codelens_show_popup}
 \end{figure}
 
-In the client the logic is minimal.
-Only the function \code{VSCodeCommandStrings.ShowReferences},
-offered by VS Code, is called \cite{vscodeAPI}. \\
-
-The complete logic and the preparation of the data is already done in the language server.
-Basicly for each symbol declaration, the CodeLens object is enriched with further information
-as shown in the following code snipped as listing \ref{lst:codelens-prep}.
+The preparation of the data is already done in the language server.
+For each symbol declaration, the CodeLens object is enriched with further information.
+The client just has to display them.
+This is shown in listing \ref{lst:codelens-prep}.
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:codelens-prep}]
 var args = new
 {
     Uri = _uri,
-    Position = position, // where to show the CodeLens popup
-    Locations = locations // what should be in the pop up displayed
+    Position = position,  // where to show the CodeLens popup
+    Locations = locations // what should be displayed inside the popup
 };
 Command command = new Command
 {
@@ -1028,61 +1049,67 @@ return new CodeLens
 \end{lstlisting}
  \intnote{todo merke grad dass showreferences ein übersehenes magic string ist... in ressourcen auslagern? todo}
 
-For each CodeLens element, for example a method, a \code{Command} object is also appended.
-The stored \code{Name} within this \code{Command}
-is the function name called when at the client the \code{Command}
-(which is the actual grey text with the reference information) is clicked. \\
+To each CodeLens element, a \code{Command} object is also appended.
+The command's name is the function called at the client, when the grey text is clicked.\\
 
-In addition, the \code{Command} is given the required reference positions as arguments.
-These reference positions are referenced in the CodeLens popup as code snippeds.  \\
+In addition, the \code{Command} is given the positions it should display inside the popup.  \\
 
 If the function \code{dafny.showReferences} is called in the client,
 the method \code{VSCodeCommandStrings.ShowReferences} from the VS Code API is called
-and the arguments prepared in sevrer are passed. \\
+and the arguments prepared in server are passed through. \\
 
 Because the whole logic for CodeLens is in the server,
-integration tests and unit tests can be written on the server side for this feature.\\
+integration tests and unit tests were written on the server side for this feature.\\
 
 \textbf{Support for File Includation} \\
-CodeLens basically works very well with regard to support over multiple files.
+CodeLens works very well over multiple files.
 But only if other files are included.
 In case the currently opened file is included by another file,
-CodeLens does not know that the included symbols are used by a third Dafny program. \\
+CodeLens does not know that it gets used by a third Dafny program. \\
 
-This problem should solve itself once a global symbol table for the complete workspace has been implemented.
-Symbols then also know about uses and references of the whole workspace.
+This problem should solve itself once a global symbol table for the complete workspace has been implemented,
+instead of a single table per file.
+Symbols will then be aware of usages across the complete workspace.
 More information about the global symbol table is described in section xxx.
- \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun. seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo}
+
+ \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun. seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo -- is noch nicht... wäre was für results}
 
 \subsubsection{Compilation}
-Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in the \code{FileRepository}.
-This includes the precompiled \code{dafnyProgram}.
-The compilation provider will take advantage of that and use the precompiled item, and just forward it to the compiler engine.
+Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in a \code{FileRepository}.
+This includes the precompiled \code{dafnyProgram}, which is then available for further reuse.
+The compilation provider will take advantage of that and use the precompiled item, and just forward it to the Dafny compiler engine.
 Prior to the compilation, custom compilation arguments are installed, if the user provided any.
-The process is fully integrated into the Dafny backend by using the following code line.\\
+The process is fully integrated into the Dafny backend.
+The compiler invocation can be seen in listing \ref{lst:dafnycompiler}.\\
 
 \begin{lstlisting}[language=csharp, caption={Calling the Dafny Compiler}, captionpos=b, label={lst:dafnycompiler}]
 DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwriter);
 \end{lstlisting}
 
-The provider will check if any errors occurred and return the outcome within a wrapper class.
+The provider will check if any errors occurred during the process and return the outcome within a wrapper class.
+The handler can then read the outcome and send a proper message to the user.
 
 \subsubsection{CounterExample}
 This feature bases on the model file, which is generated during verification.
 The model file is a key-value store generated by Boogie.
-It contains several states.
+It contains several 'states'.
 Each state tracks the content of variables during different stages of the proof.
-Of interest is primarily the \textit{initial} state, since this one contains the information how variables need to be set at the initially to achieve a CounterExample.\\
+Of interest is primarily the \textit{initial} state, since this one contains the information how variables
+need to be set initially to achieve a CounterExample.\\
 
-This provider reads the model file and uses the Boogie backend to convert into a useful format.
+The CounterExample provider reads the model file and uses the Boogie backend to convert it into a useful format, which is called \code{ILanguageSpecificModel}.
 Afterwards, it extracts the initial state from the model.
-Out of the remaining model, all key-value-pairs containing useful information are extracted, assembled and returned.
-The component will also transform information into a more human readable format, e.g. $((- 12)) \rightarrow -12$.
-Furthermore, many values are internal Boogie references and cannot be resolved.
+Out of the remaining state, all key-value-pairs are extracted, filtered, assembled and returned.
+Many values are internal Boogie references and cannot be resolved.
 These just look like \code{T@U!val!12}.
-Such values are replaced with the text \code{[Object Reference]}.\\
+Such values are replaced with the text \code{[Object Reference]}.
+Values providing no information at all are completely removed from the CounterExample.
+The component will also transform information into a more human readable format, e.g. \code{((- 12)) $\rightarrow$ -12}.\\
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
