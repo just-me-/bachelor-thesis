@@ -20,7 +20,7 @@ Those features can for example be
     \item Auto completion
     \item Hover information
     \item Rename
-    \item Go to definition
+    \item GoToDefinition
 \end{itemize}
 and much more. A full list can be found within the LSP specification \cite{lspspec}.
 Custom requests, for example \textit{compile} or \textit{counterExample} can also be added to the LSP \cite{lspWiki}.
@@ -51,8 +51,8 @@ These are shown in figure \ref{fig:lsplanguagefeatures} \cite{lspspec}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{04_lsplanguagefeatures.png}
-    \caption{List of Language Features Interfaces}
+    \includegraphics[width=\textwidth/2]{04_lsplanguagefeatures.png}
+    \caption{List of Language Features Interfaces TODO make list}
     \label{fig:lsplanguagefeatures}
 \end{figure}
 
@@ -478,7 +478,7 @@ To be able to implement the required feature set for this project, the following
         \item Which name segment (if any) is at the cursor's position?
     \end{itemize}
 
-    \item Go to definition
+    \item GoToDefinition
         \begin{itemize}
             \item Where is the symbol declared?
         \end{itemize}
@@ -801,14 +801,14 @@ This is only possible by the implementation of a proper symbol table.\\
 In addition, it would be very useful for users if the autocompletion is triggered after a \code{new}
 keyword and only available classes are automatically listed. This can be achieved by type filtering the symbols.
 
-\subsubsection{Go to Definition}
-With the "Go to Definition" feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
+\subsubsection{GoToDefinition}
+With the "GoToDefinition" feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
 In figure \ref{fig:analysis_goto_1}, an example is shown.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/analysis_goto_1}
-    \caption{Go to Definition via Context Menu}
+    \caption{GoToDefinition via Context Menu}
     \label{fig:analysis_goto_1}
 \end{figure}
 
@@ -818,11 +818,11 @@ Once pressed, the cursor jumps instantly to the definition of the desired symbol
 \begin{figure}[H]
     \centering
     \includegraphics[width=7cm]{analysis/analysis_goto_2}
-    \caption{Cursor Position After Go to Definition}
+    \caption{Cursor Position After GoToDefinition}
     \label{fig:analysis_goto_2}
 \end{figure}
 
-Go to definition uses a similar logic to auto completion and is therefore just as unreliable.
+GoToDefinition uses a similar logic to auto completion and is therefore just as unreliable.
 The name of the currently selected word is read from the cursor position.
 Afterwards the whole symbol table is iterated through - the first symbol with the same name is assumed to be the declaration.
 Then the position of this symbol is jumped to. \\

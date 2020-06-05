@@ -61,7 +61,7 @@ To provide the students with the necessary support, they shall profit by common 
     \item Error highlighting to correct faulty code efficiently
     \item Compile and run to run Dafny programs and check the output
     \item Auto completion to code efficiently
-    \item Go to definition to be able to view definitions quickly
+    \item GoToDefinition to be able to view definitions quickly
     \item Showing counter examples to efficiently remedy faulty pre- and postconditions
 \end{itemize}
 
@@ -76,7 +76,7 @@ The symbol table contains information about these items appearing in the Dafny c
 It shall allow very simple navigation within the Dafny code, for example to locate the declaration of a variable.
 Once the symbol table is generated, navigation within the code will be very easy for the language server.
 This has the advantage, that many features can be realized with almost no logic.
-For example, the feature \textit{go to definition} just has to ask the symbol table, where the definition of the symbol is.
+For example, the feature \textit{GoToDefinition} just has to ask the symbol table, where the definition of the symbol is.
 
 Consequently, a well implemented symbol table will also facilitate the development of further features.
 
@@ -97,7 +97,7 @@ The following features are supported as planned:
 Additionally the following functions could be implemented thanks to the new symbol table:
 \begin{itemize}
     \item Auto completion suggestion
-    \item Go to definition
+    \item GoToDefinition
     \item Code lens counts the usages of classes and functions and lets the developer show the usages with one click
     \item Renaming allows to rename symbols efficiently and reliably
     \item Hover information provide the developer with useful information about symbols

@@ -28,7 +28,7 @@ The current version of the plugin supports the following features for Dafny deve
     \item Compilation
     \item Counter Example
     \item Hover Information
-    \item Go to Definition
+    \item GoToDefinition
     \item Rename
     \item Code Lens
     \item Autocompletion
@@ -44,7 +44,7 @@ This should happen by chance, or by accident.\\
 
 Auto completion triggers whenever the user enters a dot or types a \code{new} and will thus be discovered automatically. \intnote{stimmt das überhaupt? noch ned aber sollte noch gm usability test}
 Furthermore, the user can type \code{CTRL+Space} to trigger auto completion.
-Further functionality, such as go to definition, compile or rename, can be accessed via the context menu.
+Further functionality, such as GoToDefinition, compile or rename, can be accessed via the context menu.
 Within the context menu, hotkeys are displayed, thus the user automatically learns how to increase his efficiency.
 
 Although there are a lot of different features, they are visible and perceivable to the end user without the necessity of a tutorial.
@@ -212,8 +212,8 @@ For example, in figure \ref{fig:hover} the user can actually find out, where his
     \label{fig:hover}
 \end{figure}
 
-\subsubsection{Go to Definition}
-Compared to the prototype, go to definition has been significantly improved.
+\subsubsection{GoToDefinition}
+Compared to the prototype, GoToDefinition has been significantly improved.
 Prior to this bachelor thesis, the feature just scanned all code for the first name-match and reported it as the definition.
 This did neither work if multiple symbols with the same name occurred, nor if the declaration was placed after the first usage in the code.
 Both cases are now handled well by the symbol table engine.\\
@@ -226,7 +226,7 @@ The cursor can now be at any character within a symbol.\\
 Technically, the feature is misnamed.
 A better name would actually be \code{Go to Declaration}, since it jumps to the symbol declaration, not definition.
 LSP would even offer a dedicated handler for this, \code{textDocument/declaration} \cite{lspspec}.
-Since VS Code names the short cut „Go to Definition“, since the definition handler was implemented, we named that feature in our previouse theses in the same way.
+Since VS Code names the short cut „GoToDefinition“, since the definition handler was implemented, we named that feature in our previouse theses in the same way.
 We kept the name to maintain the consistency of our work.
 But perhaps a rename would be appropriate.  \intnote{todo das ist jetzt eig so geschriebn fast schon wieder implementation (begründung) statt result...} \\
 
@@ -234,7 +234,7 @@ To increase the user experience with this feature, notifications are sent to the
 \begin{figure}[h]
     \centering
     \includegraphics{results/goto.png}
-    \caption{Goto Definition Error Reporting}
+    \caption{GoToDefinition Error Reporting}
     \label{fig:goto}
 \end{figure}
 

@@ -38,7 +38,7 @@ Since the proof is done with formal, mathematical methods, the correctness is gu
 
 \subsection{Language Server Protocol}
 The language server protocol (LSP) was created to unify communication between an integrated development environment (IDE) and a language server.
-It specifies requests, such as auto completion, rename or go to definition.
+It specifies requests, such as auto completion, rename or GoToDefinition.
 If the user performs an action like rename, the IDE will send the proper request to the language server.
 The message format is specified by the LSP and bases on JSON.
 
@@ -95,7 +95,7 @@ To facilitate the development of further features, the code shall be refactored 
 This especially involves a clear architectural layout with dependencies that only point downwards.
 
 Aside a clean architecture, a major goal is the creation of a custom symbol table.
-This is necessary to make features like \textit{go to definition} or \textit{auto completion} possible at all.
+This is necessary to make features like \textit{GoToDefinition} or \textit{auto completion} possible at all.
 It also allows the development of further features.
 For example, if every the symbol table provides information about the scope-depth, the indentation width can be deduced for a feature like auto formatting.\\
 
