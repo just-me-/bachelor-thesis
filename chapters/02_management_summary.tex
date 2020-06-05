@@ -41,9 +41,16 @@ This had the disadvantage that they had to communicate over a proprietary interf
 This solution was not optimal, since the Dafny backend was not accessed directly.
 Implementing new features was very time consuming. \\
 
-In the preceding semester project \cite{sa}, the language server was merged into the Dafny backend, so that the proprietary interface became obsolete.
+In the preceding semester project \cite{sa}, the language server was merged into the Dafny backend, so that the proprietary interface became obsolete as you can see in figure \ref{fig:oldBAvsSA}.
 Dafny could be accessed directly by the new software architecture.
 Within this bachelor thesis, the work of the existing solution will be continued.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth/2]{02_oldBAvsSA.png}
+    \caption{Architecture Before (Left) and After (Right) the Prototype was Created}
+    \label{fig:oldBAvsSA}
+\end{figure}
 
 \subsection{Goals}
 At HSR, Dafny is taught within the course \textit{Software Engineering}.
@@ -84,17 +91,35 @@ The following features are supported as planned:
     \item Syntax highlighting
     \item Verification: highlighting of errors and warnings
     \item Compilation of Dafny code and execute
-    \item Auto completion suggestion
-    \item Go to definition
     \item Providing counter examples
 \end{itemize}
 
 Additionally the following functions could be implemented thanks to the new symbol table:
 \begin{itemize}
+    \item Auto completion suggestion
+    \item Go to definition
     \item Code lens counts the usages of classes and functions and lets the developer show the usages with one click
     \item Renaming allows to rename symbols efficiently and reliably
     \item Hover information provide the developer with useful information about symbols
 \end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{show_autocompletion_and_hover}
+    \caption{The Features HoverInformation and AutoCompletion Profit From the Symbol Table}
+    \label{fig:show_autocompletion_and_hover}
+\end{figure}
+
+For example, a Dafny code, as it is shown in figure \ref{fig:show_autocompletion_and_hover},
+is built to a symbol table in a tree structure, as it is abstractly represented in figure \ref{fig:symbol_table_for_autocompletion_and_hover}.
+The features shown in figure \ref{fig:show_autocompletion_and_hover} such as auto completion and hover information directly use the offered symbol table.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth/2]{symbol_table_for_autocompletion_and_hover}
+    \caption{Symbol Table to Represent all Symbols Inside the User Code}
+    \label{fig:symbol_table_for_autocompletion_and_hover}
+\end{figure}
 
 Dafny developers can now benefit by a plugin, which provides a great user experience, but also gained much robustness compared to the prototype.\\
 
