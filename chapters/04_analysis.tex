@@ -483,7 +483,7 @@ To be able to implement the required feature set for this project, the following
             \item Where is the symbol declared?
         \end{itemize}
 
-    \item Code lens
+    \item CodeLens
         \begin{itemize}
             \item How often, and where, is a declaration used?
             \item What is stated inside each usage?
@@ -829,7 +829,7 @@ Then the position of this symbol is jumped to. \\
 
 Similar to AutoCompletion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
 
-\subsubsection{Code Lens}
+\subsubsection{CodeLens}
 Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol.
 As an example, the class \code{C} has been instantiated twice and the method \code{m} was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
 
@@ -843,7 +843,7 @@ This should open a popup box in which the corresponding uses are shown.
     \label{fig:analysis_codelens}
 \end{figure}
 
-The current implementation of code lens does not have an optimal runtime.
+The current implementation of CodeLens does not have an optimal runtime.
 For each symbol, the whole symbol table is iterated again to compare whether one symbol is a use of the other symbol.
 This results in a quadratic runtime. \\
 

@@ -883,7 +883,7 @@ the type of the symbol now the parameters to be passed as help text in \code{Det
 
 This function is of course not only limited to methods but can also be applied to class constructors.
 
-\subsubsection{Code Lens}
+\subsubsection{CodeLens}
 The CodeLens function is divided into two primary tasks.
 
 Firstly, the grey help text in the IDE maintenance of methods and classes
@@ -953,7 +953,7 @@ return new CodeLens
 \end{lstlisting}
  \intnote{todo merke grad dass showreferences ein übersehenes magic string ist... in ressourcen auslagern? todo}
 
-For each code lens element, for example a method, a \code{Command} object is also appended.
+For each CodeLens element, for example a method, a \code{Command} object is also appended.
 The stored \code{Name} within this \code{Command}
 is the function name called when at the client the \code{Command}
 (which is the actual grey text with the reference information) is clicked. \\
