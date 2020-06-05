@@ -1,17 +1,16 @@
 \section{Design}
 This chapter contains discussions of fundamental design decisions that were made.
-It is primarily divided into client and server architecture.
-
- \intnote{corbat; Bessere Erklärung was in diesem Kapitel folgt: Technologies,}
-
+The first section contains reasoning about the choice of technologies, such as programming languages.
+Afterwards, architectural discsussions follow, separated by client and server.
 
 \subsection{Technologies}
 The choice of technologies is determined by external circumstances.
-The client will be written in TypeScript, since this is required for VSCode plugins \cite{vscodeAPI}.
-The server will be written in \CsharpWithSpace using .NET Framework 4.6.1, since Dafny is already coded in this configuration and direct integration is the key goal of the project.
-
- \intnote{Note on new version? (.NET Framework 4.6.1)}
-
+The client is written in TypeScript, since this is required for VSCode plugins \cite{vscodeAPI}.
+To work on the client, Visual Studio Code is a natural choice, since it contains an enginge to directly launch and test the coded plugin.
+The server is written in \CsharpWithSpace using .NET Framework 4.6.1, since Dafny is already coded in this
+configuration\footnote{During the course of thsi project, Dafny was updated to .NET Framework 4.8} and direct integration is a key goal of the project.
+To work on the server, Visual Studio 2019 is used with the ReSharper extension.\\
+The CI will be realized with GitLab, since HSR offers it for free and the CI-pipeline of the prototype was pre-existing.
 
 \subsection{Client}
 The client consists of the VSCode plugin written in TypeScript.
@@ -24,11 +23,11 @@ In the following, it is discussed how this lightweight design of the client will
 Furthermore, the separation into components is also explained.
 
 \subsubsection{Initial Situation}
-The client, taken over from the pre-existing project was already refactored within the prototype.
-Aside establishing a connection to the new language server, a lot of dead code was removed and logic was moved to the server.
+The original client was already refactored within the prototype.
+A lot of dead code was removed and logic was moved to the server.
 Figure \ref{fig:client_then} gives an impression of the architecture at the beginning of this project.
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=10cm]{client_then}
     \caption{Client Architecture - Term Project}
@@ -53,22 +52,19 @@ To achieve the goal of a more manageable architecture and to reduce coupling, th
 \end{itemize}
 The new distribution into these packages is discussed in the following sections.\\
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=6cm]{client_now_packages}
     \caption{Client Architecture - Packages}
     \label{fig:client_now_packages}
 \end{figure}
 
-\intnote{hier müssen wir aufpassen - bei den grossen grafiken bleibt je nachdem sehr viel leerschlag, wenn die figure nicht gut in den flow passt. das schaut dann doof aus.}
-
-Additionally to the measures mentioned above, all logic was detached from the extension class (the main component).
+Additionally to the measures mentioned above, all logic was detached from the extension class, which forms the main component.
 This resulted in the root directory containing only a lightweight program entry point.
 The rest of the logic was split between the created packages.\\
 
 As a little extra, each component contains code documentation to help other developers to get started quickly.
 This is also helpful because they are displayed as hover tooltips.
-
 
 {\bf Extension} \textendash{}
 This component is the aforementioned \code{main}-component of the plugin and serves as an entry point.
@@ -102,24 +98,25 @@ In the following sections, the individual components and their contents are desc
 Figure \ref{fig:client_now_classes} shows a more detailed view of the client, including the components within the packages.
 The contents of type interfaces and string resources have been omitted for clarity.\\
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=8cm]{client_now_classes}
     \caption{Client Architecture - Components}
     \label{fig:client_now_classes}
 \end{figure}
 
-It can be seen that only \textit{compile} and \textit{counterexample} exist as dedicated server access classes.
-All other features, such as \textit{code lens} or \textit{auto completion} are natively supported by the LSP.
+It can be seen that only \textit{Compile} and \textit{CounterExample} exist as dedicated server access classes.
+All other features, such as \textit{CodeLens} or \textit{AutoCompletion} are natively supported by the LSP.
 This means, that no additional client logic is necessary to support these features.
-Since \textit{compile} and \textit{counterexample} are custom requests, their handling has to be implemented manually within the client.
+Since \textit{Compile} and \textit{CounterExample} are custom requests,
+their handling has to be implemented manually within the client.\\
 
-If VSCode receives a \textit{auto completion} response, the LSP standard defines how VSCode has to handle it -
+If VSCode receives a \textit{AutoCompletion} response, the LSP standard defines how VSCode has to handle it -
 namely displaying the completion suggestions and insert the text which the user selects.
 This server-side-oriented implementation via the LSP is a great enrichment to keep the client lightweight.
 Adaption to other IDE's is very simple this way.
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{client_now_methods}
     \caption{Client Architecture - Components and Public Methods}
@@ -130,7 +127,7 @@ Figure \ref{fig:client_now_methods} shows the public methods of each component.
 Only these are accessible.
 Instance variables were set to private visibility.
 Constructors were not included for simplicity.
-The contents of type interfaces and string resources were also omitted for clarity.
+The contents of type interfaces and string resources were also omitted for clarity.\\
 
 This distribution has certain upward dependencies, which is not optimal.
 The UI package accesses the server package and part of the server package accesses the UI package.
@@ -144,11 +141,12 @@ This section describes where and why the client still contains logic.\\
 
 {\bf Server Connection} \textendash{}
 Handling of the connection to the language server and sending API requests.
-In addition, the client has a simple logic that certain server requests (such as updating the counter example) are sent at most twice per second. \\
+In addition, the client has a simple logic that certain server requests (such as updating the counter example)
+are sent at most twice per second. \\
 
 {\bf Execute Compiled Dafny Files} \textendash{}
 The execution of compiled Dafny files is relatively simple.
-One distinguishes whether the execution of .exe files should be done with mono (on macOS and Linux operating systems) or not. \\
+One distinguishes whether the execution of \code{.exe} files should be done with \textit{Mono} (on macOS and Linux operating systems) or not. \\
 
 {\bf Notifications} \textendash{}
 The client is able to receive notification messages from the server.
@@ -186,15 +184,13 @@ This way the counter example is hidden when the user switches to another file
 and automatically shown again when switching back to the original Dafny file.
 
 \subsubsection{Types in TypeScript}
-As already mentioned in the previous sections, \code{any} types were largely supplemented by dedicated type interfaces.
+As already mentioned in the previous sections, \code{any}-types were largely supplemented by dedicated type interfaces.
 This prevents type changes of variables as known in pure JavaScript.
 Typed code is accordingly less error-prone - especially for unconscious type castings. \\
 
 There are individual built-in datatypes like \code{number}, \code{boolean} and \code{string} \cite{ts-types}.
 For custom types, such as compilation results, we have defined separate interfaces.
-An example is shown below.
-
-
+An example is shown in listing \ref{lst:typeinterface}.
 
 \begin{lstlisting}[language=typescript, caption={Type Interface Supplementing \code{any}-types}, captionpos=b, label={lst:typeinterface}]
 export interface ICompilerResult {
@@ -204,18 +200,317 @@ export interface ICompilerResult {
 }
 \end{lstlisting}
 
-
-
-\intnote{OmniSharp Omnisharp, VSCode VS Code. überall einheitlich. $\rightarrow$ würde vorschlagen ctrl+h am ende einmal durch, und/oder eine variable erstellen :P}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Visitor for Dafny to Build the Symboltable}
-\cite{Corbat: Kapitel Symbol Table Design fehlt noch. Ist das ein Unterkapitel davon? ist der visitor ein unter kapitel von symbol table design? }
 
 
- \intnote{offen gesagt nicht sicher wo in dem design wir den unterbringen wollen. vor dem server als eigenes? nach dem server als eigenes? innerhalb des servers aber am anfang? würd dazu tendieren... aber dann wirkts etwas "platsch" mässig wenn man damit beginnt. andererseits bauen ja die design konzepte vom symbol table manager und co darauf auf,oder? ka. was meinst du? }
+\subsection{Server}
+This subsection documents the architectural layout of the server.
+The server consists of eight different packages:
+\begin{itemize}
+    \item \code{Main}: Starting of the language server
+    \item \code{Handler}: Components handling LSP requests
+    \item \code{Core}: Contains provider-classes that supply the handlers with the necessary information
+    \item \code{CustomDTOs}: Contains all custom parameters and results like \code{CompilationResults}.
+    \item \code{WorkspaceManager}: Represents the user workspace with its buffered files
+    \item \code{SymbolTable}: Handles anything related to the symbol table (creation, navigation, access)
+    \item \code{Tools}: Individual, isolated services needed across the project
+    \item \code{Commons}: Classes accessed from multiple components, such as the language server configuration
+    \item \code{Resources}: Strings and filesystem resources
+\end{itemize}
 
+Figure \ref{fig:server_overview} shows a broad overview of the server layering.
+The packages are discussed in a detailed matter below from top to bottom.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{design/server1_overview.png}
+    \caption{Server Overview}
+    \label{fig:server_overview}
+\end{figure}
+
+\subsubsection{Main Component And Handlers}
+The \code{Main} component is responsible to start the language server.
+The capabilities of the server can be registered by injecting \textit{Handlers.}
+The handlers themselves will have to implement a specific interface by OmniSharp, for example \code{IRenameHandler}.
+These interfaces demand a \code{Handle} method with the proper arguments and return values to answer the request.\\
+
+Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server architecture.
+Be aware that this illustration is highly simplified for a better understanding.
+Only one handler is shown.\\
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=12.5cm]{design/server2_basic_idea.png}
+    \caption{Basic Server Concept}
+    \label{fig:server_basic_idea}
+\end{figure}
+
+The handlers contain some boilerplate code for registering the capability and keeping references to the language server.
+To keep classes concise, the \code{Handle} methods will not calculate the result themselves, but forward to call to a \code{Provider} from the \code{Core} package.
+This component is then responsible to provide the proper result.
+This way, the core logic can be easily tested since it is in a separate component.\\
+
+\subsubsection {Core}
+The core package contains the actual core logic for the features.
+There is one class for each feature, for example \code{RenameProvider} or \code{DiagnsoticsProvider}.
+The provider is invoked by the handler and responsible to calculate the result, that has to be sent back to the client.
+For that, the provider will invoke the \code{WorkspaceManger} and/or the \code{SymbolTableManager} and operate on these.
+Figure \ref{fig:server_core} shows the core package with the example of the \code{RenameProvider}.
+Note that the symbol table is injected using the interface \code{ISymbolTableManager}.
+By just creating a fake instance, the providers can very easily be tested using this architecture.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{design/server6_core.png}
+    \caption{Core Package Excerpt with RenameProvider}
+    \label{fig:server_core}
+\end{figure}
+
+\subsubsection{CustomDTOs}
+To provide the results of custom LSP requests, result wrapper classes had to be created.
+Since both, \code{Handler}s and \code{Provider}s require these, they were extracted to a separate package.
+It just contains the wrapper classes for
+\begin{itemize}
+    \item \code{CounterExampleResults}
+    \item \code{CounterExampleParams}
+    \item \code{CompilationResults}
+    \item \code{CompilationParams}
+\end{itemize}
+
+\subsubsection{Workspace Manager}
+A Dafny project consists out of multiple \code{.dfy} files.
+Thus, it is evident to create a class \code{PhysicalFile}.
+It just has two properties, a file path and the file content.
+Since the user is manipulating files by editing the code, it also provides an \code{Update} method.\\
+
+To be able to provide all the necessary functionality, there is more information associated with a single file than just the content:
+\begin{itemize}
+    \item Is the file valid?
+    \item Does it contain errors?
+    \item What does the compiled Dafny und Boogie program look like?
+    \item What symbols occur in the file?
+\end{itemize}
+
+Thus, a class \code{FileRepository} was created.
+It contains a \code{PhysicalFile}, but also all of the requested information in the list above.
+For that, a wrapper \code{TranslationResults} was created, containing information about errors and compiled items.
+Finally, to have a link to the symbol table, a reference to a \code{SymbolTableManager} was added.\\
+
+Since \code{TranslationResults} and \code{PhysicalFile} are used in multiple parts of the code, these classes were place within a \code{Commons} package.
+Cyclic dependencies could be avoided this way.\\
+
+To request information about a file, or to update a file, a component \code{WorkspaceManager} was created.
+It contains a dictionary, linking a file identity (as URI) to a \code{FileRepository}.
+It offers a method to update a file, but also to get information about a file.\\
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=10cm]{design/server3_workspace.png}
+    \caption{Workspace Component}
+    \label{fig:server_workspace}
+\end{figure}
+
+Whenever a change is triggered, the \code{Update} method of the \code{WorkspaceManager} can be called to apply them.
+The manager will forward the call towards the \code{FileRepository}, which will adjust the \code{PhysicalFile},
+but also generate new \code{TranslationResults} by invoking the Dafny Access package.
+Last but not least, the symbol table is also recalculated invoking the proper component discussed later.
+Any changes are then stored in its \code{Buffer} property.\\
+
+\subsubsection{Dafny Access}
+This component is responsible to access Dafny's backend.
+The core class in this package is the \linebreak \code{DafnyTranslationUnit}.
+It receives a \code{PhysicalFile} in the constructor.
+The only public method \code{Verify} will start the Dafny verification process for that file.
+As a result, the process will yield a list of errors, warnings and information objects, but also a precompiled \textit{dafnyProgram} and a precompiled \textit{boogieProgram} for later reuse.
+All of this information is stored in the \code{TranslationResults} wrapper class and returned as a result.\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=12.5cm]{design/server4_dtu.png}
+    \caption{Dafny Translation Unit}
+    \label{fig:server_dtu}
+\end{figure}
+
+
+\subsubsection{SymbolTableManager}
+All tasks related to the symbol table are moved into a dedicated package.
+The symbol table is built based on a precompiled \code{dafnyProgram}.
+It is available from the \code{WorkspaceManager} for every file and can be reused by this package.\\
+
+The symbol table manager contains of five classes:
+\begin{itemize}
+    \item \code{SymbolInformation}, a class containing just raw data about a symbol.
+    \item \code{SymbolUtilities}, a static class allowing operations on single symbols.
+    \item \code{Navigator}, a class to navigate through the symbol table.
+    \item \code{Generator}, the class that builds the symbol table.
+    \item \code{Manager}, a class to provide easy access to the symbol table for outside users.
+\end{itemize}
+
+The class \code{SymbolInformation} is supposed to contain any necessary data about every symbol.
+\begin{itemize}
+    \item In which file is it?
+    \item On what line, on what column?
+    \item What is it's parent, what children are in the body of the symbol?
+\end{itemize}
+
+
+The class \code{Navigator} is responsible to navigate through the symbol table.
+Since every symbol is supposed to know about its parent and children, it is legit to speak about a symbol tree.
+The \code{Navigator} will move along the tree, for example to locate the symbol at a certain position.\\
+
+The \code{Generator} is responsible to build the table.
+It will already make use of the navigator, namely to locate declarations of symbols.
+The result will be a root symbol, to which everything else is attached.\\
+
+The \code{SymbolUtilities}-class allows logical operations on symbols.
+These were isolated for abetter testability.\\
+
+The \code{Manager} is constructed once a symbol table has been completely built.
+It stores the root symbol and invokes the navigator to provide easy access to the symbol table construct for the outside user.\\
+
+All components are programmed against an interface, so that fakes can be created for testing.\\
+
+\subsubsection{Resources}
+String resources, such as error messages, are extracted to a specific resource package.
+This way, they are easy to maintain and adjustable at a central place.
+A similar system of centralization of string resources is followed as with the client.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{design/server7_resources.png}
+    \caption{String Resources}
+    \label{fig:server_resources}
+\end{figure}
+
+As seen in figure \ref{rig:server_resources}, they are further split into sub-categories to keep them organized.
+
+
+\subsubsection{Tools}
+Classes that take care of general tasks are put into the \code{Tools} package.
+For example, one class in this package is responsible for delivering information about the folder structure, so that relative paths can be resolved.
+Another class is responsible to create a proper logger, which can then be used throughout the language server.
+All these auxiliary classes were collected within the \code{Tools} package.
+
+\textbf{Tools.ConfigInitializer}\\
+
+The setup of the language server settings is using five different classes.
+To keep packages concise, a sub-package was created just for config initialization.\\
+
+The setup of the configuration was first of all inside a single class.
+Since several tasks were done within that class, it was split into five different classes, each responsible for a single purpose:
+\begin{itemize}
+    \item One class to parse launch arguments
+    \item One class to parse the config file
+    \item One class to report errors occurring during the process
+    \item One class to represent errors
+    \item One class coordinating the whole process and invoking all other classes
+\end{itemize}
+Since the final config setting are accessed from multiple stages inside the code, the actual language server config is located inside the \code{Commons} package.
+It would be the sixth class related to the config initialization.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=10cm]{design/server7_config.png}
+    \caption{Configuration Initialization Layout.}
+    \label{fig:server_config}
+\end{figure}
+
+The following parameters are configurable:
+\begin{itemize}
+    \item Output Stream File Location
+    \item Logfile Location
+    \item Minimum Loglevel
+    \item LSP Transmission Mode (Full / Incremental)
+\end{itemize}
+ \intnote{trennung von config und ressources aufzeigen.}
+
+
+\subsubsection{Workflow Overview}
+%Sourcecode des flowgraphen:
+%Language Server->Handler:textdocument/rename
+%Handler->Provider:Forwarding request
+%Provider->WorkspaceManager:Requesting FileRepository
+%WorkspaceManager->Provider:Delivering FileRepository
+%Provider->Provider:Calculate Result
+%Provider->Handler:Deliver Result
+%Handler->Language Server: Forward Result
+For a regular request, the language server calls the proper handler to process the request.
+The handler will then retrieve the \code{FileRepository} from the \code{WorkspaceManager} and extract the necessary information.
+This information is forwarded to the provider, which calculates the result and returns it.
+This is illustrated in sequence diagram \ref{fig:workflow1}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{design/workflow1_regular.png}
+    \caption{Overview}
+    \label{fig:workflow1}
+\end{figure}
+
+
+However, if an update is triggered, the workflow is slightly different.
+The handler will now actually request the \code{WorkspaceManager} to update a file, which will trigger the whole verification process and recalculate the symbol table, if possible.
+At the end, the handler retrieves the updated \code{FileRepository}.
+Now, it forwards the repository to the \code{VerificationProvider}, which extracts, assembles and sends diagnostics to the client.
+This is shown in \ref{fig:workflow2}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{design/workflow2_update.png}
+    \caption{Updating a File}
+    \label{fig:workflow2}
+\end{figure}
+
+
+\subsection{Symbol Table}
+Since the symbol table is a core concept of this thesis, it will explained further in this section.
+
+\subsubsection{Symbol Table Design}
+To provide the necessary information for features like Rename, GoToDefinition or AutoCompletion,
+the symbol table needs to be very versatile and it must be able to handle the following challenges:
+\begin{itemize}
+    \item Find a symbol at the cursor position
+    \item Go to symbol declarations
+    \item Find all occurrences of a symbol
+    \item Get all available symbols within a scope
+    \item Know about usages of a symbol
+\end{itemize}
+
+\textbf{Find symbol at cursor}\\
+To overcome this task, each symbol knows about its position.
+The end of the symbol can be deduced by adding the identifier-length to the start position.
+A dedicated logic can then decide if the cursor is wrapped by the symbol or not.
+
+\textbf{Find available symbols in scope}\\
+For this task, information about scopes need to be available.
+The mentioned positional data is thus extended by a \code{BodyStartToken} and a \code{BodyEndToken}.
+Of course, only symbols with an actual body will have these properties populated.\\
+
+To find all available symbols, every scope needs to know, what is declared inside it.
+Thus, a property \code{Children} is necessary.
+It is implemented as a hash list for instant access.
+One further has to divide between declarations and any occurring symbols.
+Another property \code{Descendants} contains any occurring symbol in a scope, not only declarations.
+
+\textbf{Find declaration}\\
+For this task, each symbol has to hold a reference to the declaration.
+To be able to locate the declaration beforehand, it must be possible to move to the parent scope and scan it for declarations.
+Aside the already mentioned \code{Children}-property, a \code{Parent}  property is necessary. \\
+
+\textbf{Find usages of symbol}\\
+A list of usages need to be provided, containing a reference to every usage of the symbol.
+
+All of this leads in the following structure of the class \code{SymbolInformation} shown in figure \ref{fig:symboltabledesign}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{design/SYMBOLTABLE.png}
+    \caption{Symbol Table Design}
+    \label{fig:symboltabledesign}
+\end{figure}
+
+
+\subsubsection{Generation with Visitor}
 To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}.
 The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
 The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
@@ -254,439 +549,5 @@ public class Printer : Visitor {
 }
 \end{lstlisting}
 
-
-\subsection{Server}
-This subsection documents the architectural layout of the server.
-The server consists of eight different packages:
-\begin{itemize}
-    \item Main: Starting of the language server
-    \item Handler: Components handling LSP requests
-    \item Core: Contains provider-classes that supply the handlers with the necessary information
-    \item WorkspaceManager: Represents the user workspace with its buffered files
-    \item SymbolTable: Handles anything related to the symbol table (creation, navigation, access)
-    \item Tools: Individual, isolated services needed across the project
-    \item Commons: Classes accessed from multiple components, such as the language server configuration
-    \item Resources: Strings and filesystem resources
-\end{itemize}
-
-Figure \ref{fig:server_overview} shows a broad overview of the server layering.
-The packages are discussed in a detailed matter below.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=\textwidth]{design/server1_overview.png}
-    \caption{Server Overview}
-    \label{fig:server_overview}
-\end{figure}
-
-\subsubsection{Main Component}
-The server's responsibility is to offer a language server that is able to reply to a client's request.
-OmniSharp offers a simple static method to launch such a server.
-As launch options, all supported handler classes can be passed.
-Listing \ref{lst:serverstart} shows a simplified example with two handlers for text document changes and renaming.\\
-
-\begin{lstlisting}[language=csharp, caption={Language Server Initialization}, captionpos=b, label={lst:serverstart}]
-LanguageServer.From(options => options
-    .WithHandler<TextDocumentSyncTaskHandler>()
-    .WithHandler<RenameTaskHandler>()
-    ...
-);
-\end{lstlisting}
-
-The handlers themselves will have to implement a specific interface by OmniSharp, for example \code{IRenameHandler}.
-These interfaces demand a \code{Handle} method with the proper arguments and return values.
-This is the basic workflow of a language server implementation.
-The actual challenge is formed by the implementation of the \code{Handle} methods.\\
-
-Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server implementation.
-Be aware that this illustration is highly simplified for a better understanding.\\
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=12.5cm]{design/server2_basic_idea.png}
-    \caption{Basic Server Concept}
-    \label{fig:server_basic_idea}
-\end{figure}
-
-The language server will not evaluate Dafny code itself.
-Instead, requests are just forwarded to the Dafny backend.
-Due to the integration done in the prototype, the backend is directly accessible.
-Such requests could for example be:
-\begin{itemize}
-    \item Verify the Dafny code
-    \item Provide a counter example
-    \item Compile the code
-\end{itemize}
-
-Other functionality is not directly implemented by Dafny, for example the option to jump to a definition of a symbol.
-Thus, the already discussed symbol table will be required for this functionality.\\
-
-
-\subsubsection{Workspace Manager}
-A Dafny project consists out of multiple \code{.dfy} files.
-Thus, it was evident to create a class \code{PhysicalFile}.
-It just has two properties, a file path and the file content.
-Since the user is manipulating files by editing the code, it also provides an \code{Update} method.\\
-
-To be able to provide all the necessary functionality, there is more information associated with a single file than just the content:
-\begin{itemize}
-    \item Is the file valid?
-    \item Does it contain errors?
-    \item What does the compiled Dafny und Boogie program look like?
-    \item What symbols occur in the file?
-\end{itemize}
-
-Thus, a class \code{FileRepository} was created.
-It contains a \code{PhysicalFile}, but also all of the requested information in the list above.
-For that, a wrapper \code{TranslationResults} was created, containing information about errors and compiled items.\\
-
-Since \code{TranslationResults} and \code{PhysicalFile} are used on multiple parts of the code, these classes were place within a \code{Commons} package.\\
-
-To request information about a file, or to update a file, a component \code{WorkspaceManager} was created.
-It contains a dictionary, linking a file identity (as URI) to a \code{FileRepository}.
-It offers a method to update a file, but also to get information about a file.\\
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=10cm]{design/server3_workspace.png}
-    \caption{Workspace Component}
-    \label{fig:server_workspace}
-\end{figure}
-
-Whenever a change is triggered, the \code{Update} method of the \code{WorkspaceManager} can be called to apply them.
-The manager will forward the call towards the \code{FileRepository}, which will adjust the \code{PhysicalFile},
-but also generate new \code{TranslationResults} by invoking the Dafny Access package.
-Last but not least, the symbol table is also recalculated invoking the proper component discussed later.
-Any changes are then stored in its \code{Buffer} property.\\
-
-Inside the code, the reader will find many more methods than shown in figure \ref{fig:server_workspace}.
-The \code{PhysicalFile} will contain a variety of 'helper'-methods, such as getting the length of a specific line.
-These do not play a central role and are not further discussed.
-All \code{Update} methods are generic or overloaded, so that they are available for incremental text changes sent by the client, but also for full text mode.
-
-\subsubsection{Dafny Access}
-This component is responsible to access Dafny's backend.
-The core class in this package is the \linebreak \code{DafnyTranslationUnit}.
-It receives a \code{PhysicalFile} in the constructor.
-The only public method \code{Verify} will start the Dafny verification process for that file.
-As a result, the process will yield a list of errors, warnings and information objects, but also a precompiled \textit{dafnyProgram} and a precompiled \textit{boogieProgram} for later reuse.
-All of this information is stored in the \code{TranslationResults} wrapper class.\\
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=12.5cm]{design/server4_dtu.png}
-    \caption{Dafny Translation Unit}
-    \label{fig:server_dtu}
-\end{figure}
-
-
-Excluded from the figure are some extension methods, that convert \code{Diagnostics}, such as warnings and errors, to an uniform format.
-Dafny and Boogie report their errors in different ways and formats, which made collecting them relatively complex.
-To counteract that, simple converter extensions were written to unify any occurring error representations.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=12.5cm]{design/server4b_diag.png}
-    \caption{Dafny Translation Unit}
-    \label{fig:server_dtu}
-\end{figure}
-
-
-
-\subsubsection{SymbolTableManager}
-Creating, managing and navigating through the symbol table is a highly complex process. \intnote{platsch}
-Thus, it was decided to create an own package for it.
-The symbol table is built based on a \code{dafnyProgram}.
-This has the advantage, that any included files (but only as much as necessary) are directly contained within the \code{dafnyProgram}.
-The precompiled \code{dafnyProgram} is available from the \code{WorkspaceManager} for every file and can be reused by this package.\\
-
-This symbol table manager contains of three classes:
-\begin{itemize}
-    \item \code{SymbolInformation}, a class containing just raw data about a symbol.
-    \item \code{Navigator}, a class to navigate through the symbol table.
-    \item \code{Generator}, the class that builds the symbol table.
-    \item \code{Manager}, a class to provide easy access to the symbol table for outside classes.
-\end{itemize}
-
-The class \code{SymbolInformation} is supposed to contain any necessary data about every symbol.
-\begin{itemize}
-    \item In which file is it?
-    \item On what line, on what column?
-    \item What is it's parent, what children are in the body of the symbol?
-\end{itemize}
-
-
-The class \code{Navigator} is responsible to navigate through the symbol table.
-Since every symbol is supposed to know about its parent and children, it is legit to speak about a symbol tree.
-One task could be to navigate upwards, starting from a symbol deep inside the tree.
-This way, all available declarations could be retrieved.
-Another task is to navigate from top to bottom, for example to locate a specific symbol.
-As a global access point, there is a root symbol.
-Thus, every top-down search task can be started from that root symbol.\\
-
-The \code{Generator} is responsible to build the table.
-It will already make use of the navigator, namely to locate declarations of symbols.\\
-
-The \code{Manager} is constructed once a symbol table has been completely built.
-It stores the root symbol and invokes the navigator to provide easy access to the symbol table construct for the outside world.\\
-
-All four components are highly coupled.
-The dependencies are not drawn in the following figure.
-All four classes are programmed against an interface.\\
-
-Note that the manager is based to operate on the complete, finished symbol table.
-Thus it contains the root symbol as a class field.
-The navigator on the other hand offers operations that start from a specific entrypoint, which has to be handed as an argument.
-That start symbol may be the root symbol, or it can be a certain scope that was obtained elsewhere.
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{design/server5_symboltable.png}
-    \caption{SymbolTable Component}
-    \label{fig:server_st}
-\end{figure}
-
-\subsubsection {Core}
-The core package contains the actual core logic for the features.
-There is one class for each feature, for example \code{RenameProvider} or \code{DiagnsoticsProvider}.
-The provider is invoked by the handler.
-By the separation of a provider and a handler, any Omnisharp duties, such as registration of capabilities is separated by the actual core logic.
-The necessary parameters are forwarded from the handler to the provider.
-Often, this is the \code{FileRepository}, which the handler requested from the \code{WorkspaceManager}.
-This way, the provider has access to all precompiled results, including the symbol table.
-Each provider implements a specific interface, so that fakes can easily be created for unit testing.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{design/server6_core.png}
-    \caption{Core Package Excerpt with RenameProvider}
-    \label{fig:server_core}
-\end{figure}
-
-\subsubsection{Resources}
-String resources, such as error messages, were extracted to a specific resource package.
-This way, they are easy to maintain and adjustable at a central place.
-A similar system of centralization of string resources is followed as with the client.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{design/server7_resources.png}
-    \caption{Short Cutout of a Resource Definition File}
-    \label{fig:server_resources}
-\end{figure}
-
- \intnote{todo grafik welche ressourcengruppen vorhanden sind. am ende kurz screenshot oder auflistung vom directory}
-
-\subsubsection{Tools}
-Some responsibilities were extracted into dedicated classes.
-For example, one class in this package is responsible for delivering a list of reserved Dafny words, that cannot be used as identifiers.
-Another one is responsible to create a proper logger, which can then be used throughout the language server.
-All these auxiliary classes were collected within the \code{Tools} package.
-
-\subsection{Tools.ConfigInitializer}
- \intnote{ist das nicht auch ein unterkapitel von tools?}
-
-The setup of the language server settings is using five different classes.
-To keep packages concise, a sub-package was created just for config initialization.
-
-The setup of the configuration was first of all inside a single class.
-Since several tasks were done within that class, it was split into five different classes, each responsible for a single purpose:
-\begin{itemize}
-    \item One class to parse launch arguments
-    \item One class to parse the config file
-    \item One class to report errors occurring during the process
-    \item One class to represent errors
-    \item One class coordinating the whole process and invoking all other classes
-\end{itemize}
-Since the final config setting are accessed from multiple stages inside the code, the actual language server config is located inside the \code{Commons} package.
-It would be the sixth class related to the config initialization.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=10cm]{design/server7_config.png}
-    \caption{Configuration Initialization Layout.}
-    \label{fig:server_config}
-\end{figure}
-
- \intnote{todo aufzeigen welche config bzw welche art von configs dem server übergeben werden können
-trennung von config und ressources aufzeigen.}
-
-
-\subsubsection{Workflow Overview}
-%Sourcecode des flowgraphen:
-%Language Server->Handler:textdocument/rename
-%Handler->Provider:Forwarding request
-%Provider->WorkspaceManager:Requesting FileRepository
-%WorkspaceManager->Provider:Delivering FileRepository
-%Provider->Provider:Calculate Result
-%Provider->Handler:Deliver Result
-%Handler->Language Server: Forward Result
-For a regular request, the language server calls the proper handler to process the request.
-The handler will then retrieve the \code{FileRepository} from the \code{WorkspaceManager} and extract the necessary information.
-This information is forwarded to the provider, which calculates the result and returns it.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{design/workflow1_regular.png}
-    \caption{Overview}
-    \label{fig:server_overview}
-\end{figure}
-
-
-However, if an update is triggered, the workflow is slightly different.
-The handler will now actually request the \code{WorkspaceManager} to update a file, which will trigger the whole verification process and recalculate the symbol table, if possible.
-At the end, the handler retrieves the updated \code{FileRepository}.
-Now, it forwards the repository to the \code{VerificationProvider}, which extracts, assembles and sends diagnostics to the client.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{design/workflow2_update.png}
-    \caption{Updating a File}
-    \label{fig:server_update}
-\end{figure}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Integration Tests}
- \intnote{corbat: kommt in die implementation. vollständig. da haben wir schon ein kapitel; mergen.}
-
-\label{chapter:designTests}
-Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's language server client \cite{omnisharpClient}.
-Each test starts a language server and a language client, then they connect to each other.
-Now, the client can send supported requests, for example "get me the counter examples for file ../test.dfy".
-The result can be directly parsed into our \code{CounterExampleResults} data structure and be compared to the expectation.
-Thus, tests can be written easily and are very meaningful and highly relevant.
-
-\subsubsection{Dafny Test Files}
-Integration Tests usually run directly on \code{dfy} source files.
-Those test files need to be referenced from within the test.
-To keep the references organized, a dedicated project \code{TestCommons} was created.
-Each test project has access to these common items.
-Every test file is provided as a static variable and can thus be easily referenced.
-
-\begin{lstlisting}[language=csharp, caption={Test File Reference}, captionpos=b, label={lst:semiExpectedCodeThing}]
-public static readonly string cp_semiexpected = CreateTestfilePath("compile/semi_expected_error.dfy");
-\end{lstlisting}
-The class providing these references will also check, if the test file actually exists, so that \code{FileNotFoundErrors} can be excluded.
-
-\subsubsection{String Converters}
-Many tests return results in complex data structures, such as \code{CounterExampleResults}.
-Comparing these against an expectation is not suitable, since many fields and lists had to be compared to each other.\\
-To be able to easily compare the results against an expectation, a converter was written to translate the complex data structure into a simple list of strings.
-For example, each counter example will be converted into a unique string, containing all information about the counter example.
-All counter examples together are assembled within a list of strings.
-This way, they can be easily compared against each other.\\
-Since not only counter examples, but also other data structures such as \code{Diagnostic} were converted into lists of strings, the converters were held generic as far as possible.
-The following listing shows how this was realized.
-The method takes a enumerable of type T as an argument, and a converter which converts type T into a string.
-Each item in the enumerable is then selected in the converted variant.
-
-\begin{lstlisting}[language=csharp, caption={Generic Method to Convert an IEnumerable}, captionpos=b, label={lst:genericconverter}]
-private static List<string> GenericToStringList<T>(this IEnumerable<T> source, Func<T, string> converter)
-{
-    return source?.Select(converter).ToList();
-}
-\end{lstlisting}
-
-Calling the above method for counter examples are made as follows.
-A list of counter examples is handed as the argument, and a \code{Func<CounterExample, string> ToCustomString} is handed as the converter.
-The converter is also shown in the following code segment.
-Not that it is defined as an extension method.
-
-\begin{lstlisting}[language=csharp, caption={Converting CounterExamples to strings}, captionpos=b, label={lst:converterCEToString}]
-public static List<string> ToStringList(this List<CounterExample> source)
-{
-    return GenericToStringList(source, ToCustomString);
-}
-
-public static string ToCustomString(this CounterExample ce)
-{
-    if (ce == null)
-    {
-        return null;
-    }
-    string result = $"L{ce.Line} C{ce.Col}: ";
-    result = ce.Variables.Aggregate(result, (current, kvp) => current + $"{kvp.Key} = {kvp.Value}; ");
-    return result;
-}
-\end{lstlisting}
-
-Comparison of the results and the expectation is now very simple.
-The expectation can just be written by hand as follows:
-
-\begin{lstlisting}[language=csharp, caption={Expectation}, captionpos=b, label={lst:testexpectation}]
-List<string> expecation = new List<string>()
-{
-    "L3 C19: in1 = 2446; ",
-    "L9 C19: in2 = 891; "
-};
-\end{lstlisting}
-
-The results can be converted to a string list using the defined \code{results.ToStringList()} method.
-By taking advantage of the method \code{CollectionAssert.AreEquivalent(expectation, actual)} from nUnit's test framework, the two lists can be easily compared against each other \cite{nunitCollectionAssert}.
-
-\subsubsection{Test Architecture}
-Since every integration test starts the client and the server at first, as well as disposes them at the end, this functionality could be well extracted into a separate base class.
-This class is called \code{IntegrationTestBase} and just contains two methods, \code{Setup} and \code{Teardown}.
-These methods could be directly annotated with the proper nUnit tags, so that every test will at first setup the client-server infrastructure, and tear it down after the test has been completed.\\
-It was considered if the \code{IntegrationTestBase} class should directly contain a class member\linebreak \code{T TestResults} to store the test results, as well as a method \code{SendRequest} and \code{VerifyResults}. While storing the test results could have been realized, this was not possible for the methods \code{SendRequest} and \code{VerifyResults}. The problem is, that these methods have different signatures from test case to test case. A compilation requests has differnt parameters (such as compilation arguments), than a goto-defintion request (which as a position as a parameter).\\
-Instead, it was decided to create a second base class for each test case.
-For testing compilation, this class is named \code{CompileBase} as an example.
-It inherits from the \code{IntegrationTestBase} class and provides the member \code{CompilerResults}, as well as two methods \code{RunCompilaton(string file, string[] args)} and \code{VerifyResults(string expectation)}. One can now easily see the dedicated paramter list.\\
-The test class itself inherits from its case-specific base class.
-The tests itself are very simple.
-For example, if we want to test if the compiler reports a missing semicolon, we could create a test class \code{public class SyntaxErrors : CompileBase}.
-Note that we inherit from hour case-specific base class.
-Thus, the methods \code{RunCompilation} and\code{Verify} are at our disposal.
-That means, that hour test is as simple as follows:
-
-\begin{lstlisting}[language=csharp, caption={Sample Test for Missing Semicolon}, captionpos=b, label={lst:demoTest}]
-[Test]
-public void FailureSyntaxErrorSemiExpected()
-{
-    RunCompilation(Files.cp_semiexpected);
-    VerifyResults("Semicolon expected in line 7.");
-}
-\end{lstlisting}
-
-
-As you can see, the test contains only two lines of code.
-The first is stating the test file, the second one the test result expectation.
- y the way, the boolean values represent if there were errors and if an executable was generated.\\
-The same applies for test about counter examples, go to definition and other use cases.
-Thus, the integration test architecture could be created in a way so that the creation of tests is extremely simple and user friendly.
-The code can be kept very clean and contains no duplicated code.
-Tests can easily be organized into classes \textendash{} considering compilation this could for example be the separation into logical errors, syntax errors, wrong file types and such.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth/2]{integrationTestDesign}
-    \caption{Test Architecture on the Basis of Compilation}
-    \label{fig:testArchitecture}
-\end{figure}
-
- \intnote{todo ich finde solche genauen zhalnen und angaben zur test maschine gehören nicht zum design
-sondern eher implementation, nicht? sprich testing der implementation .
-"For reproducibility, nUnits randomizer was used"
-- wurde benutzt. dh ist ja nicht mehr planung sondern realisierung}
-
-
-\subsubsection{Performance Measurement}
-To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
-Within a class method, 10'000 LOC are generated, either containing
-\begin{itemize}
-    \item a variable definition: \code{var v142 := v16;}
-    \item a variable access: \code{print v142;}
-    \item a block scope: \code{while (true) \{ \dots}
-    \item ending a blockscope: \code{\}}
-\end{itemize}
-The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 9'000 variable name segments, that have to be resolved.
-This challenges the symbol table quite a bit.
-Since the \code{textDocuemt/didOpen} notification is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
-Since we implemented compile in such a way, that it uses the precompiled \code{dafnyProgram}, we have chosen to run a compile command.
-The test has shown, that the process completes within 20 seconds on a 3.4GHz machine, which seems quite reasonable for such a large file.
-
-For reproducibility, nUnits randomizer was used, which will create the same 'random' test file on every run.
-Technically, the file generation could be excluded from the test engine, but it was left inside, in case someone wants to create additional or other tests.
