@@ -42,8 +42,8 @@ The user perceives these features without any actions necessary.\\
 Hover information triggers every time the user moves his mouse over a symbol.
 This should happen by chance, or by accident.\\
 
-Auto completion triggers whenever the user enters a dot or types a \code{new} and will thus be discovered automatically. \intnote{stimmt das überhaupt? noch ned aber sollte noch gm usability test}
-Furthermore, the user can type \code{CTRL+Space} to trigger auto completion.
+AutoCompletion triggers whenever the user enters a dot or types a \code{new} and will thus be discovered automatically. \intnote{stimmt das überhaupt? noch ned aber sollte noch gm usability test}
+Furthermore, the user can type \code{CTRL+Space} to trigger AutoCompletion.
 Further functionality, such as GoToDefinition, compile or rename, can be accessed via the context menu.
 Within the context menu, hotkeys are displayed, thus the user automatically learns how to increase his efficiency.
 
@@ -342,13 +342,13 @@ Our aut ocompletion support three basic types of proposals which are shown below
 
 \textbf{Proposals for the Object Instance}\\
 If the user writes a dot after a symbol,
-auto completion looks for the symbol before the dot in the symbol table.
+AutoCompletion looks for the symbol before the dot in the symbol table.
 The available functions and variables are then proposed for the symbol found.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Auto Completion After Dot}
+    \caption{AutoCompletion After Dot}
     \label{fig:result_completion_dot}
 \end{figure}
 
@@ -358,25 +358,25 @@ and then you want to access available contents of class A via the point operator
 methods and variables of class A are proposed as shown in figure \ref{fig:result_completion_dot}. \\
 
 \textbf{Class Suggestions}\\
-If the keyword \code{new} is placed in front of the cursor position, followed by a space, when executing an auto completion,
+If the keyword \code{new} is placed in front of the cursor position, followed by a space, when executing an AutoCompletion,
 the proposals are limited to available classes in the current scope as shown in figure \ref{fig:result_completion_new}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Auto Completion After Keyword "new"}
+    \caption{AutoCompletion After Keyword "new"}
     \label{fig:result_completion_new}
 \end{figure}
 
 \textbf{All Available Symbols as Default}\\
 If none of the above cases apply to the current context,
-all available symbols in the current scope are listed as default when calling auto completion
+all available symbols in the current scope are listed as default when calling AutoCompletion
 as shown in figure \ref{fig:result_completion_all}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Auto Completion for all Symbols in Scope}
+    \caption{AutoCompletion for all Symbols in Scope}
     \label{fig:result_completion_all}
 \end{figure}
 
@@ -406,7 +406,7 @@ Related information, such as the parent symbol, is now directly accessible.
 Any string parsing could be completely omitted compared to the prototype.
 This leads to better performance and above all to reliable symbol references.\\
 
-All of the previous features, with the exception of auto completion, do not contain much logic themselves.
+All of the previous features, with the exception of AutoCompletion, do not contain much logic themselves.
 They just request information from the symbol table and report it back to the client.
 While the features are implemented quite robust, they only work as long as the symbol table provides proper information.\\
 

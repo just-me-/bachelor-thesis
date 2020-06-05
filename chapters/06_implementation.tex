@@ -668,7 +668,7 @@ Within the recursive call, the proper class will be found, and so on.
 Default namespaces and default classes had to be treated separately for this case.
 Since the tree is moved along a single branch, the runtime for this process is $O(logn)$.\\
 
-\textbf{What auto completion suggestions are indicated?}\\
+\textbf{What AutoCompletion suggestions are indicated?}\\
 To build up autocompletion suggestions, all declarations available at a certain locations must be figured.
 First of all, the previous \code{TopDown} algorithm is used to find the current location.
 Then, all declarations in the current scope are requested.
@@ -710,12 +710,12 @@ With the help of the "Symbol Table Navigator"
 it is also possible to efficiently filter the proposals by conditions,
 which can be transferred as delegates. \\
 
-The main difficulty and thus the logical complexity of the auto completion
+The main difficulty and thus the logical complexity of the AutoCompletion
 is therefore no longer the actual collection of symbol suggestions,
 but the evaluation of what kind of suggestions the user wants in the current context
 and extracting a symbol as entry point for the symbol table navigator component. \\
 
-For our auto completion, we support three fundamentally different types of user desire.
+For our AutoCompletion, we support three fundamentally different types of user desire.
 To find out the user's desire, the following approach is taken.
 First the cursor position is used to determine the current code position in the Dafny source file.
 Then it is checked if there is a dot in front of the cursos position,
@@ -746,7 +746,7 @@ During the search, the navigator starts in the innermost scope and then moves up
 If a matching symbol is found, the corresponding symbol is now
 for example the object instance of a class named \code{myClass}.
 Using the references in the symbol table, the symbol of the class can be accessed from the instance.
-All methods and variables are now returned as auto completion suggestions. \\
+All methods and variables are now returned as AutoCompletion suggestions. \\
 
 For the sake of clarity, the described process was visualized in the following
 Dafny code example \intnote{xxx
@@ -814,20 +814,20 @@ das vom papier digitalisieren todo\\}
 \textbf{Automatic Insertion of Brackets}\\
 Since in Dafny round brackets have to be set when calling a method or initializing a class,
 these brackets are automatically inserted as a user help
-if a symbol of type method or class is selected in auto completion. \\
+if a symbol of type method or class is selected in AutoCompletion. \\
 
  \intnote{todo dies konnte realisiert werden mit xxx von LSP. }
-Whenever a symbol of type class or method is added to the list of auto completion suggestions,
+Whenever a symbol of type class or method is added to the list of AutoCompletion suggestions,
 an opening and closing bracket is added to the text to be inserted.
 
  \intnote{todo beschreiben mit welchem parameter das im symbol information vom completion gemacht werden konnte. namen un dinsert text iwas. todo nur für dot completion oder für alle methoden u klassen? }
 
 \textbf{Insert Parameter Placeholders}\\
 From certain IDE's such as XCode,
-you are used to seeing placeholders for the parameters and their types in auto completion
+you are used to seeing placeholders for the parameters and their types in AutoCompletion
 when you select a method from the suggestions \cite{sa}.
 
-That is why we wanted to implement such a convenient feature for our auto completion as well. \\
+That is why we wanted to implement such a convenient feature for our AutoCompletion as well. \\
 
 Unfortunately we had to realize that the VS Code API
 does not offer a comparable function that we could simply call,
@@ -841,7 +841,7 @@ Therefore we have decided not to support this feature.
 The idea is described below. \\
 
 As with CodeLens, you could send additional data to the client
-for the auto completion objects - namely the parameters and their types for methods.
+for the AutoCompletion objects - namely the parameters and their types for methods.
 Whenever a completion is inserted, a callback function can be called within the client.
 This function could then additionally insert the parameters as text in the code and register
 event listeners on keyboard keys like \textit{TAB}.
@@ -1164,7 +1164,7 @@ These improvements are discussed in this chapter.
 
 \subsubsection{Code Documentation for Classes and Methods}
 If you drive over symbols and the hover information is displayed,
-and if the auto completion is listing symbols,
+and if the AutoCompletion is listing symbols,
 a code documentation is missing in the corresponding info boxes.
 It would be desirable to have a code documentation for methods and classes,
 which is displayed additionally with the mentioned features. \\
@@ -1176,7 +1176,7 @@ For each of these symbols the correct position in the Dafny source code could be
 and with a regular expression found code documentation comments could be read out.
 The documentation text, read out by the pattern matching, can then be stored in the corresponding symbol as code documentation.
 This information can then be sent to the client via the LSP and displayed,
-for example in the case of auto completion or hover information,
+for example in the case of AutoCompletion or hover information,
 as a \code{documentation} element \cite{vscodeAPI}.
 
 \subsubsection{Cleaner Hover Information}
@@ -1197,8 +1197,8 @@ Less text with the same information content.\\
 Durch das erhaltene Feedback, wurde der Hover klarer strutkuriert, wie in Abbildung xxx gezeigt....
  \intnote{Todo unrelevantes löschen, positionen in llammern setzen }
 
-\subsubsection{Automatic Triggering of Auto Completion}
-If a dot is typed while typing, auto completion suggestions are automatically expected.
+\subsubsection{Automatic Triggering of AutoCompletion}
+If a dot is typed while typing, AutoCompletion suggestions are automatically expected.
 You should not have to press \code{control + space} as trigger.
 
 In addition, the suggested methods lacked to inform about the supported parameters.

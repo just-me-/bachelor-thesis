@@ -38,7 +38,7 @@ Since the proof is done with formal, mathematical methods, the correctness is gu
 
 \subsection{Language Server Protocol}
 The language server protocol (LSP) was created to unify communication between an integrated development environment (IDE) and a language server.
-It specifies requests, such as auto completion, rename or GoToDefinition.
+It specifies requests, such as AutoCompletion, rename or GoToDefinition.
 If the user performs an action like rename, the IDE will send the proper request to the language server.
 The message format is specified by the LSP and bases on JSON.
 
@@ -83,7 +83,7 @@ These commonly provide features like
 \begin{itemize}
     \item Error highlighting
     \item Compile and run
-    \item Auto completion
+    \item AutoCompletion
 \end{itemize}
 
 To provide a nice environment to the students while they explore Dafny, they shall also profit by these features in the Software Engineering course.
@@ -95,7 +95,7 @@ To facilitate the development of further features, the code shall be refactored 
 This especially involves a clear architectural layout with dependencies that only point downwards.
 
 Aside a clean architecture, a major goal is the creation of a custom symbol table.
-This is necessary to make features like \textit{GoToDefinition} or \textit{auto completion} possible at all.
+This is necessary to make features like \textit{GoToDefinition} or \textit{AutoCompletion} possible at all.
 It also allows the development of further features.
 For example, if every the symbol table provides information about the scope-depth, the indentation width can be deduced for a feature like auto formatting.\\
 
@@ -119,7 +119,7 @@ The following features are supported by the server:
     \item Compilation
     \item Show Counter Example
     \item Code Lens
-    \item Auto Completion
+    \item AutoCompletion
     \item Renaming
     \item Hover Information
 \end{itemize}
@@ -132,7 +132,7 @@ In comparison to the initial solution, any pre-existing features were improved.
  \item Verification will now also show warnings.
  \item Verification will no longer just highlight single characters.
  \item Code Lens can now actively be used to preview symbol usages.
- \item Auto completion no longer performs simple pattern matching, but provides exact results.
+ \item AutoCompletion no longer performs simple pattern matching, but provides exact results.
 \end{itemize}
 Renaming and hover information could newly be implemented due to the offerings of the symbol table.
 The user can now benefit by a plugin, which gained a lot of user experience, but also robustness compared to the initial solution.\\
