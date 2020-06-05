@@ -101,6 +101,7 @@ Sonderheut vom DOenload und dessen interface gleich hier in den einzelnen beschr
 \subsection{Server}
 In this section, the server implementation is discussed.
 Just as in the Design-chapter, the server structure will be analyzed from top to bottom, starting from the \code{Main}-method and ending at the utility layer.
+The implementation of the symbol table is split into a separate section.
 
 \subsubsection{Server Launch}
 The server starts by executing the \code{Main} method.
@@ -271,25 +272,69 @@ Last but not least, the newly implemented symbol table is also attached to the f
 To obtain all of these results, the class simply invokes the \code{SymbolTableGenerator} and the \code{DafnyTranslationUnit}.
 Thus, all information about a file is accessible from within the file repository.
 
-\begin{lstlisting}[language=csharp, caption={Handling Compilation}, captionpos=b, label={lst:handlecompilation}]
-public interface FileRepository
-{
-    PhysicalFile PhysicalFile { get; }
-    TranslationResult Result { get; }
-    ISymbolTableManager SymbolTableManager { get; }
-    void UpdateFile(string sourceCodeOfFile);
-    void UpdateFile(Container<TextDocumentContentChangeEvent> changes);
-}
+
+\subsubsection{DafnyAccess}
+Dafny Access it the package invoking the Dafny backend to obtain verification results.
+The core class in this package is the \code{DafnyTranslationUnit}.
+It was partially taken over from the pre-existing projects, but as part of this bachelor thesis it was refactored and simplified.\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=12cm]{implementation/DTUSeq.png}
+    \caption{WorkspaceManager and FileRepository}
+    \label{fig:DTUSeq}
+\end{figure}
+
+In the constructor, the translation unit accepts a \code{PhysicalFile}.
+The class then offers a single public method \code{public TranslationResults Verify()}.
+Within the method, the following sequence of events as illustrated in figure \ref{fig:DTUSeq} occurs:
+
+\begin{enumerate}
+    \item It is checked that the instance has never been used before.
+    This is, since the error reporter must be empty.
+    Otherwise, errors would be reported multiple times.
+    \item Next, Dafny is configured.
+    This includes the registration of the Dafny error reporter and setting any options to default.
+    The only non-default option is that the engine is supposed to generate a model file, which can later be used for counter example calculation.
+    The configuration is shown in \ref{lst:setupdafnyoptions}.
+    \item The Dafny parser is called.
+    This step will report any syntax errors.
+    \item The Dafny Resolver is called, if parsing was successful.
+    This step will do semantic checks, such as type checks.
+    A \code{DafnyProgram} results upon success.
+    \item If successful, the precompiled \code{DafnyProgram} will be split into \code{BoogieProgram}s.
+    \item The Boogie Execution Engine is invoked to perform logical correctness checks on the \code{BoogieProgram}s.
+    \item Any errors that were reported are collected, converted and provided in the field \code{\_diagnosticElements}
+    \item All results are wrapped by the \code{TranslationResult} class, providing the diagnostics, the Dafny program and the boogie programs.
+    Also, within the property \code{TranslationStatus}, it is remarked how far the verification and translation process succeeded.
+\end{enumerate}
+
+
+Note in the following snippet, that dafny options are by directly calling Dafny's backend.
+\begin{lstlisting}[language=csharp, caption={Setting up Dafny Options}, captionpos=b, label={lst:setupdafnyoptions}]
+    private void SetUpDafnyOptions()
+    {
+        DafnyOptions.Install(new DafnyOptions(_reporter));
+        DafnyOptions.Clo.ApplyDefaultOptions();
+        DafnyOptions.O.ModelViewFile = FileAndFolderLocations.modelBVD;
+    }
 \end{lstlisting}
 
 
 
 
-%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
 
-
-\subsubsection{Tools}
-Within the tools package,
+\subsubsection{Utilitites}
+The bottom layer of the project is formed by the utiltiy layer.
+It contains three packages
+\begin{itemize}
+    \item Tools
+    \item Commons
+    \item Resources
+\end{itemize}
+\code{Commons} contains classes that are used within multiple parts of the code, such as \code{TranslationResults} and were already discussed.
+\code{Resources} contains string resources and were realized with \code{.resx} files.
+Within the \code{Tools} package,
 a variety of services can be found that do not necessarily directly correspond to Dafny,
 but are useful within the language server environment.\\
 
@@ -333,71 +378,36 @@ While this component is specifically used solely for the \code{rename}-Feature, 
 
 
 
-\subsubsection{DafnyAccess}
-Dafny Access it the package invoking the Dafny backend to obtain verification results.
-The core class in this package is the \code{DafnyTranslationUnit}.
-It was partially taken over from the pre-existing projects, but as part of this bachelor thesis it was refactored and simplified.\\
+%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
 
-In the constructor, the translation unit accepts a \code{PhysicalFile}.
-The class then offers a single public method \code{public TranslationResults Verify()}.
-Within the method, the following sequence of events occurs:
-\begin{enumerate}
-    \item It is checked that the instance has never been used before.
-    This is, since the error reporter must be empty.
-    Otherwise, errors would be reported multiple times.
-    \item Next, Dafny is configured.
-    This includes the registration of the Dafny error reporter and setting any options to default.
-    The only non-default option is that the engine is supposed to generate a model file, which can later be used for counter example calculation.
-    The configuration is shown in \ref{lst:setupdafnyoptions}.
-    \item The Dafny parser is called.
-    This step will report any syntax errors.
-    \item The Dafny Resolver is called, if parsing was successful.
-    This step will do semantic checks, such as type checks.
-    \item If successful, the precompiled \code{DafnyProgram} will be split into \code{BoogieProgram}s.
-    \item The Boogie Execution Engine is invoked to perform logical correctness checks on the \code{BoogieProgram}s.
-    \item Any errors that were reported are collected, converted and provided in the field \code{\_diagnosticElements}
-    \item All results are wrapped by the \code{TranslationResult} class, providing the diagnostics, the Dafny program and the boogie programs.
-    Also, within the property \code{TranslationStatus}, it is remarked how far the verification and translation process succeeded.
-\end{enumerate}
-
-\intnote{evtl bild, so ablaufdiagramm}
+%%%%FUCK IST DAS LANG!!!!
 
 
 
-\begin{lstlisting}[language=csharp, caption={Setting up Dafny Options}, captionpos=b, label={lst:setupdafnyoptions}]
-private void SetUpDafnyOptions()
-{
-    DafnyOptions.Install(new DafnyOptions(_reporter));
-    DafnyOptions.Clo.ApplyDefaultOptions();
-    DafnyOptions.O.ModelViewFile = FileAndFolderLocations.modelBVD;
 
-}
-\end{lstlisting}
 
 
 \subsection{Symbol Table}
-This package provides four components:
-
-\intnote{bilder hier ist schwierig weil es einfach das gleiche ist wie bei design...)}\\
+This chapter describes the implementation of the symbol table.
+The symbol table was designed to handle four different tasks:
 
 \begin{itemize}
-    \item Symbol Information
+    \item Providing Symbol Information
     \item Symbol Table Generation
     \item Symbol Table Navigation
     \item Symbol Table Management
 \end{itemize}
 
-\textbf{Symbol Information}
- \intnote{todo uml}
+\subsubsection{Symbol Information}
 This is a component that summarizes all information about a symbol.
-Aside the name, this also includes the location, the parent, the declaration, children, and so forth.
-The class contains a lot of properties, but in exchange, it provides any information that is required.
+Logic was extracted from this class as far as possible to keep it short and concise.
+As we have seen in chapter \ref{chapter:design}, this class needs to contain a lot of properties.
 The most important properties are:
 \begin{itemize}
     \item Name
     \item File
     \item Position in File
-    \item Body Size, if any
+    \item Body Location, if any
     \item Kind and Type
     \item Link to Parent Symbol
     \item Link to Declaration Symbol
@@ -405,9 +415,11 @@ The most important properties are:
     \item List with all Descendants (Any symbol occurring in the body)
     \item List with all Usages of the symbol
     \item BaseClasses
+    \item Parameters
     \item The associated module
     \item Link to the associated default class for quick access.
 \end{itemize}
+
 The provided properties are supposed to facilitate working with the symbol table.
 For example, if a symbol's definition cannot be found with regular methods, the property with the associated default class can be accessed to search the symbol there.
 No separate logic to find the default class is necessary.
@@ -448,14 +460,10 @@ Since it is a variable definition, it can have usages though.
 The final usage of \code{x} in the last line (which we also consider a symbol), does not even have usages, since it is a usage itself.
 Thus many properties are just null for that symbol.\\
 
-As a consequence, operating on the symbol table must be done with possible null reference expectations in mind.
-Null checks were added to the code wherever necessary.\\
+Unused properties are just set to \code{null}.
+This causes the risk of \code{NullPointerExceptions}, but should save a lot of memory compared to empty lists.\\
 
-Aside the properties, the \code{SymbolInformation} also offers a public method.
-This method will check if a certain location is wrapped by the symbol.
-This namely answers the question, if for example line 5, column 2 is within the symbol's body.\\
-
-\textbf{Symbol Table Creation}\\
+\subsubsection{Symbol Table Creation}
 The symbol table generator accepts a precompiled Dafny program in the constructor.
 The generator offers a public method \code{GenerateSymbolTable}.
 It will first of all create a virtual root symbol.
@@ -491,7 +499,7 @@ Once everything is done, the scope of the method is left by calling \code{v.Leav
 If you recall the last section, it was said that two runs are performed.
 One to capture all declarations, and one to visit all method bodies.
 Thus, the visitor is having a boolean property \code{GoesDeep}, which decides if method bodies are visited or not.
-The final \code{Accept} method for a method looks as shown below.
+The final \code{Accept} method for a method looks as shown in listing \ref{lst:visitoraccept}.
 The method is shortened, there are more clauses like for example the requires clause.
 
 
@@ -530,7 +538,7 @@ Since the method itself will have it's own body, the new scope can then be set t
 All symbols that will be visited afterwards - which is anything inside the method - are then attached to the method.
 Once the method is done, \code{Leave()} is called, which will reset the scope to the parent class for the next item to be visited.\\
 
-The \code{Visit} method of the first visitor, which only takes care of declarations, will just create a symbol, and attach it to the proper scope.
+The \code{Visit}-method in listing \ref{lst:visitorvisit1} of the first visitor, which only takes care of declarations, will just create a symbol, and attach it to the proper scope.
 All required information is taken from the AST element that is visited.
 This includes the name, the position, and so on.\\
 
@@ -582,7 +590,7 @@ Both difficulties were resolved by adding separate checks for them.
 Once the declaration is found, it is simple to add the just newly created symbol as one of the declaration's usages.\\
 
 The main challenge of the whole visitor implementation was to find a symbols declaration.
-The task could be extracted to the navigator:
+The task could be extracted to the navigator as seen in listing \ref{lst:visitorfinddecl}.
 
 \begin{lstlisting}[language=csharp, caption={Finding a Declaration}, captionpos=b, label={lst:visitorfinddecl}]
 protected ISymbol FindDeclaration(string target, ISymbol scope, Kind kind)
@@ -613,7 +621,9 @@ It is executed for every occurring symbol, thus the building of the symbol table
 \end{figure}
 
 
-\textbf{Symbol Table Navigator}\\
+\intnote{ZwischenfragE: Ist der ganze Bums hier zu lang?????? ist ja eewig hoy shit wtf}
+
+\subsubsection{Symbol Table Navigator}
 To operate on the (partially) constructed symbol table, a separate component to navigate was created.
 It has basically two procedures.
 Remember that the data structure of the symbol table is basically a double linked tree.
@@ -669,16 +679,24 @@ This algorithm is also visiting just a single tree branch, thus requiring $O(log
 The navigator offers further methods to visit the whole tree if that is desired by the caller.
 The method \code{TopDownAll} will visit all branches, not just the one wrapping a certain location.
 Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used if possible.\\
-\intnote{wozu brauchen wir die eig? war ursprünglich der modul wrapper}
+\intnote{im ernst das ist doch zu lang?}
 
 
 \textbf{Symbol Table Manager}\\
 The manager is a rather simple component and can be used as an access point to perform operations on the symbol table.
-It is constructed with a root symbol of a fully generated symbol table and contains a navigator. \intnote{todo es würd echt sinn machen den navigator als klassenprop des managers, falls das unterzubringen is und schnell gemach sti}
+It is constructed with a root symbol of a fully generated symbol table and contains a navigator.
 It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}.
 That method will use the navigator to provide the user with the desired result.
 Access to the rather complex navigator is encapsulated this way.
 
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%Fehlt hier ein titel? Feautres einzeln oder sowas?
+\subsection{Features einzeln????}
 \subsubsection{DiagnosticProvider}
 This component is invoked every time a document is updated.
 It accepts a \code{FileRepository} as an argument.
@@ -1025,6 +1043,10 @@ The component will also transform information into a more human readable format,
 Furthermore, many values are internal Boogie references and cannot be resolved.
 These just look like \code{T@U!val!12}.
 Such values are replaced with the text \code{[Object Reference]}.\\
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Mono Support for macOS and Linux}
 \label{section:implementation:mono}
