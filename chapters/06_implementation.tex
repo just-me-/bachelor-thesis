@@ -231,7 +231,8 @@ result.Add(new LocationOrLocationLink(location));
 return new LocationOrLocationLinks(result);
 \end{lstlisting}
 
-
+There are a few features that had to be extended with more complex logic.
+These are described in section \ref{section:imp:features}
 
 \subsubsection{Workspace}
 The workspace is a component representing any opened files by the client.
@@ -377,13 +378,13 @@ While this component is specifically used solely for the \code{rename}-Feature, 
 
 
 
-
-%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
-
 %%%%FUCK IST DAS LANG!!!!
 
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
 
 
 
@@ -679,7 +680,7 @@ This algorithm is also visiting just a single tree branch, thus requiring $O(log
 The navigator offers further methods to visit the whole tree if that is desired by the caller.
 The method \code{TopDownAll} will visit all branches, not just the one wrapping a certain location.
 Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used if possible.\\
-\intnote{im ernst das ist doch zu lang?}
+
 
 
 \textbf{Symbol Table Manager}\\
@@ -691,52 +692,13 @@ Access to the rather complex navigator is encapsulated this way.
 
 
 
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%Fehlt hier ein titel? Feautres einzeln oder sowas?
-\subsection{Features einzeln????}
-\subsubsection{DiagnosticProvider}
-This component is invoked every time a document is updated.
-It accepts a \code{FileRepository} as an argument.
-Within the repository, the translation results are stored, including the diagnostics.
-This component will read the diagnostic, convert them to an LSP-suitable format, add usability information, and finally send the result back to the client.
-Since this is just a conversion of already calculated \code{TranslationResults} by the \code{DafnyTranslationUnit}, the runtime of this provider is neglectable.
-
-\subsubsection{HoverProvider}
-This component is very simple.
-It requests the \code{SymbolTableManager} to provide the symbol at the hover location - again this will require $O(logn)$ time.
-The hover location is passed as an argument within the request.
-Afterwards, basic information about the symbol is assembled and returned.
-That information includes
-\begin{itemize}
-    \item A quick summary, including the name and the location
-    \item Symbol kind
-    \item Symbol type
-    \item Parent symbol
-    \item Declaration origin
-\end{itemize}
-and is instantly available, not adding any runtime penalties.
-
-\subsubsection{RenameProvider}
-Rename is another feature that profits strongly by the symbol table.
-Again the feature requests the symbol at the cursor in $O(logn)$.
-Afterwards, it jumps to it's declaration in $O(1)$.
-The declaration has all usages of the symbol stored, and thus, all occurrences are also instantly accessible.
-The provider will now just assemble a \code{WorkspaceEdit} and return it.
-The \code{WorkspaceEdit} contains the new name and as well all \code{Range}s, where the name has to be applied.\\
-
-Additionally, the rename provider performs a few checks, if the new name is valid.
-The checks are
-\begin{itemize}
-    \item Name must not start with and underscore
-    \item Name must not be a reserved word, such as 'method'
-    \item Name must not contain any other then alphanumerical dinger or underscores
-\end{itemize}
-
-The last check is more restrictive than it needs to be, but since special characters are extremely uncommon in programming, it is well suitable.
-It was mainly implemented to prohibit brackets in names.
+\subsection{Features}
+\label{section:imp:features}
+As it was stated in the previous sections, many features just query the symbol table and assemble the information to a proper result format.
+This is especially the case for Rename, GoToDefinition and HoverInformation.
+These features are thus not described in detail.
+However, some features, especially AutoCompletion, involve a bit more complexity.
+In this chapter, these special cases are described.
 
 \subsubsection{Completion}
 \label{section:implementation:core:completion}
@@ -893,6 +855,7 @@ do not offer such a function.
 In the future, VS Code might even add such a function. \\
 
 \textbf{Getting Information About Method Parameters} \\
+\intnote{hier ev noch was zu updaten aka ist eig einfach verfügbar blabla?}
 Since the desired implementation of placeholder parameters was not easy to implement,
 we have generally neglected the information for parameters.
 
