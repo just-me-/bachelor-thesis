@@ -1,22 +1,19 @@
 \section{Implementation}
+This chapter describes the implementation of the planned design.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Client}
-The implementation of the client could be done relatively well as planned.
-The whole code could be broken down into the individual components defined in the analysis phase.   \intnote{todo design?? analyse?}
+The implementation of the client could be done as intended.
+The whole code could be broken down into the individual components defined in the design phase.
 
 \subsubsection{Better Encapsulation Through Interfaces and Modules}
-During the implementation process how sometimes very confusing imports of modules and components arose.
-On the one hand, this was generally unclear and thus difficult for third parties to understand,
-on the other hand, there were direct dependencies on components.
-If changes are made, these are always associated with corresponding additional costs.
+During the implementation process, many confusing module imports and component usages arose.
+Their purpose was generally unclear and thus difficult to understand.
+The imports caused a lot of dependencies, too.
 
-This problem had to be solved by further introductions of interfaces and encapsulated modules. \\
+This problem had to be solved by further introductions of interfaces and encapsulation of modules. \\
 
-Although interfaces were used for the individualized types,
-the individual core components did not use their own interfaces.
+Although interfaces were used for individual types,
+core components did not use their own interfaces.
 To reduce coupling, isolated modules were formed in a comprehensive refactoring process.
 The modules now no longer program on the class implementations, but against the interface. \\
 
@@ -38,9 +35,9 @@ Methods have been simplified and the number of parameters could be reduced signi
 Component identifiers have been renamed to be more understandable. \\
 
 However, it is now also noticeable that there are considerably more dependencies on \code{stringRessources}.
-While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.
+While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.\\
 
-This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all UI strings. \glsadd{UI}
+This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all UI strings. \glsadd{UI} \intnote{is das glossar? dann msüste es ja eig midnetsens ui anzeigen :O}
 In the code review, it was decided that default values should no longer be set within the independent modules,
 but rather at a central location.
 This would make it easier to maintain these values.
@@ -64,6 +61,7 @@ das package.js von visual studio code.
 
 disclaimer: natürlich muss die plugin entwicklung für die ide typescirpt supporten.
 ist das der fall? welche sprache verwendet eclipse, atom (java.. auch ts?),
+war eklipse nicht java? dahatten wir doch was in frameworks bei mirko mal.
 
 \subsubsection{Download of the Dafny Language Server}
 \label{section:implementation:client:download}
@@ -85,7 +83,8 @@ sonstige config und so sachen wurden zentralisiert. gm code review.
 
 todo hier nochmals jedes modul einzeln aufzeigen, was die aufgabe ist, welche interfaces und komponenten nach aussen exportiert werden
 => oder ist das überflüssig? hmm... keine überschneidungen mit dem design / analyse
-
+tom: ich hab dasselbe probelm biem server. weiss auch net recht wie damti umgehen. ich liess es jetzt mal durch, mal sehen ev lösch ich vieels weg.... 
+ich glaub aam besten so machen: 'konnte wieg epalnt gemacht werden, z.b. dies das wurde so umgesetzt: und dann ein stück code das schön ist oder so'
 nachfolgend werden die einzelnen module aufgezeigt.
 die grün dargestellten teile des moduls werden nach aussen exportiert und können von anderen modulen verwendet werden.
 die gelben/roten/orange teile werden nicht nach aussen exportiert und sind innerhalb des moduls gekapselt.
@@ -100,15 +99,16 @@ Sonderheut vom DOenload und dessen interface gleich hier in den einzelnen beschr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
-
- \intnote{todo roadmap kapitel überblick einleitung}
+In this section, the server implementation is discussed.
+Just as in the Design-chapter, the server structure will be analyzed from top to bottom, starting from the \code{Main}-method and ending at the utility layer.
 
 \subsubsection{Server Launch}
- \intnote{todo "corbat-platsch"}
-As done in common practice, the \code{Main} function is kept very short.
+The server starts by executing the \code{Main} method.
+As done in common practice, it is kept very short.
 All it does is launching the language server, which is already handled by another class.
+The full \code{Main}-method is shown in listing \ref{lst:mainserver}.
 
-\begin{lstlisting}[language=csharp, caption={Main Function}, captionpos=b, label={lst:main}]
+\begin{lstlisting}[language=csharp, caption={Main Function}, captionpos=b, label={lst:mainserver}]
 public static async Task Main(string[] args)
 {
     DafnyLanguageServer languageServer = new DafnyLanguageServer(args);
@@ -128,17 +128,165 @@ Secondly, the actual server is launched.
 The logger will directly be injected and all handlers are registered.
 In the third stage, once the server is running, a message sending service is instantiated to notify the client about the successful server start and, if any, errors occurred during start up.
 Lastly, the console output stream is redirected to keep the language server stream isolated.
+The constructor and the \code{StartServer}-method are partially shown in listing \ref{lst:serverstart}.
 
 \begin{lstlisting}[language=csharp, caption={Starting the Language Server}, captionpos=b, label={lst:serverstart}]
-public async Task StartServer()
-{
-    log.Debug(Resources.LoggingMessages.server_starting);
-    server = await LanguageServer.From(options => \dots  );
-    ExecutePostLaunchTasks();
-    await RedirectStreamUntilServerExits();
-    log.Debug(Resources.LoggingMessages.server_closed);
+public class DafnyLanguageServer{
+    public DafnyLanguageServer(string[] args)
+    {
+        var configInitializer = new ConfigInitializer(args);
+        configInitializer.SetUp();
+        configInitErrors = configInitializer.Errors;
+        log = LoggerCreator.GetLogger();
+    }
+        
+    public async Task StartServer()
+    {
+        log.Debug(Resources.LoggingMessages.server_starting);
+        server = await LanguageServer.From(options => options
+            .WithHandler<TextDocumentSyncTaskHandler>()
+            .WithHandler<RenameTaskHandler>()
+            ...
+        );
+        ExecutePostLaunchTasks();
+        await RedirectStreamUntilServerExits();
+        log.Debug(Resources.LoggingMessages.server_closed);
+    }
 }
 \end{lstlisting}
+
+\subsubsection{Handler}
+Handlers are passed to the language server and are called whenever the language server receives a corresponding request.
+Services, such logging or workspace management, can be injected and are thus available for the handler.
+As discussed in chapter \ref{chapter:design}, handlers are based around a \code{Handle} method.
+For example, every time the server receives a \code{textDocument/Definitions} request, this \code{Handle} method will be called.
+The parameter and return types are specific per request.
+GoToDefinition would pass a text document location as input, namely the cursor position, and it expects a \code{LocationLink} as response,
+namely where the cursor should jump to.
+Own requests can be realized according to section \ref{chapter:customlspmsg} by defining an own interface.\\
+
+All handlers require two additional methods, aside the actual \code{Handle}:
+\begin{itemize}
+    \item GetRegistrationOptions: This method is called when the handler is registered.
+    It allows to set options at the time the server is started.
+    Such an option is for example after which characters AutoCompletion should be automatically triggered.
+    \item SetCapability: It allows to set handler-specific capabilities, such as if the rename-handler will also support a 'prepare rename' feature.
+\end{itemize}
+
+A lot of code for these classes is always identical and was thus extracted to a generic base class.
+This concerns for example the creation of a logger out of the logger factory or handling of errors.\\
+
+To keep all of this separated from the actual tasks, it was targeted to just forward the request to a core-provider.
+This could be well achieved.
+Many handlers look just as shown in listing \ref{lst:handlecompilation}.
+
+\begin{lstlisting}[language=csharp, caption={Handling Compilation}, captionpos=b, label={lst:handlecompilation}]
+public async Task<CompilerResults> Handle(CompilerParams request, CancellationToken cancellationToken)
+{
+   _log.LogInformation(string.Format(Resources.LoggingMessages.request_handle, _method));
+   try
+   {
+       FileRepository f = _workspaceManager.GetFileRepository(request.FileToCompile);
+       return await Task.Run(() => f.Compile(request.CompilationArguments), cancellationToken);
+   }
+   catch (Exception e)
+   {
+       HandleError(string.Format(Resources.LoggingMessages.request_error, _method), e);
+       return null;
+   }
+}
+\end{lstlisting}
+
+The file to compile is given as an argument.
+The corresponding repository can be requested from the \code{WorkspaceManager}, which is injected to all handlers.
+The request is then forwarded to the according provider, which will calculate the results.
+All information required, such as the precompiled program, are available from within the \code{FileRepository}.
+In case of an error, a message is sent to the user and the error is logged within the \code{HandleError} method.\\
+
+Some handlers take additional actions, such as awaiting the result of the provider, and then sending user feedback according to the outcome.
+This is done with GoToDefinition for example.
+If the request was triggered at a declaration, an additional user message is sent.
+By handling all communication with the handler, the message sending service does not have to be passed downwards to the core logic component.
+
+
+\subsubsection{Core}
+Within this package, the result of a request is assembled.
+While it may sound like complex logic is happening here, it turned out that for most cases, all information is just available by the symbol table.
+Consider the example of GoToDefinition.
+A code excerpt is shown in listing \ref{lst:gotoProvierExample}.
+As you can see, the actual task of finding the definition is resovled by the symbol table engine and just available as a property.
+The actual task just considers the assembly of the correct result wrapper class.
+
+\begin{lstlisting}[language=csharp, caption={GoToDefinition, Core Provider}, captionpos=b, label={lst:gotoProvierExample}]
+ISymbol symbolAtCursor = _manager.GetSymbolAtPosition(uri, line, col);
+ISymbol originSymbol = symbolAtCursor.DeclarationOrigin;
+
+var position = new Position((long)originSymbol.Line - 1, (long)originSymbol.Column - 1);
+var range = new Range { Start = position, End = position };
+var location = new Location { Uri = originSymbol.FileUri, Range = range };
+
+List<LocationOrLocationLink> result = new List<LocationOrLocationLink>();
+result.Add(new LocationOrLocationLink(location));
+return new LocationOrLocationLinks(result);
+\end{lstlisting}
+
+
+
+\subsubsection{Workspace}
+The workspace is a component representing any opened files by the client.
+Thus, it naturally consists only of a single property.
+This is a dictionary, mapping a file-location to an internal file-representation:
+
+\begin{lstlisting}[language=csharp, caption={Workspace Property}, captionpos=b, label={lst:workspaceproperty}]
+private readonly ConcurrentDictionary<Uri, FileRepository> _files;
+\end{lstlisting}
+
+It offers methods to retrieve files and to update them.
+Since updates can be down in two different kinds, incremental or full, the update method is overloaded for both cases.
+The update requests are forwarded to the class \code{FileRepository}, which is used as the internal representation of a file.
+It of course contains the source code.
+However, this is not done directly as a string property, but wrapped in a class \code{PhysicalFile}.
+Thus, the actual representation on the hard disk is separated even further.
+The \code{PhysicalFile} class can then also take responsibility for applying file updates.\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/workspace.png}
+    \caption{WorkspaceManager and FileRepository}
+    \label{fig:worksapceAndRepo}
+\end{figure}
+
+Aside the file content, each \code{FileRepository} will also contain \code{TranslationResults}.
+\code{TranslationResults} is a wrapper class for anything provided by the Dafny backend:
+\begin{itemize}
+    \item Could the file be parsed?
+    \item Could it be verified?
+    \item Is it logically correct?
+    \item What errors and warnings occurred?
+    \item How far could it be compiled?
+    \item What internal compilation results could be produced for later reuse?
+\end{itemize}
+
+Last but not least, the newly implemented symbol table is also attached to the file repository.
+To obtain all of these results, the class simply invokes the \code{SymbolTableGenerator} and the \code{DafnyTranslationUnit}.
+Thus, all information about a file is accessible from within the file repository.
+
+\begin{lstlisting}[language=csharp, caption={Handling Compilation}, captionpos=b, label={lst:handlecompilation}]
+public interface FileRepository
+{
+    PhysicalFile PhysicalFile { get; }
+    TranslationResult Result { get; }
+    ISymbolTableManager SymbolTableManager { get; }
+    void UpdateFile(string sourceCodeOfFile);
+    void UpdateFile(Container<TextDocumentContentChangeEvent> changes);
+}
+\end{lstlisting}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
+
 
 \subsubsection{Tools}
 Within the tools package,
@@ -182,100 +330,7 @@ A HashSet was used to provide fast access to the set.\\
 
 While this component is specifically used solely for the \code{rename}-Feature, it was extracted to be also available at other spots if required for future features.
 
-\subsubsection{Handler}
-Handlers are passed to the language server and are called whenever the language server receives a corresponding request.
-Services, such logging or workspace management, can be injected and are thus available for the handler.
-OmniSharp directly defines interfaces, which have to be implemented in the handler classes.
-For example, the interface \code{IDefinitionHandler} requires the class to implement a \code{Handle} method.
-Every time the server receives a \code{textDocument/Definitions} request, this \code{Handle} method will be called.
-The parameter and return types are specific per request.
-Go to Definition would pass a text document location as input, namely the cursor position, and it expects a \code{LocationLink} as response, namely where the cursor should jump to.
-Own requests can be realized according to section \ref{chapter:customlspmsg} by defining an own interface.\\
 
-All handlers require two additional methods, aside the actual \code{Handle}:
-\begin{itemize}
-    \item GetRegistrationOptions: This method is called when the handler is registered.
-    It allows to set a document selector.
-    This is, that the handler is only active for '.dfy' files.
-    \item SetCapability: It allows to set handler-specific capabilities, such as if the rename-handler will also support a 'prepare rename' feature.
-\end{itemize}
-The code for these methods is always identical and was thus extracted to a generic base class.
-The generic type parameter refers to the kind of capability, necessary for the \code{SetCapability} method.
-This could be, for example, \code{RenameCapability} which has the mentioned bool property about the preparation support.\\
-
-To keep all this boilerplate code separated from the core logic, the actual \code{Handle} method will in most cases just create a provider instance, where all core logic is placed, and forward its result.
-For example, the full code of handling a compilation request is shown below.
-
-\begin{lstlisting}[language=csharp, caption={Handling Compilation}, captionpos=b, label={lst:handlecompilation}]
-public async Task<CompilerResults> Handle(CompilerParams request, CancellationToken cancellationToken)
-{
-   _log.LogInformation(string.Format(Resources.LoggingMessages.request_handle, _method));
-   try
-   {
-       FileRepository f = _workspaceManager.GetFileRepository(request.FileToCompile);
-       return await Task.Run(() => f.Compile(request.CompilationArguments), cancellationToken);
-   }
-   catch (Exception e)
-   {
-       HandleError(string.Format(Resources.LoggingMessages.request_error, _method), e);
-       return null;
-   }
-}
-\end{lstlisting}
-
-The other handlers look very similar to listing \ref{lst:handlecompilation}.
-It requests the injected workspace manager for the file and passes it to the core logic provider.
-Finally, the result is returned as a result.
-In case of an error, a message is sent to the user and the error is logged within the \code{HandleError} method.\\
-
-Some handlers take additional actions, such as awaiting the result of the provider, and then sending user feedback according to the outcome.
-This way, the message sending service does not have to be passed downwards to the core logic component.
-
-\subsubsection{Workspace}
-The workspace is a component representing any opened files by the client.
-Thus, it naturally consists only of a single property.
-This is a dictionary, mapping a file-location to an internal file-representation:
-
-\begin{lstlisting}[language=csharp, caption={Workspace Property}, captionpos=b, label={lst:workspaceproperty}]
-private readonly ConcurrentDictionary<Uri, FileRepository> _files;
-\end{lstlisting}
-
-It offers methods to retrieve files and to update them.
-Since updates can be down in two different kinds, incremental or full, the update method is overloaded for both cases.
-
-More interesting is the class \code{FileRepository}, which is used as the internal representation of a file.
-It of course contains the source code.
-However, this is not done directly as a string property, but wrapped in a class \code{PhysicalFile}.
-Thus, the actual representation on the hard disk is separated even further.
-The \code{PhysicalFile} class can then also take responsibility for applying file updates.\\
-
-\intnote{ich wrüde hier gerne ein bild einfügen aber das wäre das gleiche wie beim design.. grml.}.\\
-
-Aside the file content, each \code{FileRepository} will also contain \code{TranslationResults}.
-\code{TranslationResults} is a wrapper class for anything provided by the Dafny backend:
-\begin{itemize}
-    \item Could the file be parsed?
-    \item Could it be verified?
-    \item Is it logically correct?
-    \item What errors and warnings occurred?
-    \item How far could it be compiled?
-    \item What internal compilation results could be produced for later reuse?
-\end{itemize}
-
-Last but not least, the newly implemented symbol table is also attached to the file repository.
-Thus, all information about a file is accessible from within the file repository.
-To obtain all of these results, the class simply invokes the \code{SymbolTableGenerator} and the \code{DafnyTranslationUnit}.
-
-\begin{lstlisting}[language=csharp, caption={Handling Compilation}, captionpos=b, label={lst:handlecompilation}]
-public interface FileRepository
-{
-    PhysicalFile PhysicalFile { get; }
-    TranslationResult Result { get; }
-    ISymbolTableManager SymbolTableManager { get; }
-    void UpdateFile(string sourceCodeOfFile);
-    void UpdateFile(Container<TextDocumentContentChangeEvent> changes);
-}
-\end{lstlisting}
 
 
 \subsubsection{DafnyAccess}
@@ -623,49 +678,6 @@ It is constructed with a root symbol of a fully generated symbol table and conta
 It then offers methods such as \code{ISymbol GetSymbolByPosition(Uri file, int line, int character)}.
 That method will use the navigator to provide the user with the desired result.
 Access to the rather complex navigator is encapsulated this way.
-
-\subsection{Core}
- \intnote{Teils wird von BlaProvider gesprochen, teils kein Provider todo}
-
-In this package, the actual task of providing results for the server is done.
-Often, not much code is necessary, since the symbol table provides all necessary information.
-The classes in this package are called \textit{providers}.
-A few of them are explained more in detail.\\
-
-\subsubsection{Go to Definition}
-Go to definition is a very simple feature once the symbol table is created.
-As parameters, the provider receives a location inside a file.
-All it has to do is request what symbol is at this position from the \code{SymbolTableManger}.
-This will do a top-down search and is done in $O(logn)$ time.
-Since every symbol has a property, containing its declaration, the declaration can be accessed directly and renders as result of the task.
-Finally, the provider converts the declaration position to the proper response format and returns it.\\
-
-To provide a better usability, it does a few further checks, such as checking if the symbol already was a definition or if no result could be found at all.
-The results are stored in an \code{Outcome} property, which the handler can use to send proper client feedback.\\
-
-\begin{lstlisting}[language=csharp, caption={Providing Goto Definition}, captionpos=b, label={lst:gotoCore}]
-public LocationOrLocationLinks GetDefinitionLocation(Uri uri, int line, int col)
-{
-   List<LocationOrLocationLink> links = new List<LocationOrLocationLink>();
-   var symbol = _manager.GetSymbolByPosition(uri, line, col);
-   if (symbol == null)
-   {
-       Outcome = DefinitionsOutcome.NotFound;
-       return new LocationOrLocationLinks();
-   }
-   if (symbol.IsDeclaration)
-   {
-       Outcome = DefinitionsOutcome.WasAlreadyDefintion;
-   }
-   var originSymbol = symbol.DeclarationOrigin;
-   Position position = new Position((long)originSymbol.Line - 1, (long)originSymbol.ColumnStart - 1);
-   Range range = new Range { Start = position, End = position };
-   var location = new Location { Uri = originSymbol.FileUri, Range = range };
-   links.Add(new LocationOrLocationLink(location));
-   Outcome = DefinitionsOutcome.Success;
-   return new LocationOrLocationLinks(links);
-}
-\end{lstlisting}
 
 \subsubsection{DiagnosticProvider}
 This component is invoked every time a document is updated.

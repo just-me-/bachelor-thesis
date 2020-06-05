@@ -1,14 +1,16 @@
 \section{Design}
+\label{chapter:design}
+\intnote{eher mit gros H und pagebreak arbeiten für grafiken, ist ausser kontrolle mit kleinen h's.}
 This chapter contains discussions of fundamental design decisions that were made.
 The first section contains reasoning about the choice of technologies, such as programming languages.
-Afterwards, architectural discsussions follow, separated by client and server.
+Afterwards, architectural discussions follow, separated by client and server.
 
 \subsection{Technologies}
 The choice of technologies is determined by external circumstances.
 The client is written in TypeScript, since this is required for VSCode plugins \cite{vscodeAPI}.
-To work on the client, Visual Studio Code is a natural choice, since it contains an enginge to directly launch and test the coded plugin.
+To work on the client, Visual Studio Code is a natural choice, since it contains an engine to directly launch and test the coded plugin.
 The server is written in \CsharpWithSpace using .NET Framework 4.6.1, since Dafny is already coded in this
-configuration\footnote{During the course of thsi project, Dafny was updated to .NET Framework 4.8} and direct integration is a key goal of the project.
+configuration\footnote{During the course of this project, Dafny was updated to .NET Framework 4.8} and direct integration is a key goal of the project.
 To work on the server, Visual Studio 2019 is used with the ReSharper extension.\\
 The CI will be realized with GitLab, since HSR offers it for free and the CI-pipeline of the prototype was pre-existing.
 
@@ -262,7 +264,7 @@ By just creating a fake instance, the providers can very easily be tested using 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{design/server6_core.png}
+    \includegraphics[width=12.5cm]{design/server6_core.png}
     \caption{Core Package Excerpt with RenameProvider}
     \label{fig:server_core}
 \end{figure}
@@ -378,7 +380,7 @@ A similar system of centralization of string resources is followed as with the c
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{design/server7_resources.png}
+    \includegraphics[width=7.5cm]{design/server7_resources.png}
     \caption{String Resources}
     \label{fig:server_resources}
 \end{figure}
@@ -396,9 +398,7 @@ All these auxiliary classes were collected within the \code{Tools} package.
 
 The setup of the language server settings is using five different classes.
 To keep packages concise, a sub-package was created just for config initialization.\\
-
-The setup of the configuration was first of all inside a single class.
-Since several tasks were done within that class, it was split into five different classes, each responsible for a single purpose:
+The classes are:
 \begin{itemize}
     \item One class to parse launch arguments
     \item One class to parse the config file
@@ -504,13 +504,13 @@ All of this leads in the following structure of the class \code{SymbolInformatio
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{design/SYMBOLTABLE.png}
+    \includegraphics[width=7.5cm]{design/SYMBOLTABLE.png}
     \caption{Symbol Table Design}
     \label{fig:symboltabledesign}
 \end{figure}
 
 
-\subsubsection{Generation with Visitor}
+\subsubsection{Visitor Pattern}
 To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}.
 The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
 The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
@@ -548,6 +548,3 @@ public class Printer : Visitor {
     }
 }
 \end{lstlisting}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
