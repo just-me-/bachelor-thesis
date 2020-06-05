@@ -1,9 +1,22 @@
 \section{Implementation}
 This chapter describes the implementation of the planned design.
+First the characteristics of the client are shown.
+Then basic components of the server are described.
+The symbol table and its properties are treated as a separate section.
+The resulting features follow.
+This is followed by a discussion of platform independence followed by a section about automated testing.
+Results of our usability test and the resulting conclusions and improvements follow.
+This chapter is closed by the success achieved in terms of continuous integration.
 
 \subsection{Client}
-The implementation of the client could be done as intended.
+The implementation of the client could be basically done as intended.
 The whole code could be broken down into the individual components defined in the design phase.
+Individual deviations and descriptions of the individual implementation concepts follow in this section. \\
+
+These include a better separation of the components,
+a simplified migration concept for other, future IDEs,
+the download of the langauge server
+as well as basic configurations which are made possible for the end user.
 
 \subsubsection{Better Encapsulation Through Interfaces and Modules}
 During the implementation process, many confusing module imports and component usages arose.
@@ -41,6 +54,69 @@ This has the following reason: Up until this refactoring, the task of \code{stri
 In the code review, it was decided that default values should no longer be set within the independent modules,
 but rather at a central location.
 This would make it easier to maintain these values.
+
+\subsubsection{Client Modules In Detail}
+The individual modules from the design concept are shown below.
+The components shown in green are exported to the outside of the module and can be used by other modules.
+The other, orange components are only used within the module. \\
+
+For simplicity,  \intnote{(constructors,)} private methods and variables are omitted in the diagrams.
+Class implementations of interfaces only implement the methods specified in the interface as public.
+For this reason, their contents are not displayed for clarity.  \\
+
+In addition, there are two core modules, which were not considered in the design concept.
+The need for these modules only became apparent during the implementation phase.
+This concerns the isolation of VS Code components
+and the download of the Dafny language server.
+These two modules will be discussed separately in the following sections and not in this section.\\
+
+\textbf{\code{dafnyLanguageServerStartup}}\\
+The main package \code{dafnyLanguageServerStartup} is used by the \code{extension.ts}
+and contains basicly the packages "main logic".
+It is to start the Dafny language server and establish a connection,
+as well as basically initialize the plugin. This includes creating the UI management component and command registrations.
+
+If no local language server is available, the language server is downloaded from a server \\
+using the \code{LanguageServerInstaller} component.
+This component is only used inside the package, and is not exported to the outside,
+as can be seen in the figure \ref{fig:placeholder_ref}.
+This component can also be used to update the language server locally.
+Update means in this case to delete the local existing language server and download the latest version.
+For more details see section \ref{section:implementation:client:download}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/dafnyLanguageServerStartup}
+    \caption{Package \code{dafnyLanguageServerStartup}}
+    \label{fig:placeholder_ref}
+\end{figure}
+
+The logic of the main component \code{serverInitializer} itself was kept relatively small.
+To start the language server as a local process, two steps are basically required:\\
+
+First, basic options are set for the language server.
+These options are set in the \code{serverOptions} component. This component implements the \code{LanguageClient}
+of VS Code. "Client" is somewhat confusing in that sense, since this module is used to connect the language server; from client side.
+Among other things, the options are set with which command the server is started and which file types, which are opened in VS Code by the user of the plugin, should be transferred to the server. \\
+
+Secondly, \code{serverInitializer} registers a callback as the program entry point to the created \code{serverOptions} instance
+and then the language server is started with \code{this.languageServer.start()}. \\
+
+\textbf{\code{ui}}\\
+
+
+\textbf{\code{serverRequests}}\\
+
+\textbf{\code{localExecution}}\\
+
+\textbf{\code{typeInterfaces}}\\
+
+\textbf{\code{stringResources}}\\
+
+
+
+
+
 
 \subsubsection{Encapsulation of the VS Code Components}
  \intnote{einfache migration auf andere IDE ermoeglicht}
@@ -81,10 +157,9 @@ sonstige config und so sachen wurden zentralisiert. gm code review.
 
 
 
-todo hier nochmals jedes modul einzeln aufzeigen, was die aufgabe ist, welche interfaces und komponenten nach aussen exportiert werden
-=> oder ist das überflüssig? hmm... keine überschneidungen mit dem design / analyse
-tom: ich hab dasselbe probelm biem server. weiss auch net recht wie damti umgehen. ich liess es jetzt mal durch, mal sehen ev lösch ich vieels weg.... 
-ich glaub aam besten so machen: 'konnte wieg epalnt gemacht werden, z.b. dies das wurde so umgesetzt: und dann ein stück code das schön ist oder so'
+todo hier nochmals jedes modul einzeln aufzeigen, was die aufgabe ist
+auch gerne code snippeds
+
 nachfolgend werden die einzelnen module aufgezeigt.
 die grün dargestellten teile des moduls werden nach aussen exportiert und können von anderen modulen verwendet werden.
 die gelben/roten/orange teile werden nicht nach aussen exportiert und sind innerhalb des moduls gekapselt.
@@ -140,7 +215,7 @@ public class DafnyLanguageServer{
         configInitErrors = configInitializer.Errors;
         log = LoggerCreator.GetLogger();
     }
-        
+
     public async Task StartServer()
     {
         log.Debug(Resources.LoggingMessages.server_starting);
@@ -1464,4 +1539,3 @@ The test has shown, that the process completes within 20 seconds on a 3.4GHz mac
 
 For reproducibility, nUnits randomizer was used, which will create the same 'random' test file on every run.
 Technically, the file generation could be excluded from the test engine, but it was left inside, in case someone wants to create additional or other tests.
-
