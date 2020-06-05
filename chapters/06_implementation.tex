@@ -19,6 +19,8 @@ the download of the langauge server
 as well as basic configurations which are made possible for the end user.
 
 \subsubsection{Better Encapsulation Through Interfaces and Modules}
+\label{section:implementation:client:module_encapsulation}
+
 During the implementation process, many confusing module imports and component usages arose.
 Their purpose was generally unclear and thus difficult to understand.
 The imports caused a lot of dependencies, too.
@@ -60,15 +62,15 @@ The individual modules from the design concept are shown below.
 The components shown in green are exported to the outside of the module and can be used by other modules.
 The other, orange components are only used within the module. \\
 
-For simplicity,  \intnote{(constructors,)} private methods and variables are omitted in the diagrams.
+For simplicity, constructors, private methods and private variables are omitted in the diagrams.
 Class implementations of interfaces only implement the methods specified in the interface as public.
-For this reason, their contents are not displayed for clarity.  \\
+For this reason, their contents are not displayed for clarity. \\
 
 In addition, there are two core modules, which were not considered in the design concept.
 The need for these modules only became apparent during the implementation phase.
 This concerns the isolation of VS Code components
 and the download of the Dafny language server.
-These two modules will be discussed separately in the following sections and not in this section.\\
+These two modules will be discussed separately in the following sections and not in this section. \\
 
 \textbf{\code{dafnyLanguageServerStartup}}\\
 The main package \code{dafnyLanguageServerStartup} is used by the \code{extension.ts}
@@ -103,19 +105,31 @@ Secondly, \code{serverInitializer} registers a callback as the program entry poi
 and then the language server is started with \code{this.languageServer.start()}. \\
 
 \textbf{\code{ui}}\\
-
+This package is responsible for representations. This includes the status bar information and the display of the CounterModel.
 
 \textbf{\code{serverRequests}}\\
+This package is responsible for server requests which are not automatically handled by the VS Code.
+Specifically this concerns the LSP extensions for the compilation of Dafny programs and the CounterExample.
 
 \textbf{\code{localExecution}}\\
+This package is used for the local execution of programs.
+For example to execute \code{.exe} files.
+For macOS and Linux these are executed using mono.
+This module takes care of the correct execution of compiled Dafny programs
+and of the Dafny language server, which is also an \code{.exe} file.
 
 \textbf{\code{typeInterfaces}}\\
+Special TypeScript type extensions,
+as they are used for the return values of server requests
+that are not contained in the LSP, are defined in interfaces.
+This concerns the return types of compile and CounterExample.
 
 \textbf{\code{stringResources}}\\
-
-
-
-
+All string resources are stored in this module.
+Contrary to the design, this module does not only contain UII messages displayed to the user as mentioned in section
+\ref{section:implementation:client:module_encapsulation},
+but is the central outsourcing of all strings that also have to do with configurations.
+For example which file extensions Dafny files have.
 
 
 \subsubsection{Encapsulation of the VS Code Components}
