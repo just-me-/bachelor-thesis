@@ -328,6 +328,16 @@ export class LanguageServerNotification {
 \subsubsection{Encapsulation of the VS Code Components}
  \intnote{einfache migration auf andere IDE ermoeglicht}
 
+Atom JS,
+Eclipse java
+Andere IDEs haben wir nicht in usnerer arbeit analysiert
+daher haben wir nicht zu viel zeit für die isolation investiert
+falls nötig können aber durch diese grobe isolation innerhalb dieses moduls adapter komponenten geschrieben werden .
+falls eine ganz andere programmiersprache für eine andere IDE verwendet werden muss,
+muss die logik der einzeonen komponenten entsprechend migriert werden und der aufwand steigt entsprechend.
+neutraler name
+
+
 die exportierten module:
 bei einer migration müssen einfach die vscode module durch die module der neuen ide beim export ersetzt werden.
 die exportierten modulnamen wurden daher extra neutral gewählt.
@@ -348,34 +358,48 @@ war eklipse nicht java? dahatten wir doch was in frameworks bei mirko mal.
 
 \subsubsection{Download of the Dafny Language Server}
 \label{section:implementation:client:download}
- \intnote{GitLab Pages} (Fabian gm Meeting... hust erwaehnen)
-Interfaces geschrieben, versucht API zu nehmen, ging ned also server
-dank interface austauschbar
-interface altem tool nachempfunden. teils namen passender gewaehlt.
+Since the original Dafny plugin included the language server (which was written in TypeScript) in the plugin itself,
+we assumed in the design phase that we could integrate our new Dafny language server directly in the plugin too
+and deploy it in to the plugin markedplace. \\
 
-beschreiben interface download, wie das ausgetaucht werden kann.
+During the implementation we noticed that this would be an unpleasant solution.
+In the Dafny project - where our language server will be integrated - builds
+are created per operating system during releases \cite{dafny_lang_builds}.
+So we would have to install the builds for all platforms in our plugin,
+which would make little sense.
+Windows users would download macOS builds additionally and macOS the windows version as shown in figure \ref{fig:dafnyReleaseVersions}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/dafnyReleaseVersions}
+    \caption{Dafny Release 2.3.0 Builds as Example}
+    \label{fig:dafnyReleaseVersions}
+\end{figure}
+
+Furthermore, it would have been impossible for us to update client and server independently of each other in the future.
+Therefore the language server is now downloaded by the client.
+Each time the language server is started or restarted within the client,
+it checks whether the latest version is installed.
+If not, the local Dafny language version is removed and the latest version is downloaded. \\
+
+Therefore the original TypeScript code of the old language server,
+which had downloaded the Dafny client, was analyzed \ref{fig:ts_dafny_installer}.
+From this we have implemented the core functionality in a clean interface: \code{ILanguageServerInstaller}.
+Since our Language server is not yet integrated into the official build,
+we have implemented our own, temporary implementation of the downloader as \code{LanguageServerInstaller}.
+As soon as our Dafny language server is integrated in the Dafny project,
+the component can easily be replaced, because the plugin components program against the interface. 
+Minimal adjustments are required to replace the component. In some cases, more suitable names were chosen for methods in the interface.
 
 \subsubsection{Customizable Through Configuration}
+zwei layers. einmal komplett vom user konfigurierbar, einmal in den stringressourcen.
+darin sind beispielsweise Dafny file endungen und sonstige konfigurationen, die nicht direkt vom benutzer geändert werden wollen oder sollen.
+
  \intnote{config} - sollte neu dann auch noch durch gereiht werden oder über vscode kapselung zur verfügung gestellt werden
 man kann alles konfigurieren. support fuer dark mode.,
 CounterExample  - light und dark mode.. custom colors.
 compile (args)
 sonstige config und so sachen wurden zentralisiert. gm code review.
-
-
-
-todo hier nochmals jedes modul einzeln aufzeigen, was die aufgabe ist
-auch gerne code snippeds
-
-nachfolgend werden die einzelnen module aufgezeigt.
-die grün dargestellten teile des moduls werden nach aussen exportiert und können von anderen modulen verwendet werden.
-die gelben/roten/orange teile werden nicht nach aussen exportiert und sind innerhalb des moduls gekapselt.
-
-interface bild vom design als abgespeckte variante hier nochmals einbinden oder nicht? ka mal gucken. eher weniger wens 1.1 das gleiche ist. braucht unnötig platz. wär aber gut zur einleitung / lesefluss.
-
-Sonderheut vom DOenload und dessen interface gleich hier in den einzelnen beschreibungen aufnehmen (Sprich im modul vom server beschreiben!!) dann haben wir das auch gleich erledigt.
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
