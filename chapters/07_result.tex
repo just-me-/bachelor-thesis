@@ -245,7 +245,7 @@ The process targets more advanced users and is described in the readme file.\\
 Because the symbol table reports occurrences across imported files as well, the rename feature works well for included files.
 However, if a file gets included elsewhere, it does not know about it.
 This is, since no global symbol table is currently used for the entire workspace.
-This issue and possible solutions were described in chapter \ref{section:globalSymbolTable}.\\
+This issue and possible solutions were described in section \ref{section:globalSymbolTable}.\\
 
 \subsubsection{CodeLens}
 CodeLens is an excellent way for the developer to see which classes and methods were used how often - and where.
@@ -269,8 +269,7 @@ On the right hand side of the popup window all references found are listed.
 If the user clicks on the corresponding references, the corresponding code
 location in the right file opens on the left side - at the location within the popup.
 This is very convenient for developers,
-because they no longer have to jump back and forth between files and you do not have to scroll unnecessarily
-through the code.
+because they no longer have to jump back and forth between files and you do not have to scroll unnecessarily.
 
 \begin{figure}[H]
     \centering
@@ -279,71 +278,49 @@ through the code.
     \label{fig:result_codelens_references_popup}
 \end{figure}
 
-Just like Rename, the feature won't work for code that includes the current file.
+Just like Rename, the feature does not work for code that includes the current file
+due to the missing global symbol table as described in section \ref{section:globalSymbolTable}.
 
 \subsubsection{Automatic Code Completion}
-The code suggestions for automatic completion is a very useful feature for Dafny developers.
-It lists the available symbols in the current context on request.
-
-Compared to our previous thesis, we could significantly improve the function.
+Auto completion lists the available symbols in the current context on request.
+Compared to our previous thesis, we could significantly improve this function.
 Instead of displaying all found symbols in the opened file as before,
 we can now use the new symbol table to consider the current scope for suggestions. \\
 
-Our aut ocompletion support three basic types of proposals which are shown below.\\
+Our auto completion supports three basic types of proposals:
+\begin{itemize}
+    \item Completion after a dot was written
+    \item Completion after 'new' was written
+    \item General suggestions
+\end{itemize}
 
-\textbf{Proposals for the Object Instance}\\
-If the user writes a dot after a symbol,
-AutoCompletion looks for the symbol before the dot in the symbol table.
-The available functions and variables are then proposed for the symbol found.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{AutoCompletion After Dot}
-    \label{fig:result_completion_dot}
-\end{figure}
-
-For example, if an instance of class A has been created,
-and then you want to access available contents of class A via the point operator
-(for example \code{myInstanceOfClassA.}),
-methods and variables of class A are proposed as shown in figure \ref{fig:result_completion_dot}. \\
-
-\textbf{Class Suggestions}\\
-If the keyword \code{new} is placed in front of the cursor position, followed by a space, when executing an AutoCompletion,
-the proposals are limited to available classes in the current scope as shown in figure \ref{fig:result_completion_new}.
+If a dot was written, only declarations of the class in front of the dot are suggested.
+If a new was written, only available classes are listed.
+When none of the above is the case, all available symbols in the current scope will be displayed.
+The three cases are shown in figuer \ref{fig:result_completion}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{AutoCompletion After Keyword "new"}
-    \label{fig:result_completion_new}
+    \includegraphics[width=\textwidth]{results/completion_allinone.png}
+    \caption{AutoCompletion}
+    \label{fig:result_completion}
 \end{figure}
 
-\textbf{All Available Symbols as Default}\\
-If none of the above cases apply to the current context,
-all available symbols in the current scope are listed as default when calling AutoCompletion
-as shown in figure \ref{fig:result_completion_all}.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{AutoCompletion for all Symbols in Scope}
-    \label{fig:result_completion_all}
-\end{figure}
+\intnote{ich habe mir erlaubt, zu kürzen, weil das 1:1 in implementaiton stand mit der unterscheidung was wann wie vorgeschlagen wird.}
+\intnote{habe versucht die 3 fälle in einem bild zusammenzufassen.}
 
-\textbf{Additional Usabillity Suggar}\\
-As a little extra to increase the usability, when inserting a suggested function or method,
-automatically opening and closing brackets are added to the Dafny source code.
- \intnote{todo immer oder nur nach einem punkt?} \\
+\textbf{Additional Usabillity Sugar}\\
+As a little extra to increase the user experience, when inserting a suggested function or method,
+opening and closing brackets are automatically added.
 
-However, when inserting methods and classes no parameter placeholders are inserted in the current state,
-as you know it from other IDE's like XCode.
+However, the parameter list of methods is not yet proposed.
 Technically it would be possible, as described in chapter
 \ref{section:implementation:core:completion} \nameref{section:implementation:core:completion}.
-This would further enhance the user-friendliness as proved in the usability test.
+This would further enhance the user-friendliness as proven in the usability test.
 
 \subsection{Simplicity of Further Development}
-Aside the features, also architectural improvements are discussed,
+This section describes architectural improvements,
 which increase maintainability and facilitate future extensions of the project.
 
 \subsubsection{Symbol Table}
