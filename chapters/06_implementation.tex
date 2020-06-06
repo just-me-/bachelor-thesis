@@ -326,35 +326,38 @@ export class LanguageServerNotification {
 \end{lstlisting}
 
 \subsubsection{Encapsulation of the VS Code Components}
- \intnote{einfache migration auf andere IDE ermoeglicht}
+ \intnote{todo auch implementieren wie beschrieben :P}
 
-Atom JS,
-Eclipse java
-Andere IDEs haben wir nicht in usnerer arbeit analysiert
-daher haben wir nicht zu viel zeit für die isolation investiert
-falls nötig können aber durch diese grobe isolation innerhalb dieses moduls adapter komponenten geschrieben werden .
-falls eine ganz andere programmiersprache für eine andere IDE verwendet werden muss,
-muss die logik der einzeonen komponenten entsprechend migriert werden und der aufwand steigt entsprechend.
-neutraler name
+During our implementation of the client we noticed that almost all our modules require different modules of VS Code.
+For example, the UI components needed different graphical elements while console processes are used to execute Dafny files.
+So the whole plugin had dependencies on the VS Code specific module kit,
+which could not be offered by other IDE's in the same way. \\
 
+Because we wanted to design our plugin for VS Code in a way that the migration for other plugins
+for other IDE's is as easy as possible, we wrote additional module \code{ideApi} as shown in figure \ref{fig:packageIdeApi}.
+From this module the modules used by VS Code are exported with neutral names.
+All modules except \code{typeInterfaces} and \code{stringResources} use this module directly or indirectly.
+The idea here is that when migrating to another IDE, adapter components can be written in module \code{ideApi}
+for the VS Code modules used in a centralized way.
 
-die exportierten module:
-bei einer migration müssen einfach die vscode module durch die module der neuen ide beim export ersetzt werden.
-die exportierten modulnamen wurden daher extra neutral gewählt.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Module \code{ideApi}}
+    \label{fig:packageIdeApi}
+\end{figure}
 
-für bestimmte komponenten können wrapper klassen als adapter geschrieben werden, falls von
-der anderen/neuen IDE keine äquivalente klasse zur verfügung steht.
+However, we have not already implemented our own adapter classes and interfaces in our refactoring.
+This has the following reason:
+Through this encapsulation, developers ideally only need to make changes in a central location to migrate the plugin to another IDE.
+In the worst case, however, he will have to reimplement the entire client code.
+This means, it depends on the IDE for which a new Dafny plugin should be developed.
+It depends on the IDE for which a new Dafny plugin should be developed,
+and if TypeScript is supported by this IDE as plugin development or not.\\
 
-dies  wird durch dieses prinzip der kapselung ermöglicht.
-programierer für neeu IDE muss fürs neue Plugin lediglich dieses eine modul anpassen.
-der languageserver sowie die restlichen client komponenten kännen dann 1.1 verwendet werden.
-
-davon ausgenommen sind natürlich allgemeine plugin veröffentlichungs konfigurationen, wie konkret
-das package.js von visual studio code.
-
-disclaimer: natürlich muss die plugin entwicklung für die ide typescirpt supporten.
-ist das der fall? welche sprache verwendet eclipse, atom (java.. auch ts?),
-war eklipse nicht java? dahatten wir doch was in frameworks bei mirko mal.
+In our thesis we did not analyze with which other IDEs support which form of plugin development for language server connections.
+For example, for the plugin development for atom JavaScript \cite{plugin-atom} can be used,
+while for Eclipse mostly Java \cite{plugin-eclipse} is used.
 
 \subsubsection{Download of the Dafny Language Server}
 \label{section:implementation:client:download}
@@ -407,7 +410,7 @@ There is an extract of the plugin description, which can be seen by users in the
     \label{fig:settings}
 \end{figure}
 
-For example the colors of the displayed CounterExample can be changed or other compile arguments can be set for Dafny as default. 
+For example the colors of the displayed CounterExample can be changed or other compile arguments can be set for Dafny as default.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
