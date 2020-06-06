@@ -130,26 +130,26 @@ At HSR, Dafny is taught within the course \textit{Software Engineering}.
 Students have to make their first steps in Dafny, using a simple tutorial.
 To provide the students with the necessary support, they shall profit by common IDE features like
 \begin{itemize}
-    \item Syntax highlighting to make readability more pleasant
-    \item Error highlighting to correct faulty code efficiently
-    \item Compile and run to run Dafny programs and check the output
-    \item AutoCompletion to code efficiently
-    \item GoToDefinition to be able to view definitions quickly
-    \item Showing CounterExamples to efficiently remedy faulty pre- and postconditions
-    \item CodeLens to count the usages of classes and functions
+    \item Syntax highlighting to make readability more pleasant.
+    \item Error highlighting to correct faulty code efficiently.
+    \item Compile and Run to run Dafny programs and check the output.
+    \item AutoCompletion to code efficiently.
+    \item GoToDefinition to be able to view definitions quickly.
+    \item Showing CounterExamples to efficiently remedy faulty pre- and postconditions.
+    \item CodeLens to count the usages of classes and functions.
 \end{itemize}
 
-Some of these functions have already been implemented in a basic variant in the prototype.
+Some of these features have already been implemented in a basic variant in the prototype.
 But almost all these features need to be improved.
 This shall be realized by the implementation of a custom symbol table for features that base on code symbol navigation.
 The symbol table shall contain a well organized tree structure, so that navigation can be done efficiently.
 Each symbol shall have direct links to it's parent, children and declaration for very fast access.
 Compared to the prototype, the pre-existing implementations can be extracted into the symbol table,
-reducing the lines of code (LOC) and increasing performance. \\
+reducing the lines of code (LOC) and increasing performance. \glsadd{loc} \\
 
 Additionally, new features based on the symbol table can be added.
-This targets especially hover information and renaming.
-Further optional features are automated contract generation and refactorings like extract method. \\
+This targets especially Hover Information and Renaming.
+Further optional features are automated ContractGeneration and refactorings like ExtractMethod. \\
 
 On the other hand, the plugin shall also be used in a professional environment.
 Thus, more advanced features have to be supported in the future.
@@ -160,8 +160,9 @@ This especially involves a clear architectural layout with dependencies that onl
 This should make it as easy as possible for other developers to enrich the existing Dafny language server with additional features. \\
 
 In addition, process optimizations should make the work for future developers easier.
-This includes the recording of SonarQube for the Dafny language server as well as a clean logging,
-which should be helpful for troubleshooting.\\
+This includes the recording of SonarQube for the Dafny language server for static code analysis,
+as well as a clean logging,
+which should be helpful for troubleshooting. \glsadd{sonar}\\
 
 Furthermore, our plugin should reach a stable state and be published into the VSCode Market place.
 Dafny developers shall profit by an increased value compared to the pre-existing solution.
