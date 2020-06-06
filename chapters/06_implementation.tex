@@ -54,7 +54,7 @@ Component identifiers have been renamed to be more understandable. \\
 However, it is now also noticeable that there are considerably more dependencies on \code{stringRessources}.
 While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.\\
 
-This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all UI strings. \glsadd{UI} \intnote{is das glossar? dann msüste es ja eig midnetsens ui anzeigen :O}
+This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all user interface (UI) strings. \glsadd{UI}
 In the code review, it was decided that default values should no longer be set within the independent modules,
 but rather at a central location.
 This would make it easier to maintain these values.
@@ -193,8 +193,16 @@ so it is shown in orange inf figure \ref{fig:ui_module}.
 The module was created purely for grouping and a better file structure.\\
 
 The \code{CodeLensProvider} component is very simple. CodeLens data transferred from the server is transferred to the VSCode API.
-The logic is limited to passing the data through. The actual display of the CodeLens popup window is done via the
-VSCode API. More about the logic of CodeLens can be found in section \ref{section:implementation:features:codelens}. \\
+The logic is limited to passing the data through. The actual display of the CodeLens popup window, as shown in figure xx,
+is done via the VSCode API.
+More about the logic of CodeLens can be found in section \ref{section:implementation:features:codelens}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{CodeLens Opened After Klicking on References}
+    \label{fig:dark_light_mode}
+\end{figure}
 
 The \code{CounterModelProvider} component is used to display and hide CounterModels.
 This component also stores in which Dafny files a CounterModel should be displayed and in which not.
@@ -210,7 +218,8 @@ depending on whether VSCode is set to light or dark by the user.
     \label{fig:dark_light_mode}
 \end{figure}
 
-Unlike the Compile feature, the \code{CounterModelProvider} creates a callback and passes it to the \code{serverRequest} module.
+Unlike the Compile feature, the \code{CounterModelProvider} creates a callback and passes it to the \\
+\code{serverRequest} module.
 Therefore an update-call of the \code{CounterModelProvider} requires a transfer of the language server instance to instantiate a \code{RequestCounterExample}.
 This is for the following reason: Unlike the \code{StatusbarProvider} or the \code{CodeLensProvider},
 \code{CounterModelProvider} has an active influence on it,
