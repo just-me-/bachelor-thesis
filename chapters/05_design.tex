@@ -548,3 +548,28 @@ public class Printer : Visitor {
     }
 }
 \end{lstlisting}
+
+\subsubsection{Global Symbol Table vs Symbol Table per File}
+\label{section:globalSymbolTable}
+The current design creates a symbol table per file, and attaches it to the file repository.
+This variant was chosen for simplicity.
+However, it is technically not correct.
+A better variant would be, to use a global symbol for the entire workspace.
+This has two reasons:
+\begin{itemize}
+    \item If a file gets included elsewehre - the file is not aware about this. CodeLens and Rename will not work properly.
+    \item AutoCompletion may only suggest symbols in the current file. Symbols available in other files are not known.
+\end{itemize}
+
+Since the managment of a global symbol table is not as easy, it was decided to go with a symbol table per file in a first step.
+A global symbol table is a possible extension point for the feature.
+The procedure is, if a file gets updated, to locate the current position of the pre-existing symbol table, detach the old one and attach the new one.
+While this is not difficult, handling of global namespaces that do not know each other may suddenly become quite tricky,
+since there is no longer just 'one' global space, but one per file, as long as they don't include each other.\\
+
+A global symbol table would also increase performance and especially resource usage, since if a library is included by multiple files, it's symbol table does not have to be built multiple times.\\
+
+An alternative solution to make features like Rename and GoToDefinition would be to keep a table, which file includes which other files.
+If a file A is included in file B, an additional buffer within file A indicates that it was included by file B.
+Keeping all these references up to date is also connected with logical effort.
+Therefore, it is advisable to implement the global and updateable symbol table instead.

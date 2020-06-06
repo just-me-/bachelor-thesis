@@ -9,7 +9,7 @@ Results of our usability test and the resulting conclusions and improvements fol
 This chapter is closed by the success achieved in terms of continuous integration.
 
 \subsection{Client}
-The implementation of the client could be basically done as intended.
+The implementation of the client could basically be done as intended.
 The whole code could be broken down into the individual components defined in the design phase.
 Individual deviations and descriptions of the individual implementation concepts follow in this section. \\
 
@@ -216,7 +216,7 @@ This is for the following reason: Unlike the \code{StatusbarProvider} or the \co
 when a server request should be sent and when not.
 With the components for the statubar and CodeLens react passively to an event.
 
-In this way the CounterModel component can regulate the server requests.
+In this way the \code{CounterModel} component can regulate the server requests.
 For reasons of efficiency, the implemented client-side display of CounterModels limits its
 server requests to a certain number per second.
 This means that even if a plugin user types very fast on the keyboard, a

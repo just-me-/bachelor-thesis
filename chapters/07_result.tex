@@ -1,27 +1,25 @@
 \section{Results}
 \label{section:results}
 
- \intnote{Corbat: Da fehlt iwie ein kapitel für Comparison loc for implementation of features with symbol table present? loc symbol table?}
+ \intnote{Corbat: Da fehlt iwie ein kapitel für Comparison loc for implementation of features with symbol table present? loc symbol table? 2000. Run -> Code analysis metrics iwas for project.}
 
 As described in our objectives, our work has three basic stakeholders. \\
 
-On the one hand there are the students of the HSR, who want to develop with Dafny.
-For these students a usefull plugin should be offered to make the development with Dafny source code easier. \\
+On the one hand there are the students of the HSR, who want to get familiar with Dafny.
+For these students, a usefull plugin should be offered to make the development with Dafny easier. \\
 
-On the other hand, it is the developers who want to further develop our Language Server in order to offer additional features to users.
-This category also includes developers who want to make other IDE's compatible with new plugins for Dafny in addition to VS code.
-For developers the further development should be kept as simple as possible. \\
+On the other hand, there are the developers who want to extend the language server in the future.
+This category also includes developers who want to integrate other IDE's by additional clients.\\
 
-Last but not least, we - the authors of this thesis - also belong to the interest group.
-Since we wanted to make a contribution to society with our work,
-it was always a big concern for us to achieve a stable version of the plugin, which we can also publish.
-This way Dafny developers can get a real use for the plugin. \\
+Last but not least, anyone willing to program with Dafny may download the plugin from the VSCode marketplace.
+Since we wanted to make a contribution to the Dafny community with our work,
+it was always a big concern for us to achieve a quality level, so that it can be published.\\
 
-The following section describe the results achieved and further prospects for each target group.
+This chapter describes the results achieved and further prospects for each target group.
 
 \subsection{Features for Dafny Developers}
 In this section, the achieved feature set of the project is described and critically reflected.
-The current version of the plugin supports the following features for Dafny developers in VS Code:
+The current version of the plugin supports the following functionality:
 \begin{enumerate}
     \item Syntax Highlighting
     \item Code Verification
@@ -32,44 +30,15 @@ The current version of the plugin supports the following features for Dafny deve
     \item Rename
     \item CodeLens
     \item Autocompletion
-    \item  \intnote{mehr? todo}
+    \item  \intnote{was vergessen?}
 \end{enumerate}
-
-\subsubsection{Accessibility}
-Some of the features are just active by default, namely syntax highlighting and code verification.
-The user perceives these features without any actions necessary.\\
-
-Hover information triggers every time the user moves his mouse over a symbol.
-This should happen by chance, or by accident.\\
-
-AutoCompletion triggers whenever the user enters a dot or types a \code{new} and will thus be discovered automatically. \intnote{stimmt das überhaupt? noch ned aber sollte noch gm usability test}
-Furthermore, the user can type \code{CTRL+Space} to trigger AutoCompletion.
-Further functionality, such as GoToDefinition, compile or rename, can be accessed via the context menu.
-Within the context menu, hotkeys are displayed, thus the user automatically learns how to increase his efficiency.
-
-Although there are a lot of different features, they are visible and perceivable to the end user without the necessity of a tutorial.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=8cm]{results/context_menu.png}
-    \caption{Plugin Context Menu}
-    \label{fig:result_contextmenu}
-\end{figure}
-
-More advanced features that do not target the every day user are described in the \code{readme.md} file.
-These include:
-\begin{itemize}
-    \item Configuring colors
-    \item Setting language server arguments
-    \item Editing the language server config
-\end{itemize}
 
 \subsubsection{Syntax Highlighting}
 \label{section:result:syntaxhighgliht}
 Syntax highlighting is realized by a given Dafny grammar file.
 The file contains regex expressions defining the highlights.
 It is provided by Dafny \intnote{link reffen, ich find den link nicht} and could simply be downloaded.
-The feature was already implemented in the prototype, thus no further actions had to be done.
+The feature was already implemented in the prototype, thus no further actions aside updating the grammar file had to be done.
 The following screenshot shows how syntax highlighting looks inside Visual Studio Code.
 
 \begin{figure}[H]
@@ -87,8 +56,12 @@ Just these simple rules increase the readability significantly.
 \subsubsection{Verification}
 Verification was already implemented in the prototype, too.
 At the start of the project, the feature held some major flaws.
-It only reported logical errors.
-Syntax errors were not announced.
+\begin{itemize}
+    \item It only reported logical errors.
+    \item Syntax errors were not announced.
+    \item Warnings were ignored.
+\end{itemize}
+
 The code just invoked the \code{DafnyTranslationUnit}, taken over by the pre-existing project.\\
 
 Verification was reworked completely during this project.
@@ -96,14 +69,15 @@ First of all, Dafny code itself was analyzed to get a better understanding of ho
 Those errors could finally directly be extracted out of the Dafny error reporting engine.
 Thus, the user is now informed not only about logical errors, but also about syntax errors.
 Furthermore, warnings and information diagnostics are now also reported.
-Reporting warnings something the pre-existing project did not do and was actually already issued on the official Dafny git repository \cite{dafny_noWarnings}.
-With the symbol table, it is now also possible to underline complete code blocks, instead of just single symbols which were barely visible at the beginning of the project as you can see in figure \ref{fig:error_whole_block}.
-This shows well how the quality of the tool could be improved.
+Reporting warnings is something the pre-existing project did not do and was actually already issued on the official Dafny git repository \cite{dafny_noWarnings}.
+With the symbol table, it is now also possible to underline complete code blocks,
+instead of just single symbols which were barely visible at the beginning of the project as you can see in figure \ref{fig:error_whole_block}.
+This shows well how the quality of the language server could be improved.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=9cm]{results/error_whole_block.png}
-    \caption{Underlinding Before (Top) and After (Buttom)}
+    \caption{Underlinding Before (Top) and After (Bottom)}
     \label{fig:error_whole_block}
 \end{figure}
 
@@ -151,7 +125,7 @@ The current implementation improved that significantly, is now completely integr
 \end{figure}
 
 
-If the user chooses the option to \code{Compile And Run}, the actual launch of the executable takes quite a long time - up to about 10 seconds.
+If the user chooses the option to \code{Compile And Run}, the actual launch of the executable takes quite a long time - up to about 20 seconds.
 However, this delay is not related to the language server or the compilation process.
 If the executable is launched manually within another console outside of Visual Studio Code, it also takes long until the program starts.
 The effect just occurs the first time an executable is launched.
@@ -204,7 +178,7 @@ It was additionally implemented as an exemplary feature, to show off how easy so
 Similar to hover information, other features like text highlighting can be added as well in the future, which is discussed in chapter \ref{section:conclusion}.
 Hover may not provide much useful information to the user, but it is still a nice gimmick.
 For example, in figure \ref{fig:hover} the user can actually find out, where his \code{field} is declared if he is unsure.
-
+\intnote{bild noch updaten}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth/2]{results/hover.png}
@@ -226,9 +200,8 @@ The cursor can now be at any character within a symbol.\\
 Technically, the feature is misnamed.
 A better name would actually be \code{Go to Declaration}, since it jumps to the symbol declaration, not definition.
 LSP would even offer a dedicated handler for this, \code{textDocument/declaration} \cite{lspspec}.
-Since VS Code names the short cut „GoToDefinition“, since the definition handler was implemented, we named that feature in our previouse theses in the same way.
-We kept the name to maintain the consistency of our work.
-But perhaps a rename would be appropriate.  \intnote{todo das ist jetzt eig so geschriebn fast schon wieder implementation (begründung) statt result...} \\
+However, we kept the name to maintain the consistency of our work.
+But perhaps a rename would be appropriate.
 
 To increase the user experience with this feature, notifications are sent to the user if an error occurred or the requested symbol was already a declaration.r
 \begin{figure}[H]
@@ -238,20 +211,19 @@ To increase the user experience with this feature, notifications are sent to the
     \label{fig:goto}
 \end{figure}
 
-\intnote{die msg tut iwie nich xD is aber my bad hab da noch was geändert kürzlich. punkt 2: vscode reported das grad selber bei return null, damüssen wir unsere eigene notification eig net bringen. todo}
-
-Jumps can also be done across different files.
-If the proper file is not opened, VS Code will just open it inside the workspace.
+Jumps can also be done across included files.
+If the targeted file is not opened, VS Code will just open it inside the workspace.
 It is also possible to go to the definition of \code{this}-Expressions, which will just jump to the class definition.
 The feature works also across code that is not within a block statement, for example for expressions occurring inside an \code{ensures}-clause.
 
 \subsubsection{Rename}
-Rename is a feature that could only be added, since the symbol table provides all necessary information.
-If the user wants to execute a rename, all dependent symbols are automatically marked correctly as you see in figure \ref{fig:rename}.
+Rename was newly added to the language server.
+It is a feature that could only be realized, since the symbol table provides all necessary information.
+If the user wants to execute a rename, all dependent symbols are deduced correctly as you see in figure \ref{fig:rename}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{results/rename}
+    \includegraphics[width=\textwidth]{results/rename.png}
     \caption{Rename of a Symbol}
     \label{fig:rename}
 \end{figure}
@@ -259,21 +231,21 @@ If the user wants to execute a rename, all dependent symbols are automatically m
 It was embraced to provide as much user experience as possible for this feature, even if it is relatively simple.
 In particular, this means if there is no renamable symbol at the cursor, the user is informed by a notification.
 The algorithm will also check, if the new symbol name is valid.
-This means, it must not start with an underscore or it must not be any reserved Dafny word.
+This means, it must not start with an underscore or number, and it must not be any reserved Dafny word.
 Also, we limited the allowed new name to alphanumerical characters, although wild unicode names would be allowed by Dafny.\\
 
 This could even be driven further.
-For example, it could be checked, whether a symbol with the same new name already exists.
+For example, it could be checked, whether a symbol with the same scope already exists.
 Functionality for this is already available by the symbol table, since something similar is needed by autocompletion.
-Furthermore, it is currently not checked, if the new symbol name starts with a number, which is prohibited.
-That is also something that could easily be added. \intnote{das sind so one-liner im code... könnten wir echt nochs chnell umsetzen}\\
+That is also something that could easily be added.
 
 Since Dafny reserved words may change in the future, the wordlist is configurable for the end-user by adjusting a config file.
 The process targets more advanced users and is described in the readme file.\\
 
-Because the symbol table reports occurrences across imported files as well, the rename feature works fine across the complete workspace.
-
-\intnote{abschnitt gefällt mir mnicht, evtl neu schreiben. ist einfach blabla mit 0 inhalt. - find ich eig ned. }
+Because the symbol table reports occurrences across imported files as well, the rename feature works well for included files.
+However, if a file gets included elsewhere, it does not know about it.
+This is, since no global symbol table is currently used for the entire workspace.
+This issue and possible solutions were described in chapter \ref{section:globalSymbolTable}.\\
 
 \subsubsection{CodeLens}
 CodeLens is an excellent way for the developer to see which classes and methods were used how often - and where.
@@ -307,28 +279,7 @@ through the code.
     \label{fig:result_codelens_references_popup}
 \end{figure}
 
-Since no global symbol table is currently used for the entire workspace in the language server,
-references in included files are not displayed.
-This concerns all Dafny files that do not have their own main function and were included by other files. \\
-
-There are basically two ways to improve this: \\
-
-\textbf{Global Symbol Table}\\
-We recommend this first variant.
-Implement the global symbol table for the entire workspace.
-This not only improves runtime by giving the updatability of individual symbols,
-as described in section XXX, but automatically solves the problem.
-With a symbol table for the whole workspace and no longer per file,
-files automatically know if they are included by other files. \\
-
-\textbf{Buffer "included by" Information}\\
-The second variant is possible without the global symbol table, but involves some tinkering.
-If a file A is included in file B, an additional buffer within file A indicates that it was included by file B.
-Keeping all these references up to date is also connected with logical effort.
-Therefore, it is not advisable to implement the global and updateable symbol table.
-
- \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun.
-seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo}
+Just like Rename, the feature won't work for code that includes the current file.
 
 \subsubsection{Automatic Code Completion}
 The code suggestions for automatic completion is a very useful feature for Dafny developers.
