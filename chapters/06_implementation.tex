@@ -235,28 +235,95 @@ Whether the Dafny file is valid, if how many errors are present and the Dafny la
 
 \textbf{\code{serverRequests}}\\
 This package is responsible for server requests which are not automatically handled by the VS Code.
-Specifically this concerns the LSP extensions for the compilation of Dafny programs and the CounterExample.
+Specifically this concerns the LSP extensions for the compilation of Dafny programs and the CounterExample
+as shown in figure \ref{fig:serverRequests}.
+
+Both components receive an instance of \code{LanguageClient} injected to gain access to the server.
+As explained for the component \code{RequestCounterExample},
+the CounterExample feature limits the server requests.
+Therefore only one instance of this component is generated and injected callbacks are used.
+ is executed each time the user explicitly requests a compile.
+A new instance of \code{Compile} is created each time.
+Therefore, an asynchronous method is used for this component.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/serverRequests}
+    \caption{Module \code{serverRequests}}
+    \label{fig:serverRequests}
+\end{figure}
 
 \textbf{\code{localExecution}}\\
 This package is used for the local execution of programs.
 For example to execute \code{.exe} files.
 For macOS and Linux these are executed using mono.
 This module takes care of the correct execution of compiled Dafny programs
-and of the Dafny language server, which is also an \code{.exe} file.
+and of the Dafny language server, which is also an \code{.exe} file.\\
+
+\code{ExecutionCapabilities} check for supported capabilities.
+Under Windows \code{.exe} files can be simply executed.
+Under macOS and Linux the mono version is checked and if necessary the user is asked to install mono. \\
+
+
+Die Komponente xxx führt kompilierte Dafny programme aus. Sie erstellt einen entsprechenden Terminal Prozess,
+fürt das Program aus und zeigt dem Benutzer die entsprechende Ausgabe dar. Diese Komponente wird von
+\code{Compile} verwendet. Natürlich wird gegen das jeweilige Interface programmiert, wie sie in Figure xx dargestellt sind.
+
+The component \code{DafnyRunner}  executes compiled Dafny programs.
+It creates a corresponding terminal process
+for the program and shows the user the corresponding output.
+This component is used by \code{Compile}.
+Of course, programming is done against the respective interface, as shown in figure \ref{fig:localExecution}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/localExecution}
+    \caption{Module \code{localExecution}}
+    \label{fig:localExecution}
+\end{figure}
 
 \textbf{\code{typeInterfaces}}\\
 Special TypeScript type extensions,
 as they are used for the return values of server requests
 that are not contained in the LSP, are defined in interfaces.
-This concerns the return types of compile and CounterExample.
+This concerns the return types of compile and CounterExample as shown in figure \ref{fig:typeInterfaces}.
+
+In principle, there is a type interface for the arguments and for the results for each own implemented LSP feature.
+Only for CodeLens the types are somewhat more complex, which is why a different grouping was created for this interface.
+\code{ICodeLensReferences} is a file, which contains several interfaces and no own module.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/typeInterfaces}
+    \caption{Module \code{typeInterfaces}}
+    \label{fig:typeInterfaces}
+\end{figure}
 
 \textbf{\code{stringResources}}\\
 All string resources are stored in this module.
+They are logically grouped by usage area, as shown in figure \ref{fig:stringResources}.
 Contrary to the design, this module does not only contain UII messages displayed to the user as mentioned in section
 \ref{section:implementation:client:module_encapsulation},
 but is the central outsourcing of all strings that also have to do with configurations.
 For example which file extensions Dafny files have.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/stringResources}
+    \caption{Module \code{stringResources}}
+    \label{fig:stringResources}
+\end{figure}
+
+The structure consists of exported classes with static members. For simplicity, these members are not listed in the figure.
+In listing \ref{lst:stringResourcesExample} is an example.
+
+\begin{lstlisting}[language=typescript, caption={Excerpt from class \code{LanguageServerNotification}}, captionpos=b, label={lst:stringResourcesExample}]
+export class LanguageServerNotification {
+  public static Error: string = "ERROR";
+  public static Warning: string = "WARNING";
+  public static Info: string = "INFO";
+[..]
+\end{lstlisting}
 
 \subsubsection{Encapsulation of the VS Code Components}
  \intnote{einfache migration auf andere IDE ermoeglicht}
