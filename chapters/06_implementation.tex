@@ -1406,23 +1406,102 @@ It is split into unit, integration and system tests.
 To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
 
 \subsubsection{Unit Tests}
-Our core logic components all use an interface.
-When using components, programming is done exclusively against the corresponding interface. \\
+Since all our core components are progarammed against interfaces, testing them is not that hard.
+One can simply create fake, mock or stub, implementing the interface, and use it for testing purposes.\\
 
-This encapsulation of components allows essential core logic to be efficiently covered by unit tests. \\
+\textbf{Symbol Table Generation}\\
+To test the symbol table generation, dedicated Dafny files were written.
+The tests first call the \code{DafnaTranslationUnit} to create a dafnyProgram.
+The dafnyProgram is then handed to the \code{SymbolTableGenerator}.
+The output is - once more - converted into a string representation.
+This outcome is then compared a against an expectation file.\\
 
-Due to the fact that our unit tests are run significantly faster than the integration tests, it is very important that unit tests are written.
-Due to the fast run-through they are a very good support in the ongoing development.
-If an error creeps in due to a change, it will be detected immediately by the existing tests.
-If an error needs to be corrected or a function needs to be extended, a Test-Driven-Development approach can be used to work in a goal-oriented manner. \\
+Technically, since the \code{TranslationUnit} is inovked as well, the test is not completely isolated.
+One would have to serialize the dafnyProgram, and use that one as a test input.
+However, to be able to quickly adjust the testfile, this was not done.\\
 
-In our unit tests, primarily isolated and more complex logic blocks are tested.
-These are not only covered by a Code Coverage metric, as described in the chapter "Project Management"
-\ref{section:project_management} \nameref{section:project_management},
-but we were also busy covering edge cases by testing.
+Another flaw of this test is, that the whole symbol table is tested at once.
+There is not a single test that checks if symbol X gets used 5 times - and checks only that.
+The string representation contains information about every symbol of the whole code at once, and the whole code is tested.
+While this is not best practice, it allowed us for a much more efficient testing.
+Even if a test fails, the string representation displays exactly why it failed, so there is not a big downside to this.\\
 
-Of course the interaction of the components is also tested.
-This will be discussed in the following section regarding integration tests.
+An example expectation file of this test is shown in listing \ref{lst:expectTest}.
+
+\begin{lstlisting}[language=csharp, caption={Test Expectation}, captionpos=b, label={lst:expectTest]
+[L0:C0] "_module" | P : [L0]_programRootNode | D : self | C : 2 | U : 0
+[L1:C7] "MyClass" | P : [L0]_module | D : self | C : 4 | U : 0
+[L3:C9] "field" | P : [L1]MyClass | D : self | C :  | U : 2
+[L5:C13] "add" | P : [L1]MyClass | D : self | C : 3 | U : 1
+[L5:C17] "i" | P : [L5]add | D : self | C :  | U : 1
+[L5:C25] "j" | P : [L5]add | D : self | C :  | U : 1
+[L5:C42] "r" | P : [L5]add | D : self | C :  | U : 2
+[L6:C8] "r" | P : [L5]add | D : [L5]r | C :  | U : 
+[L6:C13] "i" | P : [L5]add | D : [L5]i | C :  | U : 
+[L6:C17] "j" | P : [L5]add | D : [L5]j | C :  | U : 
+[L7:C15] "r" | P : [L5]add | D : [L5]r | C :  | U : 
+[L10:C12] "aMethod" | P : [L1]MyClass | D : self | C : 1 | U : 0
+[L10:C31] "this" | P : [L10]aMethod | D : [L1]MyClass | C :  | U : 
+[L11:C13] "aLocalVar" | P : [L10]aMethod | D : self | C :  | U : 2
+[L12:C9] "field" | P : [L10]aMethod | D : [L3]field | C :  | U : 
+[L12:C18] "aLocalVar" | P : [L10]aMethod | D : [L11]aLocalVar | C :  | U : 
+[L13:C9] "aLocalVar" | P : [L10]aMethod | D : [L11]aLocalVar | C :  | U : 
+[L13:C22] "add" | P : [L10]aMethod | D : [L5]add | C :  | U : 
+[L13:C26] "field" | P : [L10]aMethod | D : [L3]field | C :  | U : 
+[L16:C5] "_ctor" | P : [L1]MyClass | D : self | C : 0 | U : 0
+[L0:C0] "_default" | P : [L0]_module | D : self | C : 0 | U : 0
+\end{lstlisting}
+
+The reader takes note that the test expectation is simplified.
+It is not exactly tested, if symbol X is used by symbol Y.
+Instead, just some counts are checked.
+However, by testing if the parent is correct, and by testing the children count, we can be confident that the parent-child relationship is correct.
+The same applies for the declaration-usage relation.
+You further note, that there is no information given about base clases, parameter lists or such.
+But items like these are indirectly tested.
+If the base-class would not not be attached properly, a symbols declaration would not be found, which could be seen in the string representation.
+
+\textbf{Symbol Table Navigation}\\
+To test the navigator and manager component, a fake symbol class was created.
+It allows to define the symbol position within the constructor.
+Afterwards, symbols can be attached to each other at will.
+This way, the top-down and bottom-up algorithms could be tested.
+An example is shown in listing \ref{lst:botuptest}.
+
+\begin{lstlisting}[language=csharp, caption={Navigator Unit Test}, captionpos=b, label={lst:botuptest]
+public void BottomUpFirstChild()
+{
+    SymbolInformationFake rootEntry = new SymbolInformationFake(1, 0, 1, 0, 5, 0, defaultFile, "Parent");
+    SymbolInformationFake mySymbol = new SymbolInformationFake(2, 0, 2, 0, 5, 0, defaultFile, "Child");
+    rootEntry.AddChild(mySymbol);
+    mySymbol.SetParent(rootEntry);
+    Predicate<ISymbolInformation> filter = (s => s.Name.Equals("Child"));
+    var symbol = nav.BottomUpFirst(mySymbol, filter);
+    Assert.AreEqual(mySymbol, symbol);
+}
+\end{lstlisting}
+
+\textbf{Core Provider}\\
+To efficiently test the core providers, a \code{FakeSymbolTableManager} was created.
+It wraps a symbol table, in which a few fake symobls are attached to each other.
+Within the constructor of the fake-manager, it is told which symbol the manager will statically return.
+This way, the navigator component is not invoked.\\
+
+This fake manager is used to test features like Rename, GoToDefinition or HoverInformation.
+It could just be injected to the providers, since the required interface \code{ISymbolTableManager} is implemented.
+By this construct, the correct assembly or Renamings or HoverInformation could be tested.
+An example is shown in listing \ref{lst:renameUnit}
+
+\begin{lstlisting}[language=csharp, caption={Core Provider Unit Test}, captionpos=b, label={lst:botuptest]
+public void ReservedWord()
+{
+    ISymbolTableManager manager = new FakeSymbolManager(returnsDeclaration: false, returnsNull: false);
+    var provider = new RenameProvider(manager);
+    var result = provider.GetRenameChanges("method", new Uri("file:///N:/u/l.l"), 2, 22);
+    Assert.IsTrue(provider.Outcome.Error, "error expected in rename-outcome");
+    Assert.AreEqual("method" + DafnyLanguageServer.Resources.LoggingMessages.rename_reserved_word, provider.Outcome.Msg);
+}
+\end{lstlisting}
 
 %%%%%%%%%%%%%INTEGRATIONM TEST
 
