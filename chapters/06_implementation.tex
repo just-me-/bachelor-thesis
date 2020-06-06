@@ -533,7 +533,7 @@ However, this is not done directly as a string property, but wrapped in a class 
 Thus, the actual representation on the hard disk is separated even further.
 The \code{PhysicalFile} class can then also take responsibility for applying file updates.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/workspace.png}
     \caption{WorkspaceManager and FileRepository}
@@ -561,7 +561,7 @@ Dafny Access it the package invoking the Dafny backend to obtain verification re
 The core class in this package is the \code{DafnyTranslationUnit}.
 It was partially taken over from the pre-existing projects, but as part of this bachelor thesis it was refactored and simplified.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=12cm]{implementation/DTUSeq.png}
     \caption{WorkspaceManager and FileRepository}
@@ -953,7 +953,7 @@ If the symbol cannot be found, the algorithm will search the default scope at th
 Since the symbol tree is moved upwards, the process takes $O(logn)$ time.
 It is executed for every occurring symbol, thus the building of the symbol table takes $O(nlogn)$ time, while n denoted the amount of occurring symbols.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/findDeclaration.png}
     \caption{Finding a Declaration using the Navigator}
@@ -974,7 +974,7 @@ Finally, variable c will be returned as the best match.
 Default namespaces and default classes had to be treated separately for this case.
 Since the tree is moved along a single branch, the runtime for this process is $O(logn)$.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/topDownPaintFTW.png}
     \caption{Top Down Navigation}
