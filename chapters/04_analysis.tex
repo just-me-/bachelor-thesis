@@ -364,7 +364,7 @@ This means that two variables with the same name exist.
 The local variable can be accessed via its name, but to access the class member, the programmer needs to write \code{this} in front of the variable name.\\
 
 One can even go further and redefine a local variable in a nested block scope.
-Consider the following code snippet.
+Consider the following code snippet in listing \ref{lst:shadowing}.
 It defines a class with a member variable \code{a}.
 It is initialized with value $2$ in the class constructor.
 In method \code{m}, the variable \code{a} is printed.
@@ -408,7 +408,8 @@ This behaviour can be summarized with the following three rules:
     \item If a class member is called via the \code{this} identifier, the class member is significant.
 \end{itemize}
 
-During analysis of this problem, the following recursive algorithm was created to solve the problem of finding a symbols relevant declaration.
+During analysis of this problem, the in listing \ref{lst:findsymbol} recursive algorithm was created
+to solve the problem of finding a symbols relevant declaration.
 
 \begin{lstlisting}[language=csharp, caption={Finding Symbol Definition}, captionpos=b, label={lst:findsymbol}]
 private Symbol FindDeclaration(Symbol target, Symbol scope)
@@ -432,7 +433,7 @@ If all declarations are known, the algorithm does already work for symbols defin
 \subsection{Symbol Table}
 Whenever source code is compiled into an executable assembly, the first step is to \textit{parse} the code.
 The parser of a compiler works with two major concepts.
-One of them is the abstract syntax tree (AST), the other is the symbol table.
+One of them is the abstract syntax tree (AST), the other is the symbol table. \glsadd{ast}
 The AST is a tree, that contains information about the scope of symbols.
 Consider the following code snippet.
 
