@@ -472,36 +472,39 @@ The two concepts are strongly coupled.
 \subsubsection{Requirements for the Symbol Table}
 To be able to implement the required feature set for this project, the following questions must be answered by the symbol table or the AST, respectively.
 
- \intnote{Why do you need this information.}
-
-
 \begin{itemize}
     \item Cursor position
     \begin{itemize}
         \item Which name segment (if any) is at the cursor's position?
+        To have a symbol as an entry point for the GoToDefinition feature.
     \end{itemize}
 
     \item GoToDefinition
         \begin{itemize}
             \item Where is the symbol declared?
+            To go from the received entry symbol to the declaration symbol.
         \end{itemize}
 
     \item CodeLens
         \begin{itemize}
             \item How often, and where, is a declaration used?
-            \item What is stated inside each usage?
+            To display the references to the plugin user.
         \end{itemize}
 
     \item Rename
         \begin{itemize}
             \item What are all occurrences of a symbol?
+            To rename all symbols correctly.
         \end{itemize}
 
-    \item Autocompletion
+    \item AutoCompletion
         \begin{itemize}
             \item Within which scope was the event triggered?
+            To suggest only symbols in the reachable scope.
             \item Which declarations are available inside a certain scope?
+            To suggest all symbols over several files, which are accessible. 
             \item What is the context; what was just typed before (e.g. a dot or the keyword \code{new})
+            To provide the user with more specific suggestions.
         \end{itemize}
 \end{itemize}
 
