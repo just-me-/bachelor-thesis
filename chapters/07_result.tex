@@ -430,9 +430,7 @@ This process uses the GitHub pipeline \code{release-marketplace}, which
 was adapted by Fabian Hauser \cite{our-dafny-plugin-github-publish}.
 
 Once the pull request to the Dafny project is complete,
-the preview plugin can replace the original plugin.
-
-\intnote{das war nicht so verständlich hier. hab versucht es zu clarifyen. ist noch alles richtig was hier steht?}
+the preview released plugin can completely replace the original plugin.
 
 \subsubsection{Download of the Dafny Language Server}
 In the pre-existing project, Dafny was downloaded from GitHub \cite{dafny_lang_builds}.
@@ -444,19 +442,16 @@ Once the pull request to Dafny is accepted, the download process can then be eas
 
 We decided on this simple variant in order to keep the effort for this temporary solution as low as possible.
 Alternatively, this process could have been automated with the GitLab CI using the GitLab API \cite{gitlab-api} to download the CI artifacts.
-The artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}. \intnote{zu technisch für result?}
+The artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}.
 
-\intnote{das war nicht so verständlich hier. hab versucht es zu clarifyen. ist noch alles richtig was hier steht?}
-
-
-\subsection{Performance}
+\subsection{Performance of the Language Server}
 To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
 Within a method, code lines are generated, either containing
 \begin{itemize}
-    \item a variable definition: \code{var v142 := v16;}
-    \item a variable access: \code{print v142;}
-    \item a block scope: \code{while (true) \{ \dots}
-    \item ending a blockscope: \code{\}}
+    \item A variable definition: \code{var v142 := v16;}
+    \item A variable access: \code{print v142;}
+    \item A block scope: \code{while (true) \{ \dots}
+    \item Ending a blockscope: \code{\}}
 \end{itemize}
 The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 90\% variable name segments, that have to be resolved.
 This challenges the symbol table quite a bit.
@@ -470,7 +465,9 @@ The test has shown the following results:
     \item 10'000 LOC: 18'000ms
 \end{itemize}
 
-This scheme follows a $O(nlogn)$ scheme, which was expected.
+ \intnote{grafik in excel erstellen, screenshot, fix rein. todo }
+
+This scheme follows a $O(n*log(n))$ scheme, which was expected.
 While 18seconds seem quite high, consider that 10'000 lines of code is huge.
 When working on the \code{DafnyAST.cs} file, which also contains 10'000 LOC, even Visual Studio struggled.
 Practical tests have shown that everyday usage of the plugin is pleasant.

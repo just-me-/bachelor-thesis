@@ -1438,7 +1438,8 @@ However, by testing if the parent is correct, and by testing the children count,
 The same applies for the declaration-usage relation.
 You further note, that there is no information given about base clases, parameter lists or such.
 But items like these are indirectly tested.
-If the base-class would not not be attached properly, a symbols declaration would not be found, which could be seen in the string representation.
+If the base-class would not not be attached properly,
+a symbols declaration would not be found, which could be seen in the string representation.\\
 
 \textbf{Symbol Table Navigation}\\
 To test the navigator and manager component, a fake symbol class was created.
@@ -1621,18 +1622,17 @@ public void FailureSyntaxErrorSemiExpected()
 As you can see, the test contains only two lines of code.
 The first is stating the test file, the second one the test result expectation.
 Tests for other features look quite similar, just the expectation format may be different.
-Thus, the integration test architecture could be created in a way so that the creation of tests is extremely simple.
+Thus, the integration test architecture could be created in a way so that the creation of tests is extremely simple
+as you see in figure \ref{fig:testArchitecture}.
 The code is kept very clean and contains no duplicated parts.
 Tests can easily be organized into classes \textendash{} considering compilation, this could for example be the separation into logical errors, syntax errors, wrong file types and so on.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth/2]{integrationTestDesign.png}
+    \includegraphics[width=10cm]{integrationTestDesign.png}
     \caption{Test Architecture on the Basis of Compilation}
     \label{fig:testArchitecture}
 \end{figure}
-
-
 
 
 \subsection{Usability Test}
@@ -1675,7 +1675,7 @@ By using markdown instead of plaintext, HoverInformation could be improved signi
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Hover Before (left) and Cleaner Version (right)}
+    \caption{Hover Before (Left) and Cleaner Version (Right)}
     \label{fig:hoverNowVsThen}
 \end{figure}
 
@@ -1685,11 +1685,11 @@ You should not have to press \code{control + space} as trigger.
 This issue was anyway pending and was implemented shortly after the usability test.
 
 In addition, the suggested methods lacked to inform about the supported parameters.
-With regard to the parameters, this has already been discussed in section  \intnote{Todo}. \\
+With regard to the parameters, this has already been discussed in section \ref{section:implementation:core:completion}. \\
 
 \subsubsection{Error Message Without Brackets}
 Error messages are reporting the code symbol at which the error occurrs.
-For example, when the error starts at the body of a method, the error message contains \linebreak
+For example, when the error starts at the body of a method, the error message contains
 \code{Assertion Violation at [ { ] in line 5.}}.
 The square brackets were confusing the testperson.
 Thus it was decided to leave them out, and instead show the code token on a new line.
@@ -1699,15 +1699,22 @@ The issue is shown in figure \ref{fig:cleaner_error_msg}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Error Message before (top) and after (bottom)}
+    \caption{Error Message Before (Top) and After (Bottom)}
     \label{fig:cleaner_error_msg}
 \end{figure}
 
 
 \subsubsection{Compile Improvements}
 Some plugins have a small green play icon in the upper right corner of the IDE for compilation,
-which can be pressed.
-The test person would have wished such a play button  \cite{interview-remo}. \\
+which can be pressed as shown in figure \ref{fig:runPython}.
+The test person would have wished such a play button \cite{interview-remo}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Foto Remo... Playbutton to run Python code}
+    \label{fig:runPython}
+\end{figure}
 
 It is possible to also add this icon for Dafny. If the button is clicked, a compile and run is triggered.
 Similar to the UI elements for the Dafny status bar,
@@ -1718,14 +1725,13 @@ Due to the lack of time, the feature could not be implemented anymore, though.\\
 When running the Dafny program,
 a lot of text messages are displayed,
 which distract from the relevant output.
-
 To shorten the message length, full paths could be ommitted and insetad, just file names are shown.
-This is illustrated in figuire \ref{fig:long_compile_output}.
+This is illustrated in figure \ref{fig:long_compile_output}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Output to be Improved}
+    \caption{Console Output That Could be Improved}
     \label{fig:long_compile_output}
 \end{figure}
 
@@ -1752,8 +1758,8 @@ As a simple solution, we decided to separate the client (VSCode plugin) and serv
 This not only simplifies the CI process but also ensures a generally better and clearer separation. \\
 
 As a result, the client could still be easily analyzed with the previous Sonar scanner.
-Regarding the server, a special Sonar scanner for MSBuild had to be installed, which publishes the analysis in a dedicated SonarCloud project \cite{dev}.
-The available statistics are very helpful for code reviews.\\
+Regarding the server, a special Sonar scanner for \textit{MSBuild} had to be installed, which publishes the analysis in a dedicated SonarCloud project \cite{dev}.
+The available statistics, like the finding of bugs as shown in fugure \ref{fig:sonarexample}, are very helpful for code reviews.\\
 
 As a little extra, not only our Dafny language server part is analyzed by Sonar,
 but the whole Dafny project.
@@ -1793,7 +1799,7 @@ However, if someone does not install these tools,
 and the code is not formatted according to the definition,
 the CI pipeline will fail. \\
 
-Prettier was selected for this function.
+Prettier was selected for this function \cite{dev}.
 Alternatively, ESLint would have been an option \cite{eslint}.
 This would also have automatically integrated a static code analysis in the CI.
 However, we decided to use a combination of SonarLint and Prettier,
