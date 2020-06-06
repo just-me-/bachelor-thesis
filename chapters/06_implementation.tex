@@ -1402,7 +1402,7 @@ However, this would certainly be a good approach to solve the problem.
 \subsection{Testing}
 
 This section provides a general overview of the testing.
-It is split into unit, integration and system tests.
+It is split into unit and integration tests.
 To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
 
 \subsubsection{Unit Tests}
@@ -1426,9 +1426,9 @@ The string representation contains information about every symbol of the whole c
 While this is not best practice, it allowed us for a much more efficient testing.
 Even if a test fails, the string representation displays exactly why it failed, so there is not a big downside to this.\\
 
-An example expectation file of this test is shown in listing \ref{lst:expectTest}.
+An example expectation file of this test is shown below:
 
-\begin{lstlisting}[language=csharp, caption={Test Expectation}, captionpos=b, label={lst:expectTest]
+\begin{verbatim}
 [L0:C0] "_module" | P : [L0]_programRootNode | D : self | C : 2 | U : 0
 [L1:C7] "MyClass" | P : [L0]_module | D : self | C : 4 | U : 0
 [L3:C9] "field" | P : [L1]MyClass | D : self | C :  | U : 2
@@ -1450,7 +1450,7 @@ An example expectation file of this test is shown in listing \ref{lst:expectTest
 [L13:C26] "field" | P : [L10]aMethod | D : [L3]field | C :  | U : 
 [L16:C5] "_ctor" | P : [L1]MyClass | D : self | C : 0 | U : 0
 [L0:C0] "_default" | P : [L0]_module | D : self | C : 0 | U : 0
-\end{lstlisting}
+\end{verbatim}
 
 The reader takes note that the test expectation is simplified.
 It is not exactly tested, if symbol X is used by symbol Y.
@@ -1502,6 +1502,19 @@ public void ReservedWord()
     Assert.AreEqual("method" + DafnyLanguageServer.Resources.LoggingMessages.rename_reserved_word, provider.Outcome.Msg);
 }
 \end{lstlisting}
+
+\textbf{Core Provider not depending on the Symbol Table}\\
+The features Compile and CounterExample are the only ones not depending on the symbol table.
+These were already tested in a similiar matter in the prototype.\\
+
+To test CounterExamples, a custom \code{model.bvd} file can be injected into the provider.
+This way, predefined model files are analyzed instead of the model from the live Dafny code.\\
+
+To test compilation, a \code{.dfy} file is defined in the test method.
+The test will again call the translation unit, to create \code{TranslationResults}.
+Again, this is not optimal but practical.
+Out of the translation results, a file repoistory is created, which is then handed to provider.
+
 
 %%%%%%%%%%%%%INTEGRATIONM TEST
 
