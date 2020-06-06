@@ -4,7 +4,7 @@
  \intnote{bis zu 5 seiten ist noch im limit drinne. unbedingt noch bilder hinzufügen}
 
 This chapter contains a brief overview of the bachelor thesis at hand.
-First, the technologies \textit{Dafny} and \textit{language server protocol} are explained to provide the necessary context.
+First, the technologies Dafny and language server protocol are explained to provide the necessary context.
 This is followed by a presentation of the objectives, results achieved and future prospects.
 
 \subsection{Dafny}
@@ -19,9 +19,9 @@ This means, given the precondition holds, the code will manipulate data only thu
 Dafny offers optimizations for such proofs as an advantage over other programming languages.
 
 \subsection{Language Server Protocol}
-The language server protocol (LSP) is a specification for communication.
+The language server protocol (LSP) is a specification for communication. \glsadd{lsp}
 It regulates data exchange between an IDE and a so called language server.
-This ensures a separation between the integrated development environment (IDE) and the actual programming language support of the language server.
+This ensures a separation between the integrated development environment (IDE) and the actual programming language support of the language server. \glsadd{ide}
 With this standardized protocol, a language server can be accessed by different IDEs. \\
 
 A plugin for the IDE "Visual Studio Code" was implemented during this bachelor thesis.
@@ -55,14 +55,14 @@ Within this bachelor thesis, the work of the existing solution will be continued
 \subsection{Goals}
 At HSR, Dafny is taught within the course \textit{Software Engineering}.
 Students have to make their first steps in Dafny, using a simple tutorial.
-To provide the students with the necessary support, they shall profit by common IDE features like
+To provide the students with the necessary support, they shall profit by common IDE features like:
 \begin{itemize}
-    \item Syntax highlighting to make the readability more pleasant
-    \item Error highlighting to correct faulty code efficiently
-    \item Compile and run to run Dafny programs and check the output
-    \item AutoCompletion to code efficiently
-    \item GoToDefinition to be able to view definitions quickly
-    \item Showing CounterExamples to efficiently remedy faulty pre- and postconditions
+    \item Syntax highlighting to make the readability more pleasant.
+    \item Error highlighting to correct faulty code efficiently.
+    \item Compile and run to run Dafny programs and check the output.
+    \item AutoCompletion to code efficiently.
+    \item GoToDefinition to be able to view definitions quickly.
+    \item Showing CounterExamples to efficiently remedy faulty pre- and postconditions.
 \end{itemize}
 
 On the other hand, the plugin shall also be used in a professional environment in the future.
@@ -121,7 +121,8 @@ The features shown in figure \ref{fig:show_autocompletion_and_hover} such as Aut
     \label{fig:symbol_table_for_autocompletion_and_hover}
 \end{figure}
 
-Dafny developers can now benefit by a plugin, which provides a great user experience, but also gained much robustness compared to the prototype.\\
+Dafny developers can now benefit by a plugin, which provides a great user experience,
+but also gained much robustness compared to the prototype from our previous project.\\
 
 %%Dev Benefits.
 Aside the improvements in features, many internal aspects were also improved.
@@ -156,7 +157,7 @@ Ideas include:
 \begin{itemize}
     \item Automatic generation of contracts
     \item Debugging for Dafny
-    \item Create clients for other IDE's
+    \item Create clients for other IDE's, which connect to our Dafny language server
 \end{itemize}
 
 Aside the widening of the feature range, it is necessary to complete the visitor.
