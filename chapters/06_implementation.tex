@@ -36,7 +36,7 @@ For this purpose one importable module with the name \code{\_<Directory>Modules}
 Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
 In addition, the dependencies among each other are shown.
 For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} to each package have been omitted.
-The dependency of \code{extensions} on VS Code is based on dependeny injection and represents the plugin entry point.
+The dependency of \code{extensions} on VSCode is based on dependeny injection and represents the plugin entry point.
 Apart from this dependency, no dependency injection dependencies are shown in the diagram. \\
 
 \begin{figure}[H]
@@ -70,7 +70,7 @@ For this reason, their contents are not displayed for clarity. \\
 
 In addition, there are two core modules, which were not considered in the design concept.
 The need for these modules only became apparent during the implementation phase.
-This concerns the isolation of VS Code components
+This concerns the isolation of VSCode components
 and the download of the Dafny language server.
 These two modules will be discussed separately in the following sections and not in this section. \\
 
@@ -100,8 +100,8 @@ To start the language server as a local process, two steps are basically require
 
 First, basic options are set for the language server.
 These options are set in the \code{serverOptions} component. This component implements the \code{LanguageClient}
-of VS Code. "Client" is somewhat confusing in that sense, since this module is used to connect the language server; from client side.
-Among other things, the options are set with which command the server is started and which file types, which are opened in VS Code by the user of the plugin, should be transferred to the server. \\
+of VSCode. "Client" is somewhat confusing in that sense, since this module is used to connect the language server; from client side.
+Among other things, the options are set with which command the server is started and which file types, which are opened in VSCode by the user of the plugin, should be transferred to the server. \\
 
 Secondly, \code{serverInitializer} registers a callback as the program entry point to the created \code{serverOptions} instance
 and then the language server is started with \code{this.languageServer.start()}.
@@ -111,7 +111,7 @@ This component is part of the \code{localExecution} package.\\
 \textbf{\code{ui}}\\
 This package is responsible for all visual representations.
 This includes the status bar information and the display of the CounterModel.
-Also it registers VS Code commands and context menu additions. \\
+Also it registers VSCode commands and context menu additions. \\
 
 \code{DafnyUiManager} is the basic UI entry point and manages the UI components.
 It creates the individual components and updates them specific events if necessary.
@@ -125,14 +125,14 @@ be frozen and does not response anymore in an extreme case.\\
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Commands in the Context Menu and the VS Code Command Line}
+    \caption{Commands in the Context Menu and the VSCode Command Line}
     \label{fig:commands}
 \end{figure}
 
 The \code{Commands} package registers all commands that are offered to the user
 and links them to corresponding callback functions.
 These commands are available with the context menu
-and the available commands in the VS Code Command line, as shown in Figure \ref{fig:commands}.
+and the available commands in the VSCode Command line, as shown in Figure \ref{fig:commands}.
 Individual dependencies are injected. Thiese includes:
 \code{IDafnyRunner} to call compile and run as a callback as you can see for examle in listing \ref{lst:compileAndRun}.
 Furthermore \code{IDafnyUiManager} is injected
@@ -177,7 +177,7 @@ There are the following three types, each of which is displayed with a different
     \item {\bf Info} \textendash{} is shown in blue.
 \end{itemize}
 
-The logic of the display messages is provided directly by the VS Code API.
+The logic of the display messages is provided directly by the VSCode API.
 
 \begin{figure}[H]
     \centering
@@ -192,16 +192,16 @@ However, the providers module is not exported to the outside by the \code{ui} mo
 so it is shown in orange inf figure \ref{fig:ui_module}.
 The module was created purely for grouping and a better file structure.\\
 
-The \code{CodeLensProvider} component is very simple. CodeLens data transferred from the server is transferred to the VS Code API.
+The \code{CodeLensProvider} component is very simple. CodeLens data transferred from the server is transferred to the VSCode API.
 The logic is limited to passing the data through. The actual display of the CodeLens popup window is done via the
-VS Code API. More about the logic of CodeLens can be found in section \ref{section:implementation:features:codelens}. \\
+VSCode API. More about the logic of CodeLens can be found in section \ref{section:implementation:features:codelens}. \\
 
 The \code{CounterModelProvider} component is used to display and hide CounterModels.
 This component also stores in which Dafny files a CounterModel should be displayed and in which not.
 Therefore, if the user changes the opened file in the worspace, the CounterModel is automatically hidden or shown.
 The CounterModuel supports a dark and light mode as shown in figure \ref{fig:dark_light_mode}.
 This mode is automatically set accordingly,
-depending on whether VS Code is set to light or dark by the user.
+depending on whether VSCode is set to light or dark by the user.
 
 \begin{figure}[H]
     \centering
@@ -235,7 +235,7 @@ Whether the Dafny file is valid, if how many errors are present and the Dafny la
 \end{figure}
 
 \textbf{\code{serverRequests}}\\
-This package is responsible for server requests which are not automatically handled by the VS Code.
+This package is responsible for server requests which are not automatically handled by the VSCode.
 Specifically this concerns the LSP extensions for the compilation of Dafny programs and the CounterExample
 as shown in figure \ref{fig:serverRequests}.
 
@@ -326,20 +326,20 @@ export class LanguageServerNotification {
 [..]
 \end{lstlisting}
 
-\subsubsection{Encapsulation of the VS Code Components}
+\subsubsection{Encapsulation of the VSCode Components}
  \intnote{todo auch implementieren wie beschrieben :P}
 
-During our implementation of the client we noticed that almost all our modules require different modules of VS Code.
+During our implementation of the client we noticed that almost all our modules require different modules of VSCode.
 For example, the UI components needed different graphical elements while console processes are used to execute Dafny files.
-So the whole plugin had dependencies on the VS Code specific module kit,
+So the whole plugin had dependencies on the VSCode specific module kit,
 which could not be offered by other IDE's in the same way. \\
 
-Because we wanted to design our plugin for VS Code in a way that the migration for other plugins
+Because we wanted to design our plugin for VSCode in a way that the migration for other plugins
 for other IDE's is as easy as possible, we wrote additional module \code{ideApi} as shown in figure \ref{fig:packageIdeApi}.
-From this module the modules used by VS Code are exported with neutral names.
+From this module the modules used by VSCode are exported with neutral names.
 All modules except \code{typeInterfaces} and \code{stringResources} use this module directly or indirectly.
 The idea here is that when migrating to another IDE, adapter components can be written in module \code{ideApi}
-for the VS Code modules used in a centralized way.
+for the VSCode modules used in a centralized way.
 
 \begin{figure}[H]
     \centering
@@ -400,7 +400,7 @@ There are basically two gradations of configurations.
 First, there are the configurations for developers in the \code{stringResources} component.
 This includes for example Dafny file extensions and other configurations which are not to be changed directly by the user.
 
-Secound, there are the user configurations, which can be changed by the plugin user via the settings of VS Code.
+Secound, there are the user configurations, which can be changed by the plugin user via the settings of VSCode.
 In the figure \ref{fig:settings} the configurations offered to the user are listed.
 There is an extract of the plugin description, which can be seen by users in the plugin marketplace.
 
@@ -1194,11 +1194,11 @@ From certain IDE's such as XCode,
 you are used to seeing placeholders for the parameters and their types in AutoCompletion
 when you select a method from the suggestions \cite{sa}.
 That is why we wanted to implement such a convenient feature for our AutoCompletion as well.
-Unfortunately we had to realize that this feature is not yet supported natively by the VS Code API \cite{vscodeAPI}.
+Unfortunately we had to realize that this feature is not yet supported natively by the VSCode API \cite{vscodeAPI}.
 Neither does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}. \\
 
 That there is no simple way to implement this feature does not mean that it cannot be done.
-But the effort for the implementation in VS Code would be exceptionally high.
+But the effort for the implementation in VSCode would be exceptionally high.
 Therefore we have decided not to support this feature.
 However, the symbol table stores a parameter list for every method, constructor, and function.
 Thus, the symbol table is ready to support the functionality.
@@ -1212,10 +1212,10 @@ event listeners on keyboard keys like \textit{TAB}.
 Using \textit{TextEdits}, the registered function would then jump to the next placeholder parameter
 each time \textit{TAB} is pressed and mark it, so that the user can easily replace it with his own code. \\
 
-Also, just because VS Code does not yet offer an API to perform such \textit{TAB} jumps between parameters,
+Also, just because VSCode does not yet offer an API to perform such \textit{TAB} jumps between parameters,
 does not mean that other IDE's, for which Dafny support will be offered later,
 do not offer such a function.
-In the future, VS Code might even add such a function. \\
+In the future, VSCode might even add such a function. \\
 
 \textbf{Getting Information About Method Parameters} \\
 Usability test has shown that text information about which method
@@ -1252,11 +1252,11 @@ This way, it can also expose dead code, which has never been used as seen in \re
 \textbf{Popup Windows with Code Snippets} \\
 The popup that opens when you click on the grey text
 with the reference counter is a client feature.
-It is offered by VS Code \cite{vscodeAPI}.
+It is offered by VSCode \cite{vscodeAPI}.
 Unfortunately, this is something that cannot be extracted completely to the server.
 The logic required within the client is trivial, though.
 Only the function \code{VSCodeCommandStrings.ShowReferences},
-offered by VS Code, is called \cite{vscodeAPI}.
+offered by VSCode, is called \cite{vscodeAPI}.
 The popup display is shown in figure \ref{fig:codelens_show_popup}. \\
 
 \begin{figure}[H]
@@ -1299,7 +1299,7 @@ The command's name is the function called at the client, when the grey text is c
 In addition, the \code{Command} is given the positions it should display inside the popup.  \\
 
 If the function \code{dafny.showReferences} is called in the client,
-the method \code{VSCodeCommandStrings.ShowReferences} from the VS Code API is called
+the method \code{VSCodeCommandStrings.ShowReferences} from the VSCode API is called
 and the arguments prepared in server are passed through. \\
 
 Because the whole logic for CodeLens is in the server,
@@ -1660,11 +1660,11 @@ Since we have been developing and using our plugin for many months,
 it is sometimes difficult to differentiate the results.
 
 Therefore we have designed a usability test and found a test person to perform this test \cite{interview-remo}.
-The test person, Remo Herzog, was chosen because he is programming in an environment based on VS Code
-and therefore is well integrated into the corresponding VS Code universe. \\
+The test person, Remo Herzog, was chosen because he is programming in an environment based on VSCode
+and therefore is well integrated into the corresponding VSCode universe. \\
 
 The goal of this test was primarily to find out if the features
-we implemented were implemented as a VS Code Plugin user would expected them to be,
+we implemented were implemented as a VSCode Plugin user would expected them to be,
 and which features were expected to be different in terms of display and triggering. \\
 
 The general usefulness would also be discussed and feedback for further improvements was collected.
@@ -1731,7 +1731,7 @@ The test person would have wished such a play button  \cite{interview-remo}. \\
 
 It is possible to also add this icon for Dafny. If the button is clicked, a compile and run is triggered.
 Similar to the UI elements for the Dafny status bar,
-a button can be created by the VS Code API \cite{vscodeAPI}.
+a button can be created by the VSCode API \cite{vscodeAPI}.
 It can be assigned an icon and a click action.
 Due to the lack of time, the feature could not be implemented anymore, though.\\
 

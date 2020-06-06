@@ -228,7 +228,7 @@ The primary logic is handled by the Dafny language server.
 To communicate with the language server, the language server must first be started locally as a process by the plugin. \\
 
 In the prototype, it is assumed that the server is located in a specific directory relative to the client.
-Since the Dafny language server is not part of the plugin delivery to the VS Code Market Place,
+Since the Dafny language server is not part of the plugin delivery to the VSCode Market Place,
 this is an issue for the plugin release.
 An automated download of the newest release of the Dafny language server was missing.
 Therefore, a goal of this bachelor thesis was to perform an automated download of the Dafny language server to the local machine of the user.
@@ -731,7 +731,7 @@ This includes syntax errors. If the compiled program can be run, a PowerShell in
 \end{figure}
 
 Dafny allows to specify own arguments for compilation, which our plugin should support, too.
-On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VS Code can be used for individual argument input for each compile.
+On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VSCode can be used for individual argument input for each compile.
 \intnote{todo quellen auf die funktionen von der vs code api}
 
 \subsubsection{CounterExample}
