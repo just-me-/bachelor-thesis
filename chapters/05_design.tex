@@ -29,7 +29,7 @@ The original client was already refactored within the prototype.
 A lot of dead code was removed and logic was moved to the server.
 Figure \ref{fig:client_then} gives an impression of the architecture at the beginning of this project.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{client_then}
     \caption{Client Architecture - Term Project}
@@ -54,7 +54,7 @@ To achieve the goal of a more manageable architecture and to reduce coupling, th
 \end{itemize}
 The new distribution into these packages is discussed in the following sections.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=6cm]{client_now_packages}
     \caption{Client Architecture - Packages}
@@ -90,7 +90,7 @@ Core components like the status bar are also included in this package.\\
 This package contains small logic extensions like the execution of compiled Dafny files.
 The UI package accesses this package.\\
 
-{\bf StringResources} \textendash{} \intnote{resource mit einem s - das ist im code auch falsch und müsstest du noch korrigieren. Jepp. in den grafiken auch. kommt noch später todo}
+{\bf StringResources} \textendash{}
 All string resources and command identifiers are defined in this package.
 It is used by the UI package. \\
 
@@ -100,7 +100,7 @@ In the following sections, the individual components and their contents are desc
 Figure \ref{fig:client_now_classes} shows a more detailed view of the client, including the components within the packages.
 The contents of type interfaces and string resources have been omitted for clarity.\\
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=8cm]{client_now_classes}
     \caption{Client Architecture - Components}
@@ -118,7 +118,7 @@ namely displaying the completion suggestions and insert the text which the user 
 This server-side-oriented implementation via the LSP is a great enrichment to keep the client lightweight.
 Adaption to other IDE's is very simple this way.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{client_now_methods}
     \caption{Client Architecture - Components and Public Methods}
@@ -224,7 +224,7 @@ The server consists of eight different packages:
 Figure \ref{fig:server_overview} shows a broad overview of the server layering.
 The packages are discussed in a detailed matter below from top to bottom.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{design/server1_overview.png}
     \caption{Server Overview}
@@ -262,7 +262,7 @@ Figure \ref{fig:server_core} shows the core package with the example of the \cod
 Note that the symbol table is injected using the interface \code{ISymbolTableManager}.
 By just creating a fake instance, the providers can very easily be tested using this architecture.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=12.5cm]{design/server6_core.png}
     \caption{Core Package Excerpt with RenameProvider}
@@ -378,7 +378,7 @@ String resources, such as error messages, are extracted to a specific resource p
 This way, they are easy to maintain and adjustable at a central place.
 A similar system of centralization of string resources is followed as with the client.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=7.5cm]{design/server7_resources.png}
     \caption{String Resources}
@@ -409,7 +409,7 @@ The classes are:
 Since the final config setting are accessed from multiple stages inside the code, the actual language server config is located inside the \code{Commons} package.
 It would be the sixth class related to the config initialization.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{design/server7_config.png}
     \caption{Configuration Initialization Layout.}
@@ -502,7 +502,7 @@ A list of usages need to be provided, containing a reference to every usage of t
 
 All of this leads in the following structure of the class \code{SymbolInformation} shown in figure \ref{fig:symboltabledesign}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=7.5cm]{design/SYMBOLTABLE.png}
     \caption{Symbol Table Design}
