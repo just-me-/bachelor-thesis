@@ -621,8 +621,8 @@ Within the method, the following sequence of events as illustrated in figure \re
     \item The Dafny Resolver is called, if parsing was successful.
     This step will do semantic checks, such as type checks.
     A \code{DafnyProgram} results upon success.
-    \item If successful, the precompiled \code{DafnyProgram} will be split into \code{BoogieProgram}s.
-    \item The Boogie Execution Engine is invoked to perform logical correctness checks on the \code{BoogieProgram}s.
+    \item If successful, the precompiled \code{DafnyProgram} will be split into \code{BoogiePrograms}.
+    \item The Boogie Execution Engine is invoked to perform logical correctness checks on the \code{BoogiePrograms}.
     \item Any errors that were reported are collected, converted and provided in the field \code{\_diagnosticElements}
     \item All results are wrapped by the \code{TranslationResult} class, providing the diagnostics, the Dafny program and the boogie programs.
     Also, within the property \code{TranslationStatus}, it is remarked how far the verification and translation process succeeded.

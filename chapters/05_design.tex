@@ -97,7 +97,7 @@ In the following sections, the individual components and their contents are desc
 
 \subsubsection{Components}
 Figure \ref{fig:client_now_classes} shows a more detailed view of the client, including the components within the packages.
-The contents of type interfaces and string resources have been omitted for clarity.\\
+The contents of \code{typeInterfaces} and \code{stringResources} have been omitted for clarity.\\
 
 \begin{figure}[H]
     \centering
@@ -106,13 +106,13 @@ The contents of type interfaces and string resources have been omitted for clari
     \label{fig:client_now_classes}
 \end{figure}
 
-It can be seen that only \textit{Compile} and \textit{CounterExample} exist as dedicated server access classes.
-All other features, such as \textit{CodeLens} or \textit{AutoCompletion} are natively supported by the LSP.
+It can be seen that only \code{compile} and \code{counterExample} exist as dedicated server access classes.
+All other features, such as CodeLens or AutoCompletion are natively supported by the LSP.
 This means, that no additional client logic is necessary to support these features.
-Since \textit{Compile} and \textit{CounterExample} are custom requests,
+Since Compile and CounterExample are custom requests,
 their handling has to be implemented manually within the client.\\
 
-If VSCode receives a \textit{AutoCompletion} response, the LSP standard defines how VSCode has to handle it -
+If VSCode receives a AutoCompletion response, the LSP standard defines how VSCode has to handle it -
 namely displaying the completion suggestions and insert the text which the user selects.
 This server-side-oriented implementation via the LSP is a great enrichment to keep the client lightweight.
 Adaption to other IDE's is very simple this way.
@@ -131,7 +131,7 @@ Constructors were not included for simplicity.
 The contents of type interfaces and string resources were also omitted for clarity.\\
 
 This distribution has certain upward dependencies, which is not optimal.
-The UI package accesses the server package and part of the server package accesses the UI package.
+The \code{ui} package accesses the server package and part of the server package accesses the \code{ui} package.
 Nevertheless, we have decided on this grouping,
 so that the server access functionality is encapsulated.
 
@@ -147,15 +147,15 @@ are sent at most twice per second. \\
 
 {\bf Execute Compiled Dafny Files} \textendash{}
 The execution of compiled Dafny files is relatively simple.
-One distinguishes whether the execution of \code{.exe} files should be done with \textit{Mono} (on macOS and Linux operating systems) or not. \\
+One distinguishes whether the execution of \code{.exe} files should be done with mono (on macOS and Linux operating systems) or not. \\
 
 {\bf Notifications} \textendash{}
 The client is able to receive notification messages from the server.
 These notifications are split into three severity levels:
 \begin{itemize}
-    \item information
-    \item warning
-    \item error
+    \item Information
+    \item Warning
+    \item Error
 \end{itemize}
 The corresponding logic in the client receives these messages and calls the VSCode API to display a popup message. \\
 
@@ -164,9 +164,9 @@ To enable the user to actively use features (such as compile),
 the corresponding method calls must be linked to the VSCode UI.
 There are three primary links for this:
 \begin{itemize}
-    \item Supplementing the context menu (right-click)
-    \item Keyboard shortcuts
-    \item Entering commands via the VSCode command line
+    \item Supplementing the context menu (right-click).
+    \item Keyboard shortcuts.
+    \item Entering commands via the VSCode command line.
 \end{itemize}
 
 {\bf Status Bar} \textendash{}
@@ -179,7 +179,7 @@ without having the server to send the status bar information
 (like the number of errors in the Dafny file) each time.\\
 
 {\bf CounterExample} \textendash{}
-Similarly to the status bar, CounterExample results are also buffered.
+Similarly to the status bar, the \code{CounterExample} component will have a buffer.
 For each Dafny file in the workspace, a buffer stores whether the user wants to see the CounterExample or not.
 This way the CounterExample is hidden when the user switches to another file
 and automatically shown again when switching back to the original Dafny file.
@@ -225,7 +225,7 @@ The packages are discussed in a detailed matter below from top to bottom.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{design/server1_overview.png}
+    \includegraphics[width=11cm]{design/server1_overview.png}
     \caption{Server Overview}
     \label{fig:server_overview}
 \end{figure}
@@ -240,7 +240,7 @@ Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the se
 Be aware that this illustration is highly simplified for a better understanding.
 Only one handler is shown.\\
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=12.5cm]{design/server2_basic_idea.png}
     \caption{Basic Server Concept}
@@ -261,6 +261,8 @@ Figure \ref{fig:server_core} shows the core package with the example of the \cod
 Note that the symbol table is injected using the interface \code{ISymbolTableManager}.
 By just creating a fake instance, the providers can very easily be tested using this architecture.
 
+ \intnote{and/or? was den nun und wann ;) and oder or nehmen, das verwirrt sonst}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=12.5cm]{design/server6_core.png}
@@ -270,7 +272,7 @@ By just creating a fake instance, the providers can very easily be tested using 
 
 \subsubsection{CustomDTOs}
 To provide the results of custom LSP requests, result wrapper classes had to be created.
-Since both, \code{Handler}s and \code{Provider}s require these, they were extracted to a separate package.
+Since both, \code{Handlers} and \code{Providers} require these, they were extracted to a separate package.
 It just contains the wrapper classes for
 \begin{itemize}
     \item \code{CounterExampleResults}
@@ -293,15 +295,15 @@ To be able to provide all the necessary functionality, there is more information
     \item What symbols occur in the file?
 \end{itemize}
 
-Thus, a class \code{FileRepository} was created.
+Thus, a class \code{FileRepository} will be created.
 It contains a \code{PhysicalFile}, but also all of the requested information in the list above.
-For that, a wrapper \code{TranslationResults} was created, containing information about errors and compiled items.
-Finally, to have a link to the symbol table, a reference to a \code{SymbolTableManager} was added.\\
+For that, a wrapper \code{TranslationResults} will be created, containing information about errors and compiled items.
+Finally, to have a link to the symbol table, a reference to a \code{SymbolTableManager} will be added.\\
 
-Since \code{TranslationResults} and \code{PhysicalFile} are used in multiple parts of the code, these classes were place within a \code{Commons} package.
-Cyclic dependencies could be avoided this way.\\
+Since \code{TranslationResults} and \code{PhysicalFile} are used in multiple parts of the code, these classes will be place within a \code{Commons} package.
+Cyclic dependencies can be avoided this way.\\
 
-To request information about a file, or to update a file, a component \code{WorkspaceManager} was created.
+To request information about a file, or to update a file, a component \code{WorkspaceManager} will be created.
 It contains a dictionary, linking a file identity (as URI) to a \code{FileRepository}.
 It offers a method to update a file, but also to get information about a file.\\
 
@@ -328,7 +330,7 @@ All of this information is stored in the \code{TranslationResults} wrapper class
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=12.5cm]{design/server4_dtu.png}
+    \includegraphics[width=10cm]{design/server4_dtu.png}
     \caption{Dafny Translation Unit}
     \label{fig:server_dtu}
 \end{figure}
@@ -355,7 +357,6 @@ The class \code{SymbolInformation} is supposed to contain any necessary data abo
     \item What is it's parent, what children are in the body of the symbol?
 \end{itemize}
 
-
 The class \code{Navigator} is responsible to navigate through the symbol table.
 Since every symbol is supposed to know about its parent and children, it is legit to speak about a symbol tree.
 The \code{Navigator} will move along the tree, for example to locate the symbol at a certain position.\\
@@ -379,24 +380,22 @@ A similar system of centralization of string resources is followed as with the c
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=7.5cm]{design/server7_resources.png}
+    \includegraphics[width=6cm]{design/server7_resources.png}
     \caption{String Resources}
     \label{fig:server_resources}
 \end{figure}
 
-As seen in figure \ref{rig:server_resources}, they are further split into sub-categories to keep them organized.
-
+As seen in figure \ref{fig:server_resources}, they are further split into sub-categories to keep them organized.
 
 \subsubsection{Tools}
 Classes that take care of general tasks are put into the \code{Tools} package.
 For example, one class in this package is responsible for delivering information about the folder structure, so that relative paths can be resolved.
 Another class is responsible to create a proper logger, which can then be used throughout the language server.
-All these auxiliary classes were collected within the \code{Tools} package.
+All these auxiliary classes were collected within the \code{Tools} package.\\
 
 \textbf{Tools.ConfigInitializer}\\
-
 The setup of the language server settings is using five different classes.
-To keep packages concise, a sub-package was created just for config initialization.\\
+To keep packages concise, a sub-package was created just for config initialization.
 The classes are:
 \begin{itemize}
     \item One class to parse launch arguments
@@ -442,10 +441,9 @@ This is illustrated in sequence diagram \ref{fig:workflow1}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{design/workflow1_regular.png}
-    \caption{Overview}
+    \caption{Seqience Overview of a Rename Request}
     \label{fig:workflow1}
 \end{figure}
-
 
 However, if an update is triggered, the workflow is slightly different.
 The handler will now actually request the \code{WorkspaceManager} to update a file, which will trigger the whole verification process and recalculate the symbol table, if possible.
@@ -456,29 +454,29 @@ This is shown in \ref{fig:workflow2}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{design/workflow2_update.png}
-    \caption{Updating a File}
+    \caption{Updating a File After a File has Been Changed}
     \label{fig:workflow2}
 \end{figure}
 
 
 \subsection{Symbol Table}
 Since the symbol table is a core concept of this thesis, it will explained further in this section.
+In the following, the design of the symbol table is described as well as it is built up with the help of the visitor pattern.
 
 \subsubsection{Symbol Table Design}
 To provide the necessary information for features like Rename, GoToDefinition or AutoCompletion,
 the symbol table needs to be very versatile and it must be able to handle the following challenges:
 \begin{itemize}
-    \item Find a symbol at the cursor position
-    \item Go to symbol declarations
-    \item Find all occurrences of a symbol
-    \item Get all available symbols within a scope
-    \item Know about usages of a symbol
+    \item Find a symbol at the cursor position and go to symbol declarations for the GoToDefinition feature.
+    \item Find all occurrences of a symbol for the Rename feature.
+    \item Get all available symbols within a scope for the AutoCompletion feature.
+    \item Know about usages of a symbol for the CodeLens feature.
 \end{itemize}
 
 \textbf{Find symbol at cursor}\\
 To overcome this task, each symbol knows about its position.
 The end of the symbol can be deduced by adding the identifier-length to the start position.
-A dedicated logic can then decide if the cursor is wrapped by the symbol or not.
+A dedicated logic can then decide if the cursor is wrapped by the symbol or not.\\
 
 \textbf{Find available symbols in scope}\\
 For this task, information about scopes need to be available.
@@ -489,7 +487,7 @@ To find all available symbols, every scope needs to know, what is declared insid
 Thus, a property \code{Children} is necessary.
 It is implemented as a hash list for instant access.
 One further has to divide between declarations and any occurring symbols.
-Another property \code{Descendants} contains any occurring symbol in a scope, not only declarations.
+Another property \code{Descendants} contains any occurring symbol in a scope, not only declarations.\\
 
 \textbf{Find declaration}\\
 For this task, each symbol has to hold a reference to the declaration.
@@ -497,25 +495,24 @@ To be able to locate the declaration beforehand, it must be possible to move to 
 Aside the already mentioned \code{Children}-property, a \code{Parent}  property is necessary. \\
 
 \textbf{Find usages of symbol}\\
-A list of usages need to be provided, containing a reference to every usage of the symbol.
+A list of usages need to be provided, containing a reference to every usage of the symbol. \\
 
 All of this leads in the following structure of the class \code{SymbolInformation} shown in figure \ref{fig:symboltabledesign}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=7.5cm]{design/SYMBOLTABLE.png}
+    \includegraphics[width=6.5cm]{design/SYMBOLTABLE.png}
     \caption{Symbol Table Design}
     \label{fig:symboltabledesign}
 \end{figure}
 
-
 \subsubsection{Visitor Pattern}
-To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}.
+To generate a symbol table, it is common to use the visitor programming language pattern by Gamma et al \cite{gofBook}. \glsadd{visitor}
 The pattern is used to navigate through, mostly tree-based, data structures and execute operations while doing so.
 The goal of the pattern is to separate the navigation through the data structure, and the operations that take place when visiting.\\
 
 Consider any tree based data structure.
-Every node in the tree is supposed to offer an \code{Accept(Visitor v)} method.
+Every node in the tree is supposed to offer an \code{Accept(Visitor v)} method as shown in listing \ref{lst:accept}.
 This method will accept the visitor, this is, it will execute the visitor's operation on the node itself.
 Further, it will also call the \code{accept}-methods of its child nodes.
 Thus, a typical implementation of an acceptor would look like this:
@@ -535,7 +532,7 @@ To work with every node that may occur, the visitor must overload the \code{Visi
 Within a tree, this usually just concerns nodes and leaves.
 For a symbol table, possible node types are any kind of expressions and statements.\\
 
-A visitor implementation could look like shown below.
+A visitor implementation could look like shown in listing \ref{lst:visitor}.
 
 \begin{lstlisting}[language=csharp, caption={Example for Visitor}, captionpos=b, label={lst:visitor}]
 public class Printer : Visitor {
