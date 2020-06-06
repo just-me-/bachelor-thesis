@@ -1,6 +1,5 @@
 \section{Design}
 \label{chapter:design}
-\intnote{eher mit gros H und pagebreak arbeiten für grafiken, ist ausser kontrolle mit kleinen h's.}
 This chapter contains discussions of fundamental design decisions that were made.
 The first section contains reasoning about the choice of technologies, such as programming languages.
 Afterwards, architectural discussions follow, separated by client and server.
@@ -66,33 +65,33 @@ This resulted in the root directory containing only a lightweight program entry 
 The rest of the logic was split between the created packages.\\
 
 As a little extra, each component contains code documentation to help other developers to get started quickly.
-This is also helpful because they are displayed as hover tooltips.
+This is also helpful because they are displayed as hover tooltips.\\
 
-{\bf Extension} \textendash{}
+{\bf \code{extension}} \textendash{}
 This component is the aforementioned \code{main}-component of the plugin and serves as an entry point.
 The incorporated code has been minimized.
 Only one server instance is started.
 The logic is located entirely in the server package.\\
 
-{\bf Server} \textendash{}
+{\bf \code{server}} \textendash{}
 The server package contains the initialization of the language server and the establishment of the connection between the client (plugin for VSCode) and the Dafny language server.
 In addition, all server requests, which extend the LSP by custom functionality, are sent to the server via this package.\\
 
-{\bf TypeInterfaces} \textendash{}
+{\bf \code{typeInterfaces}} \textendash{}
 In the new architecture, no \code{any} type should be used anymore.
 All types, in particular types created specifically for custom requests such as \code{CounterExampleResults}, were defined by interfaces. \\
 
-{\bf UI} \textendash{}
+{\bf \code{ui}} \textendash{}
 The UI is responsible for all visual tasks, especially VSCode commands and context menu additions.
 Core components like the status bar are also included in this package.\\
 
-{\bf LocalExecutionHelper} \textendash{}
+{\bf \code{localExecutionHelper}} \textendash{}
 This package contains small logic extensions like the execution of compiled Dafny files.
 The UI package accesses this package.\\
 
-{\bf StringResources} \textendash{}
+{\bf \code{stringResources}} \textendash{}
 All string resources and command identifiers are defined in this package.
-It is used by the UI package. \\
+It is used by the \code{ui} package. \\
 
 In the following sections, the individual components and their contents are described in more detail.
 
