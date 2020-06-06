@@ -29,15 +29,14 @@ The current version of the plugin supports the following functionality:
     \item GoToDefinition
     \item Rename
     \item CodeLens
-    \item Autocompletion
-    \item  \intnote{was vergessen?}
+    \item AutoCompletion
 \end{enumerate}
 
 \subsubsection{Syntax Highlighting}
 \label{section:result:syntaxhighgliht}
 Syntax highlighting is realized by a given Dafny grammar file.
 The file contains regex expressions defining the highlights.
-It is provided by Dafny \intnote{link reffen, ich find den link nicht} and could simply be downloaded.
+It is provided by Dafny \cite{syntax_update} and could simply be downloaded.
 The feature was already implemented in the prototype, thus no further actions aside updating the grammar file had to be done.
 The following screenshot shows how syntax highlighting looks inside Visual Studio Code.
 
@@ -172,7 +171,7 @@ The CounterExample will correctly adjust if the user continues to work on the co
 If the user switches between windows, the CounterExample state is buffered, so that once the user switches back to the original window, the CounterExample will be shown again.
 
 \subsubsection{Hover Information}
-Hover information displays a set of information, whenever the user hovers with the mouse cursor over a code symbol.
+Hover Information displays a set of information, whenever the user hovers with the mouse cursor over a code symbol.
 The feature itself was very simple to implement, since it receives all necessary information from the symbol table.
 It was additionally implemented as an exemplary feature, to show off how easy some LSP functionality can now be implemented using the new symbol table.
 Similar to hover information, other features like text highlighting can be added as well in the future, which is discussed in chapter \ref{section:conclusion}.
@@ -182,7 +181,7 @@ For example, in figure \ref{fig:hover} the user can actually find out, where his
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth/2]{results/hover.png}
-    \caption{Hover Information Example}
+    \caption{Hover Information Example todo das bild ist altes hover}
     \label{fig:hover}
 \end{figure}
 
@@ -198,16 +197,18 @@ This major flaw has of course been overcome.
 The cursor can now be at any character within a symbol.\\
 
 Technically, the feature is misnamed.
-A better name would actually be \code{Go to Declaration}, since it jumps to the symbol declaration, not definition.
+A better name would actually be GoToDeclaration, since it jumps to the symbol declaration, not definition.
 LSP would even offer a dedicated handler for this, \code{textDocument/declaration} \cite{lspspec}.
 However, we kept the name to maintain the consistency of our work.
 But perhaps a rename would be appropriate.
 
-To increase the user experience with this feature, notifications are sent to the user if an error occurred or the requested symbol was already a declaration.r
+To increase the user experience with this feature, notifications are sent to the user
+as shown in figure \ref{fig:goto}
+if an error occurred or the requested symbol was already a declaration.
 \begin{figure}[H]
     \centering
     \includegraphics{results/goto.png}
-    \caption{GoToDefinition Error Reporting}
+    \caption{GoToDefinition Error Reporting todo das bild ist falsch?}
     \label{fig:goto}
 \end{figure}
 
@@ -290,7 +291,7 @@ we can now use the new symbol table to consider the current scope for suggestion
 Our auto completion supports three basic types of proposals:
 \begin{itemize}
     \item Completion after a dot was written.
-    \item Completion after 'new' was written.
+    \item Completion after \code{new} was written.
     \item General suggestions.
 \end{itemize}
 
@@ -306,12 +307,9 @@ The three cases are shown in figuer \ref{fig:result_completion}
     \label{fig:result_completion}
 \end{figure}
 
-
-\intnote{ich habe mir erlaubt, zu kürzen, weil das 1:1 in implementaiton stand mit der unterscheidung was wann wie vorgeschlagen wird.}
-\intnote{habe versucht die 3 fälle in einem bild zusammenzufassen.}
-
 \textbf{Additional Usabillity Sugar}\\
-As a little extra to increase the user experience, when inserting a suggested function or method,
+As a little extra to increase the user experience, when inserting a suggested function or method after a dot
+or a class after a \code{new},
 opening and closing brackets are automatically added.
 
 However, the parameter list of methods is not yet proposed.
@@ -343,7 +341,7 @@ Thus, a correct symbol table is crucial for correct functionality.\\
 
 Dafny is a programming language offering a lot of features.
 Aside common object oriented features, also functional programmatic features are present.
-Figure \ref{fig:DafnyAST} shows all classes occurring inside the Dafny AST.
+Figure \ref{fig:analysis_dafnyASTStuff} shows all classes occurring inside the Dafny AST.
 The writers are well aware, that the text in this figure is too small to be read.
 The figure should indicate the humungous amount of AST-elements present in Dafny.
 Many of them are not just inheriting from \code{Expression} or \code{Statement}, but from individual base classes.
@@ -401,7 +399,7 @@ this encapsulation by interfaces is ideal for writing tests. \\
 This resulted in less encapsulation and higher coherence.
 These two motivations also encouraged the complete isolation of VSCode modules.
 We isolated the VSCode components in a separate module if possible.
-This minimizes the effort to migrate the plugin to another IDE.
+This minimizes the effort to migrate the plugin to other IDEs.
 
 
 \subsection{Publication of the Plugin}
@@ -443,6 +441,10 @@ Once the pull request to Dafny is accepted, the download process can then be eas
 We decided on this simple variant in order to keep the effort for this temporary solution as low as possible.
 Alternatively, this process could have been automated with the GitLab CI using the GitLab API \cite{gitlab-api} to download the CI artifacts.
 The artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}.
+
+\subsubsection{Easy Installation}
+Mit screens vom Installieren.
+todo
 
 \subsection{Performance of the Language Server}
 To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
