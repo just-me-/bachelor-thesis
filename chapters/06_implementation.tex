@@ -1434,7 +1434,7 @@ Now, the client can send supported requests, such as the request for CounterExam
 The result can be directly parsed into our \code{CounterExampleResults} data structure and be compared to the expectation.
 Thus, tests can be written easily and are very meaningful and highly relevant.
 
-\subsubsection{Dafny Test Files}
+\textbf{Dafny Test Files}\\
 Integration Tests usually run directly based on \code{.dfy} source files.
 Those test files need to be referenced from within the test.
 To keep the references organized, a dedicated project \code{TestCommons} was created.
@@ -1446,7 +1446,7 @@ public static readonly string cp_semiexpected = CreateTestfilePath("compile/semi
 \end{lstlisting}
 The class providing these references will also check, if the test file actually exists, so that \code{FileNotFoundErrors} can be detected early.
 
-\subsubsection{String Converters}
+\textbf{String Converters}\\
 Many tests return results in complex data structures, such as \code{CounterExampleResults}.
 Comparing these against an expectation is not suitable, since many fields and lists have to be compared against each other.\\
 
@@ -1501,7 +1501,7 @@ This is much more convenient than creating a custom \code{CounterExample}, which
 By taking advantage of the method \code{CollectionAssert.AreEquivalent(expectation, actual)} from nUnit's test framework,
 the two lists can be easily compared against each other \cite{nunitCollectionAssert}.
 
-\subsubsection{Test Architecture}
+\textbf{Test Architecture}\\
 Since every integration test starts the client and the server at first, as well as disposes them at the end,
 this functionality could be well extracted into a separate base class.
 This class is called \code{IntegrationTestBase} and just contains two methods, \code{Setup} and \code{Teardown}.
@@ -1561,7 +1561,7 @@ Tests can easily be organized into classes \textendash{} considering compilation
 
 
 
-
+ 
 \subsection{Usability Test}
 Since we have been developing and using our plugin for many months,
 it is sometimes difficult to differentiate the results.
@@ -1571,7 +1571,7 @@ The test person, Remo Herzog, was chosen because he is programming in an environ
 and therefore is well integrated into the corresponding VS Code universe. \\
 
 The goal of this test was primarily to find out if the features
-we implemented were implemented as a VS Code Plugin user would expected them to be integrated into the VS Code IDE,
+we implemented were implemented as a VS Code Plugin user would expected them to be,
 and which features were expected to be different in terms of display and triggering. \\
 
 The general usefulness would also be discussed and feedback for further improvements was collected.
@@ -1597,35 +1597,31 @@ as a \code{documentation} element \cite{vscodeAPI}.
 \subsubsection{Cleaner Hover Information}
 The information which is displayed in a symbol during a hover event was felt to be somewhat confusing.
 Sometimes the terms like \code{kind} were not clear.
-At best, some text would be appropriate.
-Texts could be minimized by a better grouping.
-Less text with the same information content.\\
+By using markdown instead of plaintext, HoverInformation could be improved significantly, as shown in figure \ref{fig:hoverNowVsThen}\\
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
     \caption{Hover Before (left) and Cleaner Version (right)}
-    \label{fig:placeholder_ref}
+    \label{fig:hoverNowVsThen}
 \end{figure}
-
-\ref{fig:placeholder_ref}
-Durch das erhaltene Feedback, wurde der Hover klarer strutkuriert, wie in Abbildung xxx gezeigt....
- \intnote{Todo unrelevantes löschen, positionen in llammern setzen }
 
 \subsubsection{Automatic Triggering of AutoCompletion}
 If a dot is typed while typing, AutoCompletion suggestions are automatically expected.
 You should not have to press \code{control + space} as trigger.
+This issue was anyway pending and was implemented shortly after the usability test.
 
 In addition, the suggested methods lacked to inform about the supported parameters.
 With regard to the parameters, this has already been discussed in section  \intnote{Todo}. \\
 
-\intnote{... todo das sollte hoffentlich noch machbar sein mit dem lsp trigger character....
-wenigstens etwas noch einbauen oO}
-Durch blablabla konnte ein automatisches triggern der autocompletion nach einem dot aktiviert werden.
-
 \subsubsection{Error Message Without Brackets}
-todo iwie mit den eckigen klammern hat die testperson verwirrt. dann kommt teils ({) statt {
-das evt reduzieren oder eleganter lösen...
+Error messages are reporting the code symbol at which the error occurrs.
+For example, when the error starts at the body of a method, the error message contains \linebreak
+\code{Assertion Violation at [ { ] in line 5.}}.
+The square brackets were confusing the testperson.
+Thus it was decided to leave them out, and instead show the code token on a new line.
+This should be less confusing.
+The issue is shown in figure \ref{fig:cleaner_error_msg}
 
 \begin{figure}[H]
     \centering
@@ -1634,26 +1630,24 @@ das evt reduzieren oder eleganter lösen...
     \label{fig:cleaner_error_msg}
 \end{figure}
 
-Cleaner...:
-\ref{fig:cleaner_error_msg}
 
 \subsubsection{Compile Improvements}
 Some plugins have a small green play icon in the upper right corner of the IDE for compilation,
-which can be pressed. This is not offered by TypeScript, but by the Python support plugin for VS Code \cite{interview-remo}.
-This play button has been missed during the usability test. \\
+which can be pressed.
+The test person would have wished such a play button  \cite{interview-remo}. \\
 
-We could also add this icon for Dafny. If the button is clicked, a compile and run is triggered.
-Similar to the UI elements for the Dafny statusbar,
+It is possible to also add this icon for Dafny. If the button is clicked, a compile and run is triggered.
+Similar to the UI elements for the Dafny status bar,
 a button can be created by the VS Code API \cite{vscodeAPI}.
-It can be assigned an icon and a click action. \\
+It can be assigned an icon and a click action.
+Due to the lack of time, the feature could not be implemented anymore, though.\\
 
 When running the Dafny program,
 a lot of text messages are displayed,
 which distract from the relevant output.
-So the absolute path to the process and then the absolute path to the exe is displayed.
 
- Since, as shown in figure \ref{fig:long_compile_output}, the paths are mostly identical,
- it would make sense to reduce the output by specifying relative paths for the exe to be executed.
+To shorten the message length, full paths could be ommitted and insetad, just file names are shown.
+This is illustrated in figuire \ref{fig:long_compile_output}.
 
 \begin{figure}[H]
     \centering
@@ -1663,7 +1657,7 @@ So the absolute path to the process and then the absolute path to the exe is dis
 \end{figure}
 
 \subsection{Continuous Integration (CI)}
-To optimize the CI process is an important part of our thesis.
+Optimizing the CI process is an important part of our thesis.
 Since we expect that our language server as well as the Dafny client plugin will be further developed by other developers,
 the CI is a primary component of automated quality assurance. \\
 
@@ -1689,7 +1683,7 @@ The available statistics are very helpful for code reviews.\\
 
 As a little extra, not only our Dafny language server part is analyzed by Sonar,
 but the whole Dafny project.
-From the bugs, vulnerabillities, code duplications and code smells revealed
+From the bugs, vulnerabilities, code duplications and code smells revealed
 by this analysis, the whole GitHub team working on the Dafny project can benefit. \\
 
 \begin{figure}[H]
@@ -1738,23 +1732,27 @@ More details are stated in the developer documentation \cite{dev}.
 The documentation found there helps future developers to easily and efficiently test changes to the docker container locally. \\
 
 
-
-
-
 \subsection{Performance Measurement}
 To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
-Within a class method, 10'000 LOC are generated, either containing
+Within a method, code lines are generated, either containing
 \begin{itemize}
     \item a variable definition: \code{var v142 := v16;}
     \item a variable access: \code{print v142;}
     \item a block scope: \code{while (true) \{ \dots}
     \item ending a blockscope: \code{\}}
 \end{itemize}
-The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 9'000 variable name segments, that have to be resolved.
+The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 90\% variable name segments, that have to be resolved.
 This challenges the symbol table quite a bit.
-Since the \code{textDocuemt/didOpen} notification is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
-Since we implemented compile in such a way, that it uses the precompiled \code{dafnyProgram}, we have chosen to run a compile command.
-The test has shown, that the process completes within 20 seconds on a 3.4GHz machine, which seems quite reasonable for such a large file.
+A tree is still grown due to the while-blocks, so not all symbols are within the same tree branch.
+Since the \code{textDocuemt/didOpen}, which triggers the symbol table instanciation, is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
+The test has shown the following results:
 
+\begin{itemize}
+    \item 100 LOC: 500ms
+    \item 1000 LOC: 1200ms
+    \item 10'000 LOC: 18'000ms
+\end{itemize}
+
+This scheme follows a $O(nlogn)$ scheme, which was expected.
 For reproducibility, nUnits randomizer was used, which will create the same 'random' test file on every run.
 Technically, the file generation could be excluded from the test engine, but it was left inside, in case someone wants to create additional or other tests.
