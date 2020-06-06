@@ -556,7 +556,7 @@ This results in a humungous variety of AST-nodes.
 The most important ones are discussed in this section.\\
 
 Dafny works with three major base classes in its AST.
-These are
+These are:
 \begin{itemize}
     \item Expression
     \item Statement
@@ -576,12 +576,12 @@ Since most of them are self-explanatory, only chosen nodes are explained.
 \textbf{Expressions}\\
 \begin{figure}[H]
     \centering
-    \includegraphics{expressiontypes/expr.png}
+    \includegraphics[width=10cm]{expressiontypes/expr.png}
     \caption{Dafny Expression Types}
     \label{fig:dafny_expr}
 \end{figure}
 
-The reader notes himself, that many expressions contain other subexpressions.
+The reader notes himself in figure \ref{fig:dafny_expr}, that many expressions contain other subexpressions.
 For example, a \code{IdentifierExpr} is nothing more than containing a \code{NameSegment}.\\
 
 An interesting node is \code{AutoGhostIdentifierExpr}.
@@ -597,19 +597,19 @@ All of these contain bound variables (the parameters of the lambda for example) 
 \textbf{Statements}\\
 \begin{figure}[H]
     \centering
-    \includegraphics{expressiontypes/stmt.png}
+    \includegraphics[width=10cm]{expressiontypes/stmt.png}
     \caption{Dafny Statement Types}
     \label{fig:dafny_stmt}
 \end{figure}
 
-An intersting statement is \code{AssignSuchThat}.
+An intersting statement in figure \ref{fig:dafny_stmt} is \code{AssignSuchThat}.
 Here, Dafny chooses what to assign, such that the condition holds.
 The programmer does not know exactly, which number will be assigned.\\
 
 \textbf{Declarations}\\
 \begin{figure}[H]
     \centering
-    \includegraphics{expressiontypes/decls.png}
+    \includegraphics[width=10cm]{expressiontypes/decls.png}
     \caption{Dafny Declaration Types}
     \label{fig:dafny_decl}
 \end{figure}
@@ -618,11 +618,10 @@ The programmer does not know exactly, which number will be assigned.\\
 \textbf{Other}
 \begin{figure}[H]
     \centering
-    \includegraphics{expressiontypes/vars.png}
+    \includegraphics[width=10cm]{expressiontypes/vars.png}
     \caption{Dafny Various Types}
     \label{fig:dafny_vars}
 \end{figure}
-
 
 These form the most important AST-nodes.
 Dafny provides many more of them.
@@ -630,7 +629,7 @@ Due to the limited time frame, not all of them could be analyzed.
 A benefit of the visitor pattern is, that it can just be implemented once for the base interface \code{IAstNode} with an empty action.
 This way, the visitor will just do nothing for nodes that are not supported.
 
-\subsection{Refactoring of the Dafny AST Implementation}
+\subsection{Refactoring of the Given Dafny AST Implementation}
 During analysis of the Dafny AST, it was noticed that the file \code{DafnyAst.cs} is humungous.
 It contains eleven thousand lines of code and a large number of classes.
 This is so extensive that even Visual Studio struggles with it and stopped working occasionally on performing refactorings.\\
@@ -641,17 +640,17 @@ to implement the visitor pattern, it was considered to refactor the whole file.\
 Splitting the file into individual class files and dividing it into a separate package would provide much better maintainability.
 The following advantages are particularly evident:
 \begin{itemize}
-    \item Clearer separation
-    \item Better overview
-    \item Better IDE performance
-    \item As a result, less error-prone coding
+    \item Clearer separation.
+    \item Better overview.
+    \item Better IDE performance.
+    \item As a result, less error-prone coding.
 \end{itemize}
 
 However, there would also be individual disadvantages:
 \begin{itemize}
-    \item Time-consuming
     \item Inconsistency: Other Dafny files would still be rather large. Refactoring should then be extended.
-    \item It is not our responsibility to refactor Dafny code.
+    \item It is not a planned enlargement of our thesis to refactor Dafny code.
+    \item Time-consuming.
     \item Dafny may not want a refactoring at all, because they are used to the current situation.
     \item By swapping out all lines of code, the top level of the git history would be disturbed for git blame.
 \end{itemize}
