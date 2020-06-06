@@ -1359,48 +1359,44 @@ The component will also transform information into a more human readable format,
 \subsection{Mono Support for macOS and Linux}
 \label{section:implementation:mono}
 One of the core objectives was to provide support for multiple platforms.
-This means that in addition to Windows, the platforms macOS and Linux should be also supported. \\
+This means that in addition to Windows, macOS and Linux should be also supported. \\
 
-In our previous thesis we had to switch from .Net Core to .Net Framework \cite{sa}.
-The reason for this was that although OmniSharp was compatible as a Language Server .Net core,
-the Dafny core project was not \cite{sa}.
-Due to dependency problems, we also switched the new Dafny Language server to .Net Framework \cite{sa}. \\
+In the preceding thesis, we had to switch from .NET Core to .NET Framework \cite{sa}.
+The reason for this was that although OmniSharp was compatible with .NET Core,
+the Dafny backend was not \cite{sa}.\\
 
-.Net core would have been easily supported by Linux and macOs.
-With .Net Framework, however, an \code{.exe} is generated as program compilation.
-Therefore you have to rely on mono on Unix based operating systems.
+.NET Core has native support for Linux and macOS.
+With .NET Framework, however, a Windows executable is generated upon compilation.
+Therefore, one has to rely on Mono for Unix based operating systems.
 Mono allows to execute \code{.exe} files on said systems \cite{mono}. \\
 
-Unfortunately, in the course of our thesis we discovered that the Language server could not be started correctly with mono.
+Unfortunately, in the course of our thesis we discovered that the language server could not be started correctly with Mono.
 The problem already occurred when trying to start the OmniSharp language server component. \\
 
-We tried several things to get even more specific details about the probem, after we found the specifig point of failure.
+We took several measures to get even more specific details about the problem, after we found the specific point of failure.
 
 \begin{itemize}
     \item We have built a new try-catch around it - just in case. But the catch is not called because no exception is thrown.
-    \item Because we use Framework and not Core, we could not debug step by step on macOS.
-    \item Our manuel debugging with logging informations was not helpful since logging was not executed after the server start try.
-    \item We also tried to start a very simple Language Server - without the Dafny project - and could not execute it correctly with \code{msbuild}.
-    \item We tried diffrent mono versions: 6.6.0.166 (2019-08) and 6.8.0.105 (2020-02).
+    \item Because we use .NET Framework and not .NET Core, we could not debug step by step on macOS.
+    \item Debugging the log output was not helpful since no log output was produced at all.
+    \item We tried to start a very simple language server - without the Dafny project - and could not execute it correctly with \code{msbuild}.
+    \item We tried different mono versions: 6.6.0.166 (2019-08) and 6.8.0.105 (2020-02).
     \item We tested on macOS as well on Linux.
 \end{itemize}
 
 This made troubleshooting very difficult for us.
-Unfortunately, we could not find out why the OmniSharp server startup does not work correctly with mono.
-Unfortunately the OmniSharp community could not help us either \cite{mono-slack}.\\
+Unfortunately, we could not find out why the OmniSharp server start-up does not work correctly with mono.
+The OmniSharp community could not help us either \cite{mono-slack}.\\
 
-While researching GitHub issues, it turned out that there are fundamental problems with Linux and Mac, as OmniSharp developers primarily develop and test on windows \cite{mono-git}.
+While researching GitHub issues, it turned out that there are fundamental problems with Linux and Mac,
+as OmniSharp developers primarily develop and test on Windows \cite{mono-git}.
 
-In consultation with our supervisor, we then put the problem on hold after a certain amount of time had been used up.
+In consultation with our supervisor, we then put the problem on hold after a certain amount of time had been used.
 Later on, Fabian Hauser noticed that instead of \code{msbuild} we would have to switch to \code{dotnet build}.
 
-Since \code{msbuild} is required for our Sonar scanning and the limited time left,
-we decided not to take up the problem again in the last weeks. \\
-
-However, this would certainly be a good approach to solving the problem.
-Furthermore it should be possible to switch the actual Dafny language server back to .Net Core
-and leave only the Dafny core part on .Net Framework.
-Apart from the Dafny component no .Net Framework features are used.
+Since \code{msbuild} is required for our Sonar scan and the limited time left,
+we decided not to take up the problem again in the last weeks of the project.
+However, this would certainly be a good approach to solve the problem.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Testing}
@@ -1428,68 +1424,142 @@ but we were also busy covering edge cases by testing.
 Of course the interaction of the components is also tested.
 This will be discussed in the following section regarding integration tests.
 
+%%%%%%%%%%%%%INTEGRATIONM TEST
+
 \subsubsection{Integration Tests}
-As described in section \ref{chapter:designTests}, a very nice test architecture was builded for integration tests.
-Each feature could be tested by creating a base class.
-The base class usually contains one method \code{Run} and another one \code{Verify}.
-The first one uses the inherited client-server infrastructure, opens a Dafny file, sends the according request, and collects the results.
-The following example is representative for such a method:
 
-\begin{lstlisting}[language=csharp, caption={Finding a Declaration}, captionpos=b, label={lst:visitorfinddecl}]
-public void Run(string testfile, int lineInEditor, int colInEditor, string newText = "newText")
+Unlike in the preceding semester thesis, integration tests were implemented using Omnisharp's language server client \cite{omnisharpClient}.
+Each test starts a language server and a language client, then they connect to each other.
+Now, the client can send supported requests, such as the request for CounterExamples.
+The result can be directly parsed into our \code{CounterExampleResults} data structure and be compared to the expectation.
+Thus, tests can be written easily and are very meaningful and highly relevant.
+
+\subsubsection{Dafny Test Files}
+Integration Tests usually run directly based on \code{.dfy} source files.
+Those test files need to be referenced from within the test.
+To keep the references organized, a dedicated project \code{TestCommons} was created.
+Each test project has access to these common items.
+Every test file is provided as a static variable and can thus be easily referenced.
+
+\begin{lstlisting}[language=csharp, caption={Test File Reference}, captionpos=b, label={lst:semiExpectedCodeThing}]
+public static readonly string cp_semiexpected = CreateTestfilePath("compile/semi_expected_error.dfy");
+\end{lstlisting}
+The class providing these references will also check, if the test file actually exists, so that \code{FileNotFoundErrors} can be detected early.
+
+\subsubsection{String Converters}
+Many tests return results in complex data structures, such as \code{CounterExampleResults}.
+Comparing these against an expectation is not suitable, since many fields and lists have to be compared against each other.\\
+
+To be able to easily compare the results against an expectation,
+a converter was written to translate the complex data structure into a simple list of strings.
+For example, each \code{CounterExample} will be converted into a unique string, containing all information about the \code{CounterExample}.
+All \code{CounterExamples} together are assembled within a list of strings.
+This way, they can be easily compared against each other.
+One could also overwrite \code{Equals(object other)}, but with the string representation, the developer has a direct visual feedback what caused the mismatch.\\
+
+Since not only \code{CounterExamples}, but also other data structures such as \code{Diagnostic} were converted into lists of strings,
+the converters were held generic as far as possible.
+Listing \ref{lst:genericconverter} shows how this was realized.
+The method takes a enumerable of type \code{T} as an argument, and a converter which converts type \code{T} into a string.
+Each item in the enumerable is then selected in the converted variant.
+
+\begin{lstlisting}[language=csharp, caption={Converting CounterExamples to a List of Strings}, captionpos=b, label={lst:genericconverter}]
+private static List<string> GenericToStringList<T>(this IEnumerable<T> source, Func<T, string> converter)
 {
+    return source?.Select(converter).ToList();
+}
+
+public static List<string> ToStringList(this List<CounterExample> source)
+{
+    return GenericToStringList(source, ToCustomString);
+}
+
+public static string ToCustomString(this CounterExample ce)
+{
+    if (ce == null)
+    {
+        return null;
+    }
+    string result = $"L{ce.Line} C{ce.Col}: ";
+    result = ce.Variables.Aggregate(result, (current, kvp) => current + $"{kvp.Key} = {kvp.Value}; ");
+    return result;
+}
+\end{lstlisting}
+
+Comparison of the results and the expectation is now very simple.
+The expectation can just be written by hand as follows:
+
+\begin{lstlisting}[language=csharp, caption={Expectation}, captionpos=b, label={lst:testexpectation}]
+List<string> expecation = new List<string>()
+{
+    "L3 C19: in1 = 2446; ",
+    "L9 C19: in2 = 891; "
+};
+\end{lstlisting}
+
+This is much more convenient than creating a custom \code{CounterExample}, which could then be used for comparison with an \code{Equals}-method.
+By taking advantage of the method \code{CollectionAssert.AreEquivalent(expectation, actual)} from nUnit's test framework,
+the two lists can be easily compared against each other \cite{nunitCollectionAssert}.
+
+\subsubsection{Test Architecture}
+Since every integration test starts the client and the server at first, as well as disposes them at the end,
+this functionality could be well extracted into a separate base class.
+This class is called \code{IntegrationTestBase} and just contains two methods, \code{Setup} and \code{Teardown}.
+These methods could be directly annotated with the proper nUnit tags,
+so that every test will at first setup the client-server infrastructure,
+and tear it down after the test has been completed.\\
+
+A second base class exists for each feature.
+For testing compilation, this class is named \code{CompileBase} as an example.
+It inherits from the \code{IntegrationTestBase} class and provides the member \code{CompilerResults},
+as well as two methods \code{RunCompilaton(string file, string[] args)} and \code{VerifyResults(string expectation)}.
+The implementation of \code{RunCompilation} is shown in listing \ref{lst:runIntegrationtest}.\\
+
+\begin{lstlisting}[language=csharp, caption={Running a Compilation Integration test}, captionpos=b, label={lst:runIntegrationtest}]
+protected void RunCompilation(string testfile, string[] args)
+{
+    CompilerParams compilerParams = new CompilerParams
+    {
+        FileToCompile = testfile,
+        CompilationArguments = args
+    };
     Client.TextDocument.DidOpen(testfile, "dfy");
-    RenameParams p = new RenameParams()
-    {
-        NewName = newText,
-        Position = new Position(lineInEditor-1, colInEditor-1),
-        TextDocument = new TextDocumentIdentifier(new Uri(testfile))
-    };
-    var response = Client.SendRequest<WorkspaceEdit>("textDocument/rename", p, CancellationSource.Token);
-    result = response.Result;
+    compilerResults = Client.SendRequest<CompilerResults>(compileKeyword, compilerParams, CancellationSource.Token).Result;
 }
 \end{lstlisting}
 
-The \code{Verify} method will just compare the results against the provided expectation.
-Often, rather complex data structures with a lot of nested classes come into play.
-To be able to compare them easily, most of them are just converted to a string representation, which can easily be dealt with.
-This was done using extension methods located in the \code{TestCommons} project.\\
+The test class itself inherits from its feature-specific base class.
+The tests itself are very simple.
+For example, if we want to test if the compiler reports a missing semicolon, we could create a test class \code{public class SyntaxErrors : CompileBase}.
+Note that we inherit from our case-specific base class.
+Thus, the methods \code{RunCompilation} and\code{Verify} are at our disposal.
+That means, that the test is as simple as follows:
 
-A test itself is created very easily with all this infrastructure.
-One simply inherits from the base class, and most tests can be written in just a few lines.
-For example, a rename test could look like this:
-
-\begin{lstlisting}[language=csharp, caption={Sample Integration Test}, captionpos=b, label={lst:sampleintegrationtest}]
+\begin{lstlisting}[language=csharp, caption={Sample Test for Missing Semicolon}, captionpos=b, label={lst:demoTest}]
 [Test]
-public void LocalVariableUsage()
+public void FailureSyntaxErrorSemiExpected()
 {
-    Run(Files.rn_scope, 9, 17);
-    List<string> expected = new List<string>()
-    {
-        "newText at L7:C12 - L7:C15",
-        "newText at L8:C14 - L8:C17",
-        "newText at L12:C18 - L12:C21",
-        "newText at L20:C14 - L20:C17"
-    };
-    Verify(expected);
+    RunCompilation(Files.cp_semiexpected);
+    VerifyResults("Semicolon expected in line 7.");
 }
 \end{lstlisting}
 
-Note that the test is kept as concise as possible.
-The tester does not even have to care about the result provided by \code{Run}, since that method will store the result inside a class member and clean it after the test is done.\\
 
-Since all tests base on actual Dafny files, a dedicated subfolder was created to store them.
-All files can be referenced globally from within the \code{TestCommons} project, where also the base class for all integration tests is located.
+As you can see, the test contains only two lines of code.
+The first is stating the test file, the second one the test result expectation.
+Tests for other features look quite similar, just the expectation format may be different.
+Thus, the integration test architecture could be created in a way so that the creation of tests is extremely simple.
+The code is kept very clean and contains no duplicated parts.
+Tests can easily be organized into classes \textendash{} considering compilation, this could for example be the separation into logical errors, syntax errors, wrong file types and so on.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth/2]{integrationTestDesign.png}
+    \caption{Test Architecture on the Basis of Compilation}
+    \label{fig:testArchitecture}
+\end{figure}
 
 
-
- \intnote{todo (?)}
-\textbf{m}
-\textbf{m}
-\textbf{m}
-\textbf{m}
-\textbf{m}
-\textbf{m}
 
 
 \subsection{Usability Test}
@@ -1554,7 +1624,7 @@ wenigstens etwas noch einbauen oO}
 Durch blablabla konnte ein automatisches triggern der autocompletion nach einem dot aktiviert werden.
 
 \subsubsection{Error Message Without Brackets}
-todo iwie mit den eckigen klammern hat verwirrt. dann kommt teils ({) statt {
+todo iwie mit den eckigen klammern hat die testperson verwirrt. dann kommt teils ({) statt {
 das evt reduzieren oder eleganter lösen...
 
 \begin{figure}[H]
@@ -1667,18 +1737,6 @@ This allowed us to resolve CI issues locally and platform-independently (through
 More details are stated in the developer documentation \cite{dev}.
 The documentation found there helps future developers to easily and efficiently test changes to the docker container locally. \\
 
-%%%%%%%%%%%%%AUS 05 rüber genommen, noch toodo zum mergen:
-\subsection{Integration Tests TODO MERGEN mit oben.}
- \intnote{corbat: kommt in die implementation. vollständig. da haben wir schon ein kapitel; mergen.}
-
-\label{chapter:designTests}
-Unlike in the preceding semester thesis, integration tests could be implemented using Omnisharp's language server client \cite{omnisharpClient}.
-Each test starts a language server and a language client, then they connect to each other.
-Now, the client can send supported requests, for example "get me the CounterExamples for file ../test.dfy".
-The result can be directly parsed into our \code{CounterExampleResults} data structure and be compared to the expectation.
-Thus, tests can be written easily and are very meaningful and highly relevant.
-
-\subsubsection{Dafny Test Files}
 Integration Tests usually run directly on \code{dfy} source files.
 Those test files need to be referenced from within the test.
 To keep the references organized, a dedicated project \code{TestCommons} was created.
@@ -1779,20 +1837,10 @@ Thus, the integration test architecture could be created in a way so that the cr
 The code can be kept very clean and contains no duplicated code.
 Tests can easily be organized into classes \textendash{} considering compilation this could for example be the separation into logical errors, syntax errors, wrong file types and such.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth/2]{integrationTestDesign}
-    \caption{Test Architecture on the Basis of Compilation}
-    \label{fig:testArchitecture}
-\end{figure}
-
- \intnote{todo ich finde solche genauen zhalnen und angaben zur test maschine gehören nicht zum design
-sondern eher implementation, nicht? sprich testing der implementation .
-"For reproducibility, nUnits randomizer was used"
-- wurde benutzt. dh ist ja nicht mehr planung sondern realisierung}
 
 
-\subsubsection{Performance Measurement}
+
+\subsection{Performance Measurement}
 To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
 Within a class method, 10'000 LOC are generated, either containing
 \begin{itemize}
