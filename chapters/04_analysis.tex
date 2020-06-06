@@ -660,8 +660,6 @@ It would be very time consuming and we would have to extend the refactoring to t
 Since the time frame of the bachelor thesis is limited, resources should rather be used at the own code segments and the core goals of the bachelor thesis, such as the implementation of the symbol table.
 However, refactoring the code of Dafny itself is one of the possible extension points for this project.
 
-
-
 \subsection{Prototype Functionality and Flaws to Improve}
 \label{section:analysis:features}
 In the prototype, some features were already implemented and possible extension points were mentioned.
@@ -670,7 +668,7 @@ It also describes how we intend to implement these improvements.
 
 \subsubsection{Syntax Highlighting}
 The syntax highlighting is realized through a given Dafny grammar file.
-Screenshot \ref{fig:analysis_syntax_highlighting} shows how syntax highlighting looks inside Visual Studio Code. \\
+Figure \ref{fig:analysis_syntax_highlighting} shows how syntax highlighting looks inside Visual Studio Code. \\
 
 As you can see, keywords like method, returns, requires and ensures are marked in purple.
 Types like int are printed in blue and comments become green.
@@ -708,7 +706,7 @@ The actual postcondition is underlined in yellow.
 The user can hover over the error to get additional information about the problem. \\
 
 In our thesis we want to extract the syntax errors from the Dafny diagnostic report and show them to the user as well.
-Dafny works with so called \code{ErrorReporter}s, that should provide the necessary information.\\
+Dafny works with so called \code{ErrorReporters}, that should provide the necessary information.\\
 
 In addition, it is noticeable that only the curly opening parenthesis is underlined in case of errors concerning methods.
 This can easily be overlooked by the user.
@@ -731,8 +729,7 @@ This includes syntax errors. If the compiled program can be run, a PowerShell in
 \end{figure}
 
 Dafny allows to specify own arguments for compilation, which our plugin should support, too.
-On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VSCode can be used for individual argument input for each compile.
-\intnote{todo quellen auf die funktionen von der vs code api}
+On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VSCode can be used for individual argument input for each compile \cite{vscodeAPI}.
 
 \subsubsection{CounterExample}
 To show a CounterExample, the user has again the choice between a hotkey, the context menu or using the command bar.
@@ -799,7 +796,8 @@ AutoCompletion has to be rebuilt so that it functions reliably and correct.
 This is only possible by the implementation of a proper symbol table.\\
 
 In addition, it would be very useful for users if the autocompletion is triggered after a \code{new}
-keyword and only available classes are automatically listed. This can be achieved by type filtering the symbols.
+keyword and only available classes are automatically listed.
+This can be achieved by type filtering the symbols of the symbol table.
 
 \subsubsection{GoToDefinition}
 With the "GoToDefinition" feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
@@ -851,16 +849,13 @@ With the new symbol table, each symbol knows how often and where it has been use
 Therefore, we only have to iterate through the symbol table once.
 Furthermore, the iteration can be limited exclusively to declarations.
 
-
-
-
 %%%%%%CI%&%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Continuous Integration (CI) of the Prototype}
 \label{section:analysis:CI}
-
+\glsadd{ci}
 Continuous integration is a very important part for code quality and collaboration
-as you will read in chapter \ref{section:project_management} \nameref{section:project_management}.
+as you will read in chapter \ref{section:project_management} \textendash{} \nameref{section:project_management}.
 Unfortunately, setting up the CI process in the prototype took almost until the end of the project
 and was not very successful.
 

@@ -1437,18 +1437,18 @@ An example expectation file of this test is shown below:
 [L5:C17] "i" | P : [L5]add | D : self | C :  | U : 1
 [L5:C25] "j" | P : [L5]add | D : self | C :  | U : 1
 [L5:C42] "r" | P : [L5]add | D : self | C :  | U : 2
-[L6:C8] "r" | P : [L5]add | D : [L5]r | C :  | U : 
-[L6:C13] "i" | P : [L5]add | D : [L5]i | C :  | U : 
-[L6:C17] "j" | P : [L5]add | D : [L5]j | C :  | U : 
-[L7:C15] "r" | P : [L5]add | D : [L5]r | C :  | U : 
+[L6:C8] "r" | P : [L5]add | D : [L5]r | C :  | U :
+[L6:C13] "i" | P : [L5]add | D : [L5]i | C :  | U :
+[L6:C17] "j" | P : [L5]add | D : [L5]j | C :  | U :
+[L7:C15] "r" | P : [L5]add | D : [L5]r | C :  | U :
 [L10:C12] "aMethod" | P : [L1]MyClass | D : self | C : 1 | U : 0
-[L10:C31] "this" | P : [L10]aMethod | D : [L1]MyClass | C :  | U : 
+[L10:C31] "this" | P : [L10]aMethod | D : [L1]MyClass | C :  | U :
 [L11:C13] "aLocalVar" | P : [L10]aMethod | D : self | C :  | U : 2
-[L12:C9] "field" | P : [L10]aMethod | D : [L3]field | C :  | U : 
-[L12:C18] "aLocalVar" | P : [L10]aMethod | D : [L11]aLocalVar | C :  | U : 
-[L13:C9] "aLocalVar" | P : [L10]aMethod | D : [L11]aLocalVar | C :  | U : 
-[L13:C22] "add" | P : [L10]aMethod | D : [L5]add | C :  | U : 
-[L13:C26] "field" | P : [L10]aMethod | D : [L3]field | C :  | U : 
+[L12:C9] "field" | P : [L10]aMethod | D : [L3]field | C :  | U :
+[L12:C18] "aLocalVar" | P : [L10]aMethod | D : [L11]aLocalVar | C :  | U :
+[L13:C9] "aLocalVar" | P : [L10]aMethod | D : [L11]aLocalVar | C :  | U :
+[L13:C22] "add" | P : [L10]aMethod | D : [L5]add | C :  | U :
+[L13:C26] "field" | P : [L10]aMethod | D : [L3]field | C :  | U :
 [L16:C5] "_ctor" | P : [L1]MyClass | D : self | C : 0 | U : 0
 [L0:C0] "_default" | P : [L0]_module | D : self | C : 0 | U : 0
 \end{verbatim}
@@ -1654,7 +1654,7 @@ Tests can easily be organized into classes \textendash{} considering compilation
 
 
 
- 
+
 \subsection{Usability Test}
 Since we have been developing and using our plugin for many months,
 it is sometimes difficult to differentiate the results.
@@ -1758,7 +1758,8 @@ This includes that the CI pipeline will fail if certain quality attributes are n
 These include, in particular, successful completion of automated tests,
 static code analysis and formatting control of the TypeScript code. \\
 
-More details on the quality aspects are described in chapter \ref{section:project_management} \nameref{section:project_management}.
+More details on the quality aspects are described in chapter
+\ref{section:project_management} \textendash{} \nameref{section:project_management}.
 This section describes how the planned improvements for the CI process from chapter \ref{section:analysis:CI} were implemented.
 
 \subsubsection{SonarQube}
