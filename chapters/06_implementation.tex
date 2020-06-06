@@ -956,19 +956,7 @@ Both options are implemented so that they can return a single, first match, or a
 To illustrate this, two examples are shown in figure \ref{fig:impl_symboltablenav}.
 With this type of tree inspection, the runtime is reduced, as it is no longer necessary to visit every symbol.
 
-For the special case that the symbol table tree for a Dafny program was built very flat
-(a Dafny program, which only uses the default scope with a main method)
-the worst case runtime is still $O(n)$ as you can see in figure \ref{fig:impl_symboltablenav_o_of_n}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Dafny Code (left) Which Generates a Flat Symbol Table (right)}
-    \label{fig:impl_symboltablenav_o_of_n}
-\end{figure}
-
-The navigator overcomes the following challenges.
-
+The navigator overcomes the following tree challenges:
 
 \textbf{Where is the definition of a symbol}\\
 This challenge uses the bottom-up procedure.
