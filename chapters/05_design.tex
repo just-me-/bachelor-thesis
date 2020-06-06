@@ -565,7 +565,7 @@ Since the managment of a global symbol table is not as easy, it was decided to g
 A global symbol table is a possible extension point for the feature.
 The procedure is, if a file gets updated, to locate the current position of the pre-existing symbol table, detach the old one and attach the new one.
 While this is not difficult, handling of global namespaces that do not know each other may suddenly become quite tricky,
-since there is no longer just 'one' global space, but one per file, as long as they don't include each other.\\
+since there is no longer just 'one' global space, but one per file, as long as they do not include each other.\\
 
 A global symbol table would also increase performance and especially resource usage, since if a library is included by multiple files, it's symbol table does not have to be built multiple times.\\
 
