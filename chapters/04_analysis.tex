@@ -127,7 +127,7 @@ OmniSharp offers support for \CsharpWithSpace \cite{langserverdotorg} in the for
 A language server client that can be used for testing is also offered.
 
 \subsubsection{Basic OmniSharp Usage}
-Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about Omnisharp's language server protocol implementation.
+Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about OmniSharp's language server protocol implementation.
 The tutorial provides the user with all the required knowledge to set up a language server in \Csharp.
 Besides the setup of the server, it also illustrated how to create message handlers, for example for AutoCompletions or document synchronization.\\
 
@@ -141,7 +141,7 @@ public class AutoCompletion : ICompletionHandler
 }
 \end{lstlisting}
 
-Listing \ref{lst:lspbasichandler} illustrates that the user simply has to implement an interface provided by Omnisharp.
+Listing \ref{lst:lspbasichandler} illustrates that the user simply has to implement an interface provided by OmniSharp.
 Within the \code{request} parameter, all required information is passed to the handler.
 For AutoCompletion, this is the file and the cursor position, as well as some context information, how the AutoCompletion event was triggered.
 The task of the language server is to figure proper suggestions and return them in the form of a \code{CompletionList} back to the client.\\
