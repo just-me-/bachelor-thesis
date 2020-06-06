@@ -40,7 +40,7 @@ For example, a lemma could be that a factorial number is never zero.
 If we define a simple function \code{Factorial}, and later divide through the result of \code{Factorial}, Dafny will state that this might be a division by zero error.
 But if we assert that a factorial number can never be zero, verification can be completed successfully.
 This is illustrated in listing \ref{lst:lemma}.
-\begin{lstlisting}[language=dafny, caption={Lemmas}, captionpos=b, label={lst:lemma}]
+\begin{lstlisting}[language=dafny, caption={Lemma Example for Factorial}, captionpos=b, label={lst:lemma}]
 
 function Factorial(n: nat): nat
 {
@@ -59,14 +59,15 @@ function Foo(n: nat): float
 \end{lstlisting}
 
 \subsection{Language Server Protocol}
-The language server protocol (LSP) was created to unify communication between an integrated development environment (IDE) and a language server.
-It specifies requests, such as AutoCompletion, rename or GoToDefinition.
-If the user performs an action like rename, the IDE will send the proper request to the language server.
-The message format is specified by the LSP and bases on JSON.\\
+The language server protocol (LSP) was created to unify communication between an integrated development environment (IDE) and a language server. \glsadd{ide}
+It specifies requests, such as AutoCompletion, Rename or GoToDefinition.
+If the user performs an action like renaming a symbol, the IDE will send the proper request to the language server.
+The message format is specified by the LSP and bases on JSON. \glsadd{lsp}
+JavaScript Object Notation (JSON) is is a language independent data format \cite{json}. \glsadd{json}\\
 
 The language server is responsible to calculate a proper result.
-For the example of a rename request, the answer contains the information where to apply the renaming.
-It is the task of the server to analyze the source code and provide a rename response with respect to language specific rules.\\
+For the example of a Rename request, the answer contains the information where to apply the renaming.
+It is the task of the server to analyze the source code and provide a Rename response with respect to language specific rules.\\
 
 Since the language server is independent of the client, a language server can be used from within multiple IDE's.
 To provide support for another IDE, just the client has to be adjusted.
@@ -75,13 +76,13 @@ A developer only has to set up the connection to the language server and has to 
 
 The most important requests the LSP supports incorporate:
 \begin{itemize}
-    \item Transfer code to server
-    \item Show errors and warnings
-    \item Rename a symbol
-    \item Go to the definition of a symbol
-    \item Show AutoCompletion suggestions
-    \item Perform a refactoring
-    \item Show usages of a code item
+    \item Transfer code to server.
+    \item Show errors and warnings.
+    \item Rename a symbol.
+    \item Go to the definition of a symbol.
+    \item Show AutoCompletion suggestions.
+    \item Perform a refactoring.
+    \item Show usages of a code item.
 \end{itemize}
 
 These are features that are commonly used by programmers, independent of the language.\\
