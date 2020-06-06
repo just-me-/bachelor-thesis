@@ -853,18 +853,17 @@ Furthermore, the iteration can be limited exclusively to declarations.
 %%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Continuous Integration (CI) of the Prototype}
 \label{section:analysis:CI}
-\glsadd{ci}
 Continuous integration is a very important part for code quality and collaboration
 as you will read in chapter \ref{section:project_management} \textendash{} \nameref{section:project_management}.
 Unfortunately, setting up the CI process in the prototype took almost until the end of the project
-and was not very successful.
+and was not very successful. \glsadd{ci}
 
 This section describes the initial situation and the desired objectives regarding CI to optimize our workflow.
 
 \subsubsection{SonarQube}
 SonarQube makes static code analysis and reports bugs and vulnerabilities.
 On the client side, code was analyzed successfully with SonarQube by the CI process.
-If the code contained any TypeScript errors, an error was thrown and the build failed \cite{sa}.\\
+If the code contained any TypeScript errors, an error was thrown and the build failed \cite{sa}. \glsadd{sonar}\\
 
 Integration testing and code analysis on the server side by SonarQube remained pending \cite{sa}.
 By splitting the client and server parts into separate git repositories,
@@ -880,7 +879,7 @@ Dafny-internal tests are run using the runner \textit{lit} \cite{lit}.
 
 \subsubsection{Docker}
 The CI server bases on a Docker distribution.
-Docker's lightweight virtualization is ideally suited to run the CI environment.\\
+Docker's lightweight virtualization is ideally suited to run the CI environment. \glsadd{docker}\\
 
 Docker also realizes the principle "Cattle, not pets" with docker \cite{pets-vs-cattle}.
 Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used.
