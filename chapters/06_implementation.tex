@@ -388,18 +388,26 @@ From this we have implemented the core functionality in a clean interface: \code
 Since our Language server is not yet integrated into the official build,
 we have implemented our own, temporary implementation of the downloader as \code{LanguageServerInstaller}.
 As soon as our Dafny language server is integrated in the Dafny project,
-the component can easily be replaced, because the plugin components program against the interface. 
+the component can easily be replaced, because the plugin components program against the interface.
 Minimal adjustments are required to replace the component. In some cases, more suitable names were chosen for methods in the interface.
 
 \subsubsection{Customizable Through Configuration}
-zwei layers. einmal komplett vom user konfigurierbar, einmal in den stringressourcen.
-darin sind beispielsweise Dafny file endungen und sonstige konfigurationen, die nicht direkt vom benutzer geändert werden wollen oder sollen.
+There are basically two gradations of configurations.
+First, there are the configurations for developers in the \code{stringResources} component.
+This includes for example Dafny file extensions and other configurations which are not to be changed directly by the user.
 
- \intnote{config} - sollte neu dann auch noch durch gereiht werden oder über vscode kapselung zur verfügung gestellt werden
-man kann alles konfigurieren. support fuer dark mode.,
-CounterExample  - light und dark mode.. custom colors.
-compile (args)
-sonstige config und so sachen wurden zentralisiert. gm code review.
+Secound, there are the user configurations, which can be changed by the plugin user via the settings of VS Code.
+In the figure \ref{fig:settings} the configurations offered to the user are listed.
+There is an extract of the plugin description, which can be seen by users in the plugin marketplace.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/settings}
+    \caption{Part of the Plugin \code{README.md}}
+    \label{fig:settings}
+\end{figure}
+
+For example the colors of the displayed CounterExample can be changed or other compile arguments can be set for Dafny as default. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
