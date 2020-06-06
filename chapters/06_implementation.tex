@@ -1,7 +1,7 @@
 \section{Implementation}
 This chapter describes the implementation of the planned design.
-First the characteristics of the client are shown.
-Then basic components of the server are described.
+First, the characteristics of the client are shown.
+Then, basic components of the server are described.
 The symbol table and its properties are treated as a separate section.
 The resulting features follow.
 This is followed by a discussion of platform independence followed by a section about automated testing.
@@ -1468,7 +1468,7 @@ Afterwards, symbols can be attached to each other at will.
 This way, the top-down and bottom-up algorithms could be tested.
 An example is shown in listing \ref{lst:botuptest}.
 
-\begin{lstlisting}[language=csharp, caption={Navigator Unit Test}, captionpos=b, label={lst:botuptest]
+\begin{lstlisting}[language=csharp, caption={Navigator Unit Test}, captionpos=b, label={lst:botuptest}]
 public void BottomUpFirstChild()
 {
     SymbolInformationFake rootEntry = new SymbolInformationFake(1, 0, 1, 0, 5, 0, defaultFile, "Parent");
@@ -1492,7 +1492,7 @@ It could just be injected to the providers, since the required interface \code{I
 By this construct, the correct assembly or Renamings or HoverInformation could be tested.
 An example is shown in listing \ref{lst:renameUnit}
 
-\begin{lstlisting}[language=csharp, caption={Core Provider Unit Test}, captionpos=b, label={lst:botuptest]
+\begin{lstlisting}[language=csharp, caption={Core Provider Unit Test}, captionpos=b, label={lst:renameUnit}]
 public void ReservedWord()
 {
     ISymbolTableManager manager = new FakeSymbolManager(returnsDeclaration: false, returnsNull: false);
