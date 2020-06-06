@@ -80,7 +80,7 @@ Aside highlights, the following LSP requests are also of interest for future ext
     \item \code{workspace/symbol}: A request that sends all, project-wide symbols to the client. This could be done relatively easy with the symbol table, for whatever purpose.
     \item \code{textDocument/didClose}: Currently, nothing is done. The proper file could actually be removed from the buffer in this case.
     \item \code{textDocument/signatureHelp}: A feature that allows to auto-fill the signature of something callable. For this, methods would have to remember their parameters, which could then be automatically filled using this request.
-    \item Differentiation between \code{textDocument/definition}, \code{textDocument/declration}.
+    \item Differentiation between \code{textDocument/definition}, \code{textDocument/decleration}.
     \item \code{textDocument/implementation}: Go to the implementation of a declared symbol.
     \item \code{textDocument/formatting}: Auto Formatting would actually be simpler to implement than one may think. Since the symbol table keeps track of scopes, the scope depth is well known. Indentation could just be done according to the scope depth.
 \end{itemize}
