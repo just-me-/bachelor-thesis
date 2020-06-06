@@ -207,7 +207,7 @@ More about the logic of CodeLens can be found in section \ref{section:implementa
 The \code{CounterModelProvider} component is used to display and hide CounterModels.
 This component also stores in which Dafny files a CounterModel should be displayed and in which not.
 Therefore, if the user changes the opened file in the worspace, the CounterModel is automatically hidden or shown.
-The CounterModuel supports a dark and light mode as shown in figure \ref{fig:dark_light_mode}.
+The CounterModuel supports a dark and light mode as shown in figure \ref{fig:dark_light_mode_2}.
 This mode is automatically set accordingly,
 depending on whether VSCode is set to light or dark by the user.
 
@@ -215,7 +215,7 @@ depending on whether VSCode is set to light or dark by the user.
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
     \caption{CounterModel in Dark (Left) and Light Mode (Right)}
-    \label{fig:dark_light_mode}
+    \label{fig:dark_light_mode_2}
 \end{figure}
 
 Unlike the Compile feature, the \code{CounterModelProvider} creates a callback and passes it to the \\
@@ -957,20 +957,24 @@ To illustrate this, two examples are shown in figure \ref{fig:impl_symboltablena
 With this type of tree inspection, the runtime is reduced, as it is no longer necessary to visit every symbol.
 
 The navigator overcomes the following tree challenges:
+Where is the definition of a symbol? What symbol is at the current cursor position?
+What AutoCompletion suggestions are indicated?
+These challanges are discussed below. \\
 
-\textbf{Where is the definition of a symbol}\\
+\textbf{Where is the definition of a symbol?}\\
 This challenge uses the bottom-up procedure.
 It is started from whatever scope the visitor is working on.
 In every scope, the navigator will iterate over all symbols and search one, that is a declaration and matches in name and kind.
 For example, if we start inside a method, every symbol already visited in that method will be checked.
-If no matching declaration was found, the navigator will move to the parent of the method, which must be a class.
+If no matching declaration was found, the navigator will move to the parent of the method, which must be a class
+as shown in figure \ref{fig:findDecl}.
 Then, all symbols within that class are searched.
 Now, the navigator may find a class method that actually matches the search criteria.
 Since all declarations were registered beforehand, the process works even if the symbol is declared after the usage, unless it is a local variable, where it must be declared anyway before usage.\\
 
 If the symbol cannot be found, the algorithm will search the default scope at the end as a last option to locate the symbol.
-Since the symbol tree is moved upwards, the process takes $O(logn)$ time.
-It is executed for every occurring symbol, thus the building of the symbol table takes $O(nlogn)$ time, while n denoted the amount of occurring symbols.\\
+Since the symbol tree is moved upwards, the process takes $O(log(n))$ time.
+It is executed for every occurring symbol, thus the building of the symbol table takes $O(n*log(n))$ time, while n denoted the amount of occurring symbols.\\
 
 \begin{figure}[H]
     \centering
@@ -984,35 +988,32 @@ For this task, top-down navigation is used.
 Starting from the root symbol, for each child it is checked if it wraps the position.
 If not, the symbol is ignored.
 But if so, iteration is recursively called on that child.
-Reagarding image \ref{fig:topdwon}, imagine we hand the blue line as the cursor position.
+Reagarding figure \ref{fig:fig:topDownPaintFTW}, imagine we hand the blue line as the cursor position.
 The algorith will then decide, that the cursor position is within module M.
 Afterwards, it will check all children of \code{M}.
 It will find out, that class \code{Z} is not surfacing the cursor position, and move to the next one.
 When checking on class \code{C}, wrapping is successfull, thus the next iteration will be done within \code{C}.
 Finally, variable c will be returned as the best match.
 Default namespaces and default classes had to be treated separately for this case.
-Since the tree is moved along a single branch, the runtime for this process is $O(logn)$.\\
+Since the tree is moved along a single branch, the runtime for this process is $O(log(n))$.\\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{implementation/topDownPaintFTW.png}
-    \caption{Top Down Navigation}
-    \label{fig:findDecl}
+    \includegraphics[width=11.5cm]{implementation/topDownPaintFTW.png}
+    \caption{Top Down Navigation Path in Blue}
+    \label{fig:topDownPaintFTW}
 \end{figure}
-
 
 \textbf{What AutoCompletion suggestions are indicated?}\\
 To build up autocompletion suggestions, all declarations available at a certain locations must be figured.
 First of all, the previous \code{TopDown} algorithm is used to find the current location.
 Then, all declarations in the current scope are requested, by using \code{BottomUp} again and requesting everything that is a declaration.
-This algorithm is diving once into the tree, and going once backup, thus requiring $O(logn)$ time.\\
+This algorithm is diving once into the tree, and going once backup, thus requiring $O(log(n))$ time.\\
 
 The navigator offers further methods to visit the whole tree if that is desired by the caller.
 The method \code{TopDownAll} will visit all branches, not just the one wrapping a certain location.
 Consequently, \code{TopDownAll} requires $O(n)$ runtime and should not be used if possible.
 We took advantage of that method to print a complete symbol tree during debugging.
-
-
 
 \subsubsection{Symbol Table Manager}
 The manager is a rather simple component and can be used as an access point to perform operations on the symbol table.
@@ -1034,23 +1035,20 @@ The utilities class offers three distinct types of \code{DoesWrap}-methods.
 This differentiation was necessary, since for GoToDefinition, only the identifier range matters.
 But for AutoCompletion, the body in which the cursor is matters.
 Lastly, clauses like \code{ensures} are inbetween those two.
-Figure \ref{fig:wraps} shows the distinction between the three methods.
+Figure \ref{fig:topDownWraps} shows the distinction between the three methods.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=5cm]{implementation/wraps.png}
+    \includegraphics[width=8cm]{implementation/wraps.png}
     \caption{Top Down Navigation}
-    \label{fig:findDecl}
+    \label{fig:topDownWraps}
 \end{figure}
 
 \begin{itemize}
-    \item Green: wrapped by the identifier range
-    \item Yellow: wrapped by the body range
-    \item Red: wrapped by the entire symbol range
+    \item Green: wrapped by the identifier range.
+    \item Yellow: wrapped by the body range.
+    \item Red: wrapped by the entire symbol range.
 \end{itemize}
-
-
-
 
 \subsection{Features}
 \label{section:imp:features}
@@ -1136,12 +1134,6 @@ Then iteration is performed from the inner scope
 to the outermost scope and all symbols found are returned as completion suggestions.
 The list is filtered already during iteration by a passed predicate for class symbols only.
 
- \intnote{todo habe ich jeweils prädicate oder delegate geschrieben für die filterung? auch beim result iwo) }
-\intnote{ja, passt. ich hab prädikat geschrieben dann gibts keine missverstänidsse ala "also string genommen ist ein delegate mimi und eig wäre es eine instanz des edelegates mimi"}
- \intnote{todo wird irgend wo beim visitor manager dingens beschrieben,
- dass zu oberst dann nochmals runter ins default package und in die default klasse gegeagen wird um die "nicht benannten"
- symbole / default scope zu holen? ja, check.}
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
@@ -1162,7 +1154,8 @@ Therefore, all types of symbols are suggested.
     \label{fig:default_completion_diagram}
 \end{figure}
 
-\code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" xD bestimmt. \\
+ \intnote{todo}
+ \code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" xD bestimmt. \\
 PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
 das vom papier digitalisieren todo\\}
 
@@ -1174,11 +1167,18 @@ Whenever a constructor or method is chosen as an AutoCompletion suggestion,
 an opening and closing bracket is added to the text to be inserted. \\
 
 From certain IDE's such as XCode,
-you are used to seeing placeholders for the parameters and their types in AutoCompletion
+you are used to seeing placeholders as shown in figure \ref{xcode_completion} for the parameters and their types in AutoCompletion
 when you select a method from the suggestions \cite{sa}.
 That is why we wanted to implement such a convenient feature for our AutoCompletion as well.
 Unfortunately we had to realize that this feature is not yet supported natively by the VSCode API \cite{vscodeAPI}.
-Neither does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}. \\
+Neither does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{AutoCompletion in XCode}
+    \label{fig:xcode_completion}
+\end{figure}
 
 That there is no simple way to implement this feature does not mean that it cannot be done.
 But the effort for the implementation in VSCode would be exceptionally high.
@@ -1192,13 +1192,13 @@ for the AutoCompletion objects - namely the parameters and their types for metho
 Whenever a completion is inserted, a callback function can be called within the client.
 This function could then additionally insert the parameters as text in the code and register
 event listeners on keyboard keys like \textit{TAB}.
-Using \textit{TextEdits}, the registered function would then jump to the next placeholder parameter
+Using \code{TextEdits}, the registered function would then jump to the next placeholder parameter
 each time \textit{TAB} is pressed and mark it, so that the user can easily replace it with his own code. \\
 
 Also, just because VSCode does not yet offer an API to perform such \textit{TAB} jumps between parameters,
 does not mean that other IDE's, for which Dafny support will be offered later,
 do not offer such a function.
-In the future, VSCode might even add such a function. \\
+In the future, VSCode might even add such a function to its API. \\
 
 \textbf{Getting Information About Method Parameters} \\
 Usability test has shown that text information about which method
@@ -1214,9 +1214,7 @@ This way, the user could be informed about them.\\
 \subsubsection{CodeLens}
 \label{section:implementation:features:codelens}
 The CodeLens functionality is divided into two primary tasks.
-
 First, it is shown how often the method or class has already been used.
-
 Second, the user can click on the text and a popup window displays all symbol usages.
 This allows the developer to efficiently jump between different places within a workspace.\\
 
@@ -1297,9 +1295,7 @@ CodeLens does not know that it gets used by a third Dafny program. \\
 This problem should solve itself once a global symbol table for the complete workspace has been implemented,
 instead of a single table per file.
 Symbols will then be aware of usages across the complete workspace.
-More information about the global symbol table is described in section xxx.
-
- \intnote{todo XXX mit Kapitelreferenz auf updatebare globale symbol tabelle manager dingens tun. seh grad ned welche skapitel es ist. haben wir das schon geschrieben? todo -- is noch nicht... wäre was für results}
+More information about the global symbol table is described in section \ref{section:globalSymbolTable}.
 
 \subsubsection{Compilation}
 Every time a file gets updated, the whole Dafny backend is triggered and the results are stored in a \code{FileRepository}.
