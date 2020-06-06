@@ -14,16 +14,16 @@ The language server protocol (LSP) is a JSON-RPC based protocol to communicate b
 In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{lspWiki}.
 The goal of the LSP is to untie the dependency of an IDE with its programming language.
 That means, that once a language server is available, the user is free in the choice of the IDE, as long as it offers a client instance that is able to communicate with the server.
-The user can then use a variety of features, as long as the language server is capable to handle them.
+The user can then use a variety of features, as long as the language server is capable to handle them. \glsadd{lsp}
 Those features can for example be
 \begin{itemize}
     \item AutoCompletion
-    \item Hover information
+    \item Hover Information
     \item Rename
     \item GoToDefinition
 \end{itemize}
 and much more. A full list can be found within the LSP specification \cite{lspspec}.
-Custom requests, for example \textit{compile} or \textit{CounterExample} can also be added to the LSP \cite{lspWiki}.
+Custom requests, for example for features like Compile or CounterExample, can also be added to the LSP \cite{lspWiki}.
 The major advantage of this concept is that the plugin can be kept very simple.
 The relevant information is delivered by the language server, which is IDE-independent.
 Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates these benefits .
