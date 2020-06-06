@@ -169,9 +169,9 @@ The following three items have to be specified:
 The parameter and response types can be custom classes and more flexibility.
 The following skeleton code demonstrates how a custom request handler can be implemented:
 
-\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspcustomhandler}]
-public class CounterExampleParams : IRequest<CounterExampleResults> { [\dots] }
-public class CounterExampleResults { [\dots] }
+\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation for CounterExample}, captionpos=b, label={lst:lspcustomhandler}]
+public class CounterExampleParams : IRequest<CounterExampleResults> { ... }
+public class CounterExampleResults { ... }
 
 [Serial, Method("CounterExample")]
 public interface ICounterExampleHandler : IJsonRpcRequestHandler<CounterExampleParams, CounterExampleResults> { }
@@ -189,7 +189,8 @@ public class MyHandler : ICounterExampleHandler
 
 \subsection{Visual Studio Code Plugin}
 To provide a plugin for Visual Studio Code, a custom extension must be programmed.
-To get a rough understanding of how to build such an extension, and how to run and debug an own plugin, a tutorial was already studied during the preceding semester thesis.
+To get a rough understanding of how to build such an extension
+and how to run and debug an own plugin, a tutorial was already studied during the preceding semester thesis.
 In the tutorial "Your First Extension”, basic concepts for own plugins were learned \cite{vscode-first-extension}.
 Examples for integrating a Language Server were found on the advanced examples page "Extension Guides" \cite{vscode-extensions}. \\
 
@@ -197,7 +198,7 @@ Creating a simple plugin extension generates the folder structure shown in figur
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{analysis/vs_code_extension_file_structure}
+    \includegraphics[width=10cm]{analysis/vs_code_extension_file_structure}
     \caption{VSCode Extension File Structure}
     \label{fig:vs_code_extension_file_structure}
 \end{figure}
@@ -205,12 +206,12 @@ Creating a simple plugin extension generates the folder structure shown in figur
 The primary components are the two TypeScript files for the extension manifest and the extension source code. \\
 
 Basic plug-in configurations are specified in the manifest.
-These include, for example
+These include, for example:
 \begin{itemize}
-    \item the name of the plugin,
-    \item the version,
-    \item command registrations,
-    \item the specification of which files the plugin should be active on.
+    \item The name of the plugin.
+    \item The version.
+    \item Command registrations.
+    \item The specification of which files the plugin should be active on.
 \end{itemize}
 
 The plugin launches by calling the method \code{activate} within \code{extension.ts}.
@@ -234,7 +235,6 @@ this is an issue for the plugin release.
 An automated download of the newest release of the Dafny language server was missing.
 Therefore, a goal of this bachelor thesis was to perform an automated download of the Dafny language server to the local machine of the user.
 
-
 \subsection{Dafny Language Features}
 With regard to the symbol table, Dafny had to be studied more in detail.
 For example, shadowing describes the existence of multiple variables with the same name, but different visibility scopes.
@@ -248,14 +248,14 @@ Dafny code can be organized by modules.
 A module is comparable to a namespace in \CsharpWithSpace or C++.
 Modules can also be nested.
 To use a class defined in another module, the user has three options.
-Imagine a method \code{addOne} defined in a module \code{Helpers}.
+Imagine a method \code{addOne} defined in a module \code{Helpers} as shown in listing \ref{lst:addOneMethod}.
 
 \begin{lstlisting}[language=dafny, caption={Module Example}, captionpos=b, label={lst:addOneMethod}]
-    module Helpers {
-        function method addOne(n: nat): nat {
-            n + 1
-        }
+module Helpers {
+    function method addOne(n: nat): nat {
+        n + 1
     }
+}
 \end{lstlisting}
 
 \begin{itemize}
@@ -271,20 +271,19 @@ This is allowed, but in this case, the locally defined item has always priority 
 For example, in listing \ref{lst:moduleShadowing}, the assert statement is violated, since the overwritten \code{addOne} has priority \cite{functionVSMethod}.
 
 \begin{lstlisting}[language = dafny, caption={Naming Clash}, captionpos=b, label={lst:moduleShadowing}]
-    module Helpers {
-        function method addOne(n: nat): nat {
-            n + 1
-        }
+module Helpers {
+    function method addOne(n: nat): nat {
+        n + 1
     }
-    function addOne(n: nat): nat {
-        n + 2
-    }
+}
+function addOne(n: nat): nat {
+    n + 2
+}
 
-    import opened Helpers
-    method m3() {
-        assert addOne(5) == 6; //violated
-    }
-
+import opened Helpers
+method m3() {
+    assert addOne(5) == 6; //violated
+}
 \end{lstlisting}
 
 To import a module defined in another file, the user has to import the file using the expression \code{include "myFile.dfy"}.
