@@ -430,7 +430,7 @@ private Symbol FindDeclaration(Symbol target, Symbol scope)
 The code had to be adjusted later on, to also respect inherited symbols and to also check inside the default scope.
 If all declarations are known, the algorithm does already work for symbols defined after the first usage.
 
-\subsection{Symbol Table}
+\subsection{Existing Dafny Visitor Component vs Required Symbol Table}
 Whenever source code is compiled into an executable assembly, the first step is to \textit{parse} the code.
 The parser of a compiler works with two major concepts.
 One of them is the abstract syntax tree (AST), the other is the symbol table. \glsadd{ast}
@@ -502,7 +502,7 @@ To be able to implement the required feature set for this project, the following
             \item Within which scope was the event triggered?
             To suggest only symbols in the reachable scope.
             \item Which declarations are available inside a certain scope?
-            To suggest all symbols over several files, which are accessible. 
+            To suggest all symbols over several files, which are accessible.
             \item What is the context; what was just typed before (e.g. a dot or the keyword \code{new})
             To provide the user with more specific suggestions.
         \end{itemize}
@@ -518,7 +518,7 @@ For example, the question where \code{i} is declared is not answered.
 Also, some information is not even relevant for the language server.
 Within a binary statement, the operand is not of interest for example.\\
 
-Screenshot \ref{fig:namesegment} shows all available properties and fields of a name segment.
+Figure \ref{fig:namesegment} shows all available properties and fields of a name segment.
 A name segment is just any occurrence of an identifier, for example of a variable or of a method.
 \begin{figure}[H]
     \centering
@@ -545,12 +545,7 @@ To be in control which information is stored, it was decided to implement an own
 This component will be called \textit{symbol table} throughout this thesis and the project source code, although it will have a double linked tree structure, as we will see later.
 \textit{Symbol Tree} would consequently be a more accurate name.
 
-
 %%%%
-
-\subsection{Analysis of the Existing Dafny Visitor Component}
- \intnote{In diesem Kapitel nur die Analyse "was hatte Dafny bisher, warum unbrauchbar"}
-  \intnote{Was der Visitor ist und wie wir den implementieren und warum genau kommt im design}
 
 
 \subsection{Dafny Expression and Statement Types}
@@ -635,7 +630,7 @@ Due to the limited time frame, not all of them could be analyzed.
 A benefit of the visitor pattern is, that it can just be implemented once for the base interface \code{IAstNode} with an empty action.
 This way, the visitor will just do nothing for nodes that are not supported.
 
-\subsection{Dafny AST Implementation}
+\subsection{Refactoring of the Dafny AST Implementation}
 During analysis of the Dafny AST, it was noticed that the file \code{DafnyAst.cs} is humungous.
 It contains eleven thousand lines of code and a large number of classes.
 This is so extensive that even Visual Studio struggles with it and stopped working occasionally on performing refactorings.\\
