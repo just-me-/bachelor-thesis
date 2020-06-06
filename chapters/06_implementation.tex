@@ -1822,29 +1822,3 @@ For an easier testability of the CI, we installed Docker locally.
 This allowed us to resolve CI issues locally and platform-independently (through the Docker Client) in case of problems.
 More details are stated in the developer documentation \cite{dev}.
 The documentation found there helps future developers to easily and efficiently test changes to the docker container locally. \\
-
-
-\subsection{Performance Measurement}
-To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
-Within a method, code lines are generated, either containing
-\begin{itemize}
-    \item a variable definition: \code{var v142 := v16;}
-    \item a variable access: \code{print v142;}
-    \item a block scope: \code{while (true) \{ \dots}
-    \item ending a blockscope: \code{\}}
-\end{itemize}
-The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 90\% variable name segments, that have to be resolved.
-This challenges the symbol table quite a bit.
-A tree is still grown due to the while-blocks, so not all symbols are within the same tree branch.
-Since the \code{textDocuemt/didOpen}, which triggers the symbol table instanciation, is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
-The test has shown the following results:
-
-\begin{itemize}
-    \item 100 LOC: 500ms
-    \item 1000 LOC: 1200ms
-    \item 10'000 LOC: 18'000ms
-\end{itemize}
-
-This scheme follows a $O(nlogn)$ scheme, which was expected.
-For reproducibility, nUnits randomizer was used, which will create the same 'random' test file on every run.
-Technically, the file generation could be excluded from the test engine, but it was left inside, in case someone wants to create additional or other tests.
