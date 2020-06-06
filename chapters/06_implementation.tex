@@ -320,7 +320,7 @@ For example which file extensions Dafny files have.
 \end{figure}
 
 The structure consists of exported classes with static members. For simplicity, these members are not listed in the figure.
-In listing \ref{lst:stringResourcesExample} is an example.
+In listing \ref{lst:stringResourcesExample} is shown an example.
 
 \begin{lstlisting}[language=typescript, caption={Excerpt from class \code{LanguageServerNotification}}, captionpos=b, label={lst:stringResourcesExample}]
 export class LanguageServerNotification {
@@ -367,10 +367,10 @@ while for Eclipse mostly Java \cite{plugin-eclipse} is used.
 \subsubsection{Download of the Dafny Language Server}
 \label{section:implementation:client:download}
 Since the original Dafny plugin included the language server (which was written in TypeScript) in the plugin itself,
-we assumed in the design phase that we could integrate our new Dafny language server directly in the plugin too
+we assumed in the preceding semester thesis that we could integrate our new Dafny language server directly in the plugin too
 and deploy it in to the plugin markedplace. \\
 
-During the implementation we noticed that this would be an unpleasant solution.
+During the design phase we noticed that this would be an unpleasant solution.
 In the Dafny project - where our language server will be integrated - builds
 are created per operating system during releases \cite{dafny_lang_builds}.
 So we would have to install the builds for all platforms in our plugin,
@@ -392,7 +392,8 @@ If not, the local Dafny language version is removed and the latest version is do
 
 Therefore the original TypeScript code of the old language server,
 which had downloaded the Dafny client, was analyzed \ref{fig:ts_dafny_installer}.
-From this we have implemented the core functionality in a clean interface: \code{ILanguageServerInstaller}.
+From this we have implemented the core functionality in a clean interface: \\
+\code{ILanguageServerInstaller}.
 Since our Language server is not yet integrated into the official build,
 we have implemented our own, temporary implementation of the downloader as \code{LanguageServerInstaller}.
 As soon as our Dafny language server is integrated in the Dafny project,
@@ -415,6 +416,7 @@ There is an extract of the plugin description, which can be seen by users in the
     \label{fig:settings}
 \end{figure}
 
+ \intnote{todo das stimmt nicht mehr. 4.5 anpassen. defaults nicht anzeigen da bugged.}
 For example the colors of the displayed CounterExample can be changed or other compile arguments can be set for Dafny as default.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -422,7 +424,7 @@ For example the colors of the displayed CounterExample can be changed or other c
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
 In this section, the server implementation is discussed.
-Just as in the Design-chapter, the server structure will be analyzed from top to bottom, starting from the \code{Main}-method and ending at the utility layer.
+Just as in the chapter design, the server structure will be analyzed from top to bottom, starting from the \code{Main}-method and ending at the utility layer.
 The implementation of the symbol table is split into a separate section.
 
 \subsubsection{Server Launch}
@@ -444,8 +446,8 @@ First, preparational work is done.
 This happens already in the constructor of the language server.
 Preparation includes
 \begin{itemize}
-    \item Reading and processing config variables
-    \item Setting up the logging framework
+    \item Reading and processing config variables.
+    \item Setting up the logging framework.
 \end{itemize}
 Secondly, the actual server is launched.
 The logger will directly be injected and all handlers are registered.

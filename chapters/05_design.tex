@@ -209,15 +209,15 @@ export interface ICompilerResult {
 This subsection documents the architectural layout of the server.
 The server consists of eight different packages:
 \begin{itemize}
-    \item \code{Main}: Starting of the language server
-    \item \code{Handler}: Components handling LSP requests
-    \item \code{Core}: Contains provider-classes that supply the handlers with the necessary information
+    \item \code{Main}: Starting of the language server.
+    \item \code{Handler}: Components handling LSP requests.
+    \item \code{Core}: Contains provider-classes that supply the handlers with the necessary information.
     \item \code{CustomDTOs}: Contains all custom parameters and results like \code{CompilationResults}.
-    \item \code{WorkspaceManager}: Represents the user workspace with its buffered files
-    \item \code{SymbolTable}: Handles anything related to the symbol table (creation, navigation, access)
-    \item \code{Tools}: Individual, isolated services needed across the project
-    \item \code{Commons}: Classes accessed from multiple components, such as the language server configuration
-    \item \code{Resources}: Strings and filesystem resources
+    \item \code{WorkspaceManager}: Represents the user workspace with its buffered files.
+    \item \code{SymbolTable}: Handles anything related to the symbol table (creation, navigation, access).
+    \item \code{Tools}: Individual, isolated services needed across the project.
+    \item \code{Commons}: Classes accessed from multiple components, such as the language server configuration.
+    \item \code{Resources}: Strings and filesystem resources.
 \end{itemize}
 
 Figure \ref{fig:server_overview} shows a broad overview of the server layering.
@@ -398,11 +398,11 @@ The setup of the language server settings is using five different classes.
 To keep packages concise, a sub-package was created just for config initialization.
 The classes are:
 \begin{itemize}
-    \item One class to parse launch arguments
-    \item One class to parse the config file
-    \item One class to report errors occurring during the process
-    \item One class to represent errors
-    \item One class coordinating the whole process and invoking all other classes
+    \item One class to parse launch arguments.
+    \item One class to parse the config file.
+    \item One class to report errors occurring during the process.
+    \item One class to represent errors.
+    \item One class coordinating the whole process and invoking all other classes.
 \end{itemize}
 Since the final config setting are accessed from multiple stages inside the code, the actual language server config is located inside the \code{Commons} package.
 It would be the sixth class related to the config initialization.
