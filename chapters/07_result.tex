@@ -324,20 +324,20 @@ This section describes architectural improvements,
 which increase maintainability and facilitate future extensions of the project.
 
 \subsubsection{Symbol Table}
-The symbol table was newly implemented during this project.
-However, the prototype contained some symbol information that was already existing inside the pre-existing project.
-That symbol table was only containing a list of strings though.
-It was a very primitive approach of a symbol table.\\
-
-The new symbol table contains proper objects.
+Within this project, a new symbol table was implemented.
+The prototype was already working with a primitive approach of a symbol table, that worked only with strings.
+This is no comparison to the new symbol table, which works with proper objects.
 Related information, such as the parent symbol, is now directly accessible.
 Any string parsing could be completely omitted compared to the prototype.
-This leads to better performance and above all to reliable symbol references.\\
+This leads to better performance and, above all, to reliable symbol references.\\
 
 All of the previous features, with the exception of AutoCompletion, do not contain much logic themselves.
 They just request information from the symbol table and report it back to the client.
-While the features are implemented quite robust, they only work as long as the symbol table provides proper information.\\
+The symbol table allows the implemention of new features, such as CodeHighlight and even AutoFormat with ease.
+This is a major gain for the future of the language server.\\
 
+
+While the features are implemented quite robust, they only work as long as the symbol table provides proper information.
 Whenever the symbol table fails, the underlying features will also produce nonsense.
 Thus, a correct symbol table is crucial for correct functionality.\\
 
@@ -349,17 +349,18 @@ The figure should indicate the humungous amount of AST-elements present in Dafny
 Many of them are not just inheriting from \code{Expression} or \code{Statement}, but from individual base classes.
 Thus, implementing the visitor for all of them turned out to be massively time consuming.
 Since the bachelor thesis is bounded by a limited time frame, it was necessary to limit the amount of Dafny language features we support.
-We decided to lay our focus on the Dafny tutorial, which is done within the software engineering at HSR.
+We decided to lay our focus on the symbols needed by the Dafny tutorial, which is done within the software engineering at HSR.
 This way, the basic concepts of Dafny are supported.
+We could support about 50\% of the available AST-nodes.
 However, as soon as the user starts to use more advanced language features, a symbol may be introduced within a scope that is not visited by the visitor.
 If the user is using that symbol later on inside a common method body, the symbol table generator will be unable to locate the symbol's declaration and thus fail.
 An overview of the supported expressions and statements was given in section \ref{section:analysis_dafnyASTStuff}.\\
 
-\intnote{würd hjier nciht schreiben, was genau failed, oder? weil das fägnt schon bei arrays oder listen an. iwo bei implemetnation ahben wir ja geschrieben, was wir analyisert ahebn. was meinst du marcel? hmm vor und nachteile xD kurz erwähnen
-"weil visitor nicht komplett implementiert, gehen einzelne Sprachfeatures wie beispielsweise Arrays oder Listen nicht korrekt"?}
+It is subject of further development to complete the visitor.
+Primarily, it lacks support for generics and custom datatypes.
+Finishing the visitor should have very high priority in the future development of this project,
+to provide the best possible user experience.
 
-It is subject of further development to complete the symbol table.
-It is the first priority in further development of the language server.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/symboltable_dafnyast.png}
@@ -371,15 +372,20 @@ It is the first priority in further development of the language server.
 At the beginning of the thesis, the server's dependency graph was quite a mess.
 During development, the code was constantly cleaned up and dependencies were resolved.
 
-While the project is quite large and has a lot of dependencies, they could be well organized.
-As seen in figure \ref{fig:dependency_graph}, all dependency are now pointing downwards, just as it should be.
-Within the picture, dependencies to the \code{Resources} package are excluded for more overview.
-The core layer of the project, containing \code{SymbolTable}, \code{Handler} and \code{Core}, have some sideward dependencies, which could not be avoided completely, since these packages are strongly coupled.
+While the project is quite large and has a lot of dependencies, they could still be well organized.
+As seen in figure \ref{fig:dependency_graph}, all dependency are now pointing strictly downwards only, just as it should be.
+Within the picture, dependencies to the \code{Utilities} layer are excluded for more overview.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{dependency_diagram_server_final.png}
+    \caption{Server Package Dependencies, generated by Visual Studio}
+    \label{fig:dependency_graph}
+\end{figure}
 
 Aside the broad architectural layout, many small refactorings were made to keep the code clean.
 This includes the creation of smaller classes and smaller methods with single responsibilities.
 A good example for this is the config initialization, which was one single large class at first.
-After refactoring, it was split into small, well organized sub-classes.
+After refactoring, it was split into small, well organized sub-classes.\\
 
 Any important classes, such as handlers, providers or classes related to the symbol table are programmed against interfaces.
 This allows for optimal testing, for example by implementing the same interface with a fake instance.
@@ -397,58 +403,48 @@ These two motivations also encouraged the complete isolation of VS Code modules.
 We isolated the VS code components in a separate module if possible.
 This minimizes the effort to migrate the plugin to another IDE.
 
+
 \subsection{Publication of the Plugin}
-To make our new Dafny plugin easy for Dafny developers to install and use,
-it has been published in the Visual Studio Marketplace as a preview version \cite{our-dafny-plugin}.
-Any Windows user can install it, try it out and leave feedback.
+The final plugin has been published to the Visual Studio Code Marketplace as a preview version \cite{our-dafny-plugin}.
+The installation is very easy and runs automatically.
+Any Windows user can install it \textendash{} try it out and leave feedback.\\
 
-This chapter describes the release of the plugin and the associated possibilities.
+This chapter describes further aspects related to the release.
 
-\subsubsection{Rebase of the Dafny Language Server to the Dafny Project}
-Our Dafny language server has reached a point where it can be merged back into the original Dafny project \cite{dafny_lang_github}.
-However, since there is still a problem with platform independence, no rebase was carried out with regard to the server in part.
-As soon as the Language server can be successfully started with mono, nothing stands in the way of a rebase.
+\subsubsection{Pull Request to Dafny}
+Our Dafny language server has reached a point where it technically can be merged back into the original Dafny project \cite{dafny_lang_github}.
+Unfortunately, they released a new version shortly before the end of the thesis.
+Thus, a rebase is necessary first.
+Since Dafny changed the underlying .NET Framework version, the rebase was executed as a proof-of-concept, but was not carried out to avoid bugs.\\
 
-\subsubsection{Publishing of the Client Plugin}
-Our plugin does not replace the old plugin, but supplements the plugin store as its own new preview plugin \cite{our-dafny-plugin}.
-The publication in the plugin store happens automatically. \\
+There is also still a problem with platform independence as described in in chapter \ref{section:implementation:mono} \nameref{section:implementation:mono}.
+Although this was a major goal, it could not be achieved.
+Before the pull request, those issues may be resolved.
 
-We rebased our GitLab repository to a GitHub repository.
-In the original GitHub CI process, the pipeline \code{release-marketplace}
-was adapted for the plugin store release by Fabian Hauser \cite{our-dafny-plugin-github-publish}.
-Once the rebase from Dafny language server to the Dafny project is done,
+
+\subsubsection{Publication to the VSCode Marketplace}
+We merged our GitLab repository to a dedicated GitHub repository.
+From there, it is uploaded to the VSCode marketplace.
+This process uses the GitHub pipeline \code{release-marketplace}, which
+was adapted by Fabian Hauser \cite{our-dafny-plugin-github-publish}.
+
+Once the pull request to the Dafny project is complete,
 the preview plugin can replace the original plugin.
-Since the repository already exists in GitHub, the effort is minimal.
+
+\intnote{das war nicht so verständlich hier. hab versucht es zu clarifyen. ist noch alles richtig was hier steht?}
 
 \subsubsection{Download of the Dafny Language Server}
-In the original plugin, the Dafny project was downloaded via the release builds of GitHub \cite{dafny_lang_builds}.
-
+In the pre-existing project, Dafny was downloaded from GitHub \cite{dafny_lang_builds}.
 As discussed in section \ref{section:implementation:client:download} \nameref{section:implementation:client:download},
-we have written an interface for this original process.
+we have written a custom interface for this original process.\\
 
-Once the rebase from Dafny language server to the Dafny project is done,
-the client can download the download the Dafny language server
-(which will be included in the Dafny project) as it was inizially done.
-Due to the written interface the component can be exchanged with minimal effort. \\
-
-The current download component downloads the Dafny language server from a private server \cite{client-serverStringResources}.
+Thanks to the interface, we can currently download the Dafny language server from a private server \cite{client-serverStringResources}.
+Once the pull request to Dafny is accepted, the download process can then be easily adjusted to download everything from Dafny directly.\\
 
 We decided on this simple variant in order to keep the effort for this temporary solution as low as possible.
-Alternatively, this process could have been automated with the GitLab CI using the GitLab API \cite{gitlab-api} to download the CI artifacts
-or the artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}.
+Alternatively, this process could have been automated with the GitLab CI using the GitLab API \cite{gitlab-api} to download the CI artifacts.
+The artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}. \intnote{zu technisch für result?}
 
-\subsubsection{Platform Independence}
-In order to reach the widest possible audience with our plugin,
-cross platform support was very important to us right from the start.
-As described in chapter \ref{section:implementation:mono} \nameref{section:implementation:mono},
-we unfortunately had to switch from .NET Core to .Net Framework
-about Dafny. Our language server had difficulties with mono to be executed correctly. \\
+\intnote{das war nicht so verständlich hier. hab versucht es zu clarifyen. ist noch alles richtig was hier steht?}
 
-Unfortunately, the problem could not be solved within a reasonable amount of time,
-and was unfortunately not completed by the end.
-Therefore our language server - and therefore also the plugin - is
-unfortunately not executable correctly on macOS or Linux. \\
 
-Platform independence was an essential goal and is unfortunately pending in consultation with our supervisor.
-As a consequence, our plugin cannot replace the existing plugin,
-but was released as a separate plugin installation marked as preview version \cite{our-dafny-plugin}.
