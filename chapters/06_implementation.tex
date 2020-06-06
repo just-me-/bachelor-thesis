@@ -24,7 +24,6 @@ as well as basic configurations which are made possible for the end user.
 During the implementation process, many confusing module imports and component usages arose.
 Their purpose was generally unclear and thus difficult to understand.
 The imports caused a lot of dependencies, too.
-
 This problem had to be solved by further introductions of interfaces and encapsulation of modules. \\
 
 Although interfaces were used for individual types,
@@ -35,7 +34,9 @@ The modules now no longer program on the class implementations, but against the 
 For this purpose one importable module with the name \code{\_<Directory>Modules} was created for each directory.
 Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
 In addition, the dependencies among each other are shown.
-For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} have been omitted. \\
+For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} to each package have been omitted.
+The dependency of \code{extensions} on VS Code is based on dependeny injection and represents the plugin entry point.
+Apart from this dependency, no dependency injection dependencies are shown in the diagram. \\
 
 \begin{figure}[H]
     \centering
@@ -57,7 +58,7 @@ In the code review, it was decided that default values should no longer be set w
 but rather at a central location.
 This would make it easier to maintain these values.
 
-\subsubsection{Client Modules In Detail}
+\subsubsection{Client Modules in Detail}
 The individual modules from the design concept are shown below.
 The components shown in green are exported to the outside of the module and can be used by other modules.
 The other, orange components are only used within the module. \\
@@ -73,8 +74,8 @@ and the download of the Dafny language server.
 These two modules will be discussed separately in the following sections and not in this section. \\
 
 \textbf{\code{dafnyLanguageServerStartup}}\\
-The main package \code{dafnyLanguageServerStartup} is used by the \code{extension.ts}
-and contains basicly the packages "main logic".
+The main module \code{dafnyLanguageServerStartup} is used by the \code{extension.ts}
+and contains basicly the plugin's "main logic".
 It is to start the Dafny language server and establish a connection,
 as well as basically initialize the plugin. This includes creating the UI management component and command registrations.
 
@@ -89,7 +90,7 @@ For more details see section \ref{section:implementation:client:download}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/dafnyLanguageServerStartup}
-    \caption{Package \code{dafnyLanguageServerStartup}}
+    \caption{Module \code{dafnyLanguageServerStartup}}
     \label{fig:placeholder_ref}
 \end{figure}
 
@@ -102,10 +103,135 @@ of VS Code. "Client" is somewhat confusing in that sense, since this module is u
 Among other things, the options are set with which command the server is started and which file types, which are opened in VS Code by the user of the plugin, should be transferred to the server. \\
 
 Secondly, \code{serverInitializer} registers a callback as the program entry point to the created \code{serverOptions} instance
-and then the language server is started with \code{this.languageServer.start()}. \\
+and then the language server is started with \code{this.languageServer.start()}.
+To run the Dafny language server, an instance of \code{DafnyRunner} is created.
+This component is part of the \code{localExecution} package.\\
 
 \textbf{\code{ui}}\\
-This package is responsible for representations. This includes the status bar information and the display of the CounterModel.
+This package is responsible for all visual representations.
+This includes the status bar information and the display of the CounterModel.
+Also it registers VS Code commands and context menu additions. \\
+
+\code{DafnyUiManager} is the basic UI entry point and manages the UI components.
+It creates the individual components and updates them specific events if necessary.
+This is the case, if the opened document is changed by the plugin user.\\
+
+Also a \code{disposeUi} function is also provided, which destroys the UI elements. This is for example
+on a Dafny language server restart the case. On restart all, UI components are rebuilt,
+so that a clean plugin restart is also performed in the client if one of the features should
+be frozen and does not response anymore in an extreme case.\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Commands in the Context Menu and the VS Code Command Line}
+    \label{fig:commands}
+\end{figure}
+
+The \code{Commands} package registers all commands that are offered to the user
+and links them to corresponding callback functions.
+These commands are available with the context menu
+and the available commands in the VS Code Command line, as shown in Figure \ref{fig:commands}.
+Individual dependencies are injected. Thiese includes:
+\code{IDafnyRunner} to call compile and run as a callback as you can see for examle in listing \ref{lst:compileAndRun}.
+Furthermore \code{IDafnyUiManager} is injected
+in order to access the CounterModelProvider with the appropriate commands and to show or hide it.
+
+\begin{lstlisting}[language=typescript, caption={Excerpt from \code{commands.ts}}, captionpos=b, label={lst:compileAndRun}]
+[..]
+name: CommandStrings.CompileAndRun,
+callback: () => {
+  const compile: ICompile = new Compile(this.languageServer);
+  compile.compile(false).then(() => compile.run(this.runner));
+}
+[..]
+\end{lstlisting}
+
+The following commands are registered:
+\begin{itemize}
+    \item {\bf Compile} \textendash{} to compile the Dafny program.
+    \item {\bf Compile with Custom Arguments} \textendash{} to pass a compilation request with user-specific
+    compile parameters to the server.
+    \item {\bf Compile and Run} \textendash{} after compiling the dafny program is executed and the output is displayed.
+    \item {\bf Show CounterExample} \textendash{} displays the CounterExample for the currently opened Dafny file, if available.
+    \item {\bf Hide Counter Example} \textendash{} hides CounterExample for the current dafny file.
+    \item {\bf Show References} \textendash{} with a click on a CodeLens references,
+    the references are shown to the user via a popup window.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Warning Message Received From Server (zB von GoTo bei invalidem File)}
+    \label{fig:msg_example}
+\end{figure}
+
+The \code{Notifications} component is responsible for displaying messages received from the server to the user.
+There is an example shown in figure xxx.
+There are the following three types, each of which is displayed with a different color:
+
+\begin{itemize}
+    \item {\bf Error} \textendash{} is shown in red.
+    \item {\bf Warning} \textendash{} is displayed in yellow.
+    \item {\bf Info} \textendash{} is shown in blue.
+\end{itemize}
+
+The logic of the display messages is provided directly by the VS Code API.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/ui}
+    \caption{Module \code{ui}}
+    \label{fig:ui_module}
+\end{figure}
+
+The \code{provider} module provides the individual UI components.
+The packages are exported to be used by the \code{DafnyUiManager} component.
+However, the providers module is not exported to the outside by the \code{ui} module,
+so it is shown in orange inf figure \ref{fig:ui_module}.
+The module was created purely for grouping and a better file structure.\\
+
+The \code{CodeLensProvider} component is very simple. CodeLens data transferred from the server is transferred to the VS Code API.
+The logic is limited to passing the data through. The actual display of the CodeLens popup window is done via the
+VS Code API. More about the logic of CodeLens can be found in section \ref{section:implementation:features:codelens}. \\
+
+The \code{CounterModelProvider} component is used to display and hide CounterModels.
+This component also stores in which Dafny files a CounterModel should be displayed and in which not.
+Therefore, if the user changes the opened file in the worspace, the CounterModel is automatically hidden or shown.
+The CounterModuel supports a dark and light mode as shown in figure \ref{fig:dark_light_mode}.
+This mode is automatically set accordingly,
+depending on whether VS Code is set to light or dark by the user.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{CounterModel in Dark (Left) and Light Mode (Right)}
+    \label{fig:dark_light_mode}
+\end{figure}
+
+Unlike the Compile feature, the \code{CounterModelProvider} creates a callback and passes it to the \code{serverRequest} module.
+Therefore an update-call of the \code{CounterModelProvider} requires a transfer of the language server instance to instantiate a \code{RequestCounterExample}.
+This is for the following reason: Unlike the \code{StatusbarProvider} or the \code{CodeLensProvider},
+\code{CounterModelProvider} has an active influence on it,
+when a server request should be sent and when not.
+With the components for the statubar and CodeLens react passively to an event.
+
+In this way the CounterModel component can regulate the server requests.
+For reasons of efficiency, the implemented client-side display of CounterModels limits its
+server requests to a certain number per second.
+This means that even if a plugin user types very fast on the keyboard, a
+update requested by \code{CounterModelProvider} to the server is limited by default to two per second. \\
+
+The \code{StatusbarProvider} reacts to messages from the Dafny language server.
+It primarily displays the following information to the user as shown in figure \ref{fig:statusbar}:
+Whether the Dafny file is valid, if how many errors are present and the Dafny language server version.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Dafny Statusbar}
+    \label{fig:statusbar}
+\end{figure}
 
 \textbf{\code{serverRequests}}\\
 This package is responsible for server requests which are not automatically handled by the VS Code.
@@ -1000,6 +1126,7 @@ This way, the user could be informed about them.\\
 
 
 \subsubsection{CodeLens}
+\label{section:implementation:features:codelens}
 The CodeLens functionality is divided into two primary tasks.
 
 First, it is shown how often the method or class has already been used.
