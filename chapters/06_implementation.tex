@@ -492,10 +492,10 @@ Own requests can be realized according to section \ref{chapter:customlspmsg} by 
 
 All handlers require two additional methods, aside the actual \code{Handle}:
 \begin{itemize}
-    \item GetRegistrationOptions: This method is called when the handler is registered.
+    \item \code{GetRegistrationOptions}: This method is called when the handler is registered.
     It allows to set options at the time the server is started.
     Such an option is for example after which characters AutoCompletion should be automatically triggered.
-    \item SetCapability: It allows to set handler-specific capabilities, such as if the rename-handler will also support a 'prepare rename' feature.
+    \item \code{SetCapability}: It allows to set handler-specific capabilities, such as if the rename-handler will also support a 'prepare rename' feature.
 \end{itemize}
 
 A lot of code for these classes is always identical and was thus extracted to a generic base class.
@@ -577,8 +577,8 @@ The \code{PhysicalFile} class can then also take responsibility for applying fil
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{implementation/workspace.png}
-    \caption{WorkspaceManager and FileRepository}
+    \includegraphics[width=9cm]{implementation/workspace.png}
+    \caption{\code{WorkspaceManager} and \code{FileRepository}}
     \label{fig:worksapceAndRepo}
 \end{figure}
 
@@ -597,7 +597,6 @@ Last but not least, the newly implemented symbol table is also attached to the f
 To obtain all of these results, the class simply invokes the \code{SymbolTableGenerator} and the \code{DafnyTranslationUnit}.
 Thus, all information about a file is accessible from within the file repository.
 
-
 \subsubsection{DafnyAccess}
 Dafny Access it the package invoking the Dafny backend to obtain verification results.
 The core class in this package is the \code{DafnyTranslationUnit}.
@@ -605,8 +604,8 @@ It was partially taken over from the pre-existing projects, but as part of this 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=12cm]{implementation/DTUSeq.png}
-    \caption{WorkspaceManager and FileRepository}
+    \includegraphics[width=6cm]{implementation/DTUSeq.png}
+    \caption{\code{DafnyTranslationUnit} Sequence}
     \label{fig:DTUSeq}
 \end{figure}
 
@@ -646,16 +645,13 @@ Note in the following snippet, that dafny options are by directly calling Dafny'
 \end{lstlisting}
 
 
-
-
-
 \subsubsection{Utilitites}
 The bottom layer of the project is formed by the utiltiy layer.
-It contains three packages
+It contains three packages:
 \begin{itemize}
-    \item Tools
-    \item Commons
-    \item Resources
+    \item \code{Tools}
+    \item \code{Commons}
+    \item \code{Resources}
 \end{itemize}
 \code{Commons} contains classes that are used within multiple parts of the code, such as \code{TranslationResults} and were already discussed.
 \code{Resources} contains string resources and were realized with \code{.resx} files.
@@ -667,12 +663,13 @@ but are useful within the language server environment.\\
 This class is used prior to the server launch and initializes a few config settings.
 The settings are stored within the static class \code{Commons/LanguageServerconfig.cs}.
 The config initializer will first of all set hard coded default values to avoid any kind of null pointer exceptions.
-Afterwards, the file \code{Config/LanguageServerConfig.json} is parsed with Newtonsoft's Json.NET library \cite{jsondotnet}.
+Afterwards, the file \\
+\code{Config/LanguageServerConfig.json} is parsed with Newtonsoft's Json.NET library \cite{jsondotnet}.
 Any available values will be written to the static configuration class.
 Unknown or illegal values will not be set and errors are added to an error reporter.
 Finally, the launch arguments are parsed, again overwriting the config settings if applicable or reporting errors otherwise.
 A simple argument parser was implemented manually.
-Alternatively, a library could have been used for this task such as \cite{clparser}.
+Alternatively, a library could have been used for this task such as \textit{Command Line Parser} \cite{clparser}.
 The config initializer is implemented exception safe.
 This will run to completion and at worst just provide default values.
 Errors can later be extracted from the \code{ErrorReporter}.
@@ -693,21 +690,13 @@ Similar to logging, methods for each severity level are available, such as \code
 
 \textbf{ReservedWordsProvider}\\
 This is a class providing a set of words, that are not suited for identifiers.
-This is, for example, 'method', 'class', or 'return'.
+This is, for example, \code{method}, \code{class}, or \code{return}.
 The class tries to read and parse \code{Config/ReservedDafnyWords.json}, which can be user adjusted in case the Dafny specification changes.
 If the file cannot be read or has a wrong format, a hard coded default list is used which was taken out from the Dafny Reference Manual \cite{dafnyReferenceManual}.
 A HashSet was used to provide fast access to the set.\\
 
-While this component is specifically used solely for the \code{rename}-Feature, it was extracted to be also available at other spots if required for future features.
-
-
-
-%%%%FUCK IST DAS LANG!!!!
-
-
-
-
-
+While this component is specifically used solely for the feature Rename,
+it was extracted to be also available at other spots if required for future features.
 
 
 \subsection{Symbol Table}
@@ -729,18 +718,18 @@ The most important properties are:
 \begin{itemize}
     \item Name
     \item File
-    \item Position in File
-    \item Body Location, if any
-    \item Kind and Type
-    \item Link to Parent Symbol
-    \item Link to Declaration Symbol
-    \item Hash with all Children Symbols (Only Declarations)
-    \item List with all Descendants (Any symbol occurring in the body)
-    \item List with all Usages of the symbol
-    \item BaseClasses
+    \item Position in file
+    \item Body location, if any
+    \item Kind and type
+    \item Link to parent symbol
+    \item Link to declaration symbol
+    \item Hash with all ahildren symbols (only declarations)
+    \item List with all descendants (any symbol occurring in the body)
+    \item List with all usages of the symbol
+    \item Base classes
     \item Parameters
     \item The associated module
-    \item Link to the associated default class for quick access.
+    \item Link to the associated default class for quick access
 \end{itemize}
 
 The provided properties are supposed to facilitate working with the symbol tree.
@@ -762,9 +751,9 @@ To be consistent, the structure will be called symbol table.\\
 
 While this is very fancy, the convenience comes at a price.
 Many properties do not apply for all kinds of symbols.
-Consider the following code segment:
+Consider the following code segment in listing \ref{short_code_segment_dafny_foo}.
 
-\begin{lstlisting}[language=dafny, caption={Example Code Regarding Symbol Information}, captionpos=b, label={lst:aldbkajds}]
+\begin{lstlisting}[language=dafny, caption={Example Code Regarding Symbol Information}, captionpos=b, label={lst:short_code_segment_dafny_foo}]
 method foo() {
     var x := 5;
     print x;
@@ -772,7 +761,7 @@ method foo() {
 \end{lstlisting}
 
 The symbol \code{foo} profits by almost all properties.
-It can have children (the variable x), it has some parent, and it can be used elsewhere in the code.
+It can have children (the variable \code{x}), it has some parent, and it can be used elsewhere in the code.
 Since \code{foo} is a method declaration, the declaration property of the symbol does not make sense.
 In this case, it just points to itself.
 This way, features like GoToDefinition will just jump to the same symbol, which is the expected behavior.
@@ -808,7 +797,7 @@ and take care of symbol usages.\\
 This way, symbols that are declared after the first usage can be found as well.\\
 
 \textbf{Visitors}\\
-As already mentioned, the whole symbol table generation is realized using the visitor pattern.
+As already mentioned, the whole symbol table generation is realized using the visitor pattern. \glsadd{visitor}
 For that, Dafny code had to be adjusted to offer a \code{Accept(Visitor v)} method.
 This method will basically just navigate through the internal Dafny symbol representation.
 For example, when visiting a method, one would like to register the method itself.
@@ -849,7 +838,7 @@ public override void Accept(Visitor v)
 Note that the method is marked with the override keyword.
 This is, since every AST-Element is either a statement, a definition or a declaration, among others.
 A virtual \code{Accept} method was implemented for these top level classes, which uses a default implementation.
-In case a specific AST element got forgotten by us, it will just use the default implementation, which is shown in listing \ref{lst:defaultAccept}.
+In case a specific AST element got forgotten by us, it will just use the default implementation, which is shown in listing \ref{lst:defaultaccept}.
 
 \begin{lstlisting}[language=csharp, caption={Default Accept}, captionpos=b, label={lst:defaultaccept}]
     public virtual void Accept(Visitor v)
@@ -875,7 +864,7 @@ Since the method itself will have its own body, the new scope will then be set t
 All symbols that will be visited afterwards - which is anything inside the method - are then attached to the method.
 Once the method is done, \code{Leave()} is called, which will reset the scope to the parent scope for the next item to be visited.\\
 
-Let's continue the example of visiting a \code{method}.
+Let us continue the example of visiting a \code{method}.
 This is a declaration, and thus will be treated by the first visitor, which will register all declarations outside method bodies.
 The \code{Visit}-method is shown in listing \ref{lst:visitorvisit1}.
 Take note how the symbol is created: All required information is taken from the AST element \code{Method o} that is visited.
@@ -913,7 +902,7 @@ will also visit declarations.
 The visitor has actually no choice to skip them, since the \code{Accept}-method decide what is visited in which order.
 However, the second visitor no longer creates a symbol for them.
 Instead, the already created symbol is located and set as the environmental scope.
-The \code{Visit}-method thus gets reduced to listing \ref{lst:visitor2method}
+The \code{Visit}-method thus gets reduced to listing \ref{lst:visitor2method}.
 
 \begin{lstlisting}[language=csharp, caption={Visiting a Method, Second Visitor}, captionpos=b, label={lst:visitor2method}]
 public override void Visit(Method o)
