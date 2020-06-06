@@ -1,16 +1,5 @@
 \section{Conclusion}
 \label{section:conclusion}
-Erreicht eund offene Ziele? am ende hab ich was. was waren ig die ziele? editier ruhig. \\
-ziele und erreicht / nicht erreicht ist eig result jetzte.
-Dann können wir hier ja eig nur noch sagen, wie geil wir eig waren.
-Verglichen mit Rinkel, Altersheim, ne saugute leistung.
-Fanfcy Plugin.
-Bei Bewerbungen hats den leuten ebreits die socken rausgehaune. und so.
-
-
-
-
-
 This chapter concludes the thesis and the puts the results into context.
 It ends up with some outlooks for future improvements.
 
@@ -40,7 +29,7 @@ The foundations for continue to work on the visitor are set.
 Thus, we are confident, that this will be done within further development of the plugin.\\
 
 For us, it was important that the plugin will somehow stay alive, whenever it encounters language features that are not supported.
-It was targeted to just do nothing, whenever an exceptional state occurs, which worked out quite well.\\
+It was targeted to just do nothing as a fault tolerant design, whenever an exceptional state occurs, which worked out quite well.\\
 
 Although the visitor is incomplete, the plugin provides a great experience for someone taking first steps in Dafny.
 The target persona was the student, completing the HSR-internal exercises on Dafny, for which the plugin is more than sufficient.
@@ -54,12 +43,13 @@ The code is well organized, split into components, and has a nice quality.
 
 \subsection{Deployment}
 The plugin has been uploaded to the VSCode Marketplace and is available for public.
-This is a huge success for the project and makes us quite proud.
-Not every bachelor thesis comes out with a product, that actually gets used in the end.
-Compared to the relatively high complexity of the project, this is quite remarkable.
+This is a huge success for the project and makes us quite proud since the result of our
+bachelor thesis is a product, that actually gets used by other developers.
+Compared to the relatively high complexity of the project, this is quite remarkable.  \intnote{letzten satz würde ich streichen weil zu wannabe mässig? kommt in den persönlichen bericht aber nicht in eine technische arbeit find ich }
 
 \subsection{Outlook}
 In this chapter, the further development of the project is described.
+This includes the complete implementation of the visitor, more LSP extensions as well more refactorings and features.
 
 \subsubsection{Completion of the Visitor}
 As mentioned previously in this chapter, the visitor should be completed to also target more advanced users.
@@ -136,13 +126,13 @@ Regarding the goals provided at the beginning of the thesis, the following items
     \item General Code cleanup was done.
     \item Clean folder structure was implemented, especially for tests, too.
     \item Tests run clean, not every test has to be added manually.
-    \item Sonar Qube is now running.
+    \item SonarQube is now running.
     \item Logging is injected properly and a common logging framework is used.
     \item Dafny Library is directly integrated everywhere by now.
     \item Client completely refactored and cleaned up.
     \item Symbol Table was implemented.
     \item Previous features were improved.
-    \item Small feature branches were used on git with short commits and good commit messages.
+    \item Small feature branches were used on git with short commits and mostly clean commit messages.
     \item No todo remain in the code.
     \item Integration tests run properly with OmniSharp's client.
 \end{itemize}
