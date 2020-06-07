@@ -102,7 +102,7 @@ The user also has the option to apply custom compilation arguments.
 These can be directly set within VSCode.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=15cm]{results/compile_customarg.png}
+    \includegraphics[width=12cm]{results/compile_customarg.png}
     \caption{Custom Compilation Arguments}
     \label{fig:compilation_custom_args}
 \end{figure}
@@ -341,9 +341,9 @@ Thus, a correct symbol table is crucial for correct functionality.\\
 
 Dafny is a programming language offering a lot of features.
 Aside common object oriented features, also functional programmatic features are present.
-Figure \ref{fig:analysis_dafnyASTStuff} shows all classes occurring inside the Dafny AST.
+Figure \ref{fig:dafnyASTOverview_3} shows all classes occurring inside the Dafny AST.
 The writers are well aware, that the text in this figure is too small to be read.
-The figure should indicate the humungous amount of AST-elements present in Dafny.
+The figure should indicate the big amount of AST-elements present in Dafny.
 Many of them are not just inheriting from \code{Expression} or \code{Statement}, but from individual base classes.
 Thus, implementing the visitor for all of them turned out to be massively time consuming.
 Since the bachelor thesis is bounded by a limited time frame, it was necessary to limit the amount of Dafny language features we support.
@@ -363,7 +363,7 @@ to provide the best possible user experience.
     \centering
     \includegraphics[width=\textwidth]{results/symboltable_dafnyast.png}
     \caption{All Dafny AST Classes}
-    \label{fig:dafnyASTOverview}
+    \label{fig:dafnyASTOverview_3}
 \end{figure}
 
 \subsubsection{Server Architectural Improvements}
@@ -497,7 +497,8 @@ Aside the increased functionality, this is mainly to explain by the extensive an
 Just to create a single symbol, aobut 20 LOC are necessary as seen in chapter \ref{chapter:implementation}.\\
 
 Interesting is the comparison of the code base required for a feature like GoToDefinition.
-The new  \code{DefinitionsProvider} just uses 38 lines of code.
+The new \\
+\code{DefinitionsProvider} just uses 38 lines of code.
 However, only about 5 are used for the core logic, all others are just error handling and user messaging.
 This is a major improvement comapared to the pre-existing project.
 

@@ -23,7 +23,8 @@ The plugin is quite robust and will recover from exceptional states.
 If something goes completely wrong, an option to restart the language server is available.\\
 
 Due to timely reasons, the visitor could not be implemented completely.
-When time is fix, scope has to be variable \cite{keller}, thus we needed to cut out some Dafny language features from the visitor.
+When a project time frame is given, the scope has to be variable \cite{keller},
+thus we needed to cut out some Dafny language features from the visitor.
 However, completing it is not necessarily complex, but rather a diligence task.
 The foundations for continue to work on the visitor are set.
 Thus, we are confident, that this will be done within further development of the plugin.\\
@@ -45,7 +46,6 @@ The code is well organized, split into components, and has a nice quality.
 The plugin has been uploaded to the VSCode Marketplace and is available for public.
 This is a huge success for the project and makes us quite proud since the result of our
 bachelor thesis is a product, that actually gets used by other developers.
-Compared to the relatively high complexity of the project, this is quite remarkable.  \intnote{letzten satz würde ich streichen weil zu wannabe mässig? kommt in den persönlichen bericht aber nicht in eine technische arbeit find ich }
 
 \subsection{Outlook}
 In this chapter, the further development of the project is described.
@@ -58,7 +58,7 @@ While it was said that this is rather a diligence tasks, some problems may arise
 For example, when inheritance was implemented, a whole new challenged appeared.
 Declarations in base classes were not found, since we could no longer just move up the symbol tree.
 Possible inherited symbols had to be treated separately.
-Thus, the task of completing the visitor is not to underestimate.
+Thus, the task of completing the visitor should not be underestimate.
 
 \subsubsection{LSP Extensions}
 The language server protocol \cite{lspspec} offers a lot more than what is currently implemented.
