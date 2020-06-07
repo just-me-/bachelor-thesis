@@ -27,3 +27,5 @@ build_pdf:
       - main.pdf
   script:
     - latexmk -pdf main.tex
+    - makeglossaries main
+    - latexmk -pdf main.tex
