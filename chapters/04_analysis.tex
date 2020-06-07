@@ -124,11 +124,11 @@ Note the JSON-based message format.\\
 \label{section:analysis:omnisharp}
 To create a language server, a proper LSP implementation is required.
 OmniSharp offers support for \CsharpWithSpace \cite{langserverdotorg} in the form of a NuGet package. \glsadd{nuget}
-NuGet is the package manager in the Microsoft univers \cite{nuget}.
+NuGet is the package manager in the Microsoft universe \cite{nuget}.
 A language server client that can be used for testing is also offered.
 
 \subsubsection{Basic OmniSharp Usage}
-Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about OmniSharp's language server protocol implementation.
+Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about OmniSharp's language server protocol implementation \cite{omnisharptutorial}.
 The tutorial provides the user with all the required knowledge to set up a language server in \Csharp.
 Besides the setup of the server, it also illustrated how to create message handlers, for example for AutoCompletions or document synchronization.\\
 
@@ -317,7 +317,7 @@ function method min(a:int, b:int) : int
 
 Further concepts include:
 \begin{itemize}
-\item A \textit{predicate} is just a function returning a bool value.
+\item A \textit{predicate} is a function returning a bool value.
 \item An \textit{inductive} predicate is a predicate calling itself.
 \item A \textit{lemma} is a mathematical fact.
 It can be called whenever Dafny cannot prove something on its own.
@@ -361,7 +361,8 @@ This means, that within each module, each method name is unique.
 \subsubsection{Shadowing}
 Shadowing means that a class method redefines a variable that was already previously defined as a class member.
 This means that two variables with the same name exist.
-The local variable can be accessed via its name, but to access the class member, the programmer needs to write \code{this} in front of the variable name.\\
+The local variable can be accessed via its name, but to access the class member,
+the keyword \code{this} needs to write in front of the variable name.\\
 
 One can even go further and redefine a local variable in a nested block scope.
 Consider the following code snippet in listing \ref{lst:shadowing}.
@@ -881,7 +882,7 @@ Dafny-internal tests are run using the runner \textit{lit} \cite{lit}.
 The CI server bases on a Docker distribution.
 Docker's lightweight virtualization is ideally suited to run the CI environment. \glsadd{docker}\\
 
-Docker also realizes the principle "Cattle, not pets" with docker \cite{pets-vs-cattle}.
+Docker also realizes the principle "Cattle, not pets" \cite{pets-vs-cattle}.
 Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used.
 This way, the dependent packages will always be up to date and security patches and the like are automatically deployed.\\
 

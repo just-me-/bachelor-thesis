@@ -368,7 +368,7 @@ while for Eclipse mostly Java \cite{plugin-eclipse} is used.
 \label{section:implementation:client:download}
 Since the original Dafny plugin included the language server (which was written in TypeScript) in the plugin itself,
 we assumed in the preceding semester thesis that we could integrate our new Dafny language server directly in the plugin too
-and deploy it in to the plugin markedplace. \\
+and deploy it in to the plugin marketplace. \\
 
 During the design phase we noticed that this would be an unpleasant solution.
 In the Dafny project - where our language server will be integrated - builds
@@ -391,7 +391,7 @@ it checks whether the latest version is installed.
 If not, the local Dafny language version is removed and the latest version is downloaded. \\
 
 Therefore the original TypeScript code of the old language server,
-which had downloaded the Dafny client, was analyzed \ref{fig:ts_dafny_installer}.
+which had downloaded the Dafny client, was analyzed \cite{ts_dafny_installer}.
 From this we have implemented the core functionality in a clean interface: \\
 \code{ILanguageServerInstaller}.
 Since our language server is not yet integrated into the official build,
@@ -746,12 +746,12 @@ one can simply start from the root symbol and navigate through the hash maps in 
 The \code{[]} operator was overloaded to make this as convenient as possible:\\
 \code{rootSymbol["M"]["C"]["foo"]}.\\
 
-Technically, the symbol table is more of a double linked tree, then a table.
+Technically, the symbol table is more of a double linked tree, than a table.
 To be consistent, the structure will be called symbol table.\\
 
 While this is very fancy, the convenience comes at a price.
 Many properties do not apply for all kinds of symbols.
-Consider the following code segment in listing \ref{short_code_segment_dafny_foo}.
+Consider the following code segment in listing \ref{lst:short_code_segment_dafny_foo}.
 
 \begin{lstlisting}[language=dafny, caption={Example Code Regarding Symbol Information}, captionpos=b, label={lst:short_code_segment_dafny_foo}]
 method foo() {
@@ -957,8 +957,11 @@ To illustrate this, two examples are shown in figure \ref{fig:impl_symboltablena
 With this type of tree inspection, the runtime is reduced, as it is no longer necessary to visit every symbol.
 
 The navigator overcomes the following tree challenges:
-Where is the definition of a symbol? What symbol is at the current cursor position?
-What AutoCompletion suggestions are indicated?
+\begin{itemize}
+    \item Where is the definition of a symbol?
+    \item What symbol is at the current cursor position?
+    \item What AutoCompletion suggestions are indicated?
+\end{itemize}
 These challanges are discussed below. \\
 
 \textbf{Where is the definition of a symbol?}\\
@@ -1280,7 +1283,8 @@ The command's name is the function called at the client, when the grey text is c
 In addition, the \code{Command} is given the positions it should display inside the popup.  \\
 
 If the function \code{dafny.showReferences} is called in the client,
-the method \code{VSCodeCommandStrings.ShowReferences} from the VSCode API is called
+the method \\
+\code{VSCodeCommandStrings.ShowReferences} from the VSCode API is called
 and the arguments prepared in server are passed through. \\
 
 Because the whole logic for CodeLens is in the server,
@@ -1390,7 +1394,8 @@ One can simply create fake, mock or stub, implementing the interface, and use it
 
 \textbf{Symbol Table Generation}\\
 To test the symbol table generation, dedicated Dafny files were written.
-The tests first call the \code{DafnaTranslationUnit} to create a dafnyProgram.
+The tests first call the \\
+\code{DafnaTranslationUnit} to create a dafnyProgram.
 The dafnyProgram is then handed to the \code{SymbolTableGenerator}.
 The output is - once more - converted into a string representation.
 This outcome is then compared a against an expectation file.\\
