@@ -27,7 +27,7 @@
 \include{chapters/08_conclusion}
 \include{chapters/09_project_management}
 
-\addcontentsline{toc}{section}{Glossar}
+\addcontentsline{toc}{section}{Glossary}
 \printglossaries
 
 \pagebreak
@@ -45,4 +45,21 @@
 
 \include{attachement/UsabilityTest_Code}
 
+
+%Für publizierbare Arbeiten: Ein PDF einer publizierbaren Version der Arbeit, ohne die persönlichen Berichte, Sitzungsprotokolle, Vereinbarungen über Urheber‐ und Nutzungsrechte, Adress‐Informationen. Aus Datenschutzgründen keine email...
+
+
+%only for private version:
+\include{attachement/PersonalReports}
+
+
+\addcontentsline{toc}{section}{Eigenständigkeitserklärung}
+%only for private version (die per mail):
+\includepdf[pages=-]{attachement/Eigenstandigkeitserklarung.pdf}
+%only for public version auf archiv: [hat er so gesagt oder? - kommt mir aber komisch vor]
+%\includepdf[pages=-]{attachement/Eigenstandigkeitserklarung_notsigned.pdf}
+
+%only for private version (die per mail):
+\addcontentsline{toc}{section}{Vereinbarung über Urheber- und Nutzungsrechte}
+\includepdf[pages=-]{attachement/UrheberNutzungsRechte.pdf}
 \end{document}
