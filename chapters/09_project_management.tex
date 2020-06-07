@@ -1,60 +1,191 @@
 \section{Project Management}
 \label{section:project_management}
-
-METRIKEN UND SONAR REPORT IST BEI RESULT.
-
-
-projetplne; git. er mehr server/symbotabte, ich mehr lcint.
-basic LSp beide. /featuresd provider und co. essenzielles im pair programming.
-
-todo
-
-QualitätsManagement: Static code analyze: SonarLint. \cite{sonar-lint}
-Wir haben zwar SonarQube. Aber analysiert erst im CI.
-damit kann man auch lokal eine statische codeanalyse laufen lassen sprich fehler werden sofort lokal beid er
-entwicklung bereits angezeigt. einfacher zu beheben.
-
-
-Die andern:
-Proejtk Plan, Milestones, Risikomanagement, Abweichungen vom Proejkt Plattformen
-Projekt Homepage
-Zeitrapport
-
-
-
-sonar, prettier, sonarlint,
-
-kapitel von der sa und alten ba durchscrollen.
-diagramm aus präsentation fuer google.
-
-Continuous Integration (CI) \glsadd{ci}
-Projekt management: darum haben wirs getan, qualität
-According to the project plan, we wanted to resolve all CI-issues at the beginning of the bachelor thesis, so that we can then profit by a supportive workflow.
-
-
-
-\subsection{Meetings}
+This chapter reflects organizational aspects.
+We will compare relevant propositions from the project plan to the actual state \cite{projectplan}.
+First, we talk about time management. Then, quality aspects will be discussed.
 
 \subsection{Time Management}
-\subsubsection{Project Management}
+This chapter shows the time spent and how well we were able to stick to the planned schedule.
 
-%\subsection{Scope - results? bzw eig jedes kapitel? - weg}
-%\subsection{Metrics and Code Quality Aspects - result gem corbat}
-%also heir so: wir haben sonar genutzt, für qualität. aber der report bei result.
+\subsubsection{Time Spent From Each Student}
+The total working hours for the bachelor thesis was defined to be 12 ECTS or 360 hours per student \cite{projectplan}.
+The project was for 17 weeks, which averages out in a nominal working time of 21.2 hours per week per student \cite{projectplan}.
+During the last two weeks, no other classes take place and more time resources will be available \cite{projectplan}.
+The submission of the work was brought forward to Wednesday instead of Friday of last week.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Time Tracking (m, t, should)}
+    \label{fig:timetracking}
+\end{figure}
+
+As shown in figure \ref{fig:timetracking}, each student spent about 360 hours total.
+The change in workload for the last two weeks shows a significant increase in the number of hours spent per student. \\
+
+The following figure \ref{fig:timetracking} shows the the invested time by activity.
+The largest part was xxxx, followed by xxx and meetings.
+We rate this basic time split as well taken.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Time by Activity (Kuchendiagram Redmine)}
+    \label{fig:timetracking}
+\end{figure}
+
+Ref to kuchendiagramm todo \ref{fig:timetracking}
+
+\subsubsection{Schedule and Scope}
+As planned in the project plan, we used a mix between unified process and SCRUM.
+The project was split into an inception, elaboration, construction and a transition phase
+as you can see in figure \ref{fig:project_staging}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Project Staging}
+    \label{fig:project_staging}
+\end{figure}
+
+Each of the periods was split into two sprints, each lasting one week
+as you can see in figure \ref{fig:planned_milestones}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Planned Milestones}
+    \label{fig:planned_milestones}
+\end{figure}
+
+In general, we were able to stick to this plan pretty well as you can see in figure \ref{fig:actual_milestones}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Actual Milestones}
+    \label{fig:actual_milestones}
+\end{figure}
+
+\subsection{Cooperation}
+The cooperation was only marginally affected by the Corona situation.
+The physical meetings were replaced by virtual video conferences and screen sharing.
+
+\subsubsection{Meetings}
+The weekly meetings with our supervisors Thomas Corbat and Fabian Hauser were held in general each Thursday at 10:30am \cite{projectplan}.
+Thomas Kistler and Marcel Hess had a reserved time frame of 3x8h from Wednesday to
+Friday each week to work on the project \cite{projectplan}.
+Whenever necessary, internal meetings were held within this time frame \cite{projectplan}.
+
+\subsubsection{Division of Labour}
+Thomas Kisstler was more involved in the realisation of the sybol table,
+while Marcel Hess was more involved in the client implementation.
+However, both were always involved in both concepts.
+Basic design implementations were therefore mostly implemented in pair programming.\\
+
+In the implementation of the middle language server layer, both were equally involved.
+To enable a precise tracking of the activities and also to facilitate collaboration,
+we worked with the version management git.
+
+\subsection{Quality Aspects}
+This chapter highlights certain quality aspects that have been crucial for good code quality.
+In principle, the requirements placed on us in the project plan were fulfilled \cite{projectplan}.
 
 \subsubsection{Code Reviews}
+Basically there were three types of non-automated control of code quality.
+First the internal code reviews. Critical and difficult parts of the code were always underlaying to a internal code review.
+Secondly the reviews with our supervisors and
+thirdly the four-eye principle for the acceptance of merge requests. \\
 
-\subsubsection{Backend}
-Lines of Code
-Other Metrics
-SonarQube (new)
+Since GitLab supports merge requests,
+merge requests for independent changes were sent to the project partner for control and approval.
+If no errors or improvement potential was found, the merge request was accepted.
+If there were minor issues, they were improved immediately.
+And in the case of major discrepancies, a code review was convened.
 
-\subsubsection{Frontend}
-SonarQube
+\subsubsection{Continuous Integration (CI)}
+\glsadd{ci}
+According to the project plan,
+we wanted to resolve all CI-issues at the beginning of the bachelor thesis,
+so that we can then profit by a supportive workflow \cite{projectplan}. And we did.
+By separating the client and server into two different repositories, two new CI pipelines were created.
+These are then discussed for the server and for the client. \\
+
+{\bf Client}\\
+The client goes through three pipeline phases as shown in figure \ref{fig:ci_client}: Test, Build and Sonar.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{CI Pipelines for the Client}
+    \label{fig:ci_client}
+\end{figure}
+
+In the test phase, prettier \cite{dev} is used to check if the TypeScript code
+is formatted according to the style guidelines \cite{projectplan}.
+The build pipeline checks whether the TypeScript code can be compiled without errors.
+If there are errors in the TypeScript or warnings - such as an unused variable - the build will fail.
+Finally, the scanner for SonarQube is run and the report is sent to SonarCloud. \\
+
+{\bf Server}\\
+The pipeline for the server was slightly modified.
+In order to create the SonarQube report, the build and Sonar scan process had to be merged
+as shown in figure \ref{fig:ci_server}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{CI Pipelines for the Server}
+    \label{fig:ci_server}
+\end{figure}
+
+After the build has been successfully created
+and the SonarQube report has been successfully submitted to SOnarCloud,
+the test phase begins.
+We will run through the existing Dafny tests to verify
+that we have not inadvertently changed anything in the Dafny project,
+then it will run our automated unit and integration tests in the \code{test\_nunit} process. \\
+
+The automated CI processes were a great enrichment for our work.
+The tests were automatically run for checked-in changes.
+If these failed, no merge request was created.
+This automated control ensured that a new bug was not accidentally checked in
+and that the quality standard was maintained.
+
+\subsubsection{Static Code Analysis}
+In addition to ReSharper for the server, SonarQube was used for the server as well as for the client for static code analysis.
+SonarQube may have suggested code improvements or issued safety warnings. \\
+
+To integrate SonarQube into our CI process, we use the SonarCloud as shown in figure \ref{fig:sonarcloud_report}
+as platform \cite{sonarcloud}.
+SonarLint was used to get a local, static code analysis at the client as well \cite{sonar-lint}.
+The fact that a static code analysis could already be carried out locally meant that errors
+could be corrected during development and were not only noticed after the CI had failed.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{SonarQube Report in SonarCloud}
+    \label{fig:sonarcloud_report}
+\end{figure}
+
+Furthermore, local plugins for VSCode and Visual Studio were used to automatically
+format the code according to our styling guides \cite{dev}.
+Thus our code was always automatically formatted uniformly. \\
+
+More detailed code metrics can be found in section \ref{section:results:metrics}.
 
 \subsubsection{Test Coverage}
+Since our integration tests are able to test all the logic of the language server
+and basically all business logic could be integrated from the original client into the language server part,
+tests were written only for the Language server.
 
-\subsubsection{Commit Activities}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \caption{Language Server Test Coverage}
+    \label{fig:test_coverage}
+\end{figure}
 
-
-\subsection{Infrastructure}
+Wie gut unsere Testabdeckung ist, sieht man hier: \ref{fig:test_coverage}
+Oder kommt das auch in Results? todo

@@ -83,7 +83,7 @@ as well as basically initialize the plugin. This includes creating the UI manage
 If no local language server is available, the language server is downloaded from a server \\
 using the \code{LanguageServerInstaller} component.
 This component is only used inside the package, and is not exported to the outside,
-as can be seen in the figure \ref{fig:placeholder_ref}.
+as can be seen in the figure \ref{fig:dafnyLanguageServerStartup}.
 This component can also be used to update the language server locally.
 Update means in this case to delete the local existing language server and download the latest version.
 For more details see section \ref{section:implementation:client:download}.
@@ -92,7 +92,7 @@ For more details see section \ref{section:implementation:client:download}.
     \centering
     \includegraphics[width=\textwidth]{implementation/dafnyLanguageServerStartup}
     \caption{Module \code{dafnyLanguageServerStartup}}
-    \label{fig:placeholder_ref}
+    \label{fig:dafnyLanguageServerStartup}
 \end{figure}
 
 The logic of the main component \code{serverInitializer} itself was kept relatively small.
@@ -1681,7 +1681,7 @@ By using markdown instead of plaintext, HoverInformation could be improved signi
 
 \subsubsection{Automatic Triggering of AutoCompletion}
 If a dot is typed while typing, AutoCompletion suggestions are automatically expected.
-You should not have to press \code{control + space} as trigger.
+You should not have to press \code{CTRL+Space} as trigger.
 This issue was anyway pending and was implemented shortly after the usability test.
 
 In addition, the suggested methods lacked to inform about the supported parameters.
