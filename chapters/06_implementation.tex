@@ -331,8 +331,6 @@ export class LanguageServerNotification {
 \end{lstlisting}
 
 \subsubsection{Encapsulation of the VSCode Components}
- \intnote{todo auch implementieren wie beschrieben :P}
-
 During our implementation of the client we noticed that almost all our modules require different modules of VSCode.
 For example, the UI components needed different graphical elements while console processes are used to execute Dafny files.
 So the whole plugin had dependencies on the VSCode specific module kit,
@@ -340,15 +338,15 @@ which could not be offered by other IDE's in the same way. \\
 
 Because we wanted to design our plugin for VSCode in a way that the migration for other plugins
 for other IDE's is as easy as possible, we wrote additional module \code{ideApi} as shown in figure \ref{fig:packageIdeApi}.
-From this module the modules used by VSCode are exported with neutral names.
+From this module the modules used from VSCode are exported with neutral names.
 All modules except \code{typeInterfaces} and \code{stringResources} use this module directly or indirectly.
 The idea here is that when migrating to another IDE, adapter components can be written in module \code{ideApi}
 for the VSCode modules used in a centralized way.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Module \code{ideApi}}
+    \includegraphics[width=\textwidth]{implementation/module_ideApi}
+    \caption{Extract of the Modules and Interfaces implemented by the Module \code{ideApi}}
     \label{fig:packageIdeApi}
 \end{figure}
 
