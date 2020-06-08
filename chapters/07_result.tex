@@ -588,7 +588,18 @@ Sonar will report 4'000 LOC.
 
 Compared to the prototype, this is an increase of about 200\%.
 Aside the increased functionality, this is mainly to explain by the extensive and repetitive code necessary for the visitor within the \code{SymbolTable} namespace.
-Just to create a single symbol, aobut 20 LOC are necessary as seen in chapter \ref{chapter:implementation}.\\
+Just to create a single symbol, about 20 LOC are necessary as seen in chapter \ref{chapter:implementation}.\\
+
+For comparison: the original language server written in TypeScript had 3'100 LOC, rounded off \cite{sonar-old_ts_server}.
+But this only includes the middle class; the middle class in the Dafny project is not included.
+The table shown in figure \ref{fig:old_ts_languageserver} shows the 10 largest components of the old language server. \\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=12cm]{metric_old_language_server}
+    \caption{10 Biggest Component in the old TypeScript Language Server}
+    \label{fig:old_ts_languageserver}
+\end{figure}
 
 Interesting is the comparison of the code base required for a feature like GoToDefinition.
 The new \\
@@ -615,7 +626,38 @@ To sonar report is shown in figure \ref{fig:sonarserver}
 \subsubsection{Client}
 For the Client we have direct comparisons between the old plugin and the new plugin thanks to SonarCloud.
 
-wie begründen mit interfaces und strings die alle ausgelagert wurden... naja.
-todo
+Compared to the original rounded 900 LOC \cite{sonar-client_old} in the client part of the old plugin,
+the new server reaches rounded 1'400 LOC \cite{sonar-client_new}.
+The numbers are displayed in figure \ref{fig:loc_client_old_new}.
 
-uund wir haben doch einen neuen styleguide mit neuen umbrüchen oder?
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{loc_client_old_new}
+    \caption{LOC Client Old (Left) vs Client New (Right)}
+    \label{fig:loc_client_old_new}
+\end{figure}
+
+This may be surprising at first sight. But the following factors must be taken into account:
+
+\begin{itemize}
+    \item The new client implements own interfaces and contains more code due to the encapsulations.
+    The typeInterfaces directory is almost three times as large.
+    \item We stored string centrally in the string resources.
+    For example, the size of our string resource is almost twice as large.
+    \item We added new configuration options such as dark and light mode support for the CounterExample.
+    \item The size of the original server requests in \code{server}
+    could even be reduced by almost 100 LOC in the new version \code{serverRequests}.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{client_sonar_size}
+    \caption{Project Size Client Old (Left) vs Client New (Right)}
+    \label{fig:client_sonar_size}
+\end{figure}
+
+As shown in figure \ref{fig:client_sonar_size},
+we have over twice as many files due to the division of components and interfaces.
+If we calculate the LOC divided by the number of files,
+we get for the old client on average 45 LOC per file, and in the new client 33 LOC per file.
+This is certainly a good result.
