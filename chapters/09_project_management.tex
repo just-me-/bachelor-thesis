@@ -49,7 +49,7 @@ It is interesting how little time the transition took and how time-consuming the
     \label{fig:time_milestones}
 \end{figure}
 
-Apart from the time-consuming meetings and documentation, the symboltable was the most intensive ticket.
+Apart from the time-consuming meetings and documentation, the symbol table was the most intensive ticket.
 Followed by the newly implemented client.
 Figure \ref{fig:time_ticket} shows the 6 most time consuming tickets.
 
@@ -80,7 +80,7 @@ as you can see in figure \ref{fig:project_staging}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{project_staging}
     \caption{Project Staging}
     \label{fig:project_staging}
 \end{figure}
@@ -90,7 +90,7 @@ as you can see in figure \ref{fig:planned_milestones}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{milestones_planned}
     \caption{Planned Milestones}
     \label{fig:planned_milestones}
 \end{figure}
@@ -99,10 +99,69 @@ In general, we were able to stick to this plan pretty well as you can see in fig
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{milestones_actual}
     \caption{Actual Milestones}
     \label{fig:actual_milestones}
 \end{figure}
+
+{\bf Inception}\\
+In the first two weeks we found our way back into the project from the prototype
+and set up our environments accordingly.
+This included updating the IDEs, OmniSharp, Z3 and Boogie,
+as well as setting up a new Redmine ticket system and draw up the project plan.\\
+
+{\bf Infrastructure}\\
+Since the majority of inception could be processed very quickly,
+we were able to start with parts of the infrastructure a week earlier.
+On the one hand we got the old CI running again with the new updated versions of Boogie and Dafny,
+and on the other hand the CI was extended by SonarQube for \Csharp.
+This also included splitting the client and server projects into different git repositories.
+
+In addition, we have revised the concept for the integration tests and developed
+a new concept for the existing component
+new integration tests were written.
+
+Completing the CI process had been somewhat delayed, but was then successfully completed.\\
+
+{\bf Improvements}\\
+In this milestone we took care to improve the existing features.
+This included the compilation, display and counterexample and verification,
+as well as small improvements of the client, such as a bug fix in the statusbar.
+With this milestone we stayed very well within the planned time frame.\\
+
+{\bf Symbol Table}\\
+At the beginning of this milestone,
+we developed the concept and the basic implementation for the symbol table.
+Soon after, however, the milestone for the symbol table
+and the improvements of the related features in the milestone \textit{extensions} was reached.
+
+The boundaries were fluid due to the fact that new data was iteratively added to the symbol table per feature. \\
+
+{\bf Extensions}\\
+As described above, this milestone passed with the milestone for the symbol table.
+Therefore, this milestone was started a little earlier.
+
+The content of this milestone was primarily to make the existing features
+- such as \textit{AutoCompletion} and \textit{CodeLens} -
+use of the created symbol table and improve them in this way.
+In addition to the improvement of the existing features, we also
+added new features like \textit{Hover Information} and \textit{Rename},
+which are also based on the new symbol table.\\
+
+{\bf Transision}\\
+In the transision, it was primarily about preparing our plugin for the release.
+We noticed relatively early that there were problems with the mono support.
+Therefore we already made rough clarifications in week 10 and wrote posts in appropriate forums,
+namely the OmniSharp Slack channel \cite{mono-slack}.
+
+The transition took a little longer, because the final description of the final plugin version was only
+finished at the end and accordingly the plugin was released very close to the end of the project in the plugin marketplace.\\
+
+{\bf Conclusion}\\
+The conclusion was basically used to round off the documentation and as a general buffer time.
+The buffer was mainly used to deliver the written work a few days before the originally planned deadline.\\
+
+All in all, we were thus able to keep well within the planned schedule of the project plan.
 
 \subsection{Cooperation}
 The cooperation was only marginally affected by the Corona situation.
@@ -141,10 +200,10 @@ If there were minor issues, they were improved immediately.
 And in the case of major discrepancies, a code review was convened.
 
 \subsubsection{Continuous Integration (CI)}
-\glsadd{ci}
 According to the project plan,
 we wanted to resolve all CI-issues at the beginning of the bachelor thesis,
-so that we can then profit by a supportive workflow \cite{projectplan}. And we did.
+so that we can then profit by a supportive workflow \cite{projectplan}. \glsadd{ci}
+And we did.
 By separating the client and server into two different repositories, two new CI pipelines were created.
 These are then discussed for the server and for the client. \\
 
@@ -206,7 +265,6 @@ could be corrected during development and were not only noticed after the CI had
     \label{fig:sonarcloud_report}
 \end{figure}
 
-
 What stands out is the high number of code smells with about 3'400
 and the over one hundred bugs found.
 These high numbers are due to the fact that we have the entire Dafny project analyzed with Sonar.
@@ -230,7 +288,7 @@ More detailed code metrics can be found in section \ref{section:results:metrics}
 \subsubsection{Test Coverage}
 Since our integration tests are able to test all the logic of the language server
 and basically all business logic could be integrated from the original client into the language server part,
-tests were written only for the Language server.
+tests were written only for the Dafny language server.
 
 \begin{figure}[H]
     \centering
