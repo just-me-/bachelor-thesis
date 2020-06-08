@@ -2,11 +2,21 @@
 \label{section:analysis}
 Since this thesis is a sequel of the preceding semester thesis, work could be directly continued.
 Many topics were already analyzed in the prequel.
-To provide the reader with a comprehensive knowledge base about Dafny and the language server protocol (LSP), some sections out of the semester thesis will be repeated in the following subsections.
-The studies of the Dafny-specific compilation process was new to the bachelor thesis.
-It was especially necessary to gain an overview of the existing abstract syntax tree nodes to build the new symbol table.
+To provide the reader with a comprehensive knowledge base about the language server protocol,
+sections \ref{section:analysis:lsp} and \ref{section:analysis:omnisharp} are repeated from the semester thesis.\\
 
- \intnote{Prepare reader for content in the chapter. Give an overview of the sections and state which are copied.}
+First, we will start by explaining the language server protocol in detail.
+It is responsible for the communication between the IDE and the language server.
+Then, studies about OmniSharp follow, which offer an LSP implementation for Visual Studio.
+On the client side, plugins have to follow a specific data structure and provide certain entry points.
+This is discussed afterwards.\\
+
+The basics about Dafny were already mentioned in section \ref{section:introduction:dafny}.
+In this chapter, we will go more into detail and study the Dafny-specific compilation process with its abstract syntax tree nodes.\\
+
+After this technical analysis, the prototype is described.
+This way, the reader is informed what the state of the product was at the beginning of this thesis.
+Finally, research done in relation to CI is described. \gls{ci}
 
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
