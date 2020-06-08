@@ -82,8 +82,8 @@ Fortunately the LSP can be extended with custom requests. This concerns the foll
 \begin{itemize}
     \item Compile: Informs the server about the file to compile and compilation arguments.
           As a result, the server delivers a success or error message.
-    \item CounterExample: The client sends a file identificator to the server and receives
-           CounterExamples in response.
+    \item CounterExample: The client sends a file identifier to the server and receives
+           counter examples in response.
 \end{itemize}
 
 Custom LSP messages are further discussed in section \ref{chapter:customlspmsg}.
@@ -169,7 +169,7 @@ For AutoCompletion, this is the file and the cursor position, as well as some co
 The task of the language server is to figure proper suggestions and return them in the form of a \code{CompletionList} back to the client.\\
 
 Since OmniSharp is open source, we could find all available interfaces and thus all available handlers in their git repository \cite{omnisharpgit}.
-Aside the official LSP specification, this collection is very helpful to perceive LSP's possibilities.
+Aside from the official LSP specification, this collection is very helpful to perceive LSP's possibilities.
 
 \subsubsection{Custom LSP Messages}
 \label{chapter:customlspmsg}
@@ -282,7 +282,7 @@ module Helpers {
 \begin{itemize}
     \item The user states the module name explicitly in front of the method he wants to call, \linebreak namely \code{Helpers.addOne(5)}.
     \item The user imports the module, for example with \code{import H = Helpers}.
-    Afterwards, he may type \code{H.addOne(5)}.
+    Afterwards, they may type \code{H.addOne(5)}.
     \item The user imports the module in opened state: \code{import opened Helpers}.
     Now the user is eligible to skip the namespace identifier and can just write \code{addOne(5)}.
 \end{itemize}
@@ -322,7 +322,7 @@ It takes an input and returns a single value.
 The function must consist of only one expression.
 For example, consider listing \ref{lst:function}.
 Furthermore, functions are not compiled into the final executable and may only be used in specification context.
-That is, in contracts or assert statements to proof logical correctness prior to compilation \cite{functionVSMethod}.
+That is, in contracts or assert statements to prove logical correctness prior to compilation \cite{functionVSMethod}.
 \item A \textit{function method} is just both at once.
 It contains a single expression with a single return, but is also compiled and thus also available in regular context \cite{functionVSMethod}.
 \end{itemize}
@@ -377,7 +377,7 @@ This means that this issue does not have to be considered any further with regar
 Overloading describes the definition of a method with an existing name, but a different signature.
 This is, with a different parameter list.
 Dafny prohibits this language concept to be able to uniquely identify each method by solely its name \cite{dafnyReferenceManual}.
-This means, that within each module, each method name is unique.
+This means that within each module, each method name is unique.
 
 \subsubsection{Shadowing}
 Shadowing means that a class method redefines a variable that was already previously defined as a class member.
@@ -456,7 +456,7 @@ If all declarations are known, the algorithm does already work for symbols defin
 Whenever source code is compiled into an executable assembly, the first step is to \textit{parse} the code.
 The parser of a compiler works with two major concepts.
 One of them is the abstract syntax tree (AST), the other is the symbol table. \glsadd{ast}
-The AST is a tree, that contains information about the scope of symbols.
+The AST is a tree that contains information about the scope of symbols.
 Consider the following code snippet.
 
 \begin{lstlisting}[language=dafny, caption={AST Demo Snippet}, captionpos=b, label={lst:astsnipped}]
@@ -563,7 +563,7 @@ Also, there is no way to know where that method is used.
     \label{fig:method}
 \end{figure}
 
-To be in control which information is stored, it was decided to implement an own symbol table / AST combination.
+To be in control of which information is stored, it was decided to implement an own symbol table / AST combination.
 This component will be called \textit{symbol table} throughout this thesis and the project source code, although it will have a double linked tree structure, as we will see later.
 \textit{Symbol Tree} would consequently be a more accurate name.
 
@@ -574,7 +574,7 @@ This component will be called \textit{symbol table} throughout this thesis and t
 \label{section:analysis_dafnyASTStuff}
 Dafny is a very versatile language.
 While it offers common object oriented language features, it also contains formal language features, comparable to languages like Haskell \cite{haskell}.
-This results in a humungous variety of AST-nodes.
+This results in a huge variety of AST-nodes.
 The most important ones are discussed in this section.\\
 
 Dafny works with three major base classes in its AST.
@@ -584,7 +584,7 @@ These are:
     \item Statement
     \item Declaration
 \end{itemize}
-Aside these, some AST-nodes are isolated, such as \code{AssignmentRHS}, which is the right hand side of an assignment.
+Besides these, some AST-nodes are isolated, such as \code{AssignmentRHS}, which is the right hand side of an assignment.
 \code{LocalVariable} is another example for a separated class, that does not extend any base class one would expect.
 Why this isolation of certain AST-nodes was made by Dafny could not be evaluated.
 Both items are technically expressions and could thus be subclasses of \code{Expression}.
@@ -603,17 +603,17 @@ Since most of them are self-explanatory, only chosen nodes are explained.
     \label{fig:dafny_expr}
 \end{figure}
 
-The reader notes himself in figure \ref{fig:dafny_expr}, that many expressions contain other subexpressions.
+The reader notes in figure \ref{fig:dafny_expr} that many expressions contain other subexpressions.
 For example, a \code{IdentifierExpr} is nothing more than containing a \code{NameSegment}.\\
 
 An interesting node is \code{AutoGhostIdentifierExpr}.
 It occurs, whenever a variable declaration also contains its initialization, for example \code{var a := 2}.
 Internally, this declaration is represented as \code{var a : int; a := 2}.
-As we see now, the second \code{a} is a pseudo-veriable, or how Dafny calls it, a \textit{AutoGhostIdentifier}.\\
+As we see now, the second \code{a} is a pseudo-variable, or how Dafny calls it, a \textit{AutoGhostIdentifier}.\\
 
-\code{ComprehensionExpression} contains a variety of sublcasses, such as the \code{ForallExpr}, \code{SetComprehension} and \code{LambdaExpr}.
+\code{ComprehensionExpression} contains a variety of subclasses, such as the \code{ForallExpr}, \code{SetComprehension} and \code{LambdaExpr}.
 All of these contain bound variables (the parameters of the lambda for example) and an expression afterwards.\\
-\code{|a|} denots the size of the set \code{a}.\\
+\code{|a|} denotes the size of the set \code{a}.\\
 
 \pagebreak
 \textbf{Statements}\\
@@ -648,11 +648,11 @@ The programmer does not know exactly, which number will be assigned.\\
 These form the most important AST-nodes.
 Dafny provides many more of them.
 Due to the limited time frame, not all of them could be analyzed.
-A benefit of the visitor pattern is, that it can just be implemented once for the base interface \code{IAstNode} with an empty action.
+A benefit of the visitor pattern is that it can just be implemented once for the base interface \code{IAstNode} with an empty action.
 This way, the visitor will just do nothing for nodes that are not supported.
 
 \subsection{Refactoring of the Given Dafny AST Implementation}
-During analysis of the Dafny AST, it was noticed that the file \code{DafnyAst.cs} is humungous.
+During analysis of the Dafny AST, it was noticed that the file \code{DafnyAst.cs} is overwhelmingly large.
 It contains eleven thousand lines of code and a large number of classes.
 This is so extensive that even Visual Studio struggles with it and stopped working occasionally on performing refactorings.\\
 
@@ -737,7 +737,7 @@ With the previous version, this implementation would have been possible only by 
 With the planned renewal of the symbol table, we automatically have access to the information where the corresponding closing parenthesis of a code block is.
 
 \subsubsection{Compile}
-The user has two options to initiate compilation: He can just compile the software or he can additionally run it on a console inside VSCode.
+The user has two options to initiate compilation: He/She can just compile the software or he can additionally run it on a console inside VSCode.
 The commands are available as hotkeys, in the context menu or via the VSCode command bar.
 The client will save the document, send its URI, and the server will report back if compilation was successful.
 If any errors are present in the code, they are reported as a window notification as shown in figure \ref{fig:analysis_compile}.
@@ -791,7 +791,7 @@ This is exactly what is suggested for the user as you can see in figure \ref{fig
     \label{fig:analysis_completion_1}
 \end{figure}
 
-In addition, AutoCompletion is also able to provide general completion suggestions if one is not typing a word.
+Moreover, AutoCompletion is also able to provide general completion suggestions if one is not typing a word.
 In this case, just all available symbols are proposed.
 This is illustrated below in figure \ref{fig:analysis_completion_1}.
 Please also note that every symbol type (i.e. methods, classes and variables) have their own icons.
@@ -805,8 +805,8 @@ Please also note that every symbol type (i.e. methods, classes and variables) ha
 
 Unfortunately, both implemented versions are neither very reliable nor very performant.
 AutoCompletion was implemented via string matching.
-That means, if the AutoCompletion is called after a dot, the word before the dot is extracted from the source code.
-Afterwards the complete symbol table is iterated through and as soon as a symbol with the matching name is found,
+That means if the AutoCompletion is called after a dot, the word before the dot is extracted from the source code.
+Afterwards, the complete symbol table is iterated through and as soon as a symbol with the matching name is found,
 it is assumed that this symbol is the originally declared symbol.
 If there are multiple symbols with the same name, or if the declaration takes place after the first usage,
 the AutoCompletion would no longer work properly. \\
@@ -844,7 +844,7 @@ Once pressed, the cursor jumps instantly to the definition of the desired symbol
 
 GoToDefinition uses a similar logic to AutoCompletion and is therefore just as unreliable.
 The name of the currently selected word is read from the cursor position.
-Afterwards the whole symbol table is iterated through - the first symbol with the same name is assumed to be the declaration.
+Afterwards, the whole symbol table is iterated through - the first symbol with the same name is assumed to be the declaration.
 Then the position of this symbol is jumped to. \\
 
 Similar to AutoCompletion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
@@ -905,7 +905,7 @@ Docker's lightweight virtualization is ideally suited to run the CI environment.
 
 Docker also realizes the principle "Cattle, not pets" \cite{pets-vs-cattle}.
 Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used.
-This way, the dependent packages will always be up to date and security patches and the like are automatically deployed.\\
+This way, the dependent packages will always be up to date and security patches and similar are automatically deployed.\\
 
 Excluded from this principle are \textit{Node}, \textit{Z3}, \textit{Go}, \textit{Boogie} and \textit{Sonar}.
 All of these have to be installed in specific release versions by the CI server.
@@ -914,8 +914,8 @@ See the developer documentation for more details \cite{dev}.\\
 
 While working on the prototype, adjustments to the Docker image were very cumbersome.
 For each change, a separate commit was made to test if the pipeline would run to success.
-On the one hand this was very time-consuming as the completion of each pipeline hat to be awaited on the CI server,
-on the other hand this resulted in an unpleasant commit history.
+On the one hand, this was very time-consuming as the completion of each pipeline hat to be awaited on the CI server,
+on the other hand, this resulted in an unpleasant commit history.
 To test changes more efficiently and allow local testing without commits,
 a developer-friendly way should be found and documented.
 
