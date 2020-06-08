@@ -3,7 +3,7 @@
 Since this thesis is a sequel of the preceding semester thesis, work could be directly continued.
 Many topics were already analyzed in the prequel.
 To provide the reader with a comprehensive knowledge base about the language server protocol,
-sections \ref{section:analysis:lsp} and \ref{section:analysis:omnisharp} are repeated from the semester thesis.\\
+sections \ref{section:analysis:lsp} and \ref{section:analysis:omnisharp} are repeated from the semester thesis.\\ \glsadd{omnisharp}
 
 First, we will start by explaining the language server protocol in detail.
 It is responsible for the communication between the IDE and the language server.
@@ -16,11 +16,11 @@ In this chapter, we will go more into detail and study the Dafny-specific compil
 
 After this technical analysis, the prototype is described.
 This way, the reader is informed what the state of the product was at the beginning of this thesis.
-Finally, research done in relation to CI is described. \gls{ci}
+Finally, research done in relation to CI is described. \glsadd{ci}
 
 \subsection{Language Server Protocol}
 \label{section:analysis:lsp}
-The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{lspWiki}.
+The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{lspWiki}. \glsadd{jsonrpc}
 In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{lspWiki}.
 The goal of the LSP is to untie the dependency of an IDE with its programming language.
 That means that once a language server is available, the user is free in the choice of the IDE, as long as it offers a client instance that is able to communicate with the server.
@@ -28,12 +28,12 @@ The user can then use a variety of features, as long as the language server is c
 Those features can for example be
 \begin{itemize}
     \item \textit{AutoCompletion}
-    \item Hover Information
+    \item \textit{HoverInformation}
     \item \textit{Rename}
     \item \textit{GoToDefinition}
 \end{itemize}
 and much more. A full list can be found within the LSP specification \cite{lspspec}.
-Custom requests, for example for features like Compile or CounterExample, can also be added to the LSP \cite{lspWiki}.
+Custom requests, for example for features like \textit{Compile} or \textit{CounterExample}, can also be added to the LSP \cite{lspWiki}.
 The major advantage of this concept is that the plugin can be kept very simple.
 The relevant information is delivered by the language server, which is IDE-independent.
 Figure \ref{fig:lspcommunication} from the VSCode extension guide illustrates these benefits .
@@ -83,7 +83,7 @@ The requests are collected in the following itemization:
     \item \code{rangeFormatting}
     \item \code{onTypeFormatting}
     \item \code{rename}
-    \item \code{prepare\textit{Rename}}
+    \item \code{prepareRename}
     \item \code{foldingRange}
     \item \code{selectionRange}
 \end{itemize}
@@ -92,9 +92,9 @@ The requests are collected in the following itemization:
 Certain functions, which are needed for the Dafny plugin, are not offered by the standard.
 Fortunately the LSP can be extended with custom requests. This concerns the following features:
 \begin{itemize}
-    \item Compile: Informs the server about the file to compile and compilation arguments.
+    \item \textit{Compile}: Informs the server about the file to compile and compilation arguments.
           As a result, the server delivers a success or error message.
-    \item CounterExample: The client sends a file identifier to the server and receives
+    \item \textit{CounterExample}: The client sends a file identifier to the server and receives
            counter examples in response.
 \end{itemize}
 
@@ -103,7 +103,7 @@ Custom LSP messages are further discussed in section \ref{chapter:customlspmsg}.
 \subsubsection{Communication Example}
 The basic concept of the LSP is to inform the server about any client action.
 For example, when the user is opening a document, the notification \code{textdocument/didOpen} is sent.
-The message contains the URI of the opened document, so that the language server can load the source code.
+The message contains the URI of the opened document, so that the language server can load the source code. \glsadd{uri}
 Whenever the user is typing, the notification \code{textDocument/didChange} is sent.
 It contains any changes that were made.\\
 
@@ -119,6 +119,8 @@ Since the protocol is standardized, the client supporting the LSP is natively ab
     \label{fig:lspmsgexample}
 \end{figure}
 
+\pagebreak
+
 \subsubsection{Message Example}
 The following message in listing \ref{lst:lspjsonmsg} is a \code{textDocument/publishDiagnostics} notification as it appears in figure \ref{fig:lspmsgexample}.
 It states that on line 4, from character 12 to 17, there is an assertion violation.
@@ -130,7 +132,7 @@ Note the JSON-based message format.\\
    "jsonrpc":"2.0",
    "method":"textDocument/publishDiagnostics",
    "params":{
-      "uri":"file:///D:/[\ddots]/fail1.dfy",
+      "uri":"file:///D:/[...]/fail1.dfy",
       "diagnostics":[
          {
             "range":{
@@ -145,7 +147,7 @@ Note the JSON-based message format.\\
             },
             "severity":1,
             "code":0,
-            "source":"file:///D:/[\ddots]/fail1.dfy",
+            "source":"file:///D:/[...]/fail1.dfy",
             "message":"assertion violation"
          }
       ]
@@ -161,23 +163,23 @@ NuGet is the package manager in the Microsoft universe \cite{nuget}.
 A language server client that can be used for testing is also offered.
 
 \subsubsection{Basic OmniSharp Usage}
-Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about OmniSharp's language server protocol implementation \cite{omnisharptutorial}.
+Mr. Martin Bj\"orkstr\"om published a comprehensible tutorial about OmniSharp's language server protocol implementation \cite{omnisharptutorial}. \glsadd{omnisharp}
 The tutorial provides the user with all the required knowledge to set up a language server in \Csharp.
-Besides the setup of the server, it also illustrated how to create message handlers, for example for AutoCompletions or document synchronization.\\
+Besides the setup of the server, it also illustrated how to create message handlers, for example for auto completions or document synchronization.\\
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspbasichandler}]
-public class \textit{AutoCompletion} : ICompletionHandler
+public class AutoCompletion : ICompletionHandler
 {
     public Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        //...
     }
 }
 \end{lstlisting}
 
 Listing \ref{lst:lspbasichandler} illustrates that the user simply has to implement an interface provided by OmniSharp.
 Within the \code{request} parameter, all required information is passed to the handler.
-For \textit{AutoCompletion}, this is the file and the cursor position, as well as some context information, how the \textit{AutoCompletion} event was triggered.
+For \textit{AutoCompletion}, this is the file and the cursor position, as well as some context information, how the completion event was triggered.
 The task of the language server is to figure proper suggestions and return them in the form of a \code{CompletionList} back to the client.\\
 
 Since OmniSharp is open source, we could find all available interfaces and thus all available handlers in their git repository \cite{omnisharpgit}.
@@ -185,7 +187,7 @@ Aside from the official LSP specification, this collection is very helpful to pe
 
 \subsubsection{Custom LSP Messages}
 \label{chapter:customlspmsg}
-The current problem domain does not only require premade LSP messages like AutoCompletions or diagnostics, but also custom requests such as \code{CounterExample}, which is Dafny-specific.
+The current problem domain does not only require premade LSP messages like \code{completion} or \code{publishDiagnostics}, but also custom requests such as \code{CounterExample}, which is Dafny-specific.
 Such a message is not natively supported by the language server protocol.
 Since no example or documentation could be found on custom messages, Martin Bj\"orkstr\"om was contacted in the OmniSharp Slack channel \cite{omnisharpslack}.
 Mr. Bj\"orkstr\"om and his team were able to quickly provide the solution for this issue.\\
@@ -332,19 +334,39 @@ It can be a class member or be in global space.
 \item A \textit{function} is more like a mathematical function.
 It takes an input and returns a single value.
 The function must consist of only one expression.
-For example, consider listing \ref{lst:function}.
 Furthermore, functions are not compiled into the final executable and may only be used in specification context.
 That is, in contracts or assert statements to prove logical correctness prior to compilation \cite{functionVSMethod}.
 \item A \textit{function method} is just both at once.
 It contains a single expression with a single return, but is also compiled and thus also available in regular context \cite{functionVSMethod}.
 \end{itemize}
 
- \intnote{Das check ich ned ganz. beispiee für beide fälle damit man den unterschied sehen kann. erstes ist mit code referenziert aber da steht function method min. funktion nach art benennen. myMinFunction. myMinFunctionMethod. dann ists klar.}
+Listing \ref{lst:functionmethod} shows an example containing all three cases.
 
-\begin{lstlisting}[language=dafny, caption={Function Method Example}, captionpos=b, label={lst:function}]
-function method min(a:int, b:int) : int
-{
+\pagebreak
+
+\begin{lstlisting}[language=dafny, caption={Function and Method Difference}, captionpos=b, label={lst:functionmethod}]
+function method minFunctionMethod(a:int, b:int) : int {
     if a < b then a else b
+}
+
+function minFunction(a:int, b:int) : int {
+    if a < b then a else b
+}
+
+method minMethod(a:int, b:int) returns (r:int) {
+    return if a < b then a else b;
+}
+
+method Main() {
+    //Regular Context:
+    var a := minMethod(2,3);              //OK
+    //var b := minFunction(2,3);          //Error
+    var c := minFunctionMethod(2,3);      //OK
+
+    //Specification Context:
+    //assert minMethod(2,3) == 2;         //Error
+    assert minFunction(2,3) == 2;         //OK
+    assert minFunctionMethod(2,3) == 2;   //OK
 }
 \end{lstlisting}
 
@@ -446,9 +468,9 @@ During analysis of this problem, the in listing \ref{lst:findsymbol} recursive a
 to solve the problem of finding a symbols relevant declaration.
 
 \begin{lstlisting}[language=csharp, caption={Finding Symbol Definition}, captionpos=b, label={lst:findsymbol}]
-private Symbol FindDeclaration(Symbol target, Symbol scope)
+private Symbol FindDeclaration(ISymbol target, ISymbol scope)
 {
-    foreach (Symbol s in scope.AllSymbols)
+    foreach (ISymbol s in scope.AllSymbols)
     {
         if (s.Name == target.Name && s.IsDeclaration)
         {
@@ -464,7 +486,7 @@ private Symbol FindDeclaration(Symbol target, Symbol scope)
 The code had to be adjusted later on, to also respect inherited symbols and to also check inside the default scope.
 If all declarations are known, the algorithm does already work for symbols defined after the first usage.
 
-\subsection{Existing Dafny Visitor Component vs Required Symbol Table}
+\subsection{Abstract Syntax Tree}
 Whenever source code is compiled into an executable assembly, the first step is to \textit{parse} the code.
 The parser of a compiler works with two major concepts.
 One of them is the abstract syntax tree (AST), the other is the symbol table. \glsadd{ast}
@@ -478,8 +500,8 @@ while(i < 5) {
 }
 \end{lstlisting}
 
-The tree segment for this snippet would contain of the while-Statement as the root node.
-It then has two branches, one for the condition, and one for the body of the while statement.
+The tree segment for this snippet would contain the while-statement as the root node.
+It then has two branches, one for the condition, and one for the body of the while-statement.
 The body itself consists of a list of statements.
 In the above example, there are two statements.
 The first one is an assignment.
@@ -502,6 +524,11 @@ This is where the symbol table comes into play.
 The symbol table contains that information and is connected to the AST, for example by the use of a dictionary, linking an AST-node to a symbol table entry.
 With the help of the symbol table, it can be figured that the name segment \code{i} is of type int.
 The two concepts are strongly coupled.
+
+\subsection{Dafny's Abstract Syntax Tree}
+In this chapter, we will analyze Dafny's implementation of AST-nodes.
+However, before we do that, we will derive what information we exactly need.
+Then we can compare this requirement against to what Dafny is providing.
 
 \subsubsection{Requirements for the Symbol Table}
 To be able to implement the required feature set for this project, the following questions must be answered by the symbol table or the AST, respectively.
@@ -549,7 +576,7 @@ Dafny uses the Coco/R library for its compilation.
 This library can generate a source code parser, is thus just generating the AST \cite{coco}.
 As one can note regarding figure \ref{fig:ast_for_example}, the AST is not really providing the information required in the list above.
 For example, the question where \code{i} is declared is not answered.
-Also, some information is not even relevant for the language server.
+Also, some information is not relevant for the language server.
 Within a binary statement, the operand is not of interest for example.\\
 
 Figure \ref{fig:namesegment} shows all available properties and fields of a name segment.
@@ -557,7 +584,7 @@ A name segment is just any occurrence of an identifier, for example of a variabl
 \begin{figure}[H]
     \centering
     \includegraphics{analysis/namesegmentbsp.png}
-    \caption{Properties and Fields of a NameSegment Expression}
+    \caption{Properties and Fields of a Name Segment}
     \label{fig:namesegment}
 \end{figure}
 While \code{ResolvedExpression} looks like an interesting property, it just points to itself in a regular case, not to the declaration.
@@ -577,7 +604,7 @@ Also, there is no way to know where that method is used.
 
 To be in control of which information is stored, it was decided to implement an own symbol table / AST combination.
 This component will be called \textit{symbol table} throughout this thesis and the project source code, although it will have a double linked tree structure, as we will see later.
-\textit{Symbol Tree} would consequently be a more accurate name.
+\textit{Symbol tree} would consequently be a more accurate name.
 
 %%%%
 
@@ -592,9 +619,9 @@ The most important ones are discussed in this section.\\
 Dafny works with three major base classes in its AST.
 These are:
 \begin{itemize}
-    \item Expression
-    \item Statement
-    \item Declaration
+    \item \code{Expression}
+    \item \code{Statement}
+    \item \code{Declaration}
 \end{itemize}
 Besides these, some AST-nodes are isolated, such as \code{AssignmentRHS}, which is the right hand side of an assignment.
 \code{LocalVariable} is another example for a separated class, that does not extend any base class one would expect.
@@ -616,15 +643,16 @@ Since most of them are self-explanatory, only chosen nodes are explained.
 \end{figure}
 
 The reader notes in figure \ref{fig:dafny_expr} that many expressions contain other subexpressions.
-For example, a \code{IdentifierExpr} is nothing more than containing a \code{NameSegment}.\\
+For example, a \linebreak \code{IdentifierExpr} is nothing more than containing a \code{NameSegment}.\\
 
 An interesting node is \code{AutoGhostIdentifierExpr}.
 It occurs, whenever a variable declaration also contains its initialization, for example \code{var a := 2}.
-Internally, this declaration is represented as \code{var a : int; a := 2}.
-As we see now, the second \code{a} is a pseudo-variable, or how Dafny calls it, a \textit{AutoGhostIdentifier}.\\
+Internally, this declaration is represented as \linebreak \code{var a : int; a := 2}.
+As we see now, the second \code{a} is a pseudo-variable, or how Dafny calls it, a \code{AutoGhostIdentifier}.\\
 
-\code{ComprehensionExpression} contains a variety of subclasses, such as the \code{ForallExpr}, \code{SetComprehension} and \code{LambdaExpr}.
+\code{ComprehensionExpression} contains a variety of subclasses, such as the \code{ForallExpr}, \linebreak \code{SetComprehension} and \code{LambdaExpr}.
 All of these contain bound variables (the parameters of the lambda for example) and an expression afterwards.\\
+
 \code{|a|} denotes the size of the set \code{a}.\\
 
 \pagebreak
@@ -753,7 +781,7 @@ The user has two options to initiate compilation: He/She can just compile the so
 The commands are available as hotkeys, in the context menu or via the VSCode command bar.
 The client will save the document, send its URI, and the server will report back if compilation was successful.
 If any errors are present in the code, they are reported as a window notification as shown in figure \ref{fig:analysis_compile}.
-This includes syntax errors. If the compiled program can be run, a PowerShell instance is started directly inside Visual Studio Code.
+This includes syntax errors. If the compiled program can be run, a PowerShell instance is started directly inside Visual Studio Code. \glsadd{powershell}
 
 \begin{figure}[H]
     \centering
@@ -777,7 +805,7 @@ The precondition is commented. Without this requirement, the postcondition can b
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/counter_example}
-    \caption{Demonstration of CounterExamples}
+    \caption{Counter Examples in the Prototype}
     \label{fig:analysis_counter_example}
 \end{figure}
 
@@ -791,7 +819,7 @@ Furthermore, an automatic update of the counter example should take place whenev
 The representation of the counter example will also be improved.
 A clear and concise display and increased user friendliness is targeted.\\
 
-\subsubsection{\textit{AutoCompletion} for Identifiers}
+\subsubsection{AutoCompletion for Identifiers}
 Whenever a valid interim result of a Dafny file is sent to the server, a naive file symbol table is created and buffered.
 As an example, if one would have a Dafny code snippet like below, the best and only match would be method \code{m}.
 This is exactly what is suggested for the user as you can see in figure \ref{fig:analysis_completion_1}.
@@ -799,7 +827,7 @@ This is exactly what is suggested for the user as you can see in figure \ref{fig
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/analysis_completion_1}
-    \caption{\textit{AutoCompletion} for Instance of Class C}
+    \caption{AutoCompletion for Instance of Class \code{C}}
     \label{fig:analysis_completion_1}
 \end{figure}
 
@@ -817,11 +845,11 @@ Please also note that every symbol type (i.e. methods, classes and variables) ha
 
 Unfortunately, both implemented versions are neither very reliable nor very performant.
 \textit{AutoCompletion} was implemented via string matching.
-That means if the \textit{AutoCompletion} is called after a dot, the word before the dot is extracted from the source code.
+That means if \textit{AutoCompletion} is called after a dot, the word before the dot is extracted from the source code.
 Afterwards, the complete symbol table is iterated through and as soon as a symbol with the matching name is found,
 it is assumed that this symbol is the originally declared symbol.
 If there are multiple symbols with the same name, or if the declaration takes place after the first usage,
-the \textit{AutoCompletion} would no longer work properly. \\
+\textit{AutoCompletion} would no longer work properly. \\
 
 For general suggestions, simply all symbols are suggested.
 This includes symbols not visible in the current scope. \\
@@ -829,23 +857,23 @@ This includes symbols not visible in the current scope. \\
 \textit{AutoCompletion} has to be rebuilt so that it functions reliably and correct.
 This is only possible by the implementation of a proper symbol table.\\
 
-In addition, it would be very useful for users if the autocompletion is triggered after a \code{new}
+In addition, it would be very useful for users if \textit{AutoCompletion} is triggered after a \code{new}
 keyword and only available classes are automatically listed.
 This can be achieved by type filtering the symbols of the symbol table.
 
-\subsubsection{\textit{GoToDefinition}}
-With the "\textit{GoToDefinition}" feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
+\subsubsection{GoToDefinition}
+With the \textit{GoToDefinition} feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
 In figure \ref{fig:analysis_goto_1}, an example is shown.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/analysis_goto_1}
-    \caption{\textit{GoToDefinition} via Context Menu}
+    \caption{Go to Definition via Context Menu}
     \label{fig:analysis_goto_1}
 \end{figure}
 
 Please note that in the current version, the cursor has to be on the left side of the symbol's keyword.
-Once pressed, the cursor jumps instantly to the definition of the desired symbol as it is shown in the following figure \ref{fig:analysis_goto_2}.
+Once pressed, the cursor jumps instantly to the definition of the desired symbol as it is shown in figure \ref{fig:analysis_goto_2}.
 
 \begin{figure}[H]
     \centering
@@ -861,7 +889,7 @@ Then the position of this symbol is jumped to. \\
 
 Similar to \textit{AutoCompletion}, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
 
-\subsubsection{\textit{CodeLens}}
+\subsubsection{CodeLens}
 Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol.
 As an example, the class \code{C} has been instantiated twice and the method \code{m} was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
 
@@ -871,7 +899,7 @@ This should open a popup box in which the corresponding uses are shown.
 \begin{figure}[H]
     \centering
     \includegraphics[width=9cm]{analysis/analysis_codelens}
-    \caption{\textit{CodeLens} Example}
+    \caption{CodeLens Example}
     \label{fig:analysis_codelens}
 \end{figure}
 
@@ -907,8 +935,8 @@ it should be easier to isolate, analyze and fix the remaining problem of a missi
 The client's end-to-end tests, provided by the prototype could not be integrated, due to their heavy dependencies.
 This issue has to be re-visited at a given time. \\
 
-On the server side, the project was automatically built by the CI server using \textit{MSBuild}.
-Unit tests were executed using the \textit{nUnit} console runner \cite{nunit}.
+On the server side, the project was automatically built by the CI server using \textit{MSBuild}.  \glsadd{msbuild}
+Unit tests were executed using the \textit{nUnit} console runner \cite{nunit}. \glsadd{nunit} \glsadd{lit}
 Dafny-internal tests are run using the runner \textit{lit} \cite{lit}.
 
 \subsubsection{Docker}
@@ -919,7 +947,7 @@ Docker also realizes the principle "Cattle, not pets" \cite{pets-vs-cattle}.
 Instead of having certain package dependencies that need to be updated continuously (pet), a "build, throw away, rebuild" procedure (cattle) is used.
 This way, the dependent packages will always be up to date and security patches and similar are automatically deployed.\\
 
-Excluded from this principle are \textit{Node}, \textit{Z3}, \textit{Go}, \textit{Boogie} and \textit{Sonar}.
+Excluded from this principle are \textit{Node}, \textit{Z3}, \textit{Go}, \textit{Boogie} and \textit{Sonar}.  \glsadd{z3} \glsadd{boogie} \glsadd{sonar}
 All of these have to be installed in specific release versions by the CI server.
 This is, since Dafny relies on specific deployments of these products.
 See the developer documentation for more details \cite{dev}.\\
@@ -932,6 +960,6 @@ To test changes more efficiently and allow local testing without commits,
 a developer-friendly way should be found and documented.
 
 \subsubsection{Security Aspects}
-The Sonar report states some issues that the usage of launch arguments may be unsafe.
+The Sonar report states four issues that the usage of launch arguments and loggers may be unsafe.
 However, since server and plugin run on the same machine, no active threat to a remote system exists.
 Thus, a special focus on application security is not necessary.
