@@ -27,17 +27,17 @@ When a project time frame is given, the scope has to be variable \cite{keller},
 thus we needed to cut out some Dafny language features from the visitor.
 However, completing it is not necessarily complex, but rather a diligence task.
 The foundations for continue to work on the visitor are set.
-Thus, we are confident, that this will be done within further development of the plugin.\\
+Thus, we are confident that this will be done within further development of the plugin.\\
 
-For us, it was important that the plugin will somehow stay alive, whenever it encounters language features that are not supported.
+For us, it was important that the plugin will somehow stay alive whenever it encounters language features that are not supported.
 It was targeted to just do nothing as a fault tolerant design, whenever an exceptional state occurs, which worked out quite well.\\
 
 Although the visitor is incomplete, the plugin provides a great experience for someone taking first steps in Dafny.
 The target persona was the student, completing the HSR-internal exercises on Dafny, for which the plugin is more than sufficient.
-Our user experience tests have shown, that the plugin accommodates this requirement, and thus, the project is counted as a success.\\
+Our user experience tests have shown that the plugin accommodates this requirement, and thus, the project is counted as a success.\\
 
 Since the symbol table is its own component, the existing features which base on the symbol table will automatically scale, once the symbol table is completely implemented.
-This means, that once the visitor is completed, the plugin automatically gains a lot of usability and can then also target more advanced users, that use more advanced language features.\\
+This means that once the visitor is completed, the plugin automatically gains a lot of usability and can then also target more advanced users that use more advanced language features.\\
 
 The \code{DafnyServer} component, which originates from the pre-existing project, could be be completely superseded.
 The code is well organized, split into components, and has a nice quality.
@@ -54,7 +54,7 @@ This includes the complete implementation of the visitor, more LSP extensions as
 \subsubsection{Completion of the Visitor}
 As mentioned previously in this chapter, the visitor should be completed to also target more advanced users.
 Once this is done, the project instantly gains a lot of quality, since all targeted features scale automatically with the symbol table.
-While it was said that this is rather a diligence tasks, some problems may arise though.
+While it was said that this is rather a diligence task, some problems may arise as a result.
 For example, when inheritance was implemented, a whole new challenged appeared.
 Declarations in base classes were not found, since we could no longer just move up the symbol tree.
 Possible inherited symbols had to be treated separately.
@@ -71,10 +71,10 @@ The developer just has to request the symbol at the text position, which is pass
 Then, all occurrences have to be requested, by just calling \code{symbol.GetAllOccurences()}.
 Finally, these occurrences have to be assembled into the target response format \code{DocumentHighlight[]} and can be sent back to the client.
 
-\code{textDocument/documentHighlight} is actually very similar to \code{textDocument/rename} and would be a nice first step for a future development team,
-for example if this project gets further developed within another bachelor thesis.\\
+\code{textDocument/documentHighlight} is actually very similar to \code{textDocument/rename} and would be a good first step for a future development team,
+for example if this project is further developed within another bachelor thesis.\\
 
-Aside highlights, the following LSP requests are also of interest for future extensions:
+Besides highlights, the following LSP requests are also of interest for future extensions:
 \begin{itemize}
     \item \code{workspace/workspace/didChangeWatchedFiles}: Actually handle the request (for example remove the file from the buffer if it was deleted) instead of ignoring the change.
     \item \code{workspace/symbol}: A request that sends all, project-wide symbols to the client. This could be done relatively easy with the symbol table, for whatever purpose.
@@ -90,7 +90,7 @@ The language server protocol also offers a code action request.
 It can be used for quick fixes, which would be a nice addendum to the plugin.
 For example, if Dafny reports, that a semicolon is missing, a quick fix would just be to insert a semicolon at the target position.\\
 
-Aside quick fixes, the LSP also provides support for refactorings like extractions (extract method, extract variable...) \cite{lspspec}.
+Alongside quick fixes, the LSP also provides support for refactorings like extractions (extract method, extract variable...) \cite{lspspec}.
 The result can directly be transferred via the LSP within a \code{CodeAction} container, that contains all text edits which have to be done.
 Support for these refactorings would increase the quality of the plugin even further.
 The symbol table is also providing assistance for these features.
@@ -104,13 +104,13 @@ An optional goal of this bachelor thesis was the automated generation of contrac
 Thus, it remains as a possible extension point for the future.
 Here, even topics like AI come into play and the project would involve completely different fields of work.\\
 
-A feature, that was discussed already back at the preceding bachelor thesis \cite{ba}, was the support for debugging.
+A feature that was discussed already back at the preceding bachelor thesis \cite{ba}, was the support for debugging.
 However, this is a very complex topic and may not fit into the scope of a bachelor thesis.
 
 \subsubsection{More IDEs}
 Currently, only Visual Studio Code is supported.
 The idea of the language server protocol is, that the server is isolated and can connect to various clients.
-Thus, a nice extension point would be to implement support for other IDE's, like Eclipse or Atom.
+Thus, a suitable extension point would be to implement support for other IDE's, like Eclipse or Atom.
 Within this bachelor thesis, the VSCode client was refactored completely and the code was cleaned up.
 Thus, it is even more lightweight than before and adaption for other IDE's would not cost much effort.
 Support for the native LSP features come out of the box.
