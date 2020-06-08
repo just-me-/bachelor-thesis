@@ -8,7 +8,7 @@ This mainly concerns Dafny and the language server protocol (LSP).
 \subsection{Dafny}
 \label{section:introduction:dafny}
 Dafny is a compiled language optimized to prove formal correctness \cite{dafnyWiki}.
-It is based on \textit{Boogie} \cite{boogie}, which uses the \textit{Z3} \cite{z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}.
+It is based on \textit{Boogie} \cite{boogie}, which uses the \textit{Z3} \cite{z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}. \glsadd{z3} \glsadd{boogie}
 That means that a programmer can define a precondition - a fact that is just given at the start of the code.
 The postcondition on the other hand is a statement that must be true after the code has been executed.
 Just as with the precondition, the postcondition is also defined by the programmer.
@@ -47,13 +47,13 @@ function Factorial(n: nat): nat
     if n == 0 then 1 else n * Factorial(n-1)
 }
 
-lemma FactorialIsPositive(n: nat)
+lemma FactorialIsNotZero(n: nat)
 ensures Factorial(n) != 0
 {}
 
 function Foo(n: nat): float
 {
-    FactorialIsPositive(n);
+    FactorialIsNotZero(n);
     100 / Factorial(n)
 }
 \end{lstlisting}

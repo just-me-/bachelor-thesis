@@ -1,8 +1,6 @@
 \section{Management Summary}
 \label{section:management_summary}
 
- \intnote{bis zu 5 seiten ist noch im limit drinne. unbedingt noch bilder hinzufügen}
-
 This chapter contains a brief overview of the bachelor thesis at hand.
 First, the technologies Dafny and language server protocol are explained to provide the necessary context.
 This is followed by a presentation of the objectives, results achieved and future prospects.
@@ -10,7 +8,7 @@ This is followed by a presentation of the objectives, results achieved and futur
 \subsection{Dafny}
 \label{section:management_summary:dafny}
 Dafny is formal programming language.
-Within the Dafny code, a developer has the option to state a so-called precondition.
+Within Dafny code, a developer has the option to state a so-called precondition.
 This is a fact that must be true at the beginning of the code.
 Once the code has been executed, the developer may state a postcondition.
 The postcondition is, contrary to the precondition, something that is true at the end of code.
@@ -36,7 +34,7 @@ As a result of using the LSP, it is possible that Dafny can be supported by othe
 \label{section:management_summary:initialsolution}
 In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a LSP client-server infrastructure for Visual Studio Code was created to support Dafny \cite{ba}.
 The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{correctnessLab} to make coding in Dafny easier.
-The language server and the Dafny backends were separated into two different components.
+The language server and the Dafny backend were separated into two different components.
 This had the disadvantage that they had to communicate over a proprietary interface.
 This solution was not optimal, since the Dafny backend was not accessed directly.
 Implementing new features was very time consuming. \\
@@ -62,7 +60,7 @@ To provide the students with the necessary support, they shall profit by common 
     \item Compile and run to run Dafny programs and check the output.
     \item \textit{AutoCompletion} to code efficiently.
     \item \textit{GoToDefinition} to be able to view definitions quickly.
-    \item Showing CounterExamples to efficiently remedy faulty pre- and postconditions.
+    \item \textit{CounterExample} to efficiently remedy faulty pre- and postconditions.
 \end{itemize}
 
 On the other hand, the plugin shall also be used in a professional environment in the future.
@@ -90,8 +88,8 @@ The following features are supported as planned:
 \begin{itemize}
     \item Syntax highlighting.
     \item Verification: highlighting of errors and warnings.
-    \item Compilation of Dafny code and execute.
-    \item Providing CounterExamples.
+    \item Compilation of Dafny code and execute it.
+    \item Providing counter examples.
 \end{itemize}
 
 Additionally, the following functions could be implemented thanks to the new symbol table:
@@ -99,8 +97,8 @@ Additionally, the following functions could be implemented thanks to the new sym
     \item \textit{AutoCompletion} suggestion.
     \item \textit{GoToDefinition}.
     \item \textit{CodeLens} counts the usages of classes and functions and lets the developer show the usages with one click.
-    \item Renaming allows to rename symbols efficiently and reliably.
-    \item Hover information provides the developer with useful information about symbols.
+    \item \textit{Rename} allows to rename symbols efficiently and reliably.
+    \item \textit{HoverInformation} provides the developer with useful information about symbols.
 \end{itemize}
 
 \begin{figure}[H]
@@ -110,8 +108,8 @@ Additionally, the following functions could be implemented thanks to the new sym
     \label{fig:show_autocompletion_and_hover}
 \end{figure}
 
-For example, a Dafny code, as it is shown in figure \ref{fig:show_autocompletion_and_hover},
-is built to a symbol table in a tree structure, as it is abstractly represented in figure \ref{fig:symbol_table_for_autocompletion_and_hover}.
+In figure \ref{fig:show_autocompletion_and_hover}, a short code example is shown.
+The code fragment would build a symbol table as it is abstractly represented in figure \ref{fig:symbol_table_for_autocompletion_and_hover}.
 The features shown in figure \ref{fig:show_autocompletion_and_hover} such as \textit{AutoCompletion} and hover information directly use the offered symbol table.
 
 \begin{figure}[H]
@@ -137,12 +135,12 @@ This makes the implementation significantly more performant.\\
 
 %%ST
 The targeted symbol table could be implemented for the most important Dafny language features.
-Various challenges had to be accommodated, including the handling of default scopes, default classes, inheritance, external file import or variable hiding.
+Various challenges had to be accommodated, including the handling of default scopes, default classes, inheritance, external file import or variable hiding.\\
 
 The symbol table opens the option to implement many more features than currently provided.
 For example, the LSP offers a highlight request, marking occurrences of a symbol.
 Any information required for this feature are already provided by the symbol table.
-Thus, adding this feature would be very simple.
+Thus, adding this feature would be very simple.\\
 
 %%client
 Besides changes in the server, the VSCode client is now as lightweight as possible.
@@ -163,7 +161,6 @@ Ideas include:
 Alongside the widening of the feature range, it is necessary to complete the visitor.
 The visitor is the component generating an internal symbol table within the language server.
 Currently, only the most important Dafny language features are supported.
-This was due to the limited time frame of the bachelor thesis.
 For example, custom datatypes\footnote{for example \code{datatype Tree<T> = Empty | Node(left : Tree, root : T, right : Tree)}}, as used in formal programming languages, are not supported.\\
 
 Nevertheless, the plugin is of a nice quality and is ready for deployment into the VSCode market place, once multi-platform support is implemented.
