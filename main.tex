@@ -1,4 +1,3 @@
-
 \documentclass{article}
 \include{packages}
 \include{layout}
@@ -46,20 +45,30 @@
 \include{attachement/UsabilityTest_Code}
 
 
-%Für publizierbare Arbeiten: Ein PDF einer publizierbaren Version der Arbeit, ohne die persönlichen Berichte, Sitzungsprotokolle, Vereinbarungen über Urheber‐ und Nutzungsrechte, Adress‐Informationen. Aus Datenschutzgründen keine email...
+%Public Version: No personal reports, no protocols, not copyright stuff (nothing said about we did it ourselves signature)
+%Mail version: with personal reports, with all signatures.
 
 
-%only for private version:
+
+%Private Only:
 \include{attachement/PersonalReports}
 
 
-\addcontentsline{toc}{section}{Eigenständigkeitserklärung}
-%only for private version (die per mail):
+%Private Only:
+%\addcontentsline{toc}{section}{Eigenständigkeitserklärung}
 %\includepdf[pages=-]{attachement/Eigenstandigkeitserklarung.pdf}
-%only for public version auf archiv: [hat er so gesagt oder? - kommt mir aber komisch vor]
+
+
+
+%Public Only: (?)
+%\addcontentsline{toc}{section}{Eigenständigkeitserklärung}
 %\includepdf[pages=-]{attachement/Eigenstandigkeitserklarung_notsigned.pdf}
 
-%only for private version (die per mail):
-\addcontentsline{toc}{section}{Vereinbarung über Urheber- und Nutzungsrechte}
+
+
+%Private only:
+%\addcontentsline{toc}{section}{Vereinbarung über Urheber- und Nutzungsrechte}
 %\includepdf[pages=-]{attachement/UrheberNutzungsRechte.pdf}
+
+
 \end{document}
