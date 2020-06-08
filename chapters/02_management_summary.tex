@@ -10,24 +10,24 @@ This is followed by a presentation of the objectives, results achieved and futur
 \subsection{Dafny}
 \label{section:management_summary:dafny}
 Dafny is formal programming language.
-Within the Dafny code, a developer has the option to state a so called precondition.
+Within the Dafny code, a developer has the option to state a so-called precondition.
 This is a fact that must be true at the beginning of the code.
 Once the code has been executed, the developer may state a postcondition.
 The postcondition is, contrary to the precondition, something that is true at the end of code.
-Dafny contains an internal engine to automatically proof postconditions.
+Dafny contains an internal engine to automatically prove postconditions.
 This means, given the precondition holds, the code will manipulate data only thus far, so that also the postcondition is valid.
 Dafny offers optimizations for such proofs as an advantage over other programming languages.
 
 \subsection{Language Server Protocol}
 The language server protocol (LSP) is a specification for communication. \glsadd{lsp}
-It regulates data exchange between an IDE and a so called language server.
+It regulates data exchange between an IDE and a so-called language server.
 This ensures a separation between the integrated development environment (IDE) and the actual programming language support of the language server. \glsadd{ide}
 With this standardized protocol, a language server can be accessed by different IDEs. \\
 
 A plugin for the IDE "Visual Studio Code" was implemented during this bachelor thesis. \glsadd{vs_code}
 Once a user writes Dafny code using the plugin, the code is then transferred to the language server.
-The language server is now responsible to analyze the code and provide proper replies to the editor, whenever the editor requests something.
-A request could for example be to show information about a variable.
+The language server is now responsible for analyzing the code and provide proper replies to the editor whenever the editor requests something.
+A request could, for example, be to show information about a variable.
 The server has to provide all the necessary information to the IDE.\\
 
 As a result of using the LSP, it is possible that Dafny can be supported by other IDE's with minimal effort.
@@ -70,13 +70,13 @@ Thus, more advanced features have to be supported.
 To facilitate the future development of such features, the codebase shall be refactored to achieve a clean and maintainable state.
 This especially involves a clear-cut architectural layout with well-organized dependencies.\\
 
-Aside a clean architecture, a major goal is the creation of a custom symbol table.
+Aside from a clean architecture, a major goal is the creation of a custom symbol table.
 A symbol can be a variable, a function or a class.
 The symbol table contains information about these items appearing in the Dafny code.
 It shall allow very simple navigation within the Dafny code, for example to locate the declaration of a variable.
-Once the symbol table is generated, navigation within the code will be very easy for the language server.
-This has the advantage, that many features can be realized with almost no logic.
-For example, the feature \textit{GoToDefinition} just has to ask the symbol table, where the definition of the symbol is.
+Once the symbol table has been generated, navigation within the code will be very easy for the language server.
+This has the advantage that many features can be realized with almost no logic.
+For example, the feature \textit{GoToDefinition} just has to ask the symbol table where the definition of the symbol is.
 
 Consequently, a well implemented symbol table will also facilitate the development of further features.
 
@@ -94,13 +94,13 @@ The following features are supported as planned:
     \item Providing CounterExamples.
 \end{itemize}
 
-Additionally the following functions could be implemented thanks to the new symbol table:
+Additionally, the following functions could be implemented thanks to the new symbol table:
 \begin{itemize}
     \item AutoCompletion suggestion.
     \item GoToDefinition.
     \item CodeLens counts the usages of classes and functions and lets the developer show the usages with one click.
     \item Renaming allows to rename symbols efficiently and reliably.
-    \item Hover information provide the developer with useful information about symbols.
+    \item Hover information provides the developer with useful information about symbols.
 \end{itemize}
 
 \begin{figure}[H]
@@ -125,7 +125,7 @@ Dafny developers can now benefit by a plugin, which provides a great user experi
 but also gained much robustness compared to the prototype from our previous project.\\
 
 %%Dev Benefits.
-Aside the improvements in features, many internal aspects were also improved.
+Alongside the improvements in features, many internal aspects were also improved.
 This benefits developers who want to extend the Dafny language server in the future.\\
 
 A component called Dafny translation unit was completely re-visited and simplified.
@@ -145,13 +145,13 @@ Any information required for this feature are already provided by the symbol tab
 Thus, adding this feature would be very simple.
 
 %%client
-Aside changes in the server, the VSCode client is now as lightweight as possible.
+Besides changes in the server, the VSCode client is now as lightweight as possible.
 This makes the adaption to other IDE's very simple.
 The server is now able to create a symbol table containing any information required for the langue analysis features.
 Pre-existing features and algorithms were improved to gain more reliability and a better user experience.
 
 \subsection{Outlook}
-While the quality of the features, as well as the general code quality could be massively improved, the project is not in a final state.
+While the quality of the features as well as the general code quality could be massively improved, the project is not in a final state.
 Functionality of the project could be improved even further.
 Ideas include:
 \begin{itemize}
@@ -160,7 +160,7 @@ Ideas include:
     \item Create clients for other IDE's, which connect to our Dafny language server
 \end{itemize}
 
-Aside the widening of the feature range, it is necessary to complete the visitor.
+Alongside the widening of the feature range, it is necessary to complete the visitor.
 The visitor is the component generating an internal symbol table within the language server.
 Currently, only the most important Dafny language features are supported.
 This was due to the limited time frame of the bachelor thesis.
