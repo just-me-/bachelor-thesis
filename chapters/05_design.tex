@@ -41,9 +41,9 @@ Almost all members were public.
 This led to high coupling and low cohesion.
 Furthermore, there were various helper classes which were not grouped into sub-packages.
 This made it challenging to maintain the code.
-Furthermore, it was difficult to identify all dead code passages due to the non-transparent dependencies.\\
+Moreover, it was difficult to identify all dead code passages due to the non-transparent dependencies.\\
 
-Because of those problems it was decided to redesign the client from scratch.
+As a result of those problems it was decided to redesign the client from scratch.
 
 \subsubsection{New Architecture}
 To achieve the goal of a more manageable architecture and to reduce coupling, the following measures were targeted:
@@ -60,7 +60,7 @@ The new distribution into these packages is discussed in the following sections.
     \label{fig:client_now_packages}
 \end{figure}
 
-Additionally to the measures mentioned above, all logic was detached from the extension class, which forms the main component.
+In addition to the measures mentioned above, all logic was detached from the extension class, which forms the main component.
 This resulted in the root directory containing only a lightweight program entry point.
 The rest of the logic was split between the created packages.\\
 
@@ -70,7 +70,7 @@ This is also helpful because they are displayed as hover tooltips as shown in fi
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{design/CodeDocTypescriptExample}
-    \caption{Code Documentation Excample in TypeScript}
+    \caption{Code Documentation Example in TypeScript}
     \label{fig:CodeDocTypescriptExample}
 \end{figure}
 
@@ -186,7 +186,7 @@ without having the server to send the status bar information
 (like the number of errors in the Dafny file) each time.\\
 
 {\bf CounterExample} \textendash{}
-Similarly to the status bar, the \code{CounterExample} component will have a buffer.
+Similar to the status bar, the \code{CounterExample} component will have a buffer.
 For each Dafny file in the workspace, a buffer stores whether the user wants to see the CounterExample or not.
 This way the CounterExample is hidden when the user switches to another file
 and automatically shown again when switching back to the original Dafny file.
@@ -311,7 +311,7 @@ It contains a \code{PhysicalFile}, but also all of the requested information in 
 For that, a wrapper \code{TranslationResults} will be created, containing information about errors and compiled items.
 Finally, to have a link to the symbol table, a reference to a \code{SymbolTableManager} will be added.\\
 
-Since \code{TranslationResults} and \code{PhysicalFile} are used in multiple parts of the code, these classes will be place within a \code{Commons} package.
+Since \code{TranslationResults} and \code{PhysicalFile} are used in multiple parts of the code, these classes will be placed within a \code{Commons} package.
 Cyclic dependencies can be avoided this way.\\
 
 To request information about a file, or to update a file, a component \code{WorkspaceManager} will be created.
@@ -352,7 +352,7 @@ All tasks related to the symbol table are moved into a dedicated package.
 The symbol table is built based on a precompiled \code{dafnyProgram}.
 It is available from the \code{WorkspaceManager} for every file and can be reused by this package.\\
 
-The symbol table manager contains of five classes:
+The symbol table manager consists of five classes:
 \begin{itemize}
     \item \code{SymbolInformation}, a class containing just raw data about a symbol.
     \item \code{SymbolUtilities}, a static class allowing operations on single symbols.
@@ -372,7 +372,7 @@ The class \code{Navigator} is responsible to navigate through the symbol table.
 Since every symbol is supposed to know about its parent and children, it is legit to speak about a symbol tree.
 The \code{Navigator} will move along the tree, for example to locate the symbol at a certain position.\\
 
-The \code{Generator} is responsible to build the table.
+The \code{Generator} is responsible for building the table.
 It will already make use of the navigator, namely to locate declarations of symbols.
 The result will be a root symbol, to which everything else is attached.\\
 
@@ -401,7 +401,7 @@ As seen in figure \ref{fig:server_resources}, they are further split into sub-ca
 \subsubsection{Tools}
 Classes that take care of general tasks are put into the \code{Tools} package.
 For example, one class in this package is responsible for delivering information about the folder structure, so that relative paths can be resolved.
-Another class is responsible to create a proper logger, which can then be used throughout the language server.
+Another class is responsible for creating a proper logger, which can then be used throughout the language server.
 All these auxiliary classes were collected within the \code{Tools} package.\\
 
 \textbf{Tools.ConfigInitializer}\\
@@ -503,7 +503,7 @@ Another property \code{Descendants} contains any occurring symbol in a scope, no
 \textbf{Find declaration}\\
 For this task, each symbol has to hold a reference to the declaration.
 To be able to locate the declaration beforehand, it must be possible to move to the parent scope and scan it for declarations.
-Aside the already mentioned \code{Children}-property, a \code{Parent}  property is necessary. \\
+Aside from the already mentioned \code{Children}-property, a \code{Parent}  property is necessary. \\
 
 \textbf{Find usages of symbol}\\
 A list of usages need to be provided, containing a reference to every usage of the symbol. \\

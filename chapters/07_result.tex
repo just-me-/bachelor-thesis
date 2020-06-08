@@ -545,7 +545,7 @@ Within a method, code lines are generated, either containing
 The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 90\% variable name segments, that have to be resolved.
 This challenges the symbol table quite a bit.
 A tree is still grown due to the while-blocks, so not all symbols are within the same tree branch.
-Since the \code{textDocuemt/didOpen}, which triggers the symbol table instanciation, is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
+Since the \code{textDocuemt/didOpen}, which triggers the symbol table instantiation, is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
 The test has shown the following results:
 
 \begin{itemize}

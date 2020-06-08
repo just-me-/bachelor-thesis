@@ -1519,7 +1519,7 @@ Every test file is provided as a static variable and can thus be easily referenc
 \begin{lstlisting}[language=csharp, caption={Test File Reference}, captionpos=b, label={lst:semiExpectedCodeThing}]
 public static readonly string cp_semiexpected = CreateTestfilePath("compile/semi_expected_error.dfy");
 \end{lstlisting}
-The class providing these references will also check, if the test file actually exists, so that \code{FileNotFoundErrors} can be detected early.\\
+The class providing these references will also check if the test file actually exists, so that \code{FileNotFoundErrors} can be detected early.\\
 
 \textbf{String Converters}\\
 Many tests return results in complex data structures, such as \code{CounterExampleResults}.
@@ -1610,7 +1610,7 @@ The tests itself are very simple.
 For example, if we want to test if the compiler reports a missing semicolon, we could create a test class \code{public class SyntaxErrors : CompileBase}.
 Note that we inherit from our case-specific base class.
 Thus, the methods \code{RunCompilation} and \code{Verify} are at our disposal.
-That means, that the test is as simple as follows:
+That means that the test is as simple as follows:
 
 \begin{lstlisting}[language=csharp, caption={Sample Test for Missing Semicolon}, captionpos=b, label={lst:demoTest}]
 [Test]
