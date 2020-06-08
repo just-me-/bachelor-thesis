@@ -16,7 +16,7 @@ Individual deviations and descriptions of the individual implementation concepts
 
 These include a better separation of the components,
 a simplified migration concept for other, future IDEs,
-the download of the langauge server
+the download of the language server
 as well as basic configurations which are made possible for the end user.
 
 \subsubsection{Better Encapsulation Through Interfaces and Modules}
@@ -36,7 +36,7 @@ For this purpose, one importable module with the name \code{\_<Directory>Modules
 Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
 In addition, the dependencies among each other are shown.
 For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} to each package have been omitted.
-The dependency of \code{extensions} on VSCode is based on dependeny injection and represents the plugin entry point.
+The dependency of \code{extensions} on VSCode is based on dependency injection and represents the plugin entry point.
 Apart from this dependency, no dependency injection dependencies are shown in the diagram. \\
 
 \begin{figure}[H]
@@ -76,7 +76,7 @@ These two modules will be discussed separately in the following sections and not
 
 \textbf{\code{dafnyLanguageServerStartup}}\\
 The main module \code{dafnyLanguageServerStartup} is used by the \code{extension.ts}
-and contains basicly the plugin's "main logic".
+and contains basically the plugin's "main logic".
 It is to start the Dafny language server and establish a connection,
 as well as basically initialize the plugin. This includes creating the UI management component and command registrations.
 
@@ -133,8 +133,8 @@ The \code{Commands} package registers all commands that are offered to the user
 and links them to corresponding callback functions.
 These commands are available with the context menu
 and the available commands in the VSCode Command line, as shown in Figure \ref{fig:commands_shown}.
-Individual dependencies are injected. Thiese includes:
-\code{IDafnyRunner} to call compile and run as a callback as you can see for examle in listing \ref{lst:compileAndRun}.
+Individual dependencies are injected. These includes:
+\code{IDafnyRunner} to call compile and run as a callback as you can see for example in listing \ref{lst:compileAndRun}.
 Furthermore, \code{IDafnyUiManager} is injected
 in order to access the CounterModelProvider with the appropriate commands and to show or hide it.
 
@@ -153,9 +153,9 @@ The following commands are registered:
     \item {\bf Compile} \textendash{} to compile the Dafny program.
     \item {\bf Compile with Custom Arguments} \textendash{} to pass a compilation request with user-specific
     compile parameters to the server.
-    \item {\bf Compile and Run} \textendash{} after compiling the dafny program is executed and the output is displayed.
+    \item {\bf Compile and Run} \textendash{} after compiling the Dafny program is executed and the output is displayed.
     \item {\bf Show CounterExample} \textendash{} displays the CounterExample for the currently opened Dafny file, if available.
-    \item {\bf Hide CounterExample} \textendash{} hides CounterExample for the current dafny file.
+    \item {\bf Hide CounterExample} \textendash{} hides CounterExample for the current Dafny file.
     \item {\bf Show References} \textendash{} with a click on a CodeLens references,
     the references are shown to the user via a popup window.
 \end{itemize}
@@ -189,7 +189,7 @@ The logic of the display messages is provided directly by the VSCode API.
 The \code{provider} module provides the individual UI components.
 The packages are exported to be used by the \code{DafnyUiManager} component.
 However, the providers module is not exported to the outside by the \code{ui} module,
-so it is shown in orange inf figure \ref{fig:ui_module}.
+so it is shown in orange in figure \ref{fig:ui_module}.
 The module was created purely for grouping and a better file structure.\\
 
 The \code{CodeLensProvider} component is very simple. CodeLens data transferred from the server is transferred to the VSCode API.
@@ -201,14 +201,14 @@ More about the logic of CodeLens can be found in section \ref{section:implementa
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/opened_codelens_exmpl}
-    \caption{CodeLens Opened After Klicking on References}
+    \caption{CodeLens Opened After Clicking on References}
     \label{fig:opened_codelens_exmpl}
 \end{figure}
 
 The \code{CounterModelProvider} component is used to display and hide CounterModels.
 This component also stores in which Dafny files a CounterModel should be displayed and in which not.
-Therefore, if the user changes the opened file in the worspace, the CounterModel is automatically hidden or shown.
-The CounterModuel supports a dark and light mode as shown in figure \ref{fig:dark_light_mode_2}.
+Therefore, if the user changes the opened file in the workspace, the CounterModel is automatically hidden or shown.
+The CounterModule supports a dark and light mode as shown in figure \ref{fig:dark_light_mode_2}.
 This mode is automatically set accordingly,
 depending on whether VSCode is set to light or dark by the user.
 
@@ -225,7 +225,7 @@ Therefore an update-call of the \code{CounterModelProvider} requires a transfer 
 This is for the following reason: Unlike the \code{StatusbarProvider} or the \code{CodeLensProvider},
 \code{CounterModelProvider} has an active influence on it,
 when a server request should be sent and when not.
-With the components for the statubar and CodeLens react passively to an event.
+With the components for the status bar and CodeLens react passively to an event.
 
 In this way the \code{CounterModel} component can regulate the server requests.
 For reasons of efficiency, the implemented client-side display of CounterModels limits its
@@ -240,7 +240,7 @@ Whether the Dafny file is valid, if how many errors are present and the Dafny la
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/dafny_statusbar}
-    \caption{Dafny Statusbar for a Invalid (Top) and a Valid File (Bottom)}
+    \caption{Dafny Status Bar for an Invalid (Top) and a Valid File (Bottom)}
     \label{fig:statusbar}
 \end{figure}
 
@@ -404,7 +404,7 @@ There are basically two gradations of configurations.
 First, there are the configurations for developers in the \code{stringResources} component.
 This includes for example Dafny file extensions and other configurations which are not to be changed directly by the user.
 
-Secound, there are the user configurations, which can be changed by the plugin user via the settings of VSCode.
+Second, there are the user configurations, which can be changed by the plugin user via the settings of VSCode.
 In the figure \ref{fig:settings} the configurations offered to the user are listed.
 There is an extract of the plugin description, which can be seen by users in the plugin marketplace.
 
@@ -537,7 +537,7 @@ Within this package, the result of a request is assembled.
 While it may sound like complex logic is happening here, it turned out that for most cases, all information is just available by the symbol table.
 Consider the example of GoToDefinition.
 A code excerpt is shown in listing \ref{lst:gotoProvierExample}.
-As you can see, the actual task of finding the definition is resovled by the symbol table engine and just available as a property.
+As you can see, the actual task of finding the definition is resolved by the symbol table engine and just available as a property.
 The actual task just considers the assembly of the correct result wrapper class.
 
 \begin{lstlisting}[language=csharp, caption={GoToDefinition, Core Provider}, captionpos=b, label={lst:gotoProvierExample}]
@@ -632,7 +632,7 @@ Within the method, the following sequence of events as illustrated in figure \re
 \end{enumerate}
 
 
-Note in the following snippet, that dafny options are by directly calling Dafny's backend.
+Note in the following snippet, that Dafny options are by directly calling Dafny's backend.
 \begin{lstlisting}[language=csharp, caption={Setting up Dafny Options}, captionpos=b, label={lst:setupdafnyoptions}]
     private void SetUpDafnyOptions()
     {
@@ -643,8 +643,8 @@ Note in the following snippet, that dafny options are by directly calling Dafny'
 \end{lstlisting}
 
 
-\subsubsection{Utilitites}
-The bottom layer of the project is formed by the utiltiy layer.
+\subsubsection{Utilities}
+The bottom layer of the project is formed by the utility layer.
 It contains three packages:
 \begin{itemize}
     \item \code{Tools}
@@ -721,7 +721,7 @@ The most important properties are:
     \item Kind and type
     \item Link to parent symbol
     \item Link to declaration symbol
-    \item Hash with all ahildren symbols (only declarations)
+    \item Hash with all child symbols (only declarations)
     \item List with all descendants (any symbol occurring in the body)
     \item List with all usages of the symbol
     \item Base classes
@@ -946,7 +946,7 @@ Remember that the data structure of the symbol table is basically a double linke
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{TopDown (Left) and ButtomUp (Right) Visualized}
+    \caption{TopDown (Left) and BottomUp (Right) Visualized}
     \label{fig:impl_symboltablenav}
 \end{figure}
 
@@ -960,7 +960,7 @@ The navigator overcomes the following tree challenges:
     \item What symbol is at the current cursor position?
     \item What AutoCompletion suggestions are indicated?
 \end{itemize}
-These challanges are discussed below. \\
+These challenges are discussed below. \\
 
 \textbf{Where is the definition of a symbol?}\\
 This challenge uses the bottom-up procedure.
@@ -992,11 +992,11 @@ For this task, top-down navigation is used.
 Starting from the root symbol, for each child it is checked if it wraps the position.
 If not, the symbol is ignored.
 But if so, iteration is recursively called on that child.
-Reagarding figure \ref{fig:fig:topDownPaintFTW}, imagine we hand the blue line as the cursor position.
-The algorith will then decide, that the cursor position is within module M.
+Regarding figure \ref{fig:fig:topDownPaintFTW}, imagine we hand the blue line as the cursor position.
+The algorithm will then decide, that the cursor position is within module M.
 Afterwards, it will check all children of \code{M}.
 It will find out, that class \code{Z} is not surfacing the cursor position, and move to the next one.
-When checking on class \code{C}, wrapping is successfull, thus the next iteration will be done within \code{C}.
+When checking on class \code{C}, wrapping is successful, thus the next iteration will be done within \code{C}.
 Finally, variable c will be returned as the best match.
 Default namespaces and default classes had to be treated separately for this case.
 Since the tree is moved along a single branch, the runtime for this process is $O(log(n))$.\\
@@ -1038,7 +1038,7 @@ The utilities class offers three distinct types of \code{DoesWrap}-methods.
 \end{itemize}
 This differentiation was necessary, since for GoToDefinition, only the identifier range matters.
 But for AutoCompletion, the body in which the cursor is matters.
-Lastly, clauses like \code{ensures} are inbetween those two.
+Lastly, clauses like \code{ensures} are in between those two.
 Figure \ref{fig:topDownWraps} shows the distinction between the three methods.
 
 \begin{figure}[H]
@@ -1088,7 +1088,7 @@ a decision is made between the three user desires, as shown in figure \ref{fig:g
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Evaluating Users Desire - PAP/Ablaufsdiagramm/Flussdiagramm}
+    \caption{Evaluating Users Desire - Activity Diagram}
     \label{fig:get_users_desire}
 \end{figure}
 
@@ -1120,7 +1120,7 @@ method Main() {
 }
 \end{lstlisting}
 
-todo snipped in IDE screenshotten, cleich auch die resultate listen als screenshot rechts davon
+\intnote{todo snipped in IDE make screenshot, also list results at right}
 
 \begin{figure}[H]
     \centering
@@ -1230,7 +1230,7 @@ This way, it can also expose dead code, which has never been used as seen in \re
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_show_numbers}
-    \caption{CodeLens Shows Number of Counted Referances}
+    \caption{CodeLens Shows Number of Counted References}
     \label{fig:codelens_show_ref_number}
 \end{figure}
 
@@ -1291,7 +1291,7 @@ and the arguments prepared in server are passed through. \\
 Because the whole logic for CodeLens is in the server,
 integration tests and unit tests were written on the server side for this feature.\\
 
-\textbf{Support for File Includation} \\
+\textbf{Support for File Includes} \\
 CodeLens works very well over multiple files.
 But only if other files are included.
 In case the currently opened file is included by another file,
@@ -1311,7 +1311,7 @@ The process is fully integrated into the Dafny backend.
 The compiler invocation can be seen in listing \ref{lst:dafnycompiler}.\\
 
 \begin{lstlisting}[language=csharp, caption={Calling the Dafny Compiler}, captionpos=b, label={lst:dafnycompiler}]
-DafnyDriver.CompileDafnyProgram(dafnyProgarm, filePath, otherFiles, true, textwriter);
+DafnyDriver.CompileDafnyProgram(dafnyProgram, filePath, otherFiles, true, textWriter);
 \end{lstlisting}
 
 The provider will check if any errors occurred during the process and return the outcome within a wrapper class.
@@ -1390,7 +1390,7 @@ It is split into unit and integration tests.
 To read how to write tests or why we worked with interfaces for dependency injection, refer to the development document.
 
 \subsubsection{Unit Tests}
-Since all our core components are progarammed against interfaces, testing them is not that hard.
+Since all our core components are programmed against interfaces, testing them is not that hard.
 One can simply create fake, mock or stub, implementing the interface, and use it for testing purposes.\\
 
 \textbf{Symbol Table Generation}\\
@@ -1401,9 +1401,9 @@ The dafnyProgram is then handed to the \code{SymbolTableGenerator}.
 The output is - once more - converted into a string representation.
 This outcome is then compared a against an expectation file.\\
 
-Technically, since the \code{TranslationUnit} is inovked as well, the test is not completely isolated.
+Technically, since the \code{TranslationUnit} is invoked as well, the test is not completely isolated.
 One would have to serialize the dafnyProgram, and use that one as a test input.
-However, to be able to quickly adjust the testfile, this was not done.\\
+However, to be able to quickly adjust the test file, this was not done.\\
 
 Another flaw of this test is, that the whole symbol table is tested at once.
 There is not a single test that checks if symbol X gets used 5 times - and checks only that.
@@ -1442,7 +1442,7 @@ It is not exactly tested, if symbol X is used by symbol Y.
 Instead, just some counts are checked.
 However, by testing if the parent is correct, and by testing the children count, we can be confident that the parent-child relationship is correct.
 The same applies for the declaration-usage relation.
-You further note, that there is no information given about base clases, parameter lists or such.
+You further note, that there is no information given about base classes, parameter lists or such.
 But items like these are indirectly tested.
 If the base-class would not not be attached properly,
 a symbols declaration would not be found, which could be seen in the string representation.\\
@@ -1469,13 +1469,13 @@ public void BottomUpFirstChild()
 
 \textbf{Core Provider}\\
 To efficiently test the core providers, a \code{FakeSymbolTableManager} was created.
-It wraps a symbol table, in which a few fake symobls are attached to each other.
+It wraps a symbol table, in which a few fake symbols are attached to each other.
 Within the constructor of the fake-manager, it is told which symbol the manager will statically return.
 This way, the navigator component is not invoked.\\
 
 This fake manager is used to test features like Rename, GoToDefinition or HoverInformation.
 It could just be injected to the providers, since the required interface \code{ISymbolTableManager} is implemented.
-By this construct, the correct assembly or Renamings or HoverInformation could be tested.
+By this construct, the correct assembly of Rename and HoverInformation could be tested.
 An example is shown in listing \ref{lst:renameUnit}
 
 \begin{lstlisting}[language=csharp, caption={Core Provider Unit Test}, captionpos=b, label={lst:renameUnit}]
@@ -1491,7 +1491,7 @@ public void ReservedWord()
 
 \textbf{Core Provider not depending on the Symbol Table}\\
 The features Compile and CounterExample are the only ones not depending on the symbol table.
-These were already tested in a similiar matter in the prototype.\\
+These were already tested in a similar matter in the prototype.\\
 
 To test CounterExamples, a custom \code{model.bvd} file can be injected into the provider.
 This way, predefined model files are analyzed instead of the model from the live Dafny code.\\
@@ -1499,7 +1499,7 @@ This way, predefined model files are analyzed instead of the model from the live
 To test compilation, a \code{.dfy} file is defined in the test method.
 The test will again call the translation unit, to create \code{TranslationResults}.
 Again, this is not optimal but practical.
-Out of the translation results, a file repoistory is created, which is then handed to provider.
+Out of the translation results, a file repository is created, which is then handed to provider.
 
 
 %%%%%%%%%%%%%INTEGRATIONM TEST
@@ -1568,7 +1568,7 @@ Comparison of the results and the expectation is now very simple.
 The expectation can just be written by hand as follows in listing \ref{lst:testexpectation}.
 
 \begin{lstlisting}[language=csharp, caption={Expectation}, captionpos=b, label={lst:testexpectation}]
-List<string> expecation = new List<string>()
+List<string> expectation = new List<string>()
 {
     "L3 C19: in1 = 2446; ",
     "L9 C19: in2 = 891; "
@@ -1594,14 +1594,14 @@ as well as two methods \code{RunCompilaton(string file, string[] args)} and \cod
 The implementation of \code{RunCompilation} is shown in listing \ref{lst:runIntegrationtest}.\\
 
 \begin{lstlisting}[language=csharp, caption={Running a Compilation Integration test}, captionpos=b, label={lst:runIntegrationtest}]
-protected void RunCompilation(string testfile, string[] args)
+protected void RunCompilation(string testFile, string[] args)
 {
     CompilerParams compilerParams = new CompilerParams
     {
-        FileToCompile = testfile,
+        FileToCompile = testFile,
         CompilationArguments = args
     };
-    Client.TextDocument.DidOpen(testfile, "dfy");
+    Client.TextDocument.DidOpen(testFile, "dfy");
     compilerResults = Client.SendRequest<CompilerResults>(compileKeyword, compilerParams, CancellationSource.Token).Result;
 }
 \end{lstlisting}
@@ -1694,10 +1694,10 @@ In addition, the suggested methods lacked to inform about the supported paramete
 With regard to the parameters, this has already been discussed in section \ref{section:implementation:core:completion}. \\
 
 \subsubsection{Error Message Without Brackets}
-Error messages are reporting the code symbol at which the error occurrs.
+Error messages are reporting the code symbol at which the error occurs.
 For example, when the error starts at the body of a method, the error message contains
 \code{Assertion Violation at [ { ] in line 5.}}.
-The square brackets were confusing the testperson.
+The square brackets were confusing the test person.
 Thus it was decided to leave them out, and instead show the code token on a new line.
 This should be less confusing.
 The issue is shown in figure \ref{fig:cleaner_error_msg}
@@ -1730,7 +1730,7 @@ Due to the lack of time, the feature could not be implemented anymore, though.\\
 When running the Dafny program,
 a lot of text messages are displayed,
 which distract from the relevant output.
-To shorten the message length, full paths could be ommitted and insetad, just file names are shown.
+To shorten the message length, full paths could be omitted and instead, just file names are shown.
 This is illustrated in figure \ref{fig:long_compile_output}.
 
 \begin{figure}[H]
@@ -1764,7 +1764,7 @@ This not only simplifies the CI process but also ensures a generally better and 
 
 As a result, the client could still be easily analyzed with the previous Sonar scanner.
 Regarding the server, a special Sonar scanner for \textit{MSBuild} had to be installed, which publishes the analysis in a dedicated SonarCloud project \cite{dev}.
-The available statistics, like the finding of bugs as shown in fugure \ref{fig:sonarexample}, are very helpful for code reviews.\\
+The available statistics, like the finding of bugs as shown in figure \ref{fig:sonarexample}, are very helpful for code reviews.\\
 
 As a little extra, not only our Dafny language server part is analyzed by Sonar,
 but the whole Dafny project.
