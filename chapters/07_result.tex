@@ -334,6 +334,43 @@ The symbol table allows the implemention of new features, such as CodeHighlight 
 This is a major gain for the future of the language server.\\
 
 
+Because information about the symbols can be made available already prepared,
+the feature development has been greatly simplified.
+For example, before we had the symbol table,
+a feature like CodeLens required us to find and count all references for a symbol in the following way,
+as shown in listing \ref{lst:codelens_code_old}.
+Comments have been added to understand the code without context. The code has been simpiled for illustration purposes.
+
+\begin{lstlisting}[language=csharp, caption={Example for CodeLens in the Prototype}, captionpos=b, label={lst:codelens_code_old}]
+// for each symbol in the current opened Dafny file...
+foreach (var symbol in fileSymboltable.GetFullList())
+{
+  var symbolReferencecounter = 0;
+  // ...search through all symbols in all buffered files
+  // to see if the current symbol is used.
+  foreach (var fileBuffers in _bufferManager.GetAllFiles().Values)
+  {
+      foreach (var symbolInformation in fileBuffers.Symboltable.GetFullList())
+      {
+        // if the name matches, count this as an usage.
+        if (symbolInformation.Name == symbol.Name)
+            symbolReferencecounter++;
+      }
+  }
+  CreateCodeLens(symbolReferencecounter);
+}
+\end{lstlisting}
+
+Newly this works via a property as a one-liner as shown in listing \ref{lst:codelens_code_new}.
+The symbol table simplifies the development enormously.
+
+\begin{lstlisting}[language=csharp, caption={Example for CodeLens With the new Symbol Table}, captionpos=b, label={lst:codelens_code_new}]
+foreach (var symbol in _manager.GetAllSymbolDeclarations())
+{
+  CreateCodeLens(symbol.Usages.Count);
+}
+\end{lstlisting}
+
 While the features are implemented quite robust, they only work as long as the symbol table provides proper information.
 Whenever the symbol table fails, the underlying features will also produce nonsense.
 Thus, a correct symbol table is crucial for correct functionality.\\
