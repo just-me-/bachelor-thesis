@@ -423,11 +423,18 @@ Before the pull request, those issues may be resolved.
 
 \subsubsection{Publication to the VSCode Marketplace}
 We merged our GitLab repository to a dedicated GitHub repository.
-From there, it is uploaded to the VSCode marketplace.
+From there, it is uploaded to the VSCode marketplace during the CI process, which is shown in figure \ref{fig:github_ci}.
 This process uses the GitHub pipeline \code{release-marketplace}, which
 was adapted by Fabian Hauser \cite{our-dafny-plugin-github-publish}.
 
-Once the pull request to the Dafny project is complete,
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{results/github_ci}
+    \caption{GitHub CI}
+    \label{fig:github_ci}
+\end{figure}
+
+Once the pull request to the Dafny project to integrate the Dafny language server is complete,
 the preview released plugin can completely replace the original plugin.
 
 \subsubsection{Download of the Dafny Language Server}
