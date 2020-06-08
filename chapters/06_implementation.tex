@@ -124,15 +124,15 @@ be frozen and does not response anymore in an extreme case.\\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{implementation/commands_shown}
     \caption{Commands in the Context Menu and the VSCode Command Line}
-    \label{fig:commands}
+    \label{fig:commands_shown}
 \end{figure}
 
 The \code{Commands} package registers all commands that are offered to the user
 and links them to corresponding callback functions.
 These commands are available with the context menu
-and the available commands in the VSCode Command line, as shown in Figure \ref{fig:commands}.
+and the available commands in the VSCode Command line, as shown in Figure \ref{fig:commands_shown}.
 Individual dependencies are injected. Thiese includes:
 \code{IDafnyRunner} to call compile and run as a callback as you can see for examle in listing \ref{lst:compileAndRun}.
 Furthermore \code{IDafnyUiManager} is injected
@@ -162,8 +162,8 @@ The following commands are registered:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Warning Message Received From Server (zB von GoTo bei invalidem File)}
+    \includegraphics[width=\textwidth]{implementation/msg_example_warning}
+    \caption{Warning Message Received From Server}
     \label{fig:msg_example}
 \end{figure}
 
@@ -193,15 +193,16 @@ so it is shown in orange inf figure \ref{fig:ui_module}.
 The module was created purely for grouping and a better file structure.\\
 
 The \code{CodeLensProvider} component is very simple. CodeLens data transferred from the server is transferred to the VSCode API.
-The logic is limited to passing the data through. The actual display of the CodeLens popup window, as shown in figure xx,
+The logic is limited to passing the data through. The actual display of the CodeLens popup window,
+as shown in figure \ref{fig:opened_codelens_exmpl},
 is done via the VSCode API.
 More about the logic of CodeLens can be found in section \ref{section:implementation:features:codelens}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{implementation/opened_codelens_exmpl}
     \caption{CodeLens Opened After Klicking on References}
-    \label{fig:dark_light_mode}
+    \label{fig:opened_codelens_exmpl}
 \end{figure}
 
 The \code{CounterModelProvider} component is used to display and hide CounterModels.
@@ -213,8 +214,8 @@ depending on whether VSCode is set to light or dark by the user.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{CounterModel in Dark (Left) and Light Mode (Right)}
+    \includegraphics[width=\textwidth]{implementation/dark_light_mode_2}
+    \caption{CounterModel in Light (Top) and in Dark Mode (Bottom)}
     \label{fig:dark_light_mode_2}
 \end{figure}
 
@@ -238,8 +239,8 @@ Whether the Dafny file is valid, if how many errors are present and the Dafny la
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Dafny Statusbar}
+    \includegraphics[width=\textwidth]{implementation/dafny_statusbar}
+    \caption{Dafny Statusbar for a Invalid (Top) and a Valid File (Bottom)}
     \label{fig:statusbar}
 \end{figure}
 
@@ -945,7 +946,7 @@ Remember that the data structure of the symbol table is basically a double linke
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{TopDown (left) and ButtomUp (right) Visualized}
+    \caption{TopDown (Left) and ButtomUp (Right) Visualized}
     \label{fig:impl_symboltablenav}
 \end{figure}
 
@@ -1175,7 +1176,7 @@ Neither does the LSP support a standard for the explosive insertion of parameter
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{implementation/xcode}
     \caption{AutoCompletion in XCode}
     \label{fig:xcode_completion}
 \end{figure}
@@ -1225,8 +1226,8 @@ This way, it can also expose dead code, which has never been used as seen in \re
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{CodeLens shows Number of Counted Referances}
+    \includegraphics[width=\textwidth]{results/codelens_show_numbers}
+    \caption{CodeLens Shows Number of Counted Referances}
     \label{fig:codelens_show_ref_number}
 \end{figure}
 
@@ -1242,7 +1243,7 @@ The popup display is shown in figure \ref{fig:codelens_show_popup}. \\
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{results/codelens_opened}
     \caption{CodeLens shows Popup with Code Snippets}
     \label{fig:codelens_show_popup}
 \end{figure}
@@ -1676,7 +1677,7 @@ By using markdown instead of plaintext, HoverInformation could be improved signi
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{implementation/hover_before_after}
     \caption{Hover Before (Left) and Cleaner Version (Right)}
     \label{fig:hoverNowVsThen}
 \end{figure}
@@ -1700,11 +1701,10 @@ The issue is shown in figure \ref{fig:cleaner_error_msg}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{implementation/cleaner_error_msg}
     \caption{Error Message Before (Top) and After (Bottom)}
     \label{fig:cleaner_error_msg}
 \end{figure}
-
 
 \subsubsection{Compile Improvements}
 Some plugins have a small green play icon in the upper right corner of the IDE for compilation,
@@ -1713,8 +1713,8 @@ The test person would have wished such a play button \cite{interview-remo}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Foto Remo... Playbutton to run Python code}
+    \includegraphics[width=7cm]{implementation/runPython}
+    \caption{Play Button to Run Python Code}
     \label{fig:runPython}
 \end{figure}
 
@@ -1732,7 +1732,7 @@ This is illustrated in figure \ref{fig:long_compile_output}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{implementation/RunDafny}
     \caption{Console Output That Could be Improved}
     \label{fig:long_compile_output}
 \end{figure}
