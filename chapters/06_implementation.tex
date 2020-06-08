@@ -32,7 +32,7 @@ core components did not use their own interfaces.
 To reduce coupling, isolated modules were formed in a comprehensive refactoring process.
 The modules now no longer program on the class implementations, but against the interface. \\
 
-For this purpose one importable module with the name \code{\_<Directory>Modules} was created for each directory.
+For this purpose, one importable module with the name \code{\_<Directory>Modules} was created for each directory.
 Figure \ref{fig:client_2nd_refactoring} shows an overview of the interfaces.
 In addition, the dependencies among each other are shown.
 For simplicity, the contents of \code{stringRessources} and \code{typeInterfaces} to each package have been omitted.
@@ -135,7 +135,7 @@ These commands are available with the context menu
 and the available commands in the VSCode Command line, as shown in Figure \ref{fig:commands_shown}.
 Individual dependencies are injected. Thiese includes:
 \code{IDafnyRunner} to call compile and run as a callback as you can see for examle in listing \ref{lst:compileAndRun}.
-Furthermore \code{IDafnyUiManager} is injected
+Furthermore, \code{IDafnyUiManager} is injected
 in order to access the CounterModelProvider with the appropriate commands and to show or hide it.
 
 \begin{lstlisting}[language=typescript, caption={Excerpt from \code{commands.ts}}, captionpos=b, label={lst:compileAndRun}]
@@ -441,7 +441,7 @@ public static async Task Main(string[] args)
 
 The launch of the server itself is divided into four stages.
 First, preparational work is done.
-This happens already in the constructor of the language server.
+This already happens in the constructor of the language server.
 Preparation includes
 \begin{itemize}
     \item Reading and processing config variables.
@@ -488,7 +488,7 @@ GoToDefinition would pass a text document location as input, namely the cursor p
 namely where the cursor should jump to.
 Own requests can be realized according to section \ref{chapter:customlspmsg} by defining an own interface.\\
 
-All handlers require two additional methods, aside the actual \code{Handle}:
+All handlers require two additional methods, apart from the actual \code{Handle}:
 \begin{itemize}
     \item \code{GetRegistrationOptions}: This method is called when the handler is registered.
     It allows to set options at the time the server is started.
@@ -580,7 +580,7 @@ The \code{PhysicalFile} class can then also take responsibility for applying fil
     \label{fig:worksapceAndRepo}
 \end{figure}
 
-Aside the file content, each \code{FileRepository} will also contain \code{TranslationResults}.
+Aside from the file content, each \code{FileRepository} will also contain \code{TranslationResults}.
 \code{TranslationResults} is a wrapper class for anything provided by the Dafny backend:
 \begin{itemize}
     \item Could the file be parsed?
@@ -668,10 +668,10 @@ Unknown or illegal values will not be set and errors are added to an error repor
 Finally, the launch arguments are parsed, again overwriting the config settings if applicable or reporting errors otherwise.
 A simple argument parser was implemented manually.
 Alternatively, a library could have been used for this task such as \textit{Command Line Parser} \cite{clparser}.
-The config initializer is implemented exception safe.
-This will run to completion and at worst just provide default values.
+The config initializer is implemented exception-safe.
+It will run to completion and at worst just provide default values.
 Errors can later be extracted from the \code{ErrorReporter}.
-Each task is done by a dedicated component.\\
+Each task is carried out by a dedicated component.\\
 
 \textbf{LoggerCreator}\\
 This class simply sets up a \textit{Serilog} \cite{serilog} logger.
@@ -769,7 +769,7 @@ While the parent is \code{foo}, it can not have any children.
 Since it is a variable definition, it still can have usages though.
 
 The final usage of \code{x} in the last line (which we also consider a symbol), does not even have usages, since it is a usage itself.
-Thus many properties are null for that last symbol.\\
+Thus, many properties are null for that last symbol.\\
 
 Unused properties are set to \code{null}.
 This causes the risk of \code{NullPointerExceptions}, but should save a lot of memory compared to empty lists or dictionaries.\\
@@ -809,9 +809,9 @@ Once everything is done, the scope of the method is left by calling \code{v.Leav
 
 If you recall the paragraph before the last one, it was said that two runs are performed.
 One to capture all declarations, and one to visit all method bodies.
-Thus, the visitor is having a boolean property \code{GoesDeep}, which decides if method bodies are visited or not.
+Thus, the visitor has a boolean property \code{GoesDeep}, which decides whether method bodies are visited or not.
 The final \code{Accept} method for a method looks as shown in listing \ref{lst:visitoraccept}.
-The method is shortened, there are more clauses like for example the \code{requires} clause.
+The method is shortened, there are more clauses such as the \code{requires} clause.
 
 
 \begin{lstlisting}[language=csharp, caption={Accepting a Visitor}, captionpos=b, label={lst:visitoraccept}]
@@ -834,7 +834,7 @@ public override void Accept(Visitor v)
 \end{lstlisting}
 
 Note that the method is marked with the override keyword.
-This is, since every AST-Element is either a statement, a definition or a declaration, among others.
+This is the case, since every AST-Element is either a statement, a definition or a declaration, among others.
 A virtual \code{Accept} method was implemented for these top level classes, which uses a default implementation.
 In case a specific AST element got forgotten by us, it will just use the default implementation, which is shown in listing \ref{lst:defaultaccept}.
 
@@ -891,7 +891,7 @@ public override void Visit(Method o)
 \end{lstlisting}
 
 The \code{CreateSymbol} method will set all properties accordingly.
-That means, a symbol that can have children will be initialized with a list for children,
+That means a symbol that can have children will be initialized with a list for children,
 while a symbol that cannot have children will just have a null entry there.
 Note that the end of the method, the scope is set to the just created symbol for future visitations.\\
 
@@ -920,7 +920,7 @@ The second visitor will now also visit method bodies, since the \code{GoesDeep} 
 The \code{Accept} method as seen in listing \ref{lst:visitoraccept} is no longer stopping, once the body is treated.
 Within the body, local variables exist.
 Despite local variables being declarations, they were not handled by the first visitor, which is actually responsible for declarations.
-However, this is fine, since local variables are not accessible before they were not declared.
+However, this is fine since local variables are not accessible before they were not declared.
 Furthermore, symbol \textit{usages} such as method calls or variable usages are now encountered.
 The visitor will create proper symbols for these.
 Since these are symbol usages, it is not sufficient to just create a symbol and attach it to the parent scope.
@@ -935,7 +935,7 @@ Once the declaration is known, it is trivial to set the according properties.
 
 \subsubsection{Symbol Table Navigator}
 To operate on the (partially) constructed symbol table, a separate component to navigate was created.
-It has basically two procedures.
+It basically has two procedures.
 Remember that the data structure of the symbol table is basically a double linked tree.
 
 \begin{itemize}
@@ -971,7 +971,10 @@ If no matching declaration was found, the navigator will move to the parent of t
 as shown in figure \ref{fig:findDecl}.
 Then, all symbols within that class are searched.
 Now, the navigator may find a class method that actually matches the search criteria.
-Since all declarations were registered beforehand, the process works even if the symbol is declared after the usage, unless it is a local variable, where it must be declared anyway before usage.\\
+Since all declarations were registered beforehand,
+the process works even if the symbol is declared after the usage,
+unless it is a local variable,
+whereby it must be declared anyway before usage.\\
 
 If the symbol cannot be found, the algorithm will search the default scope at the end as a last option to locate the symbol.
 Since the symbol tree is moved upwards, the process takes $O(log(n))$ time.
@@ -1315,7 +1318,7 @@ The provider will check if any errors occurred during the process and return the
 The handler can then read the outcome and send a proper message to the user.
 
 \subsubsection{CounterExample}
-This feature bases on the model file, which is generated during verification.
+This feature is based on the model file, which is generated during verification.
 The model file is a key-value store generated by Boogie.
 It contains several \textit{states}.
 Each state tracks the content of variables during different stages of the proof.
@@ -1349,7 +1352,7 @@ the Dafny backend was not \cite{sa}.\\
 
 .NET Core has native support for Linux and macOS.
 With .NET Framework, however, a Windows executable is generated upon compilation.
-Therefore, one has to rely on Mono for Unix based operating systems.
+Therefore, is is necessary to rely on Mono for Unix based operating systems.
 Mono allows to execute \code{.exe} files on said systems \cite{mono}. \glsadd{mono} \\
 
 Unfortunately, in the course of our thesis we discovered that the language server could not be started correctly with Mono.
