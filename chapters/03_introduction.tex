@@ -60,14 +60,14 @@ function Foo(n: nat): float
 
 \subsection{Language Server Protocol}
 The language server protocol (LSP) was created to unify communication between an integrated development environment (IDE) and a language server. \glsadd{ide}
-It specifies requests, such as AutoCompletion, Rename or GoToDefinition.
+It specifies requests, such as \textit{AutoCompletion}, \textit{Rename} or \textit{GoToDefinition}.
 If the user performs an action like renaming a symbol, the IDE will send the proper request to the language server.
 The message format is specified by the LSP and bases on JSON. \glsadd{lsp}
 JavaScript Object Notation (JSON) is is a language independent data format \cite{json}. \glsadd{json}\\
 
 The language server is responsible to calculate a proper result.
-For the example of a Rename request, the answer contains the information where to apply the renaming.
-It is the task of the server to analyze the source code and provide a Rename response with respect to language specific rules.\\
+For the example of a \textit{Rename} request, the answer contains the information where to apply the renaming.
+It is the task of the server to analyze the source code and provide a \textit{Rename} response with respect to language specific rules.\\
 
 Since the language server is independent of the client, a language server can be used from within multiple IDE's.
 To provide support for another IDE, just the client has to be adjusted.
@@ -78,16 +78,16 @@ The most important requests the LSP supports incorporate:
 \begin{itemize}
     \item Transfer code to server.
     \item Show errors and warnings.
-    \item Rename a symbol.
+    \item \textit{Rename} a symbol.
     \item Go to the definition of a symbol.
-    \item Show AutoCompletion suggestions.
+    \item Show \textit{AutoCompletion} suggestions.
     \item Perform a refactoring.
     \item Show usages of a code item.
 \end{itemize}
 
 These are features that are commonly used by programmers, independent of the language.\\
 
-Apart from these standard features, Dafny has the option to show a CounterExample, if a postcondition is violated.
+Apart from these standard features, Dafny has the option to show a counter example, if a postcondition is violated.
 This request is not natively supported by the LSP.
 However, own custom requests and data responses can easily be added to the LSP.
 These have to be handled separately within the client though, since the LSP is not automatically displaying the result. \\
@@ -133,10 +133,10 @@ To provide the students with the necessary support, they shall profit by common 
     \item Syntax highlighting to make readability more pleasant.
     \item Error highlighting to correct faulty code efficiently.
     \item Compile and Run to run Dafny programs and check the output.
-    \item AutoCompletion to code efficiently.
-    \item GoToDefinition to be able to view definitions quickly.
+    \item \textit{AutoCompletion} to code efficiently.
+    \item \textit{GoToDefinition} to be able to view definitions quickly.
     \item Showing CounterExamples to efficiently remedy faulty pre- and postconditions.
-    \item CodeLens to count the usages of classes and functions.
+    \item \textit{CodeLens} to count the usages of classes and functions.
 \end{itemize}
 
 Some of these features have already been implemented in a basic variant in the prototype.

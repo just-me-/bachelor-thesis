@@ -60,8 +60,8 @@ To provide the students with the necessary support, they shall profit by common 
     \item Syntax highlighting to make the readability more pleasant.
     \item Error highlighting to correct faulty code efficiently.
     \item Compile and run to run Dafny programs and check the output.
-    \item AutoCompletion to code efficiently.
-    \item GoToDefinition to be able to view definitions quickly.
+    \item \textit{AutoCompletion} to code efficiently.
+    \item \textit{GoToDefinition} to be able to view definitions quickly.
     \item Showing CounterExamples to efficiently remedy faulty pre- and postconditions.
 \end{itemize}
 
@@ -76,7 +76,7 @@ The symbol table contains information about these items appearing in the Dafny c
 It shall allow very simple navigation within the Dafny code, for example to locate the declaration of a variable.
 Once the symbol table has been generated, navigation within the code will be very easy for the language server.
 This has the advantage that many features can be realized with almost no logic.
-For example, the feature \textit{GoToDefinition} just has to ask the symbol table where the definition of the symbol is.
+For example, the feature \textit{\textit{GoToDefinition}} just has to ask the symbol table where the definition of the symbol is.
 
 Consequently, a well implemented symbol table will also facilitate the development of further features.
 
@@ -96,9 +96,9 @@ The following features are supported as planned:
 
 Additionally, the following functions could be implemented thanks to the new symbol table:
 \begin{itemize}
-    \item AutoCompletion suggestion.
-    \item GoToDefinition.
-    \item CodeLens counts the usages of classes and functions and lets the developer show the usages with one click.
+    \item \textit{AutoCompletion} suggestion.
+    \item \textit{GoToDefinition}.
+    \item \textit{CodeLens} counts the usages of classes and functions and lets the developer show the usages with one click.
     \item Renaming allows to rename symbols efficiently and reliably.
     \item Hover information provides the developer with useful information about symbols.
 \end{itemize}
@@ -106,13 +106,13 @@ Additionally, the following functions could be implemented thanks to the new sym
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{show_autocompletion_and_hover}
-    \caption{The Features HoverInformation and AutoCompletion Profit From the Symbol Table}
+    \caption{The Features \textit{HoverInformation} and \textit{AutoCompletion} Profit From the Symbol Table}
     \label{fig:show_autocompletion_and_hover}
 \end{figure}
 
 For example, a Dafny code, as it is shown in figure \ref{fig:show_autocompletion_and_hover},
 is built to a symbol table in a tree structure, as it is abstractly represented in figure \ref{fig:symbol_table_for_autocompletion_and_hover}.
-The features shown in figure \ref{fig:show_autocompletion_and_hover} such as AutoCompletion and hover information directly use the offered symbol table.
+The features shown in figure \ref{fig:show_autocompletion_and_hover} such as \textit{AutoCompletion} and hover information directly use the offered symbol table.
 
 \begin{figure}[H]
     \centering

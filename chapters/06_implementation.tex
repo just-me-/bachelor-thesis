@@ -156,7 +156,7 @@ The following commands are registered:
     \item {\bf Compile and Run} \textendash{} after compiling the Dafny program is executed and the output is displayed.
     \item {\bf Show CounterExample} \textendash{} displays the CounterExample for the currently opened Dafny file, if available.
     \item {\bf Hide CounterExample} \textendash{} hides CounterExample for the current Dafny file.
-    \item {\bf Show References} \textendash{} with a click on a CodeLens references,
+    \item {\bf Show References} \textendash{} with a click on a \textit{CodeLens} references,
     the references are shown to the user via a popup window.
 \end{itemize}
 
@@ -192,16 +192,16 @@ However, the providers module is not exported to the outside by the \code{ui} mo
 so it is shown in orange in figure \ref{fig:ui_module}.
 The module was created purely for grouping and a better file structure.\\
 
-The \code{CodeLensProvider} component is very simple. CodeLens data transferred from the server is transferred to the VSCode API.
-The logic is limited to passing the data through. The actual display of the CodeLens popup window,
+The \code{CodeLensProvider} component is very simple. \textit{CodeLens} data transferred from the server is transferred to the VSCode API.
+The logic is limited to passing the data through. The actual display of the \textit{CodeLens} popup window,
 as shown in figure \ref{fig:opened_codelens_exmpl},
 is done via the VSCode API.
-More about the logic of CodeLens can be found in section \ref{section:implementation:features:codelens}.
+More about the logic of \textit{CodeLens} can be found in section \ref{section:implementation:features:codelens}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/opened_codelens_exmpl}
-    \caption{CodeLens Opened After Clicking on References}
+    \caption{\textit{CodeLens} Opened After Clicking on References}
     \label{fig:opened_codelens_exmpl}
 \end{figure}
 
@@ -225,7 +225,7 @@ Therefore an update-call of the \code{CounterModelProvider} requires a transfer 
 This is for the following reason: Unlike the \code{StatusbarProvider} or the \code{CodeLensProvider},
 \code{CounterModelProvider} has an active influence on it,
 when a server request should be sent and when not.
-With the components for the status bar and CodeLens react passively to an event.
+With the components for the status bar and \textit{CodeLens} react passively to an event.
 
 In this way the \code{CounterModel} component can regulate the server requests.
 For reasons of efficiency, the implemented client-side display of CounterModels limits its
@@ -295,7 +295,7 @@ that are not contained in the LSP, are defined in interfaces.
 This concerns the return types of compile and CounterExample as shown in figure \ref{fig:typeInterfaces}.
 
 In principle, there is a type interface for the arguments and for the results for each own implemented LSP feature.
-Only for CodeLens the types are somewhat more complex, which is why a different grouping was created for this interface.
+Only for \textit{CodeLens} the types are somewhat more complex, which is why a different grouping was created for this interface.
 \code{ICodeLensReferences} is a file, which contains several interfaces and no own module.
 
 \begin{figure}[H]
@@ -468,7 +468,7 @@ public class DafnyLanguageServer{
         log.Debug(Resources.LoggingMessages.server_starting);
         server = await LanguageServer.From(options => options
             .WithHandler<TextDocumentSyncTaskHandler>()
-            .WithHandler<RenameTaskHandler>()
+            .WithHandler<\textit{Rename}TaskHandler>()
             ...
         );
         ExecutePostLaunchTasks();
@@ -484,7 +484,7 @@ Services, such logging or workspace management, can be injected and are thus ava
 As discussed in chapter \ref{chapter:design}, handlers are based around a \code{Handle} method.
 For example, every time the server receives a \code{textDocument/Definitions} request, this \code{Handle} method will be called.
 The parameter and return types are specific per request.
-GoToDefinition would pass a text document location as input, namely the cursor position, and it expects a \code{LocationLink} as response,
+\textit{GoToDefinition} would pass a text document location as input, namely the cursor position, and it expects a \code{LocationLink} as response,
 namely where the cursor should jump to.
 Own requests can be realized according to section \ref{chapter:customlspmsg} by defining an own interface.\\
 
@@ -492,7 +492,7 @@ All handlers require two additional methods, apart from the actual \code{Handle}
 \begin{itemize}
     \item \code{GetRegistrationOptions}: This method is called when the handler is registered.
     It allows to set options at the time the server is started.
-    Such an option is for example after which characters AutoCompletion should be automatically triggered.
+    Such an option is for example after which characters \textit{AutoCompletion} should be automatically triggered.
     \item \code{SetCapability}: It allows to set handler-specific capabilities, such as if the rename-handler will also support a 'prepare rename' feature.
 \end{itemize}
 
@@ -527,7 +527,7 @@ All information required, such as the precompiled program, are available from wi
 In case of an error, a message is sent to the user and the error is logged within the \code{HandleError} method.\\
 
 Some handlers take additional actions, such as awaiting the result of the provider, and then sending user feedback according to the outcome.
-This is done with GoToDefinition for example.
+This is done with \textit{GoToDefinition} for example.
 If the request was triggered at a declaration, an additional user message is sent.
 By handling all communication with the handler, the message sending service does not have to be passed downwards to the core logic component.
 
@@ -535,12 +535,12 @@ By handling all communication with the handler, the message sending service does
 \subsubsection{Core}
 Within this package, the result of a request is assembled.
 While it may sound like complex logic is happening here, it turned out that for most cases, all information is just available by the symbol table.
-Consider the example of GoToDefinition.
+Consider the example of \textit{GoToDefinition}.
 A code excerpt is shown in listing \ref{lst:gotoProvierExample}.
 As you can see, the actual task of finding the definition is resolved by the symbol table engine and just available as a property.
 The actual task just considers the assembly of the correct result wrapper class.
 
-\begin{lstlisting}[language=csharp, caption={GoToDefinition, Core Provider}, captionpos=b, label={lst:gotoProvierExample}]
+\begin{lstlisting}[language=csharp, caption={\textit{GoToDefinition}, Core Provider}, captionpos=b, label={lst:gotoProvierExample}]
 ISymbol symbolAtCursor = _manager.GetSymbolAtPosition(uri, line, col);
 ISymbol originSymbol = symbolAtCursor.DeclarationOrigin;
 
@@ -693,7 +693,7 @@ The class tries to read and parse \code{Config/ReservedDafnyWords.json}, which c
 If the file cannot be read or has a wrong format, a hard coded default list is used which was taken out from the Dafny Reference Manual \cite{dafnyReferenceManual}.
 A HashSet was used to provide fast access to the set.\\
 
-While this component is specifically used solely for the feature Rename,
+While this component is specifically used solely for the feature \textit{Rename},
 it was extracted to be also available at other spots if required for future features.
 
 
@@ -762,7 +762,7 @@ The symbol \code{foo} profits by almost all properties.
 It can have children (the variable \code{x}), it has some parent, and it can be used elsewhere in the code.
 Since \code{foo} is a method declaration, the declaration property of the symbol does not make sense.
 In this case, it just points to itself.
-This way, features like GoToDefinition will just jump to the same symbol, which is the expected behavior.
+This way, features like \textit{GoToDefinition} will just jump to the same symbol, which is the expected behavior.
 
 The declaration of \code{x} in the second line will have many null values within the symbol information.
 While the parent is \code{foo}, it can not have any children.
@@ -958,7 +958,7 @@ The navigator overcomes the following tree challenges:
 \begin{itemize}
     \item Where is the definition of a symbol?
     \item What symbol is at the current cursor position?
-    \item What AutoCompletion suggestions are indicated?
+    \item What \textit{AutoCompletion} suggestions are indicated?
 \end{itemize}
 These challenges are discussed below. \\
 
@@ -1008,7 +1008,7 @@ Since the tree is moved along a single branch, the runtime for this process is $
     \label{fig:topDownPaintFTW}
 \end{figure}
 
-\textbf{What AutoCompletion suggestions are indicated?}\\
+\textbf{What \textit{AutoCompletion} suggestions are indicated?}\\
 To build up autocompletion suggestions, all declarations available at a certain locations must be figured.
 First of all, the previous \code{TopDown} algorithm is used to find the current location.
 Then, all declarations in the current scope are requested, by using \code{BottomUp} again and requesting everything that is a declaration.
@@ -1036,8 +1036,8 @@ The utilities class offers three distinct types of \code{DoesWrap}-methods.
     \item Is a position wrapped just by the body of a symbol?
     \item Is a position wrapped just by the identifier of a symbol?
 \end{itemize}
-This differentiation was necessary, since for GoToDefinition, only the identifier range matters.
-But for AutoCompletion, the body in which the cursor is matters.
+This differentiation was necessary, since for \textit{GoToDefinition}, only the identifier range matters.
+But for \textit{AutoCompletion}, the body in which the cursor is matters.
 Lastly, clauses like \code{ensures} are in between those two.
 Figure \ref{fig:topDownWraps} shows the distinction between the three methods.
 
@@ -1057,13 +1057,13 @@ Figure \ref{fig:topDownWraps} shows the distinction between the three methods.
 \subsection{Features}
 \label{section:imp:features}
 As it was stated in the previous sections, many features just query the symbol table and assemble the information to a proper result format.
-This is especially the case for Rename, GoToDefinition and HoverInformation.
+This is especially the case for \textit{Rename}, \textit{GoToDefinition} and \textit{HoverInformation}.
 An example was given while explaining the \code{Core}-package of the server implementation.
 These features are thus not described in detail any further, since they are nearly trivial.
-However, other features, especially AutoCompletion, CodeLens and the ones not depending on the symbol table involve a bit more complexity.
+However, other features, especially \textit{AutoCompletion}, \textit{CodeLens} and the ones not depending on the symbol table involve a bit more complexity.
 In this chapter, these special cases are described.
 
-\subsubsection{AutoCompletion}
+\subsubsection{\textit{AutoCompletion}}
 \label{section:implementation:core:completion}
 The automatic code completion is an essential feature of every IDE and is a great help for the developer to write code efficiently.
 Making good suggestions to the user is a complex matter. \\
@@ -1073,12 +1073,12 @@ With the help of the "Symbol Table Navigator"
 it is also possible to efficiently filter the proposals by conditions,
 which can be transferred as predicates. \\
 
-The main difficulty and thus the logical complexity of the AutoCompletion
+The main difficulty and thus the logical complexity of the \textit{AutoCompletion}
 is therefore no longer the actual collection of symbol suggestions,
 but the evaluation of what kind of suggestions the user wants in the current context
 and extracting a symbol as entry point for the symbol table navigator component. \\
 
-For our AutoCompletion, we support three fundamentally different types of user desire.
+For our \textit{AutoCompletion}, we support three fundamentally different types of user desire.
 To find out the user's desire, the following approach is taken.
 First, the cursor position is used to determine the current code position in the Dafny source file.
 Then, it is checked if there is a dot or "\code{new }" in front of the cursor position.
@@ -1103,7 +1103,7 @@ For example, if the user is typing in the method \code{myMethod}, the symbol for
 
 If a matching symbol is found, for example a class named \code{myClass}, all methods and fields defined inside \code{myClass}
 can be extracted using the symbols properties.
-These are now returned as AutoCompletion suggestions. \\
+These are now returned as \textit{AutoCompletion} suggestions. \\
 
 For clarity, the described process is visualized in the following
 Dafny code example \intnote{xxx in figure xx} as a sequence diagram.
@@ -1167,20 +1167,20 @@ das vom papier digitalisieren todo\\}
 Just like in other programming languages, Dafny invokes methods and constructors by round brackets.
 It was our goal to automatically propose those brackets.
 This goal could easily be achieved.
-Whenever a constructor or method is chosen as an AutoCompletion suggestion,
+Whenever a constructor or method is chosen as an \textit{AutoCompletion} suggestion,
 an opening and closing bracket is added to the text to be inserted. \\
 
 From certain IDE's such as XCode,
-you are used to seeing placeholders as shown in figure \ref{fig:xcode_completion} for the parameters and their types in AutoCompletion
+you are used to seeing placeholders as shown in figure \ref{fig:xcode_completion} for the parameters and their types in \textit{AutoCompletion}
 when you select a method from the suggestions \cite{sa}.
-That is why we wanted to implement such a convenient feature for our AutoCompletion as well.
+That is why we wanted to implement such a convenient feature for our \textit{AutoCompletion} as well.
 Unfortunately we had to realize that this feature is not yet supported natively by the VSCode API \cite{vscodeAPI}.
 Neither does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/xcode}
-    \caption{AutoCompletion in XCode}
+    \caption{\textit{AutoCompletion} in XCode}
     \label{fig:xcode_completion}
 \end{figure}
 
@@ -1191,8 +1191,8 @@ However, the symbol table stores a parameter list for every method, constructor,
 Thus, the symbol table is ready to support the functionality.
 The complete idea how the feature could be implemented is described below. \\
 
-As with CodeLens, you could send additional data to the client
-for the AutoCompletion objects - namely the parameters and their types for methods.
+As with \textit{CodeLens}, you could send additional data to the client
+for the \textit{AutoCompletion} objects - namely the parameters and their types for methods.
 Whenever a completion is inserted, a callback function can be called within the client.
 This function could then additionally insert the parameters as text in the code and register
 event listeners on keyboard keys like \textit{TAB}.
@@ -1215,9 +1215,9 @@ Those details could hold the parameter list.
 This way, the user could be informed about them.\\
 
 
-\subsubsection{CodeLens}
+\subsubsection{\textit{CodeLens}}
 \label{section:implementation:features:codelens}
-The CodeLens functionality is divided into two primary tasks.
+The \textit{CodeLens} functionality is divided into two primary tasks.
 First, it is shown how often the method or class has already been used.
 Second, the user can click on the text and a popup window displays all symbol usages.
 This allows the developer to efficiently jump between different places within a workspace.\\
@@ -1230,7 +1230,7 @@ This way, it can also expose dead code, which has never been used as seen in \re
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_show_numbers}
-    \caption{CodeLens Shows Number of Counted References}
+    \caption{\textit{CodeLens} Shows Number of Counted References}
     \label{fig:codelens_show_ref_number}
 \end{figure}
 
@@ -1247,12 +1247,12 @@ The popup display is shown in figure \ref{fig:codelens_show_popup}. \\
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_opened}
-    \caption{CodeLens shows Popup with Code Snippets}
+    \caption{\textit{CodeLens} shows Popup with Code Snippets}
     \label{fig:codelens_show_popup}
 \end{figure}
 
 The preparation of the data is already done in the language server.
-For each symbol declaration, the CodeLens object is enriched with further information.
+For each symbol declaration, the \textit{CodeLens} object is enriched with further information.
 The client just has to display them.
 This is shown in listing \ref{lst:codelens-prep}.
 
@@ -1269,7 +1269,7 @@ Command command = new Command
     Name = "dafny.showReferences",
     Arguments = new JArray(JsonConvert.SerializeObject(args))
 };
-return new CodeLens
+return new \textit{CodeLens}
 {
     Data = _uri,
     Range = range,
@@ -1278,7 +1278,7 @@ return new CodeLens
 \end{lstlisting}
  \intnote{todo merke grad dass showreferences ein übersehenes magic string ist... in ressourcen auslagern? todo}
 
-To each CodeLens element, a \code{Command} object is also appended.
+To each \textit{CodeLens} element, a \code{Command} object is also appended.
 The command's name is the function called at the client, when the grey text is clicked.\\
 
 In addition, the \code{Command} is given the positions it should display inside the popup.  \\
@@ -1288,14 +1288,14 @@ the method \\
 \code{VSCodeCommandStrings.ShowReferences} from the VSCode API is called
 and the arguments prepared in server are passed through. \\
 
-Because the whole logic for CodeLens is in the server,
+Because the whole logic for \textit{CodeLens} is in the server,
 integration tests and unit tests were written on the server side for this feature.\\
 
 \textbf{Support for File Includes} \\
-CodeLens works very well over multiple files.
+\textit{CodeLens} works very well over multiple files.
 But only if other files are included.
 In case the currently opened file is included by another file,
-CodeLens does not know that it gets used by a third Dafny program. \\
+\textit{CodeLens} does not know that it gets used by a third Dafny program. \\
 
 This problem should solve itself once a global symbol table for the complete workspace has been implemented,
 instead of a single table per file.
@@ -1473,17 +1473,17 @@ It wraps a symbol table, in which a few fake symbols are attached to each other.
 Within the constructor of the fake-manager, it is told which symbol the manager will statically return.
 This way, the navigator component is not invoked.\\
 
-This fake manager is used to test features like Rename, GoToDefinition or HoverInformation.
+This fake manager is used to test features like \textit{Rename}, \textit{GoToDefinition} or \textit{HoverInformation}.
 It could just be injected to the providers, since the required interface \code{ISymbolTableManager} is implemented.
-By this construct, the correct assembly of Rename and HoverInformation could be tested.
+By this construct, the correct assembly of \textit{Rename} and \textit{HoverInformation} could be tested.
 An example is shown in listing \ref{lst:renameUnit}
 
 \begin{lstlisting}[language=csharp, caption={Core Provider Unit Test}, captionpos=b, label={lst:renameUnit}]
 public void ReservedWord()
 {
     ISymbolTableManager manager = new FakeSymbolManager(returnsDeclaration: false, returnsNull: false);
-    var provider = new RenameProvider(manager);
-    var result = provider.GetRenameChanges("method", new Uri("file:///N:/u/l.l"), 2, 22);
+    var provider = new \textit{Rename}Provider(manager);
+    var result = provider.Get\textit{Rename}Changes("method", new Uri("file:///N:/u/l.l"), 2, 22);
     Assert.IsTrue(provider.Outcome.Error, "error expected in rename-outcome");
     Assert.AreEqual("method" + DafnyLanguageServer.Resources.LoggingMessages.rename_reserved_word, provider.Outcome.Msg);
 }
@@ -1658,25 +1658,25 @@ These improvements are discussed in this chapter.
 
 \subsubsection{Code Documentation for Classes and Methods}
 If you drive over symbols and the hover information is displayed,
-and if the AutoCompletion is listing symbols,
+and if the \textit{AutoCompletion} is listing symbols,
 a code documentation is missing in the corresponding info boxes.
 It would be desirable to have a code documentation for methods and classes,
 which is displayed additionally with the mentioned features. \\
 
 This feature could be realized with the new symbol table. The approach would be the following:
 
-Through the feature CodeLens all declarations of methods and classes are already known.
+Through the feature \textit{CodeLens} all declarations of methods and classes are already known.
 For each of these symbols the correct position in the Dafny source code could be read out
 and with a regular expression found code documentation comments could be read out.
 The documentation text, read out by the pattern matching, can then be stored in the corresponding symbol as code documentation.
 This information can then be sent to the client via the LSP and displayed,
-for example in the case of AutoCompletion or hover information,
+for example in the case of \textit{AutoCompletion} or hover information,
 as a \code{documentation} element \cite{vscodeAPI}.
 
 \subsubsection{Cleaner Hover Information}
 The information which is displayed in a symbol during a hover event was felt to be somewhat confusing.
 Sometimes the terms like \code{kind} were not clear.
-By using markdown instead of plaintext, HoverInformation could be improved significantly, as shown in figure \ref{fig:hoverNowVsThen}\\
+By using markdown instead of plaintext, \textit{HoverInformation} could be improved significantly, as shown in figure \ref{fig:hoverNowVsThen}\\
 
 \begin{figure}[H]
     \centering
@@ -1685,8 +1685,8 @@ By using markdown instead of plaintext, HoverInformation could be improved signi
     \label{fig:hoverNowVsThen}
 \end{figure}
 
-\subsubsection{Automatic Triggering of AutoCompletion}
-If a dot is typed while typing, AutoCompletion suggestions are automatically expected.
+\subsubsection{Automatic Triggering of \textit{AutoCompletion}}
+If a dot is typed while typing, \textit{AutoCompletion} suggestions are automatically expected.
 You should not have to press \code{CTRL+Space} as trigger.
 This issue was anyway pending and was implemented shortly after the usability test.
 

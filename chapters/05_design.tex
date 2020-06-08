@@ -114,12 +114,12 @@ The contents of \code{typeInterfaces} and \code{stringResources} have been omitt
 \end{figure}
 
 It can be seen that only \code{compile} and \code{counterExample} exist as dedicated server access classes.
-All other features, such as CodeLens or AutoCompletion are natively supported by the LSP.
+All other features, such as \textit{CodeLens} or \textit{AutoCompletion} are natively supported by the LSP.
 This means, that no additional client logic is necessary to support these features.
 Since Compile and CounterExample are custom requests,
 their handling has to be implemented manually within the client.\\
 
-If VSCode receives a AutoCompletion response, the LSP standard defines how VSCode has to handle it -
+If VSCode receives a \textit{AutoCompletion} response, the LSP standard defines how VSCode has to handle it -
 namely displaying the completion suggestions and insert the text which the user selects.
 This server-side-oriented implementation via the LSP is a great enrichment to keep the client lightweight.
 Adaption to other IDE's is very simple this way.
@@ -244,7 +244,7 @@ and green components are referred to the utility layer.
 \subsubsection{Main Component And Handlers}
 The \code{Main} component is responsible to start the language server.
 The capabilities of the server can be registered by injecting \textit{Handlers.}
-The handlers themselves will have to implement a specific interface by OmniSharp, for example \code{IRenameHandler}.
+The handlers themselves will have to implement a specific interface by OmniSharp, for example \code{I\textit{Rename}Handler}.
 These interfaces demand a \code{Handle} method with the proper arguments and return values to answer the request.\\
 
 Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server architecture.
@@ -265,10 +265,10 @@ This way, the core logic can be easily tested since it is in a separate componen
 
 \subsubsection {Core}
 The core package contains the actual core logic for the features.
-There is one class for each feature, for example \code{RenameProvider} or \code{DiagnsoticsProvider}.
+There is one class for each feature, for example \code{\textit{Rename}Provider} or \code{DiagnsoticsProvider}.
 The provider is invoked by the handler and responsible to calculate the result, that has to be sent back to the client.
 For that, the provider will invoke the \code{WorkspaceManger} and/or the \code{SymbolTableManager} and operate on these.
-Figure \ref{fig:server_core} shows the core package with the example of the \code{RenameProvider}.
+Figure \ref{fig:server_core} shows the core package with the example of the \code{\textit{Rename}Provider}.
 Note that the symbol table is injected using the interface \code{ISymbolTableManager}.
 By just creating a fake instance, the providers can very easily be tested using this architecture.
 
@@ -277,7 +277,7 @@ By just creating a fake instance, the providers can very easily be tested using 
 \begin{figure}[H]
     \centering
     \includegraphics[width=12.5cm]{design/server6_core.png}
-    \caption{Core Package Excerpt with RenameProvider}
+    \caption{Core Package Excerpt with \textit{Rename}Provider}
     \label{fig:server_core}
 \end{figure}
 
@@ -452,7 +452,7 @@ This is illustrated in sequence diagram \ref{fig:workflow1}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{design/workflow1_regular.png}
-    \caption{Sequence Diagram of a Rename Request}
+    \caption{Sequence Diagram of a \textit{Rename} Request}
     \label{fig:workflow1}
 \end{figure}
 
@@ -475,13 +475,13 @@ Since the symbol table is a core concept of this thesis, it will explained furth
 In the following, the design of the symbol table is described as well as it is built up with the help of the visitor pattern.
 
 \subsubsection{Symbol Table Design}
-To provide the necessary information for features like Rename, GoToDefinition or AutoCompletion,
+To provide the necessary information for features like \textit{Rename}, \textit{GoToDefinition} or \textit{AutoCompletion},
 the symbol table needs to be very versatile and it must be able to handle the following challenges:
 \begin{itemize}
-    \item Find a symbol at the cursor position and go to symbol declarations for the GoToDefinition feature.
-    \item Find all occurrences of a symbol for the Rename feature.
-    \item Get all available symbols within a scope for the AutoCompletion feature.
-    \item Know about usages of a symbol for the CodeLens feature.
+    \item Find a symbol at the cursor position and go to symbol declarations for the \textit{GoToDefinition} feature.
+    \item Find all occurrences of a symbol for the \textit{Rename} feature.
+    \item Get all available symbols within a scope for the \textit{AutoCompletion} feature.
+    \item Know about usages of a symbol for the \textit{CodeLens} feature.
 \end{itemize}
 
 \textbf{Find symbol at cursor}\\
@@ -564,8 +564,8 @@ However, it is technically not correct.
 A better variant would be to use a global symbol for the entire workspace.
 This has two reasons:
 \begin{itemize}
-    \item If a file gets included elsewhere - the file is not aware about this. CodeLens and Rename will not work properly.
-    \item AutoCompletion may only suggest symbols in the current file. Symbols available in other files are not known.
+    \item If a file gets included elsewhere - the file is not aware about this. \textit{CodeLens} and \textit{Rename} will not work properly.
+    \item \textit{AutoCompletion} may only suggest symbols in the current file. Symbols available in other files are not known.
 \end{itemize}
 
 A global symbol table is a possible extension point for the feature.
@@ -573,7 +573,7 @@ It would also increase performance and especially resource usage, since if a lib
 If a file gets updated, only this specific part of the symbol table has to be recalculated. Symbols of other files just have to be re-attached properly.
 However, this task is not as easy, since one may run into problems when multiple default namespaces exist in files that do not include each other.\\
 
-An alternative solution to make features like Rename and GoToDefinition know about where they are included is to keep a table.
+An alternative solution to make features like \textit{Rename} and \textit{GoToDefinition} know about where they are included is to keep a table.
 If a file A is included in file B, an additional buffer within file A indicates that it was included by file B.
 Keeping all these references up to date is also connected with logical effort.
 Therefore, it is advisable to implement the global and updateable symbol table instead.

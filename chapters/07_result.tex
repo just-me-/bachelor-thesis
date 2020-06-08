@@ -26,10 +26,10 @@ The current version of the plugin supports the following functionality:
     \item Compilation
     \item CounterExample
     \item Hover Information
-    \item GoToDefinition
-    \item Rename
-    \item CodeLens
-    \item AutoCompletion
+    \item \textit{GoToDefinition}
+    \item \textit{Rename}
+    \item \textit{CodeLens}
+    \item \textit{AutoCompletion}
 \end{enumerate}
 
 \subsubsection{Syntax Highlighting}
@@ -76,7 +76,7 @@ This shows well how the quality of the language server could be improved.
 \begin{figure}[H]
     \centering
     \includegraphics[width=9cm]{results/error_whole_block.png}
-    \caption{Underlinding Before (Top) and After (Bottom)}
+    \caption{Underlining Before (Top) and After (Bottom)}
     \label{fig:error_whole_block}
 \end{figure}
 
@@ -184,8 +184,8 @@ For example, in figure \ref{fig:hover} the user can actually find out, where his
     \label{fig:hover}
 \end{figure}
 
-\subsubsection{GoToDefinition}
-Compared to the prototype, GoToDefinition has been significantly improved.
+\subsubsection{\textit{GoToDefinition}}
+Compared to the prototype, \textit{GoToDefinition} has been significantly improved.
 Prior to this bachelor thesis, the feature just scanned all code for the first name-match and reported it as the definition.
 This did neither work if multiple symbols with the same name occurred, nor if the declaration was placed after the first usage in the code.
 Both cases are now handled well by the symbol table engine.\\
@@ -207,7 +207,7 @@ if an error occurred or the requested symbol was already a declaration.
 \begin{figure}[H]
     \centering
     \includegraphics{results/goto.png}
-    \caption{GoToDefinition Error Reporting}
+    \caption{\textit{GoToDefinition} Error Reporting}
     \label{fig:goto}
 \end{figure}
 
@@ -216,15 +216,15 @@ If the targeted file is not opened, VSCode will just open it inside the workspac
 It is also possible to go to the definition of \code{this}-Expressions, which will just jump to the class definition.
 The feature works also across code that is not within a block statement, for example for expressions occurring inside an \code{ensures}-clause.
 
-\subsubsection{Rename}
-Rename was newly added to the language server.
+\subsubsection{\textit{Rename}}
+\textit{Rename} was newly added to the language server.
 It is a feature that could only be realized, since the symbol table provides all necessary information.
 If the user wants to execute a rename, all dependent symbols are deduced correctly as you see in figure \ref{fig:rename}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/rename.png}
-    \caption{Rename of a Symbol}
+    \caption{\textit{Rename} of a Symbol}
     \label{fig:rename}
 \end{figure}
 
@@ -232,7 +232,7 @@ Providing as much user experience as possible for this feature was embraced, eve
 In particular, this means if there is no renamable symbol at the cursor, the user is informed by a notification.
 The algorithm will also check whether the new symbol name is valid.
 This means, it must not start with an underscore or number, and it must not be any reserved Dafny word.
-Also, we limited the allowed new name to alphanumerical characters, although wild unicode names would be allowed by Dafny.\\
+Also, we limited the allowed new name to alphanumerical characters, although wild Unicode names would be allowed by Dafny.\\
 
 This could even be driven further.
 For example, it could be checked whether a symbol with the same scope already exists.
@@ -247,8 +247,8 @@ However, if a file gets included elsewhere, it does not know about it.
 This is, since no global symbol table is currently used for the entire workspace.
 This issue and possible solutions were described in section \ref{section:globalSymbolTable}.\\
 
-\subsubsection{CodeLens}
-CodeLens is an excellent way for the developer to see which classes and methods were used how often - and where.
+\subsubsection{\textit{CodeLens}}
+\textit{CodeLens} is an excellent way for the developer to see which classes and methods were used how often - and where.
 In order to be able to assign the references reliably and
 also to consider the references across included files, the symbol table was necessary. \\
 
@@ -259,7 +259,7 @@ but also dead code is lifted by a special text.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_show_numbers}
-    \caption{Codelens Shows the Number of Uses}
+    \caption{CodeLens Shows the Number of Uses}
     \label{fig:result_codelens_references}
 \end{figure}
 
@@ -274,11 +274,11 @@ because they no longer have to jump back and forth between files and they do not
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_opened}
-    \caption{Codelens Shows References in Pop-up}
+    \caption{CodeLens Shows References in Pop-up}
     \label{fig:result_codelens_references_popup}
 \end{figure}
 
-Just like Rename, the feature does not work for code that includes the current file
+Just like \textit{Rename}, the feature does not work for code that includes the current file
 due to the missing global symbol table as described in section \ref{section:globalSymbolTable}.
 
 \subsubsection{Automatic Code Completion}
@@ -297,16 +297,16 @@ Our auto completion supports three basic types of proposals:
 If a dot was written, only declarations of the class in front of the dot are suggested.
 If a new was written, only available classes are listed.
 When none of the above is the case, all available symbols in the current scope will be displayed.
-The three cases are shown in figuer \ref{fig:result_completion}.
+The three cases are shown in figure \ref{fig:result_completion}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/completion_allinone.png}
-    \caption{AutoCompletion}
+    \caption{\textit{AutoCompletion}}
     \label{fig:result_completion}
 \end{figure}
 
-\textbf{Additional Usabillity Sugar}\\
+\textbf{Additional Usability Sugar}\\
 As a little extra to increase the user experience, when inserting a suggested function or method after a dot
 or a class after a \code{new},
 opening and closing brackets are automatically added.
@@ -328,21 +328,21 @@ Related information, such as the parent symbol, is now directly accessible.
 Any string parsing could be completely omitted compared to the prototype.
 This leads to better performance and, above all, to reliable symbol references.\\
 
-All of the previous features, with the exception of AutoCompletion, do not contain much logic themselves.
+All of the previous features, with the exception of \textit{AutoCompletion}, do not contain much logic themselves.
 They just request information from the symbol table and report it back to the client.
-The symbol table allows the implemention of new features, such as CodeHighlight and even AutoFormat with ease.
+The symbol table allows the implementation of new features, such as CodeHighlight and even AutoFormat with ease.
 This is a major gain for the future of the language server.\\
 
 
 Because information about the symbols can be made available already prepared,
 the feature development has been greatly simplified.
 For example, before we had the symbol table,
-a feature like CodeLens required us to find and count all references for a symbol in the following way,
+a feature like \textit{CodeLens} required us to find and count all references for a symbol in the following way,
 as shown in listing \ref{lst:codelens_code_old}.
 Comments have been added to understand the code without context.
 The code has been simplified for illustration purposes.
 
-\begin{lstlisting}[language=csharp, caption={Example for CodeLens in the Prototype}, captionpos=b, label={lst:codelens_code_old}]
+\begin{lstlisting}[language=csharp, caption={Example for \textit{CodeLens} in the Prototype}, captionpos=b, label={lst:codelens_code_old}]
 // for each symbol in the current opened Dafny file...
 foreach (var symbol in fileSymboltable.GetFullList())
 {
@@ -358,18 +358,18 @@ foreach (var symbol in fileSymboltable.GetFullList())
             symbolReferenceCounter++;
       }
   }
-  // create CodeLens with symbolReferenceCounter
+  // create \textit{CodeLens} with symbolReferenceCounter
 }
 \end{lstlisting}
 
 Newly this works via a property as a one-liner as shown in listing \ref{lst:codelens_code_new}.
 The symbol table simplifies the development enormously.
 
-\begin{lstlisting}[language=csharp, caption={Example for CodeLens With the new Symbol Table}, captionpos=b, label={lst:codelens_code_new}]
+\begin{lstlisting}[language=csharp, caption={Example for \textit{CodeLens} With the new Symbol Table}, captionpos=b, label={lst:codelens_code_new}]
 foreach (var symbol in _manager.GetAllSymbolDeclarations())
 {
   var symbolReferenceCounter = symbol.Usages.Count;
-  // create CodeLens with symbolReferenceCounter
+  // create \textit{CodeLens} with symbolReferenceCounter
 }
 \end{lstlisting}
 
@@ -601,11 +601,11 @@ The table shown in figure \ref{fig:old_ts_languageserver} shows the 10 largest c
     \label{fig:old_ts_languageserver}
 \end{figure}
 
-Interesting is the comparison of the code base required for a feature like GoToDefinition.
+Interesting is the comparison of the code base required for a feature like \textit{GoToDefinition}.
 The new \\
 \code{DefinitionsProvider} just uses 38 lines of code.
 However, only about 5 are used for the core logic, all others are just error handling and user messaging.
-This is a major improvement comapared to the pre-existing project.
+This is a major improvement compared to the pre-existing project.
 
 The Sonar report for the server only detects about 15 issues.
 The security aspects were ensured to be no problem, since the server is running on a local machine.

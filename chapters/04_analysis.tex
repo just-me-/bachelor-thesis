@@ -17,10 +17,10 @@ That means that once a language server is available, the user is free in the cho
 The user can then use a variety of features, as long as the language server is capable to handle them. \glsadd{lsp}
 Those features can for example be
 \begin{itemize}
-    \item AutoCompletion
+    \item \textit{AutoCompletion}
     \item Hover Information
-    \item Rename
-    \item GoToDefinition
+    \item \textit{Rename}
+    \item \textit{GoToDefinition}
 \end{itemize}
 and much more. A full list can be found within the LSP specification \cite{lspspec}.
 Custom requests, for example for features like Compile or CounterExample, can also be added to the LSP \cite{lspWiki}.
@@ -73,7 +73,7 @@ The requests are collected in the following itemization:
     \item \code{rangeFormatting}
     \item \code{onTypeFormatting}
     \item \code{rename}
-    \item \code{prepareRename}
+    \item \code{prepare\textit{Rename}}
     \item \code{foldingRange}
     \item \code{selectionRange}
 \end{itemize}
@@ -156,7 +156,7 @@ The tutorial provides the user with all the required knowledge to set up a langu
 Besides the setup of the server, it also illustrated how to create message handlers, for example for AutoCompletions or document synchronization.\\
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation}, captionpos=b, label={lst:lspbasichandler}]
-public class AutoCompletion : ICompletionHandler
+public class \textit{AutoCompletion} : ICompletionHandler
 {
     public Task<CompletionList> Handle(CompletionParams request, CancellationToken cancellationToken)
     {
@@ -167,7 +167,7 @@ public class AutoCompletion : ICompletionHandler
 
 Listing \ref{lst:lspbasichandler} illustrates that the user simply has to implement an interface provided by OmniSharp.
 Within the \code{request} parameter, all required information is passed to the handler.
-For AutoCompletion, this is the file and the cursor position, as well as some context information, how the AutoCompletion event was triggered.
+For \textit{AutoCompletion}, this is the file and the cursor position, as well as some context information, how the \textit{AutoCompletion} event was triggered.
 The task of the language server is to figure proper suggestions and return them in the form of a \code{CompletionList} back to the client.\\
 
 Since OmniSharp is open source, we could find all available interfaces and thus all available handlers in their git repository \cite{omnisharpgit}.
@@ -500,28 +500,28 @@ To be able to implement the required feature set for this project, the following
     \item Cursor position
     \begin{itemize}
         \item Which name segment (if any) is at the cursor's position?
-        To have a symbol as an entry point for the GoToDefinition feature.
+        To have a symbol as an entry point for the \textit{GoToDefinition} feature.
     \end{itemize}
 
-    \item GoToDefinition
+    \item \textit{GoToDefinition}
         \begin{itemize}
             \item Where is the symbol declared?
             To go from the received entry symbol to the declaration symbol.
         \end{itemize}
 
-    \item CodeLens
+    \item \textit{CodeLens}
         \begin{itemize}
             \item How often, and where, is a declaration used?
             To display the references to the plugin user.
         \end{itemize}
 
-    \item Rename
+    \item \textit{Rename}
         \begin{itemize}
             \item What are all occurrences of a symbol?
             To rename all symbols correctly.
         \end{itemize}
 
-    \item AutoCompletion
+    \item \textit{AutoCompletion}
         \begin{itemize}
             \item Within which scope was the event triggered?
             To suggest only symbols in the reachable scope.
@@ -756,12 +756,12 @@ Dafny allows to specify own arguments for compilation, which our plugin should s
 On the one hand, extended configuration settings should allow the user to set default values in the plugin, on the other hand the popup box integrated in VSCode can be used for individual argument input for each compile \cite{vscodeAPI}.
 
 \subsubsection{CounterExample}
-To show a CounterExample, the user has again the choice between a hotkey, the context menu or using the command bar.
-The CounterExample is then shown as a VSCode design element.
-If the user is no longer interested in the CounterExample, there is another command to hide it.
+To show a counter example, the user has again the choice between a hotkey, the context menu or using the command bar.
+The counter example is then shown as a VSCode design element.
+If the user is no longer interested in the counter example, there is another command to hide it.
 The suppression of the counter model is completely handled inside the client. \\
 
-The example in figure \ref{fig:analysis_counter_example} demonstrates a CounterExample.
+The example in figure \ref{fig:analysis_counter_example} demonstrates a counter example.
 The precondition is commented. Without this requirement, the postcondition can be violated with \code{y = 0}.
 
 \begin{figure}[H]
@@ -771,17 +771,17 @@ The precondition is commented. Without this requirement, the postcondition can b
     \label{fig:analysis_counter_example}
 \end{figure}
 
-In the current version the CounterExample is automatically hidden when the code is edited.
-If the user switches to another tab in VSCode, the CounterExample is also deactivated. \\
+In the current version the counter example is automatically hidden when the code is edited.
+If the user switches to another tab in VSCode, the counter example is also deactivated. \\
 
-New client logic has to be used to store for which files the CounterExample is active.
-The CounterExample can be displayed to the user again, as soon as he switches back to the original Dafny file with the new logic.
-Furthermore, an automatic update of the CounterExample should take place whenever the user edits the code.\\
+New client logic has to be used to store for which files the counter example is active.
+The counter example can be displayed to the user again, as soon as he switches back to the original Dafny file with the new logic.
+Furthermore, an automatic update of the counter example should take place whenever the user edits the code.\\
 
-The representation of the CounterExample will also be improved.
+The representation of the counter example will also be improved.
 A clear and concise display and increased user friendliness is targeted.\\
 
-\subsubsection{AutoCompletion for Identifiers}
+\subsubsection{\textit{AutoCompletion} for Identifiers}
 Whenever a valid interim result of a Dafny file is sent to the server, a naive file symbol table is created and buffered.
 As an example, if one would have a Dafny code snippet like below, the best and only match would be method \code{m}.
 This is exactly what is suggested for the user as you can see in figure \ref{fig:analysis_completion_1}.
@@ -789,11 +789,11 @@ This is exactly what is suggested for the user as you can see in figure \ref{fig
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/analysis_completion_1}
-    \caption{AutoCompletion for Instance of Class C}
+    \caption{\textit{AutoCompletion} for Instance of Class C}
     \label{fig:analysis_completion_1}
 \end{figure}
 
-Moreover, AutoCompletion is also able to provide general completion suggestions if one is not typing a word.
+Moreover, \textit{AutoCompletion} is also able to provide general completion suggestions if one is not typing a word.
 In this case, just all available symbols are proposed.
 This is illustrated below in figure \ref{fig:analysis_completion_1}.
 Please also note that every symbol type (i.e. methods, classes and variables) have their own icons.
@@ -806,31 +806,31 @@ Please also note that every symbol type (i.e. methods, classes and variables) ha
 \end{figure}
 
 Unfortunately, both implemented versions are neither very reliable nor very performant.
-AutoCompletion was implemented via string matching.
-That means if the AutoCompletion is called after a dot, the word before the dot is extracted from the source code.
+\textit{AutoCompletion} was implemented via string matching.
+That means if the \textit{AutoCompletion} is called after a dot, the word before the dot is extracted from the source code.
 Afterwards, the complete symbol table is iterated through and as soon as a symbol with the matching name is found,
 it is assumed that this symbol is the originally declared symbol.
 If there are multiple symbols with the same name, or if the declaration takes place after the first usage,
-the AutoCompletion would no longer work properly. \\
+the \textit{AutoCompletion} would no longer work properly. \\
 
 For general suggestions, simply all symbols are suggested.
 This includes symbols not visible in the current scope. \\
 
-AutoCompletion has to be rebuilt so that it functions reliably and correct.
+\textit{AutoCompletion} has to be rebuilt so that it functions reliably and correct.
 This is only possible by the implementation of a proper symbol table.\\
 
 In addition, it would be very useful for users if the autocompletion is triggered after a \code{new}
 keyword and only available classes are automatically listed.
 This can be achieved by type filtering the symbols of the symbol table.
 
-\subsubsection{GoToDefinition}
-With the "GoToDefinition" feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
+\subsubsection{\textit{GoToDefinition}}
+With the "\textit{GoToDefinition}" feature, a user can use the context menu or hit F12 to go to the definition of a symbol.
 In figure \ref{fig:analysis_goto_1}, an example is shown.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/analysis_goto_1}
-    \caption{GoToDefinition via Context Menu}
+    \caption{\textit{GoToDefinition} via Context Menu}
     \label{fig:analysis_goto_1}
 \end{figure}
 
@@ -840,18 +840,18 @@ Once pressed, the cursor jumps instantly to the definition of the desired symbol
 \begin{figure}[H]
     \centering
     \includegraphics[width=7cm]{analysis/analysis_goto_2}
-    \caption{Cursor Position After GoToDefinition}
+    \caption{Cursor Position After \textit{GoToDefinition}}
     \label{fig:analysis_goto_2}
 \end{figure}
 
-GoToDefinition uses a similar logic to AutoCompletion and is therefore just as unreliable.
+\textit{GoToDefinition} uses a similar logic to \textit{AutoCompletion} and is therefore just as unreliable.
 The name of the currently selected word is read from the cursor position.
 Afterwards, the whole symbol table is iterated through - the first symbol with the same name is assumed to be the declaration.
 Then the position of this symbol is jumped to. \\
 
-Similar to AutoCompletion, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
+Similar to \textit{AutoCompletion}, the cursor position can reliably identify the currently selected symbol and the new symbol table can determine the declaration symbol.
 
-\subsubsection{CodeLens}
+\subsubsection{\textit{CodeLens}}
 Once a user opens a Dafny file that includes classes, methods or functions, a greyish line shows the reference count to that symbol.
 As an example, the class \code{C} has been instantiated twice and the method \code{m} was used once in the following code snippet in figure \ref{fig:analysis_codelens}.
 
@@ -861,11 +861,11 @@ This should open a popup box in which the corresponding uses are shown.
 \begin{figure}[H]
     \centering
     \includegraphics[width=9cm]{analysis/analysis_codelens}
-    \caption{CodeLens Example}
+    \caption{\textit{CodeLens} Example}
     \label{fig:analysis_codelens}
 \end{figure}
 
-The current implementation of CodeLens does not have an optimal runtime.
+The current implementation of \textit{CodeLens} does not have an optimal runtime.
 For each symbol, the whole symbol table is iterated again to compare whether one symbol is a use of the other symbol.
 This results in a quadratic runtime. \\
 
