@@ -443,8 +443,50 @@ Alternatively, this process could have been automated with the GitLab CI using t
 The artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}.
 
 \subsubsection{Easy Installation}
-Mit screens vom Installieren.
-todo
+As soon as the user opens a Dafny file, he receives a message as shown in figure \ref{fig:install_need_dafny},
+that appropriate extensions are available for Dafny files in the extension marketplace.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth/2]{results/installation/install_need_dafny}
+    \caption{Message "Marketplace has Extensions for Dafny Files"}
+    \label{fig:install_need_dafny}
+\end{figure}
+
+In the marketplace we search for extensions for Dafny and find our plugin as shown in figure \ref{fig:install_search}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{results/installation/install_search}
+    \caption{Searching Dafny Extensions in the Marketplace}
+    \label{fig:install_search}
+\end{figure}
+
+Beside our plugin description \cite{our-dafny-plugin},
+which contains a description of the plugin and some example screenshots,
+the plugin store automatically lists an overview of all shortcuts and possible settings for the user,
+as shown in figure \ref{fig:supportedSettingsAndShortCutsOVerview}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{results/installation/supportedSettingsAndShortCutsOVerview}
+    \caption{Settings, Commands and Keyboard Shortcuts}
+    \label{fig:supportedSettingsAndShortCutsOVerview}
+\end{figure}
+
+After the plugin is installed and the Dafny file is opened again,
+the plugin automatically starts the download of the Dafny language server and
+starts it afterwards as shown in figure \ref{fig:installation_popups}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{results/installation/installation_popups}
+    \caption{Popup Messages for Installation (Left) and Starting (Right)}
+    \label{fig:installation_popups}
+\end{figure}
+
+That is it, the user has the plugin and the Dafny language server ready to use.
+He can start programming in Dafny.
 
 \subsection{Performance of the Language Server}
 To measure performance, a little algorithm was written that creates a pseudorandom Dafny file.
@@ -467,7 +509,14 @@ The test has shown the following results:
     \item 10'000 LOC: 18'000ms
 \end{itemize}
 
- \intnote{grafik in excel erstellen, screenshot, fix rein. todo }
+A resulting trend line is shown in figure \ref{fig:trendline_1}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth/2]{results/runtime_trendline}
+    \caption{Runtime Trend Line}
+    \label{fig:trendline_1}
+\end{figure}
 
 This scheme follows a $O(n*log(n))$ scheme, which was expected.
 While 18seconds seem quite high, consider that 10'000 lines of code is huge.
