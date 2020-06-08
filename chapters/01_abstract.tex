@@ -2,8 +2,8 @@
 \label{section:abstract}
 
 \textbf{Initial Situation}\\
-Dafny is a formal programming language to proof a program's correctness.
-In a preceding bachelor thesis, a plugin for Visual Studio Code has been created to access Dafny-specific static analysis features.
+Dafny is a formal programming language to prove a program's correctness.
+In a preceding bachelor thesis, a plugin for Visual Studio Code was created to access Dafny-specific static analysis features.
 The plugin communicates with a language server using Microsoft's language server protocol,
 which standardizes communication between an integrated development environment (IDE) and a language server.
 The language server itself used to access the Dafny library, which features the backend of the Dafny language analysis,
@@ -23,5 +23,5 @@ Every symbol contains information about its parent, its children and its declara
 This keeps navigation within the symbol hierarchy very simple.
 The implemented features GoToDefinition, Rename, CodeLens, HoverInformation and AutoCompletion benefit from the symbol table and are no longer required to analyze the code themselves and provide better results.
 The symbol table can be used for future extensions, such as AutoFormatting or CodeHighlighting.
-Beside features based on the symbol table, pre-existing functionality was revisited as well to improve the overall software quality.
+Apart from features based on the symbol table, pre-existing functionality was revisited as well to improve the overall software quality.
 The final product has been deployed to the Visual Studio Code marketplace and is publicly available.
