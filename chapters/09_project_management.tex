@@ -6,6 +6,7 @@ First, we talk about time management. Then, quality aspects will be discussed.
 
 \subsection{Time Management}
 This chapter shows the time spent and how well we were able to stick to the planned schedule.
+The times are taken from the used tool Redmine \cite{redmine}.
 
 \subsubsection{Time Spent From Each Student}
 The total working hours for the bachelor thesis was defined to be 12 ECTS or 360 hours per student \cite{projectplan}.
@@ -15,26 +16,62 @@ The submission of the work was brought forward to Wednesday instead of Friday of
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Time Tracking (m, t, should)}
+    \includegraphics[width=\textwidth]{time/time_tracking}
+    \caption{Time Tracking}
     \label{fig:timetracking}
 \end{figure}
 
-As shown in figure \ref{fig:timetracking}, each student spent about 360 hours total.
+As shown in figure \ref{fig:timetracking}, each student spent about 363 hours total.
 The change in workload for the last two weeks shows a significant increase in the number of hours spent per student. \\
 
 The following figure \ref{fig:timetracking_activity} shows the the invested time by activity.
-The largest part was xxxx, followed by xxx and meetings.
+The largest part was development, followed by documentation and meetings.
 We rate this basic time split as well taken.
+The testing is a relatively small percentage according to the diagram.
+Since implementation and testing are often merged through the test driven development,
+the time was sometimes only reported on the development.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Time by Activity (Cake Chart Redmine)}
+    \includegraphics[width=\textwidth/2]{time/activity}
+    \caption{Time by Activity}
     \label{fig:timetracking_activity}
 \end{figure}
 
-Ref to Cake Chart todo \ref{fig:timetracking}
+Figure \ref{fig:time_milestones} shows the accumulated times per milestone.
+The individual milestones are described in more detail in the following section.
+It is interesting how little time the transition took and how time-consuming the symbol table was.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{time/milestones}
+    \caption{Time by Milestone}
+    \label{fig:time_milestones}
+\end{figure}
+
+Apart from the time-consuming meetings and documentation, the symboltable was the most intensive ticket.
+Followed by the newly implemented client.
+Figure \ref{fig:time_ticket} shows the 6 most time consuming tickets.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{time/top6}
+    \caption{Top 6 Time Consuming Tickets}
+    \label{fig:time_ticket}
+\end{figure}
+
+Figure \ref{fig:time_feature} shows thes the reported time on the core features.
+The numbers are to be enjoyed with caution.
+A lot of time spent on features was reported on own refactoring or test tickets.
+Nevertheless, the graphic gives an overview of which features
+were more time-consuming and which were easier to implement.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{time/feature}
+    \caption{Time for each Feature}
+    \label{fig:time_feature}
+\end{figure}
 
 \subsubsection{Schedule and Scope}
 As planned in the project plan, we used a mix between unified process and SCRUM.
@@ -175,7 +212,7 @@ and the over one hundred bugs found.
 These high numbers are due to the fact that we have the entire Dafny project analyzed with Sonar.
 The actual numbers for our project are of course much lower,
 as shown in figure \ref{fig:sonar_server_detail}.
-The \code{DafnyLanguageServer} is highlighted in yellow in the figure. 
+The \code{DafnyLanguageServer} is highlighted in yellow in the figure.
 
 \begin{figure}[H]
     \centering
