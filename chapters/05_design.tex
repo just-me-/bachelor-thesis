@@ -244,7 +244,7 @@ and green components are referred to the utility layer.
 \subsubsection{Main Component And Handlers}
 The \code{Main} component is responsible to start the language server.
 The capabilities of the server can be registered by injecting \textit{Handlers.}
-The handlers themselves will have to implement a specific interface by OmniSharp, for example \code{I\textit{Rename}Handler}.
+The handlers themselves will have to implement a specific interface by OmniSharp, for example \code{IRenameHandler}.
 These interfaces demand a \code{Handle} method with the proper arguments and return values to answer the request.\\
 
 Figure \ref{fig:server_basic_idea} shows the basic, fundamental layout of the server architecture.
@@ -265,10 +265,10 @@ This way, the core logic can be easily tested since it is in a separate componen
 
 \subsubsection {Core}
 The core package contains the actual core logic for the features.
-There is one class for each feature, for example \code{\textit{Rename}Provider} or \code{DiagnsoticsProvider}.
+There is one class for each feature, for example \code{RenameProvider} or \code{DiagnsoticsProvider}.
 The provider is invoked by the handler and responsible to calculate the result, that has to be sent back to the client.
 For that, the provider will invoke the \code{WorkspaceManger} and/or the \code{SymbolTableManager} and operate on these.
-Figure \ref{fig:server_core} shows the core package with the example of the \code{\textit{Rename}Provider}.
+Figure \ref{fig:server_core} shows the core package with the example of the \code{RenameProvider}.
 Note that the symbol table is injected using the interface \code{ISymbolTableManager}.
 By just creating a fake instance, the providers can very easily be tested using this architecture.
 
