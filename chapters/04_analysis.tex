@@ -49,33 +49,35 @@ Aside regular communication, such as text document synchronization,
 the language server protocol specifies a large number of language features \cite{lspspec}.
 The requests are collected in the following itemization:
 
+\begin{multicols}{3}
 \begin{itemize}
-    \item completion
-    \item completion resolve
-    \item hover
-    \item signatureHelp
-    \item declaration
-    \item definition
-    \item typeDefinition
-    \item implementation
-    \item references
-    \item documentHighlight
-    \item documentSymbol
-    \item codeAction
-    \item codeLens
-    \item codeLens resolve
-    \item documentLink
-    \item documentLink resolve
-    \item documentColor
-    \item colorPresentation
-    \item formatting
-    \item rangeFormatting
-    \item onTypeFormatting
-    \item rename
-    \item prepareRename
-    \item foldingRange
-    \item selectionRange
+    \item \code{completion}
+    \item \code{completion/resolve}
+    \item \code{hover}
+    \item \code{vsignatureHelp}
+    \item \code{declaration}
+    \item \code{definition}
+    \item \code{typeDefinition}
+    \item \code{implementation}
+    \item \code{references}
+    \item \code{documentHighlight}
+    \item \code{documentSymbol}
+    \item \code{codeAction}
+    \item \code{codeLens}
+    \item \code{codeLens/resolve}
+    \item \code{documentLink}
+    \item \code{documentLink/resolve}
+    \item \code{documentColor}
+    \item \code{colorPresentation}
+    \item \code{formatting}
+    \item \code{rangeFormatting}
+    \item \code{onTypeFormatting}
+    \item \code{rename}
+    \item \code{prepareRename}
+    \item \code{foldingRange}
+    \item \code{selectionRange}
 \end{itemize}
+\end{multicols}
 
 Certain functions, which are needed for the Dafny plugin, are not offered by the standard.
 Fortunately the LSP can be extended with custom requests. This concerns the following features:
