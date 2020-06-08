@@ -5,8 +5,8 @@
 
 As described in our objectives, our work has three basic stakeholders. \\
 
-On the one hand there are the students of the HSR, who want to get familiar with Dafny.
-For these students, a usefull plugin should be offered to make the development with Dafny easier. \\
+On the one hand, there are the students of the HSR who want to get familiar with Dafny.
+For these students, a useful plugin should be offered to make the development with Dafny easier. \\
 
 On the other hand, there are the developers who want to extend the language server in the future.
 This category also includes developers who want to integrate other IDE's by additional clients.\\
@@ -80,7 +80,7 @@ This shows well how the quality of the language server could be improved.
     \label{fig:error_whole_block}
 \end{figure}
 
-The feature directly invokes Dafny's compile engine, thus works quite solid and scales automatically with future Dafny features.
+The feature directly invokes Dafny's compile engine, thus works quite solidly and scales automatically with future Dafny features.
 
 \begin{figure}[H]
     \centering
@@ -132,7 +132,7 @@ The reason for that could not be investigated.
 
 \subsubsection{CounterExample}
 Providing CounterExamples was already possible in the prototype.
-A major flaw was, that the representation of the CounterExample was quite complex and not intuitively readable.
+A major flaw was that the representation of the CounterExample was quite complex and not intuitively readable.
 Thus, it was a goal to ease the CounterExample representation.\\
 
 For this, the related \code{model.bvd} file was studied.
@@ -152,7 +152,7 @@ The expression \code{((- 23))} is therefore reformatted into \code{-23}, making 
 
 Figure \ref{fig:ce_beforeafter} shows a comparison of the CounterExample feature between the initial state and at the end of the project.
 The representation is much cleaner and easier to immerse. \intnote{todo dieses untere bild updaten. verification streicht neu alles an.}
-Also note, that more room is given so that is does not have a clumsy effect on the user's eye. \\
+Also note that more room is given so that is does not have a clumsy effect on the user's eye. \\
 
 This feature was also improved on the client side.
 The user has the option to configure the color scheme of the CounterExample representation, if he does not like the default colors.
@@ -228,14 +228,14 @@ If the user wants to execute a rename, all dependent symbols are deduced correct
     \label{fig:rename}
 \end{figure}
 
-It was embraced to provide as much user experience as possible for this feature, even if it is relatively simple.
+Providing as much user experience as possible for this feature was embraced, even if it is relatively simple.
 In particular, this means if there is no renamable symbol at the cursor, the user is informed by a notification.
-The algorithm will also check, if the new symbol name is valid.
+The algorithm will also check whether the new symbol name is valid.
 This means, it must not start with an underscore or number, and it must not be any reserved Dafny word.
 Also, we limited the allowed new name to alphanumerical characters, although wild unicode names would be allowed by Dafny.\\
 
 This could even be driven further.
-For example, it could be checked, whether a symbol with the same scope already exists.
+For example, it could be checked whether a symbol with the same scope already exists.
 Functionality for this is already available by the symbol table, since something similar is needed by autocompletion.
 That is also something that could easily be added.
 
@@ -269,7 +269,7 @@ On the right hand side of the popup window all references found are listed.
 If the user clicks on the corresponding references, the corresponding code
 location in the right file opens on the left side - at the location within the popup.
 This is very convenient for developers,
-because they no longer have to jump back and forth between files and you do not have to scroll unnecessarily.
+because they no longer have to jump back and forth between files and they do not have to scroll unnecessarily.
 
 \begin{figure}[H]
     \centering
@@ -418,7 +418,7 @@ Within the picture, dependencies to the \code{Utilities} layer are excluded for 
     \label{fig:dependency_graph_2}
 \end{figure}
 
-Aside the broad architectural layout, many small refactorings were made to keep the code clean.
+Aside from the broad architectural layout, many small refactorings were made to keep the code clean.
 This includes the creation of smaller classes and smaller methods with single responsibilities.
 A good example for this is the config initialization, which was one single large class at first.
 After refactoring, it was split into small, well organized sub-classes.\\
@@ -431,7 +431,7 @@ The client was completely restructured.
 Isolated, small, preferably encapsulated components were programmed.
 Components are now no longer directly dependent on each other but program against interfaces.
 Modules were created and these export only the most necessary interfaces and components to the outside.
-If complex logic would have to be implemented for the client at a later date due to new features,
+If complex has be implemented for the client at a later date due to new features,
 this encapsulation by interfaces is ideal for writing tests. \\
 
 This resulted in less encapsulation and higher coherence.
