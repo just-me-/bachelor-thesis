@@ -164,9 +164,24 @@ could be corrected during development and were not only noticed after the CI had
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{sonar_report_client_server}
     \caption{SonarQube Report in SonarCloud}
     \label{fig:sonarcloud_report}
+\end{figure}
+
+
+What stands out is the high number of code smells with about 3'400
+and the over one hundred bugs found.
+These high numbers are due to the fact that we have the entire Dafny project analyzed with Sonar.
+The actual numbers for our project are of course much lower,
+as shown in figure \ref{fig:sonar_server_detail}.
+The \code{DafnyLanguageServer} is highlighted in yellow in the figure. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{sonar_server_detail}
+    \caption{SonarQube Report in SonarCloud for the Dafny project}
+    \label{fig:sonar_server_detail}
 \end{figure}
 
 Furthermore, local plugins for VSCode and Visual Studio were used to automatically
