@@ -11,7 +11,7 @@ To work on the client, Visual Studio Code is a natural choice, since it contains
 The server is written in \CsharpWithSpace using .NET Framework 4.6.1, since Dafny is already coded in this
 configuration\footnote{During the course of this project, Dafny was updated to .NET Framework 4.8} and direct integration is a key goal of the project.
 To work on the server, Visual Studio 2019 is used with the ReSharper extension.\\
-The CI will be realized with GitLab, since HSR offers it for free and the CI-pipeline of the prototype was pre-existing.
+The CI will be realized with GitLab, since HSR offers it for free and the CI-pipeline of the prototype was pre-existing. \glsadd{ci} \glsadd{resharper} \glsadd{gitlab}
 
 \subsection{Client}
 The client consists of the VSCode plugin written in TypeScript.
@@ -31,7 +31,7 @@ Figure \ref{fig:client_then} gives an impression of the architecture at the begi
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{client_then}
-    \caption{Client Architecture - Term Project}
+    \caption{Client Architecture in the Prototype}
     \label{fig:client_then}
 \end{figure}
 
@@ -116,7 +116,7 @@ The contents of \code{typeInterfaces} and \code{stringResources} have been omitt
 It can be seen that only \code{compile} and \code{counterExample} exist as dedicated server access classes.
 All other features, such as \textit{CodeLens} or \textit{AutoCompletion} are natively supported by the LSP.
 This means, that no additional client logic is necessary to support these features.
-Since Compile and CounterExample are custom requests,
+Since \textit{Compile} and \textit{CounterExample} are custom requests,
 their handling has to be implemented manually within the client.\\
 
 If VSCode receives a \textit{AutoCompletion} response, the LSP standard defines how VSCode has to handle it -
@@ -167,7 +167,7 @@ These notifications are split into three severity levels:
 The corresponding logic in the client receives these messages and calls the VSCode API to display a popup message. \\
 
 {\bf Commands} \textendash{}
-To enable the user to actively use features (such as compile),
+To enable the user to actively use features (such as \textit{Compile}),
 the corresponding method calls must be linked to the VSCode UI.
 There are three primary links for this:
 \begin{itemize}
@@ -187,8 +187,8 @@ without having the server to send the status bar information
 
 {\bf CounterExample} \textendash{}
 Similar to the status bar, the \code{CounterExample} component will have a buffer.
-For each Dafny file in the workspace, a buffer stores whether the user wants to see the CounterExample or not.
-This way the CounterExample is hidden when the user switches to another file
+For each Dafny file in the workspace, a buffer stores whether the user wants to see the counter example or not.
+This way the counter example is hidden when the user switches to another file
 and automatically shown again when switching back to the original Dafny file.
 
 \subsubsection{Types in TypeScript}
@@ -214,9 +214,9 @@ export interface ICompilerResult {
 
 \subsection{Server}
 This subsection documents the architectural layout of the server.
-The server consists of eight different packages:
+The server consists of eight different packages aside the \code{Main} class:
 \begin{itemize}
-    \item \code{Main}: Starting of the language server.
+    \item \code{Main}: Initializing the language server.
     \item \code{Handler}: Components handling LSP requests.
     \item \code{Core}: Contains provider-classes that supply the handlers with the necessary information.
     \item \code{CustomDTOs}: Contains all custom parameters and results like \code{CompilationResults}.
@@ -224,11 +224,11 @@ The server consists of eight different packages:
     \item \code{SymbolTable}: Handles anything related to the symbol table (creation, navigation, access).
     \item \code{Tools}: Individual, isolated services needed across the project.
     \item \code{Commons}: Classes accessed from multiple components, such as the language server configuration.
-    \item \code{Resources}: Strings and filesystem resources.
+    \item \code{Resources}: Extracted strings.
 \end{itemize}
 
 Figure \ref{fig:server_overview} shows a broad overview of the server layering.
-The packages are discussed in a detailed matter below from top to bottom.
+The packages are discussed in a detailed matter in the next sections from top to bottom.
 
 \begin{figure}[H]
     \centering
@@ -236,14 +236,14 @@ The packages are discussed in a detailed matter below from top to bottom.
     \caption{Server Overview}
     \label{fig:server_overview}
 \end{figure}
-In this section, blue UML components will refer to core components on the top layer,
-orange components are related to the symbol table or Dafny access on the middle layer,
-and green components are referred to the utility layer.
+Blue UML components will refer to core components on the top layer.
+Orange components are related to the symbol table or Dafny access on the middle layer.
+Green components will refer to the utility layer.
 
 
 \subsubsection{Main Component And Handlers}
 The \code{Main} component is responsible to start the language server.
-The capabilities of the server can be registered by injecting \textit{Handlers.}
+The capabilities of the server can be registered by injecting a \code{Handler}.
 The handlers themselves will have to implement a specific interface by OmniSharp, for example \code{IRenameHandler}.
 These interfaces demand a \code{Handle} method with the proper arguments and return values to answer the request.\\
 
@@ -267,12 +267,10 @@ This way, the core logic can be easily tested since it is in a separate componen
 The core package contains the actual core logic for the features.
 There is one class for each feature, for example \code{RenameProvider} or \code{DiagnsoticsProvider}.
 The provider is invoked by the handler and responsible to calculate the result, that has to be sent back to the client.
-For that, the provider will invoke the \code{WorkspaceManger} and/or the \code{SymbolTableManager} and operate on these.
+For that, the provider will invoke the \code{WorkspaceManger} and the \code{SymbolTableManager} and operate on these.
 Figure \ref{fig:server_core} shows the core package with the example of the \code{RenameProvider}.
 Note that the symbol table is injected using the interface \code{ISymbolTableManager}.
 By just creating a fake instance, the providers can very easily be tested using this architecture.
-
- \intnote{and/or? was den nun und wann ;) and oder or nehmen, das verwirrt sonst}
 
 \begin{figure}[H]
     \centering
@@ -315,7 +313,7 @@ Since \code{TranslationResults} and \code{PhysicalFile} are used in multiple par
 Cyclic dependencies can be avoided this way.\\
 
 To request information about a file, or to update a file, a component \code{WorkspaceManager} will be created.
-It contains a dictionary, linking a file identity (as URI) to a \code{FileRepository}.
+It contains a dictionary, linking a file identity (as URI) to a \code{FileRepository}. \glsadd{uri}
 It offers a method to update a file, but also to get information about a file.\\
 
 \begin{figure}[ht]
@@ -326,8 +324,8 @@ It offers a method to update a file, but also to get information about a file.\\
 \end{figure}
 
 Whenever a change is triggered, the \code{Update} method of the \code{WorkspaceManager} can be called to apply them.
-The manager will forward the call towards the \code{FileRepository}, which will adjust the \code{PhysicalFile},
-but also generate new \code{TranslationResults} by invoking the Dafny Access package.
+The manager will forward the call towards the \code{FileRepository}, which will adjust the \linebreak \code{PhysicalFile},
+but also generate new \code{TranslationResults} by invoking the \code{DafnyAccess} package.
 Last but not least, the symbol table is also recalculated invoking the proper component discussed later.
 Any changes are then stored in its \code{Buffer} property.\\
 
@@ -336,7 +334,7 @@ This component is responsible to access Dafny's backend.
 The core class in this package is the \linebreak \code{DafnyTranslationUnit}.
 It receives a \code{PhysicalFile} in the constructor.
 The only public method \code{Verify} will start the Dafny verification process for that file.
-As a result, the process will yield a list of errors, warnings and information objects, but also a precompiled \textit{dafnyProgram} and a precompiled \textit{boogieProgram} for later reuse.
+As a result, the process will yield a list of errors, warnings and information objects, but also a precompiled \code{dafnyProgram} and a precompiled \code{boogieProgram} for later reuse.
 All of this information is stored in the \code{TranslationResults} wrapper class and returned as a result.\\
 
 \begin{figure}[H]
@@ -427,20 +425,21 @@ It would be the sixth class related to the config initialization.
 
 The following parameters are configurable:
 \begin{itemize}
-    \item Output Stream File Location
-    \item Logfile Location
-    \item Minimum Loglevel
-    \item LSP Transmission Mode (Full / Incremental)
+    \item Output stream file location
+    \item Logfile location
+    \item Minimum loglevel
+    \item LSP transmission mode (full / incremental)
 \end{itemize}
- \intnote{trennung von config und ressources aufzeigen.}
+Unlike resources, config parameters affect the language server behaviour.
+Resources are just text representations, such as error messages.
 
 
 \subsubsection{Workflow Overview}
 %Source code of flow graph:
 %Language Server->Handler:textDocument/rename
-%Handler->Provider:Forwarding request
-%Provider->WorkspaceManager:Requesting FileRepository
-%WorkspaceManager->Provider:Delivering FileRepository
+%Handler->Workspace:Get FileRepository
+%Workspace->Handler:Deliver FileRepository
+%Handler->Provider:Request Results
 %Provider->Provider:Calculate Result
 %Provider->Handler:Deliver Result
 %Handler->Language Server: Forward Result
@@ -452,7 +451,7 @@ This is illustrated in sequence diagram \ref{fig:workflow1}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{design/workflow1_regular.png}
-    \caption{Sequence Diagram of a \textit{Rename} Request}
+    \caption{Sequence Diagram of a Rename Request}
     \label{fig:workflow1}
 \end{figure}
 
@@ -460,7 +459,7 @@ However, if an update is triggered, the workflow is slightly different.
 The handler will now actually request the \code{WorkspaceManager} to update a file, which will trigger the whole verification process and recalculate the symbol table, if possible.
 At the end, the handler retrieves the updated \code{FileRepository}.
 Now, it forwards the repository to the \code{VerificationProvider}, which extracts, assembles and sends diagnostics to the client.
-This is shown in \ref{fig:workflow2}
+This is shown in figure \ref{fig:workflow2}.
 
 \begin{figure}[H]
     \centering
@@ -478,7 +477,8 @@ In the following, the design of the symbol table is described as well as it is b
 To provide the necessary information for features like \textit{Rename}, \textit{GoToDefinition} or \textit{AutoCompletion},
 the symbol table needs to be very versatile and it must be able to handle the following challenges:
 \begin{itemize}
-    \item Find a symbol at the cursor position and go to symbol declarations for the \textit{GoToDefinition} feature.
+    \item Find the symbol at the cursor position
+    \item Go to the declaration of a symbol for the \textit{GoToDefinition} feature.
     \item Find all occurrences of a symbol for the \textit{Rename} feature.
     \item Get all available symbols within a scope for the \textit{AutoCompletion} feature.
     \item Know about usages of a symbol for the \textit{CodeLens} feature.
@@ -496,8 +496,8 @@ Of course, only symbols with an actual body will have these properties populated
 
 To find all available symbols, every scope needs to know, what is declared inside it.
 Thus, a property \code{Children} is necessary.
-It is implemented as a hash list for instant access.
-One further has to divide between declarations and any occurring symbols.
+It is implemented as a hash map for instant access.
+One further has to divide between just declarations and all occurring symbols.
 Another property \code{Descendants} contains any occurring symbol in a scope, not only declarations.\\
 
 \textbf{Find declaration}\\
@@ -508,7 +508,7 @@ Aside from the already mentioned \code{Children}-property, a \code{Parent}  prop
 \textbf{Find usages of symbol}\\
 A list of usages need to be provided, containing a reference to every usage of the symbol. \\
 
-All of this leads in the following structure of the class \code{SymbolInformation} shown in figure \ref{fig:symboltabledesign}.
+All of this leads to the following structure of \code{SymbolInformation}, shown in figure \ref{fig:symboltabledesign}.
 
 \begin{figure}[H]
     \centering
@@ -525,13 +525,13 @@ The goal of the pattern is to separate the navigation through the data structure
 Consider any tree based data structure.
 Every node in the tree is supposed to offer an \code{Accept(Visitor v)} method as shown in listing \ref{lst:accept}.
 This method will accept the visitor, this is, it will execute the visitor's operation on the node itself.
-Further, it will also call the \code{accept}-methods of its child nodes.
+Further, it will also call the \code{Accept}-methods of its child nodes.
 Thus, a typical implementation of an acceptor would look like this:
 
-\begin{lstlisting}[language=csharp, caption={Example for Accept}, captionpos=b, label={lst:accept}]
+\begin{lstlisting}[language=csharp, caption={Standard-Implementation of Accept}, captionpos=b, label={lst:accept}]
 public void Accept(Visitor v) {
     v.Visit(this);
-    foreach (Node child in this.Children) {
+    foreach (Vertex child in this.Children) {
         child.Accept(v);
     }
 }
@@ -545,7 +545,7 @@ For a symbol table, possible node types are any kind of expressions and statemen
 
 A visitor implementation could look like shown in listing \ref{lst:visitor}.
 
-\begin{lstlisting}[language=csharp, caption={Example for Visitor}, captionpos=b, label={lst:visitor}]
+\begin{lstlisting}[language=csharp, caption={Example for a Visitor}, captionpos=b, label={lst:visitor}]
 public class Printer : Visitor {
     public override void Visit(Node n) {
         Console.WriteLine("Node: " + n.ToString());
@@ -561,19 +561,19 @@ public class Printer : Visitor {
 The current design creates a symbol table per file, and attaches it to the file repository.
 This variant was chosen for simplicity.
 However, it is technically not correct.
-A better variant would be to use a global symbol for the entire workspace.
+A better option would be to use a global symbol for the entire workspace.
 This has two reasons:
 \begin{itemize}
-    \item If a file gets included elsewhere - the file is not aware about this. \textit{CodeLens} and \textit{Rename} will not work properly.
+    \item If a file is included elsewhere - the file is not aware about this. \textit{CodeLens} and \textit{Rename} will not work properly.
     \item \textit{AutoCompletion} may only suggest symbols in the current file. Symbols available in other files are not known.
 \end{itemize}
 
-A global symbol table is a possible extension point for the feature.
-It would also increase performance and especially resource usage, since if a library is included by multiple files, it's symbol table does not have to be built multiple times.
+A global symbol table is a possible extension point in the future.
+It would also increase performance and especially resource usage, since if a library is included by multiple files, its symbol table does not have to be built multiple times.
 If a file gets updated, only this specific part of the symbol table has to be recalculated. Symbols of other files just have to be re-attached properly.
 However, this task is not as easy, since one may run into problems when multiple default namespaces exist in files that do not include each other.\\
 
-An alternative solution to make features like \textit{Rename} and \textit{GoToDefinition} know about where they are included is to keep a table.
-If a file A is included in file B, an additional buffer within file A indicates that it was included by file B.
+An alternative solution to make features like \textit{Rename} and \textit{GoToDefinition} know about where they are included is to keep a table with this information.
+If a file \code{A} is included in file \code{B}, an additional buffer within file \code{A} indicates that it was included by file \code{B}.
 Keeping all these references up to date is also connected with logical effort.
 Therefore, it is advisable to implement the global and updateable symbol table instead.
