@@ -8,11 +8,11 @@ This mainly concerns Dafny and the language server protocol (LSP).
 \subsection{Dafny}
 \label{section:introduction:dafny}
 Dafny is a compiled language optimized to prove formal correctness \cite{dafnyWiki}.
-It bases on \textit{Boogie} \cite{boogie}, which uses the \textit{Z3} \cite{z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}.
-That means, a programmer can define a precondition - a fact that is just given at the start of the code.
+It is based on \textit{Boogie} \cite{boogie}, which uses the \textit{Z3} \cite{z3} automated theorem prover for discharging proof obligations \cite{dafnyWiki}.
+That means that a programmer can define a precondition - a fact that is just given at the start of the code.
 The postcondition on the other hand is a statement that must be true after the code has been executed.
-Just as the precondition, the postcondition are both defined by the programmer.
-In other words, it can be proven, that under a given premise, the code will manipulate data only thus far, so that also the postcondition will be satisfied.
+Just as with the precondition, the postcondition is also defined by the programmer.
+In other words, it can be proven that under a given premise, the code will manipulate data only thus far, so that also the postcondition will be satisfied.
 Dafny will formally ensure this.
 If it is not guaranteed that the postcondition holds, an error is stated.\\
 
@@ -20,7 +20,7 @@ Listing \ref{lst:simpleDafnyExample} shows an example.
 The value \code{a} is given, but it is required to be positive.
 This is the precondition.
 In the method body, the variable \code{b} is assigned the negative of \code{a}.
-We ensure, that \code{b} must be negative, which is the postcondition.
+We ensure that \code{b} must be negative, which is the postcondition.
 \begin{lstlisting}[language=dafny, caption={Simple Dafny Example}, captionpos=b, label={lst:simpleDafnyExample}]
 method Negate(a: int) returns (b: int)
 requires a > 0
@@ -87,20 +87,20 @@ The most important requests the LSP supports incorporate:
 
 These are features that are commonly used by programmers, independent of the language.\\
 
-Aside these standard features, Dafny has the option to show a CounterExample, if a postcondition is violated.
+Apart from these standard features, Dafny has the option to show a CounterExample, if a postcondition is violated.
 This request is not natively supported by the LSP.
 However, own custom requests and data responses can easily be added to the LSP.
 These have to be handled separately within the client though, since the LSP is not automatically displaying the result. \\
 
 Because of these advantages, the project is based on this protocol.
-In chapter \ref{section:analysis}, it is discussed, which features will be implemented in the underlying project.
+In chapter \ref{section:analysis}, which features will be implemented in the underlying project will be discussed.
 
 \subsection{Initial Solution and Motivation}
 \label{section:introduction:initialsolution}
 In a previous bachelor thesis by Markus Schaden and Rafael Krucker, a LSP client-server infrastructure for Visual Studio Code was created to support Dafny \cite{ba}.
 The plugin was particularly appreciated by the "HSR Correctness Lab" \cite{correctnessLab} to make coding in Dafny easier.
 Its development was continued within the HSR under the lead of Fabian Hauser.
-In the following text, the existing project will be referred as the \textit{pre-existing project}. \glsadd{pre_existing_project}
+In the following text, the existing project will be referred to as the \textit{pre-existing project}. \glsadd{pre_existing_project}
 The pre-existing project offered a LSP-client for Visual Studio Code, which connected to a language server.
 Both, the language server and the plugin, were written in TypeScript.
 To communicate with the Dafny backend, the language server used a proprietary JSON-interface.
@@ -141,9 +141,9 @@ To provide the students with the necessary support, they shall profit by common 
 
 Some of these features have already been implemented in a basic variant in the prototype.
 But almost all these features need to be improved.
-This shall be realized by the implementation of a custom symbol table for features that base on code symbol navigation.
-The symbol table shall contain a well organized tree structure, so that navigation can be done efficiently.
-Each symbol shall have direct links to it's parent, children and declaration for very fast access.
+This will be realized by the implementation of a custom symbol table for features that base on code symbol navigation.
+The symbol table will contain a well organized tree structure, so that navigation can be done efficiently.
+Each symbol will have direct links to its parent, children and declaration for very fast access.
 Compared to the prototype, the pre-existing implementations can be extracted into the symbol table,
 reducing the lines of code (LOC) and increasing performance. \glsadd{loc} \\
 
@@ -151,11 +151,11 @@ Additionally, new features based on the symbol table can be added.
 This targets especially Hover Information and Renaming.
 Further optional features are automated ContractGeneration and refactorings like ExtractMethod. \\
 
-On the other hand, the plugin shall also be used in a professional environment.
+On the other hand, the plugin will also be used in a professional environment.
 Thus, more advanced features have to be supported in the future.
 For example, if the new symbol table provides information about the scope-depth, the indentation width can be deduced for a feature like auto formatting.\\
 
-To facilitate the development of further features, the code shall be refactored to achieve a clean state.
+To facilitate the development of further features, the code will be refactored to achieve a clean state.
 This especially involves a clear architectural layout with dependencies that only point downwards.
 This should make it as easy as possible for other developers to enrich the existing Dafny language server with additional features. \\
 
