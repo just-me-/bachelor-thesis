@@ -13,7 +13,7 @@ It was especially necessary to gain an overview of the existing abstract syntax 
 The language server protocol (LSP) is a JSON-RPC based protocol to communicate between an IDE and a language server \cite{lspWiki}.
 In 2016, Microsoft started collaborating with Red Hat and Codenvy to standardize the protocol’s specification \cite{lspWiki}.
 The goal of the LSP is to untie the dependency of an IDE with its programming language.
-That means, that once a language server is available, the user is free in the choice of the IDE, as long as it offers a client instance that is able to communicate with the server.
+That means that once a language server is available, the user is free in the choice of the IDE, as long as it offers a client instance that is able to communicate with the server.
 The user can then use a variety of features, as long as the language server is capable to handle them. \glsadd{lsp}
 Those features can for example be
 \begin{itemize}
@@ -47,14 +47,35 @@ Each message type can be sent from both sides. From client to server and from se
 \subsubsection{Language Features}
 Aside regular communication, such as text document synchronization,
 the language server protocol specifies a large number of language features \cite{lspspec}.
-These are shown in figure \ref{fig:lsplanguagefeatures}.
+The requests are collected in the following itemization:
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\textwidth/2]{04_lsplanguagefeatures.png}
-    \caption{List of Language Features Interfaces TODO make list}
-    \label{fig:lsplanguagefeatures}
-\end{figure}
+\begin{itemize}
+    \item completion
+    \item completion resolve
+    \item hover
+    \item signatureHelp
+    \item declaration
+    \item definition
+    \item typeDefinition
+    \item implementation
+    \item references
+    \item documentHighlight
+    \item documentSymbol
+    \item codeAction
+    \item codeLens
+    \item codeLens resolve
+    \item documentLink
+    \item documentLink resolve
+    \item documentColor
+    \item colorPresentation
+    \item formatting
+    \item rangeFormatting
+    \item onTypeFormatting
+    \item rename
+    \item prepareRename
+    \item foldingRange
+    \item selectionRange
+\end{itemize}
 
 Certain functions, which are needed for the Dafny plugin, are not offered by the standard.
 Fortunately the LSP can be extended with custom requests. This concerns the following features:
@@ -755,7 +776,7 @@ New client logic has to be used to store for which files the CounterExample is a
 The CounterExample can be displayed to the user again, as soon as he switches back to the original Dafny file with the new logic.
 Furthermore, an automatic update of the CounterExample should take place whenever the user edits the code.\\
 
-The representation of the CounterExample shall also be improved.
+The representation of the CounterExample will also be improved.
 A clear and concise display and increased user friendliness is targeted.\\
 
 \subsubsection{AutoCompletion for Identifiers}
