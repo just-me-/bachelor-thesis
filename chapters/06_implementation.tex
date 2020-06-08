@@ -992,7 +992,7 @@ For this task, top-down navigation is used.
 Starting from the root symbol, for each child it is checked if it wraps the position.
 If not, the symbol is ignored.
 But if so, iteration is recursively called on that child.
-Regarding figure \ref{fig:fig:topDownPaintFTW}, imagine we hand the blue line as the cursor position.
+Regarding figure \ref{fig:topDownPaintFTW}, imagine we hand the blue line as the cursor position.
 The algorithm will then decide, that the cursor position is within module M.
 Afterwards, it will check all children of \code{M}.
 It will find out, that class \code{Z} is not surfacing the cursor position, and move to the next one.
