@@ -265,13 +265,13 @@ Therefore, an asynchronous method is used for this component.
 \textbf{\code{localExecution}}\\
 This package is used for the local execution of programs.
 For example to execute \code{.exe} files.
-For macOS and Linux these are executed using mono. \glsadd{mono}
+For macOS and Linux these are executed using Mono. \glsadd{mono}
 This module takes care of the correct execution of compiled Dafny programs
 and of the Dafny language server, which is also an \code{.exe} file.\\
 
 \code{ExecutionCapabilities} check for supported capabilities.
 Under Windows, \code{.exe} files can be executed natively.
-Under macOS and Linux, the mono version is checked and if necessary the user is asked to install mono. \\
+Under macOS and Linux, the Mono version is checked and if necessary the user is asked to install Mono. \\
 
 The component \code{DafnyRunner} executes compiled Dafny programs.
 It creates a corresponding terminal process and launches the executable.
@@ -1370,10 +1370,10 @@ the Dafny backend was not \cite{sa}.\\
 
 .NET Core has native support for Linux and macOS. 
 With .NET Framework, however, a Windows executable is generated upon compilation.
-Therefore, it is necessary to rely on mono for Unix based operating systems.
+Therefore, it is necessary to rely on Mono for Unix based operating systems.
 Mono allows to execute \code{.exe} files on said systems \cite{mono}. \glsadd{mono} \\
 
-Unfortunately, in the course of our thesis we discovered that the language server could not be started correctly with mono.
+Unfortunately, in the course of our thesis we discovered that the language server could not be started correctly with Mono.
 The problem already occurred when trying to start the OmniSharp language server component. \\
 
 We took several measures to get even more specific details about the problem, after we found the specific point of failure.
