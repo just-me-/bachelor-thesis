@@ -1276,7 +1276,6 @@ return new \textit{CodeLens}
     Command = command
 };
 \end{lstlisting}
- \intnote{todo merke grad dass showreferences ein übersehenes magic string ist... in ressourcen auslagern? todo}
 
 To each \textit{CodeLens} element, a \code{Command} object is also appended.
 The command's name is the function called at the client, when the grey text is clicked.\\
@@ -1396,8 +1395,9 @@ One can simply create fake, mock or stub, implementing the interface, and use it
 \textbf{Symbol Table Generation}\\
 To test the symbol table generation, dedicated Dafny files were written.
 The tests first call the \\
-\code{DafnaTranslationUnit} to create a dafnyProgram.
-The dafnyProgram is then handed to the \code{SymbolTableGenerator}.
+\code{DafnaTranslationUnit} to create a \code{dafnyProgram}.
+The dafnyProgram is then handed to the \\
+\code{SymbolTableGenerator}.
 The output is - once more - converted into a string representation.
 This outcome is then compared a against an expectation file.\\
 
@@ -1406,7 +1406,7 @@ One would have to serialize the dafnyProgram, and use that one as a test input.
 However, to be able to quickly adjust the test file, this was not done.\\
 
 Another flaw of this test is, that the whole symbol table is tested at once.
-There is not a single test that checks if symbol X gets used 5 times - and checks only that.
+There is not a single test that checks if symbol \code{X} gets used 5 times - and checks only that.
 The string representation contains information about every symbol of the whole code at once, and the whole code is tested.
 While this is not best practice, it allowed us for a much more efficient testing.
 Even if a test fails, the string representation displays exactly why it failed, so there is not a big downside to this.\\
@@ -1438,7 +1438,7 @@ An example expectation file of this test is shown below:
 \end{verbatim}
 
 The reader takes note that the test expectation is simplified.
-It is not exactly tested, if symbol X is used by symbol Y.
+It is not exactly tested, if symbol \code{X} is used by symbol \code{Y}.
 Instead, just some counts are checked.
 However, by testing if the parent is correct, and by testing the children count, we can be confident that the parent-child relationship is correct.
 The same applies for the declaration-usage relation.
@@ -1476,7 +1476,7 @@ This way, the navigator component is not invoked.\\
 This fake manager is used to test features like \textit{Rename}, \textit{GoToDefinition} or \textit{HoverInformation}.
 It could just be injected to the providers, since the required interface \code{ISymbolTableManager} is implemented.
 By this construct, the correct assembly of \textit{Rename} and \textit{HoverInformation} could be tested.
-An example is shown in listing \ref{lst:renameUnit}
+An example is shown in listing \ref{lst:renameUnit}.
 
 \begin{lstlisting}[language=csharp, caption={Core Provider Unit Test}, captionpos=b, label={lst:renameUnit}]
 public void ReservedWord()
@@ -1576,7 +1576,8 @@ List<string> expectation = new List<string>()
 \end{lstlisting}
 
 This is much more convenient than creating a custom \code{CounterExample}, which could then be used for comparison with an \code{Equals}-method.
-By taking advantage of the method \code{CollectionAssert.AreEquivalent(expectation, actual)} from nUnit's test framework,
+By taking advantage of the method \\
+\code{CollectionAssert.AreEquivalent(expectation, actual)} from nUnit's test framework,
 the two lists can be easily compared against each other \cite{nunitCollectionAssert}. \\
 
 \textbf{Test Architecture}\\
