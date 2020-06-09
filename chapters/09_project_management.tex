@@ -6,13 +6,13 @@ First, we talk about time management. Then, quality aspects will be discussed.
 
 \subsection{Time Management}
 This chapter shows the time spent and how well we were able to stick to the planned schedule.
-The times are taken from the used tool Redmine \cite{redmine}.
+The times are taken from Redmine \cite{redmine}.
 
 \subsubsection{Time Spent From Each Student}
 The total working hours for the bachelor thesis was defined to be 12 ECTS or 360 hours per student \cite{projectplan}.
-The project was for 17 weeks, which averages out in a nominal working time of 21.2 hours per week per student \cite{projectplan}.
-During the last two weeks, no other classes take place and more time resources will be available \cite{projectplan}.
-The submission of the work was brought forward to Wednesday instead of Friday of last week.
+The project lasted 17 weeks, which averages out in a nominal working time of 21.2 hours per week per student \cite{projectplan}.
+During the last two weeks, no other classes took place and more time resources were available \cite{projectplan}.
+The submission of the thesis was brought forward to Wednesday, the 10th of June 2020 instead of the following Friday.
 
 \begin{figure}[H]
     \centering
@@ -21,15 +21,15 @@ The submission of the work was brought forward to Wednesday instead of Friday of
     \label{fig:timetracking}
 \end{figure}
 
-As shown in figure \ref{fig:timetracking}, each student spent about 363 hours total.
-The change in workload for the last two weeks shows a significant increase in the number of hours spent per student. \\
+As shown in figure \ref{fig:timetracking}, each student spent about 363 hours in total.
+In the last two weeks, a significant increase in workload can be seen. \\
 
-The following figure \ref{fig:timetracking_activity} shows the the invested time by activity.
+Figure \ref{fig:timetracking_activity} shows the invested time by activity.
 The largest part was development, followed by documentation and meetings.
 We rate this basic time split as well taken.
-The testing is a relatively small percentage according to the diagram.
-Since implementation and testing are often merged through the test driven development,
-the time was sometimes only reported on the development.
+For testing, a relatively small percentage was spent according to the diagram.
+Since the boundary between implementation and testing is not so clear for test driven development,
+time was sometimes rather reported for development than for testing.
 
 \begin{figure}[H]
     \centering
@@ -38,7 +38,7 @@ the time was sometimes only reported on the development.
     \label{fig:timetracking_activity}
 \end{figure}
 
-Figure \ref{fig:time_milestones} shows the accumulated times per milestone.
+Figure \ref{fig:time_milestones} shows the accumulated time per milestone.
 The individual milestones are described in more detail in the following section.
 It is interesting how little time the transition took and how time-consuming the symbol table was.
 
@@ -50,8 +50,8 @@ It is interesting how little time the transition took and how time-consuming the
 \end{figure}
 
 Apart from the time-consuming meetings and documentation, the symbol table was the most intensive ticket.
-Followed by the newly implemented client.
-Figure \ref{fig:time_ticket} shows the 6 most time consuming tickets.
+This is followed by the newly implemented client.
+Figure \ref{fig:time_ticket} shows the six most time consuming tickets.
 
 \begin{figure}[H]
     \centering
@@ -60,22 +60,22 @@ Figure \ref{fig:time_ticket} shows the 6 most time consuming tickets.
     \label{fig:time_ticket}
 \end{figure}
 
-Figure \ref{fig:time_feature} shows thes the reported time on the core features.
+Figure \ref{fig:time_feature} shows the reported time per core feature.
 The numbers are to be enjoyed with caution.
-A lot of time spent on features was reported on own refactoring or test tickets.
+A lot of time spent on features was also reported on dedicated tickets for testing or refactoring.
 Nevertheless, the graphic gives an overview of which features
 were more time-consuming and which were easier to implement.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{time/feature}
+    \includegraphics[width=10cm]{time/feature.png}
     \caption{Time for Each Feature}
     \label{fig:time_feature}
 \end{figure}
 
 \subsubsection{Schedule and Scope}
 As planned in the project plan, we used a mix between unified process and SCRUM.
-The project was split into an inception, elaboration, construction and a transition phase
+The project was split into an inception, elaboration, construction and a transition stage
 as you can see in figure \ref{fig:project_staging}.
 
 \begin{figure}[H]
@@ -85,12 +85,12 @@ as you can see in figure \ref{fig:project_staging}.
     \label{fig:project_staging}
 \end{figure}
 
-Each of the periods was split into two sprints, each lasting one week
-as you can see in figure \ref{fig:planned_milestones}.
+Each of the stages was split into sprints lasting one week.
+This is shown in figure \ref{fig:planned_milestones}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{milestones_planned}
+    \includegraphics[width=\textwidth]{milestones_planned.png}
     \caption{Planned Milestones}
     \label{fig:planned_milestones}
 \end{figure}
@@ -105,67 +105,73 @@ In general, we were able to stick to this plan pretty well as you can see in fig
 \end{figure}
 
 {\bf Inception}\\
-In the first two weeks we found our way back into the project from the prototype
+In the first two weeks, we found our way back into the project from the prototype
 and set up our environments accordingly.
 This included updating the IDEs, OmniSharp, Z3 and Boogie,
-as well as setting up a new Redmine ticket system and draw up the project plan.\\
+as well as setting up a new Redmine ticket system and create the project plan.\\
 
 {\bf Infrastructure}\\
-Since the majority of inception could be processed very quickly,
+Since the majority of the inception stage could be processed very quickly,
 we were able to start with parts of the infrastructure a week earlier.
-On the one hand we got the old CI running again with the new updated versions of Boogie and Dafny,
-and on the other hand the CI was extended by SonarQube for \Csharp.
-This also included splitting the client and server projects into different git repositories.
+On the one hand, we got the old CI running again with the new updated versions of Boogie and Dafny,
+and on the other hand, the CI was extended by SonarQube for \Csharp.
+This also included splitting the client and server projects into different git repositories.\\
 
-In addition, we have revised the concept for the integration tests and developed
-a new concept for the existing component
-new integration tests were written.
+In addition, we have revised the concept for integration tests and developed
+a working test-prototype.
 
-Completing the CI process had been somewhat delayed, but was then successfully completed.\\
+Completing the CI process had been somewhat delayed, but was then successfully finished.\\
 
 {\bf Improvements}\\
-In this milestone we took care to improve the existing features.
-This included the compilation, display and counterexample and verification,
-as well as small improvements of the client, such as a bug fix in the statusbar.
-With this milestone we stayed very well within the planned time frame.\\
+In this milestone, we took care to improve the existing features.
+Only features that are not related to the symbol table were dealt with.
+This included:
+\begin{itemize}
+    \item Compilation
+    \item CounterExample
+    \item Verification
+\end{itemize}
+
+Small improvements of the client were also done, such as a bug fix in the status bar.
+This milestone could be completed on time.\\
 
 {\bf Symbol Table}\\
 At the beginning of this milestone,
 we developed the concept and the basic implementation for the symbol table.
-Soon after, however, the milestone for the symbol table
-and the improvements of the related features in the milestone \textit{extensions} was reached.
+A prototype with support for a few AST-Nodes could be achieved very quickly.
+However, implementing support for the massive amount of AST-Nodes took very long.\\
 
-The boundaries were fluid due to the fact that new data was iteratively added to the symbol table per feature. \\
+We started to already make use of the symbol table before the symbol table was complete.
+This was done to gain a break from the tedious visitor implementation.
 
 {\bf Extensions}\\
-As described above, this milestone passed with the milestone for the symbol table.
-Therefore, this milestone was started a little earlier.
+As described above, this milestone was started a little earlier.
 
 The content of this milestone was primarily to make the existing features
 - such as \textit{AutoCompletion} and \textit{CodeLens} -
-use of the created symbol table and improve them in this way.
+use the new symbol table.
 In addition to the improvement of the existing features, we also
-added new features like \textit{Hover Information} and \textit{Rename},
+added new features like \textit{HoverInformation} and \textit{Rename},
 which are also based on the new symbol table.\\
 
-{\bf Transision}\\
-In the transision, it was primarily about preparing our plugin for the release.
-We noticed relatively early that there were problems with the mono support.
-Therefore we already made rough clarifications in week 10 and wrote posts in appropriate forums,
-namely the OmniSharp Slack channel \cite{mono-slack}.
+{\bf Transition}\\
+The transition stage was primarily based about preparing our plugin for the release.
+We noticed relatively early that there were problems with the support for Mono.
+Therefore, we already made rough clarifications in week ten and wrote posts in appropriate forums,
+namely the OmniSharp slack channel \cite{mono-slack}.\\
 
-The transition took a little longer, because the final description of the final plugin version was only
-finished at the end and accordingly the plugin was released very close to the end of the project in the plugin marketplace.\\
+The transition took a little longer, since the the plugin had to be finalized before it could be published.
+Instead, we started a bit earlier with writing the documentation.\\
 
 {\bf Conclusion}\\
-The conclusion was basically used to round off the documentation and as a general buffer time.
-The buffer was mainly used to deliver the written work a few days before the originally planned deadline.\\
+The conclusion was basically used to write the documentation and as a general buffer time.
+The buffer time was not necessary, since we respected our plan and showed enough courage to leave out some visitor functionality in order to be on time.
+The buffer could then be used to do some finalization work and prepare the presentation.\\
 
-All in all, we were thus able to keep well within the planned schedule of the project plan.
-
-\subsection{Cooperation}
+\subsection{Effects of the Covid-19 Pandemic}
 The cooperation was only marginally affected by the Corona situation.
-The physical meetings were replaced by virtual video conferences and screen sharing.
+Physical meetings were replaced by virtual video conferences and screen sharing.
+This was done for the meetings with the supervisors, but also for internal meetings of the two students.
 
 \subsubsection{Meetings}
 The weekly meetings with our supervisors Thomas Corbat and Fabian Hauser were held in general each Thursday at 10:30am \cite{projectplan}.
@@ -175,41 +181,48 @@ Whenever necessary, internal meetings were held within this time frame \cite{pro
 
 \subsubsection{Division of Labour}
 Thomas Kistler was more involved in the realisation of the symbol table,
-while Marcel Hess was more involved in the client implementation.
+while Marcel Hess was working a bit more on the client implementation.
 However, both were always involved in both concepts.
 Basic design implementations were therefore mostly implemented in pair programming.\\
 
-In the implementation of the middle language server layer, both were equally involved.
+In the implementation of core providers, both participated equally.
 To enable a precise tracking of the activities and also to facilitate collaboration,
 we worked with the version management git.
 
 \subsection{Quality Aspects}
 This chapter highlights certain quality aspects that have been crucial for good code quality.
-In principle, the requirements placed on us in the project plan were fulfilled \cite{projectplan}.
+In general, the requirements placed in the project plan were fulfilled \cite{projectplan}.
 
 \subsubsection{Code Reviews}
-Basically there were three types of non-automated control of code quality.
-First the internal code reviews. Critical and difficult parts of the code were always underlaying to a internal code review.
-Secondly the reviews with our supervisors and
-thirdly the four-eye principle for the acceptance of merge requests. \\
+There were three layers of non-automated code quality control.
+\begin{enumerate}
+    \item Internal code reviews of the students. Critical and difficult parts of the code were always underlaying to a internal code review.
+    \item Reviews with the supervisors
+    \item The four-eye principle using merge requests.
+\end{enumerate}
+
 
 Since GitLab supports merge requests,
 merge requests for independent changes were sent to the project partner for control and approval.
 If no errors or improvement potential was found, the merge request was accepted.
 If there were minor issues, they were improved immediately.
-And in the case of major discrepancies, a code review was convened.
+In the case of major discrepancies, a code review was convened.
 
 \subsubsection{Continuous Integration (CI)}
 According to the project plan,
 we wanted to resolve all CI-issues at the beginning of the bachelor thesis,
 so that we can then profit by a supportive workflow \cite{projectplan}. \glsadd{ci}
-And we did.
+This goal could be achieved.
 By separating the client and server into two different repositories, two new CI pipelines were created.
 These are then discussed for the server and for the client. \\
 
 {\bf Client}\\
 The client goes through three pipeline phases as shown in figure \ref{fig:ci_client}:
-\textit{Test}, \textit{Build} and \textit{Sonar}.
+\begin{enumerate}
+    \item \textit{Test}
+    \item \textit{Build}
+    \item \textit{Sonar}
+\end{enumerate}
 
 \begin{figure}[H]
     \centering
@@ -226,7 +239,7 @@ Finally, the scanner for SonarQube is run and the report is sent to SonarCloud. 
 
 {\bf Server}\\
 The pipeline for the server was slightly modified.
-In order to create the SonarQube report, the build and Sonar scan process had to be merged
+In order to create the SonarQube report, the build and Sonar scan processes had to be merged
 as shown in figure \ref{fig:ci_server}.
 
 \begin{figure}[H]
@@ -236,28 +249,28 @@ as shown in figure \ref{fig:ci_server}.
     \label{fig:ci_server}
 \end{figure}
 
-After the build has been successfully created
-and the SonarQube report has been successfully submitted to SonarCloud,
+After the build has been created and the SonarQube report has been successfully submitted to SonarCloud,
 the test phase begins.
-We will run through the existing Dafny tests to verify
+Existing Dafny tests are run to verify
 that we have not inadvertently changed anything in the Dafny project,
-then it will run our automated unit and integration tests in the \code{test\_nunit} process. \\
+and our own unit and integration tests are executed in the \code{test\_nunit} stage. \\
 
 The automated CI processes were a great enrichment for our work.
 The tests were automatically run for checked-in changes.
 If these failed, no merge request was created.
-This automated control ensured that a new bug was not accidentally checked in
+This automated control ensured that a new bug was not accidentally overlooked
 and that the quality standard was maintained.
 
 \subsubsection{Static Code Analysis}
-In addition to ReSharper for the server, SonarQube was used for the server as well as for the client for static code analysis.
-SonarQube may have suggested code improvements or issued safety warnings. \\
-
-To integrate SonarQube into our CI process, we use the SonarCloud as shown in figure \ref{fig:sonarcloud_report}
-as platform \cite{sonarcloud}.
-SonarLint was used to get a local, static code analysis at the client as well \cite{sonar-lint}.
+Aside SonarQube, ReSharper was used locally for the server to gain additional insights.
+Regarding the client, SonarLint was used to get a local, static code analysis \cite{sonar-lint}.
 The fact that a static code analysis could already be carried out locally meant that errors
-could be corrected during development and were not only noticed after the CI had failed.
+could be already corrected during development and were not only noticed after the CI had failed.
+
+SonarQube was used for the server and for the client within the CI process.
+To integrate SonarQube into our CI process, we use the SonarCloud as a platform \cite{sonarcloud}.
+This is shown in figure \ref{fig:sonarcloud_report}.
+
 
 \begin{figure}[H]
     \centering
@@ -266,29 +279,28 @@ could be corrected during development and were not only noticed after the CI had
     \label{fig:sonarcloud_report}
 \end{figure}
 
-What stands out is the high number of code smells with about 3'400
-and the over one hundred bugs found.
-These high numbers are due to the fact that we have the entire Dafny project analyzed with Sonar.
+It stands out that there is a high number of code smells and bugs.
+These high numbers are due to the fact that the entire Dafny project is analyzed by Sonar.
 The actual numbers for our project are of course much lower,
 as shown in figure \ref{fig:sonar_server_detail}.
-The \code{DafnyLanguageServer} is highlighted in yellow in the figure.
+The \code{DafnyLanguageServer} is highlighted in yellow.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{sonar_server_detail}
+    \includegraphics[width=\textwidth]{sonar_server_detail.png}
     \caption{SonarQube Report in SonarCloud for the Dafny project}
     \label{fig:sonar_server_detail}
 \end{figure}
 
 Furthermore, local plugins for VSCode and Visual Studio were used to automatically
 format the code according to our styling guides \cite{dev}.
-Thus our code was always automatically formatted uniformly. \\
+Thus our code was always automatically formatted uniformly. \\ % Geht das schon als easter egg durch?
 
 More detailed code metrics can be found in section \ref{section:results:metrics}.
 
 \subsubsection{Test Coverage}
-Since our integration tests are able to test all the logic of the language server
-and basically all business logic could be integrated from the original client into the language server part,
+Since our integration tests are able to test all components of the language server
+and the client contains basically no logic,
 tests were written only for the Dafny language server.
 
 \begin{figure}[H]
@@ -298,11 +310,45 @@ tests were written only for the Dafny language server.
     \label{fig:test_coverage}
 \end{figure}
 
-How good test coverage is can be seen in figure \ref{fig:test_coverage}.
-We have not achieved 100\% coverage in all components.
-This is due to the following reason:
-It was very important for us to test the business logic of our language server.
-For those classes with their own logic we have therefore set a test coverage of 100\%.
-However, components that call Dafny itself and only pass information,
-or interfaces to frameworks such as OmniSharp, have not been tested with our unit tests.
-Dafny and OmniSharp contain own tests about their own logic. Therefore we assume that they work accordingly. We have put our focus on testing logic implemented by us.
+The test coverage can be seen in figure \ref{fig:test_coverage}.
+We did not achieve a full 100\%, but still a very high percentage was reached.
+Components that contain no important logic remain untested.
+For example, code fragments that call Dafny itself and only pass information were not specifically tested, since no advantage would be gained.
+Listing \ref{lst:nottested} shows another code fragment that pulls down test coverage.
+It is taken from the \code{DeclarationVisitor}.
+
+
+\begin{lstlisting}[language=typescript, caption={Untested Code}, captionpos=b, label={lst:nottested}]
+public override void Visit(ThisExpr e) {
+    throw new InvalidOperationException(Resources.ExceptionMessages.visit_only_declarations);
+}
+
+public override void Leave(ThisExpr e) {
+    throw new InvalidOperationException(Resources.ExceptionMessages.visit_only_declarations);
+}
+
+public override void Visit(DisplayExpression o) {
+    throw new InvalidOperationException(Resources.ExceptionMessages.visit_only_declarations);
+}
+
+public override void Leave(DisplayExpression o) {
+    throw new InvalidOperationException(Resources.ExceptionMessages.visit_only_declarations);
+}
+
+public override void Visit(ComprehensionExpr o) {
+    throw new InvalidOperationException(Resources.ExceptionMessages.visit_only_declarations);
+}
+
+public override void Leave(ComprehensionExpr o) {
+    throw new InvalidOperationException(Resources.ExceptionMessages.visit_only_declarations);
+}
+
+...
+\end{lstlisting}
+
+The \code{DeclarationVisitor} is not visiting any of these AST-nodes (the \code{DeepVisitor} is doing that),
+yet it has to provide the methods for them because it is inheriting from the base class \code{Visitor}.
+However, whenever core logic takes place, the code is tested.
+Thus, we are well satisfied with the test coverage of more than 85\%.
+
+
