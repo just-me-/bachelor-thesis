@@ -187,7 +187,8 @@ Aside from the official LSP specification, this collection is very helpful to pe
 
 \subsubsection{Custom LSP Messages}
 \label{chapter:customlspmsg}
-The current problem domain does not only require premade LSP messages like \code{completion} or \code{publishDiagnostics}, but also custom requests such as \code{CounterExample}, which is Dafny-specific.
+The current problem domain does not only require premade LSP messages like \code{completion} or \linebreak
+\code{publishDiagnostics}, but also custom requests such as \code{CounterExample}, which is Dafny-specific.
 Such a message is not natively supported by the language server protocol.
 Since no example or documentation could be found on custom messages, Martin Bj\"orkstr\"om was contacted in the OmniSharp Slack channel \cite{omnisharpslack}.
 Mr. Bj\"orkstr\"om and his team were able to quickly provide the solution for this issue.\\
@@ -203,6 +204,8 @@ The following three items have to be specified:
 
 The parameter and response types can be custom classes and more flexibility.
 The following skeleton code demonstrates how a custom request handler can be implemented:
+
+\pagebreak
 
 \begin{lstlisting}[language=csharp, caption={LSP Handler Implementation for CounterExample}, captionpos=b, label={lst:lspcustomhandler}]
 public class CounterExampleParams : IRequest<CounterExampleResults> { ... }
@@ -434,8 +437,7 @@ To access the class variable, the this-locator is required.
 class A {
     constructor () { a := 2; }
     var a: int
-    method m()
-    modifies this
+    method m() modifies this
     {
         print a;           // 2
         var a: string := "hello";
@@ -485,6 +487,8 @@ private Symbol FindDeclaration(ISymbol target, ISymbol scope)
 \end{lstlisting}
 The code had to be adjusted later on, to also respect inherited symbols and to also check inside the default scope.
 If all declarations are known, the algorithm does already work for symbols defined after the first usage.
+
+\pagebreak
 
 \subsection{Abstract Syntax Tree}
 Whenever source code is compiled into an executable assembly, the first step is to \textit{parse} the code.
@@ -583,7 +587,7 @@ Figure \ref{fig:namesegment} shows all available properties and fields of a name
 A name segment is just any occurrence of an identifier, for example of a variable or of a method.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=9.5cm]{analysis/namesegmentbsp.png}
+    \includegraphics[width=8cm]{analysis/namesegmentbsp.png}
     \caption{Properties and Fields of a Name Segment}
     \label{fig:namesegment}
 \end{figure}
@@ -597,7 +601,7 @@ Also, there is no way to know where that method is used.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=9.5cm]{analysis/methodbsp.png}
+    \includegraphics[width=8cm]{analysis/methodbsp.png}
     \caption{Properties and Fields of a Method}
     \label{fig:method}
 \end{figure}
@@ -607,7 +611,6 @@ This component will be called \textit{symbol table} throughout this thesis and t
 \textit{Symbol tree} would consequently be a more accurate name.
 
 %%%%
-
 
 \subsection{Dafny Expression and Statement Types}
 \label{section:analysis_dafnyASTStuff}
@@ -630,9 +633,7 @@ Both items are technically expressions and could thus be subclasses of \code{Exp
 Figures \ref{fig:dafny_expr}, \ref{fig:dafny_stmt}, \ref{fig:dafny_decl} and \ref{fig:dafny_vars} follow the structure given by Dafny and present the AST-elements that were analyzed.
 These are also the nodes a dedicated \code{Accept} and \code{Visit}-method was implemented for.\\
 
-Since most of them are self-explanatory, only chosen nodes are explained.
-
-\pagebreak
+Since most of them are self-explanatory, only chosen nodes are explained.\\
 
 \textbf{Expressions}\\
 \begin{figure}[H]
@@ -656,6 +657,7 @@ All of these contain bound variables (the parameters of the lambda for example) 
 \code{|a|} denotes the size of the set \code{a}.\\
 
 \pagebreak
+
 \textbf{Statements}\\
 \begin{figure}[H]
     \centering
@@ -739,7 +741,7 @@ Just these simple rules increase the readability significantly.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth/2]{analysis/syntax_highlighting}
+    \includegraphics[width=10cm]{analysis/syntax_highlighting}
     \caption{Syntax Highlighting}
     \label{fig:analysis_syntax_highlighting}
 \end{figure}
@@ -804,7 +806,7 @@ The precondition is commented. Without this requirement, the postcondition can b
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{analysis/counter_example}
+    \includegraphics[width=12cm]{analysis/counter_example}
     \caption{Counter Examples in the Prototype}
     \label{fig:analysis_counter_example}
 \end{figure}

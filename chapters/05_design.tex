@@ -84,6 +84,8 @@ The logic is located entirely in the server package.\\
 The server package contains the initialization of the language server and the establishment of the connection between the client (plugin for VSCode) and the Dafny language server.
 In addition, all server requests, which extend the LSP by custom functionality, are sent to the server via this package.\\
 
+\pagebreak
+
 {\bf \code{typeInterfaces}} \textendash{}
 In the new architecture, no \code{any} type should be used anymore.
 All types, in particular types created specifically for custom requests such as \code{CounterExampleResults}, were defined by interfaces. \\
@@ -318,7 +320,7 @@ It offers a method to update a file, but also to get information about a file.\\
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=10cm]{design/server3_workspace.png}
+    \includegraphics[width=14cm]{design/server3_workspace.png}
     \caption{Workspace Component}
     \label{fig:server_workspace}
 \end{figure}
@@ -450,7 +452,7 @@ This is illustrated in sequence diagram \ref{fig:workflow1}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{design/workflow1_regular.png}
+    \includegraphics[width=12cm]{design/workflow1_regular.png}
     \caption{Sequence Diagram of a Rename Request}
     \label{fig:workflow1}
 \end{figure}

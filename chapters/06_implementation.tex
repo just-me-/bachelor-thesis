@@ -137,6 +137,8 @@ Individual dependencies are injected. These includes:
 Furthermore, \code{IDafnyUiManager} is injected
 in order to access the \code{CounterModelProvider} with the appropriate commands and to show or hide it.
 
+\pagebreak
+
 \begin{lstlisting}[language=typescript, caption={Excerpt from \code{commands.ts}}, captionpos=b, label={lst:compileAndRun}]
 [..]
 name: CommandStrings.CompileAndRun,
@@ -1118,7 +1120,7 @@ These are now returned as the final suggestions. \\
 For clarity, the described process is visualized in the following two figures.
 Listing \ref{lst:myClassCompletionExampleUML} shows a code example, which leads into the resolving sequence in figure \ref{fig:object_completion_diagram_dot}.
 
-%page break here? let's see at the end.
+\pagebreak
 
 \begin{lstlisting}[language=dafny, caption={Example Dafny Code - Cursor Position at Line 8}, captionpos=b, label={lst:myClassCompletionExampleUML}]
 class myClass {
@@ -1235,7 +1237,7 @@ the property \code{Length} would then have to be suggested for the array \code{a
     \label{fig:array_support}
 \end{figure}
 
-\subsubsection{\textit{CodeLens}}
+\subsubsection{CodeLens}
 \label{section:implementation:features:codelens}
 The \textit{CodeLens} functionality is divided into two primary tasks.
 First, it is shown how often the method or class has already been used.
@@ -1351,13 +1353,6 @@ These just look like \code{T@U!val!12}.
 Such values are replaced with the text \code{[Object Reference]}.
 Values providing no information at all are completely removed from the CounterExample.
 The component will also transform information into a more human readable format, e.g. \code{((- 12)) $\rightarrow$ -12}.\\
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%TOMS WORK IN PROGRAESS HIER WEIT_ER MARKER/&&&&%%%%%%%%%"*çTQFGAWZHAZAZE%HRAZEHAEZ%RAEZ%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Mono Support for macOS and Linux}
 \label{section:implementation:mono}
@@ -1590,6 +1585,8 @@ public static string ToCustomString(this CounterExample ce)
 
 Comparison of the results and the expectation is now very simple.
 The expectation can just be written by hand as follows in listing \ref{lst:testexpectation}.
+
+\pagebreak
 
 \begin{lstlisting}[language=csharp, caption={Expectation}, captionpos=b, label={lst:testexpectation}]
 List<string> expectation = new List<string>()

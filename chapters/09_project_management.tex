@@ -142,7 +142,7 @@ A prototype with support for a few AST-Nodes could be achieved very quickly.
 However, implementing support for the massive amount of AST-Nodes took very long.\\
 
 We started to already make use of the symbol table before the symbol table was complete.
-This was done to gain a break from the tedious visitor implementation.
+This was done to gain a break from the tedious visitor implementation.\\
 
 {\bf Extensions}\\
 As described above, this milestone was started a little earlier.
@@ -168,7 +168,7 @@ The conclusion was basically used to write the documentation and as a general bu
 The buffer time was not necessary, since we respected our plan and showed enough courage to leave out some visitor functionality in order to be on time.
 The buffer could then be used to do some finalization work and prepare the presentation.\\
 
-\subsection{Effects of the Covid-19 Pandemic}
+\subsection{Effects of the COVID-19 Pandemic}
 The cooperation was only marginally affected by the Corona situation.
 Physical meetings were replaced by virtual video conferences and screen sharing.
 This was done for the meetings with the supervisors, but also for internal meetings of the two students.
@@ -317,6 +317,7 @@ For example, code fragments that call Dafny itself and only pass information wer
 Listing \ref{lst:nottested} shows another code fragment that pulls down test coverage.
 It is taken from the \code{DeclarationVisitor}.
 
+\pagebreak
 
 \begin{lstlisting}[language=typescript, caption={Untested Code}, captionpos=b, label={lst:nottested}]
 public override void Visit(ThisExpr e) {
@@ -350,5 +351,3 @@ The \code{DeclarationVisitor} is not visiting any of these AST-nodes (the \code{
 yet it has to provide the methods for them because it is inheriting from the base class \code{Visitor}.
 However, whenever core logic takes place, the code is tested.
 Thus, we are well satisfied with the test coverage of more than 85\%.
-
-
