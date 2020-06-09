@@ -1098,8 +1098,8 @@ a decision is made between the three user desires, as shown in figure \ref{fig:g
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
-    \caption{Evaluating Users Desire - Activity Diagram}
+    \includegraphics[width=\textwidth/2]{get_users_desire}
+    \caption{Evaluating Users Desire}
     \label{fig:get_users_desire}
 \end{figure}
 
@@ -1116,10 +1116,10 @@ If a matching symbol is found, for example a class named \code{myClass}, all met
 can be extracted using the symbols properties.
 These are now returned as \textit{AutoCompletion} suggestions. \\
 
-For clarity, the described process is visualized in the following
-Dafny code example \intnote{xxx in figure xx} as a sequence diagram.
+For clarity, the described process is visualized for the following
+Dafny code example \ref{lst:myClassCompletionExampleUML} in the sequence diagram of figure \ref{fig:object_completion_diagram_dot}.
 
-\begin{lstlisting}[language=dafny, caption={tmptodo.dfy}, captionpos=b, label={lst:tmptodo}]
+\begin{lstlisting}[language=dafny, caption={Example Dafny Code - Cursor Position at Line 8}, captionpos=b, label={lst:myClassCompletionExampleUML}]
 class myClass {
    var ABC: int;
    constructor () { }
@@ -1131,29 +1131,28 @@ method Main() {
 }
 \end{lstlisting}
 
-\intnote{todo snipped in IDE make screenshot, also list results at right}
-
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{object_completion_diagram_dot}
     \caption{Sequence Diagram for Object Instances}
-    \label{fig:object_completion_diagram}
+    \label{fig:object_completion_diagram_dot}
 \end{figure}
 
 \textbf{Class Suggestions}\\
 If it is assumed that the user only wants classes proposed, the following approach is followed.
 
 As with the proposals for an object instance,
-the completion provider first looks for an access symbol at the cursor position.
+the \code{CompletionProvider} first looks for an access symbol as entry point at the cursor position.
 Then iteration is performed from the inner scope
 to the outermost scope and all symbols found are returned as completion suggestions.
 The list is filtered already during iteration by a passed predicate for class symbols only.
+This process is visualized in figure \ref{fig:new_completion_diagram_classes}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=12cm]{new_completion_diagram_classes}
     \caption{Sequence Diagram for Class Suggestions}
-    \label{fig:new_completion_diagram}
+    \label{fig:new_completion_diagram_classes}
 \end{figure}
 
 \textbf{All Available Symbols as Default}\\
@@ -1161,18 +1160,14 @@ If it is assumed that the user would like to have all symbols proposed in the cu
 the procedure is basically the same as before.
 The only difference is that no filter is passed to the symbol navigator.
 Therefore, all types of symbols are suggested.
+This process is visualized in figure \ref{fig:default_completion_diagram_all}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=12cm]{default_completion_diagram_all}
     \caption{Sequence Diagram for all Symbols in Scope}
-    \label{fig:default_completion_diagram}
+    \label{fig:default_completion_diagram_all}
 \end{figure}
-
- \intnote{todo}
- \code{todo für alle implementationen: Ablauf. Diagramme wie in der SA sind nützlich. das mag "name einsetzen" xD bestimmt. \\
-PAP oder flussdiagramm zeichnen für die fall untrscheidungen\\
-das vom papier digitalisieren todo\\}
 
 \textbf{Insertion of Parameter Placeholders}\\
 Just like in other programming languages, Dafny invokes methods and constructors by round brackets.
