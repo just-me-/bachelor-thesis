@@ -10,20 +10,20 @@ The features of the prototype could be improved significantly, and new, major fe
 In comparison to the initial solution, any pre-existing features were improved.
 \begin{itemize}
  \item Compilation will no longer start a dedicated Dafny process for compilation, but instead use the Dafny backend directly.
- \item CounterExample representation is now much cleaner and easier to perceive.
+ \item The representation of counter examples is now much cleaner and easier to perceive.
  \item Verification will also show syntax errors, not only logical errors.
  \item Verification will now also show warnings.
  \item Verification will no longer just highlight single characters.
- \item \textit{CodeLens} can now actively be used to preview symbol usages.
- \item \textit{AutoCompletion} no longer performs simple pattern matching, but provides exact results.
+ \item CodeLens can now actively be used to preview symbol usages.
+ \item AutoCompletion no longer performs simple pattern matching, but provides exact results.
 \end{itemize}
-Renaming and hover information could newly be implemented due to the offerings of the symbol table.
+\textit{Rename} and \textit{HoverInformation} could newly be implemented due to the offerings of the symbol table.
 
 The plugin is quite robust and will recover from exceptional states.
 If something goes completely wrong, an option to restart the language server is available.\\
 
 Due to timely reasons, the visitor could not be implemented completely.
-When a project time frame is given, the scope has to be variable \cite{keller},
+When a project time frame is strictly given, the scope has to be variable \cite{keller},
 thus we needed to cut out some Dafny language features from the visitor.
 However, completing it is not necessarily complex, but rather a diligence task.
 The foundations for continue to work on the visitor are set.
@@ -32,24 +32,25 @@ Thus, we are confident that this will be done within further development of the 
 For us, it was important that the plugin will somehow stay alive whenever it encounters language features that are not supported.
 It was targeted to just do nothing as a fault tolerant design, whenever an exceptional state occurs, which worked out quite well.\\
 
-Although the visitor is incomplete, the plugin provides a great experience for someone taking first steps in Dafny.
+Although the visitor lacks support for a few advanced language features, the plugin provides a great experience for someone taking first steps in Dafny.
 The target persona was the student, completing the HSR-internal exercises on Dafny, for which the plugin is more than sufficient.
-Our user experience tests have shown that the plugin accommodates this requirement, and thus, the project is counted as a success.\\
+Our user experience tests have shown that the plugin accommodates this requirement.\\
 
-Since the symbol table is its own component, the existing features which base on the symbol table will automatically scale, once the symbol table is completely implemented.
-This means that once the visitor is completed, the plugin automatically gains a lot of usability and can then also target more advanced users that use more advanced language features.\\
+The existing features which base on the symbol table will automatically scale, once the visitor is completely implemented.
+The plugin will then automatically gain a lot of quality and can also target more advanced users that use more advanced language features.\\
 
-The \code{DafnyServer} component, which originates from the pre-existing project, could be be completely superseded.
-The code is well organized, split into components, and has a nice quality.
+The \code{DafnyServer} component, which originates from the pre-existing project, could be be completely superseded.\\
+
+The codebase of the project is well organized, split into components, uses interfaces where ever possible and has a nice maintainability.
 
 \subsection{Deployment}
 The plugin has been uploaded to the VSCode Marketplace and is available for public.
-This is a huge success for the project and makes us quite proud since the result of our
-bachelor thesis is a product, that actually gets used by other developers.
+This is a huge success for the project and makes us quite proud, since the result of our
+bachelor thesis is a product that actually gets used by other people.
 
 \subsection{Outlook}
 In this chapter, the further development of the project is described.
-This includes the complete implementation of the visitor, more LSP extensions as well more refactorings and features.
+This includes the complete implementation of the visitor, more LSP extensions, as well as more refactorings and features.
 
 \subsubsection{Completion of the Visitor}
 As mentioned previously in this chapter, the visitor should be completed to also target more advanced users.
@@ -65,7 +66,7 @@ The language server protocol \cite{lspspec} offers a lot more than what is curre
 Many of these features can now easily be implemented, since the symbol table offers all information required.
 Indeed, many of the following features can be implemented in just a few minutes to hours.\\
 
-For example, 'textDocument/documentHighlight' \cite{lspspec} is already completely supported by the symbol table.
+For example, the foundations for \code{textDocument/documentHighlight} \cite{lspspec} are already completely supported by the symbol table.
 The feature highlights all occurrences of a symbol, given a certain text position.
 The developer just has to request the symbol at the text position, which is passed by the client.
 Then, all occurrences have to be requested, by just calling \code{symbol.GetAllOccurences()}.
@@ -76,36 +77,35 @@ for example if this project is further developed within another bachelor thesis.
 
 Besides highlights, the following LSP requests are also of interest for future extensions:
 \begin{itemize}
-    \item \code{workspace/workspace/didChangeWatchedFiles}: Actually handle the request (for example remove the file from the buffer if it was deleted) instead of ignoring the change.
-    \item \code{workspace/symbol}: A request that sends all, project-wide symbols to the client. This could be done relatively easy with the symbol table, for whatever purpose.
+    \item \code{workspace/didChangeWatchedFiles}: Actually handle the request (for example remove the file from the buffer if it was deleted) instead of relying on \code{textDocument/didChange}.
+    \item \code{workspace/symbol}: A request that sends all, project-wide symbols to the client. This could be done relatively easy with the symbol table.
     \item \code{textDocument/didClose}: Currently, nothing is done. The proper file could actually be removed from the buffer in this case.
-    \item \code{textDocument/signatureHelp}: A feature that allows to auto-fill the signature of something callable. For this, methods would have to remember their parameters, which could then be automatically filled using this request.
-    \item Differentiation between \code{textDocument/definition}, \code{textDocument/decleration}.
+    \item Differentiation between \code{textDocument/definition} and \code{textDocument/decleration}.
     \item \code{textDocument/implementation}: Go to the implementation of a declared symbol.
-    \item \code{textDocument/formatting}: Auto Formatting would actually be simpler to implement than one may think. Since the symbol table keeps track of scopes, the scope depth is well known. Indentation could just be done according to the scope depth.
+    \item \code{textDocument/formatting}: Auto formatting would actually be simpler to implement than one may think. Since the symbol table keeps track of scopes, the scope depth is well known. Indentation could just be done according to the scope depth.
 \end{itemize}
 
-\subsubsection{More Refactorings}
+\subsubsection{Refactorings}
 The language server protocol also offers a code action request.
 It can be used for quick fixes, which would be a nice addendum to the plugin.
-For example, if Dafny reports, that a semicolon is missing, a quick fix would just be to insert a semicolon at the target position.\\
+For example, if Dafny reports that a semicolon is missing, a quick fix would just be to insert a semicolon at the target position.\\
 
 Alongside quick fixes, the LSP also provides support for refactorings like extractions (extract method, extract variable...) \cite{lspspec}.
 The result can directly be transferred via the LSP within a \code{CodeAction} container, that contains all text edits which have to be done.
 Support for these refactorings would increase the quality of the plugin even further.
 The symbol table is also providing assistance for these features.
 For example, for \textit{extract method}, the symbol table could provide information about what symbols have to passed as an argument, and which symbols are local variables and get extracted, too.
-This example shows, how far the benefits of the implemented symbol table reach.
+This example shows how far the benefits of the implemented symbol table reach.
 A whole new set of feature became possible.
 
 \subsubsection{Dafny Specific Functionality}
 Further extension points would be to work on Dafny-specific features.
 An optional goal of this bachelor thesis was the automated generation of contracts, which could not be implemented due to timely reasons.
-Thus, it remains as a possible extension point for the future.
+Thus, it remains available as a possible extension point for the future.
 Here, even topics like AI come into play and the project would involve completely different fields of work.\\
 
-A feature that was discussed already back at the preceding bachelor thesis \cite{ba}, was the support for debugging.
-However, this is a very complex topic and may not fit into the scope of a bachelor thesis.
+A feature that was discussed already back at the preceding bachelor thesis \cite{ba} was the support for debugging.
+However, this is a very complex topic and may not even fit into the scope of a bachelor thesis.
 
 \subsubsection{More IDEs}
 Currently, only Visual Studio Code is supported.
@@ -116,22 +116,25 @@ Thus, it is even more lightweight than before and adaption for other IDE's would
 Support for the native LSP features come out of the box.
 The client developer would just have to implement the language server connection establishment and provide support for the additional features, namely compile and CounterExample.
 
-\subsection{Achieved Improvements Compared to the Prototype}
-Regarding the goals provided at the beginning of the thesis, the following items could be reached:
+\subsection{Further Achievements}
+At the beginning of the bachelor thesis, we were given a list of goals.
+The goals targeting the feature set, the symbol table or the architecture were already discussed.
+Also many minor goals were achieved:
 \begin{itemize}
-    \item Client and Server are split into separate repositories.
-    \item Language Server was rebased multiple times to be on par with the newest Dafny upstream.
+    \item LaTeX was used instead of Word.
+    \item Client and server are split into separate repositories.
+    \item The language server was rebased multiple times to be on par with the newest Dafny upstream.
     \item No local paths occur in the code.
-    \item General Code cleanup was done.
+    \item General code cleanup was done.
     \item Clean folder structure was implemented, especially for tests, too.
-    \item Tests run clean, not every test has to be added manually.
+    \item Tests run clean, not every test has to be added manually to the CI.
     \item SonarQube is now running.
     \item Logging is injected properly and a common logging framework is used.
-    \item Dafny Library is directly integrated everywhere by now.
-    \item Client completely refactored and cleaned up.
+    \item The Dafny library is directly integrated everywhere by now.
+    \item Client was completely refactored and cleaned up.
     \item Symbol Table was implemented.
     \item Previous features were improved.
-    \item Small feature branches were used on git with short commits and mostly clean commit messages.
+    \item Small feature branches were used on git with short commits and commit messages were slightly improved compared to the prototype development.
     \item No todo remain in the code.
     \item Integration tests run properly with OmniSharp's client.
 \end{itemize}
