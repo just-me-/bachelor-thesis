@@ -423,11 +423,11 @@ either accept adjustments directly there, or he will be forwarded to \code{setti
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%SÖÖÖÖRVÖÖÖÖR%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Server}
 In this section, the server implementation is discussed.
-Just as in the chapter design, the server structure will be analyzed from top to bottom, starting from the \code{Main}-method and ending at the utility layer.
+Just as in the chapter \nameref{chapter:design}, the server structure will be analyzed from top to bottom, starting with the \code{Main}-method and ending at the utility layer.
 The implementation of the symbol table is split into a separate section.
 
 \subsubsection{Server Launch}
@@ -452,7 +452,7 @@ Preparation includes
     \item Reading and processing config variables.
     \item Setting up the logging framework.
 \end{itemize}
-Secondly, the actual server is launched.
+Second, the actual server is launched.
 The logger will directly be injected and all handlers are registered.
 In the third stage, once the server is running, a message sending service is instantiated to notify the client about the successful server start and, if any, errors occurred during start up.
 Lastly, the console output stream is redirected to keep the language server stream isolated.
@@ -473,7 +473,7 @@ public class DafnyLanguageServer{
         log.Debug(Resources.LoggingMessages.server_starting);
         server = await LanguageServer.From(options => options
             .WithHandler<TextDocumentSyncTaskHandler>()
-            .WithHandler<\textit{Rename}TaskHandler>()
+            .WithHandler<RenameTaskHandler>()
             ...
         );
         ExecutePostLaunchTasks();
@@ -485,9 +485,9 @@ public class DafnyLanguageServer{
 
 \subsubsection{Handler}
 Handlers are passed to the language server and are called whenever the language server receives a corresponding request.
-Services, such logging or workspace management, can be injected and are thus available for the handler.
+Services, such as logging or workspace management, can be injected and are thus available to each handler.
 As discussed in chapter \ref{chapter:design}, handlers are based around a \code{Handle} method.
-For example, every time the server receives a \code{textDocument/Definitions} request, this \code{Handle} method will be called.
+For example, every time the server receives a \code{textDocument/Definitions} request, that \code{Handle} method will be called.
 The parameter and return types are specific per request.
 \textit{GoToDefinition} would pass a text document location as input, namely the cursor position, and it expects a \code{LocationLink} as response,
 namely where the cursor should jump to.
@@ -497,12 +497,12 @@ All handlers require two additional methods, apart from the actual \code{Handle}
 \begin{itemize}
     \item \code{GetRegistrationOptions}: This method is called when the handler is registered.
     It allows to set options at the time the server is started.
-    Such an option is for example after which characters \textit{AutoCompletion} should be automatically triggered.
-    \item \code{SetCapability}: It allows to set handler-specific capabilities, such as if the rename-handler will also support a 'prepare rename' feature.
+    Such an option is, for example, after which characters \textit{AutoCompletion} should be automatically triggered.
+    \item \code{SetCapability}: It allows to set handler-specific capabilities, such as if the \textit{Rename}-handler will also support a 'prepare rename' feature.
 \end{itemize}
 
 A lot of code for these classes is always identical and was thus extracted to a generic base class.
-This concerns for example the creation of a logger out of the logger factory or handling of errors.\\
+This concerns the creation of a logger out of the logger factory and the handling of errors.\\
 
 To keep all of this separated from the actual tasks, it was targeted to just forward the request to a core-provider.
 This could be well achieved.
@@ -532,9 +532,9 @@ All information required, such as the precompiled program, are available from wi
 In case of an error, a message is sent to the user and the error is logged within the \code{HandleError} method.\\
 
 Some handlers take additional actions, such as awaiting the result of the provider, and then sending user feedback according to the outcome.
-This is done with \textit{GoToDefinition} for example.
+This is done for \textit{GoToDefinition} for example.
 If the request was triggered at a declaration, an additional user message is sent.
-By handling all communication with the handler, the message sending service does not have to be passed downwards to the core logic component.
+By handling all communication inside the handler, the message sending service does not have to be passed downwards to the core logic component.
 
 
 \subsubsection{Core}
@@ -543,7 +543,7 @@ While it may sound like complex logic is happening here, it turned out that for 
 Consider the example of \textit{GoToDefinition}.
 A code excerpt is shown in listing \ref{lst:gotoProvierExample}.
 As you can see, the actual task of finding the definition is resolved by the symbol table engine and just available as a property.
-The actual task just considers the assembly of the correct result wrapper class.
+The provider only has to assemble the result within the proper wrapper class.
 
 \begin{lstlisting}[language=csharp, caption={\textit{GoToDefinition}, Core Provider}, captionpos=b, label={lst:gotoProvierExample}]
 ISymbol symbolAtCursor = _manager.GetSymbolAtPosition(uri, line, col);
@@ -558,7 +558,7 @@ result.Add(new LocationOrLocationLink(location));
 return new LocationOrLocationLinks(result);
 \end{lstlisting}
 
-There are a few features that had to be extended with more complex logic.
+There are a few features that had to be extended with additional logic.
 These are described in section \ref{section:imp:features}
 
 \subsubsection{Workspace}
@@ -569,9 +569,10 @@ This is a dictionary, mapping a file-location to an internal file-representation
 \begin{lstlisting}[language=csharp, caption={Workspace Property}, captionpos=b, label={lst:workspaceproperty}]
 private readonly ConcurrentDictionary<Uri, FileRepository> _files;
 \end{lstlisting}
+\glsadd{uri}
 
 It offers methods to retrieve files and to update them.
-Since updates can be down in two different kinds, incremental or full, the update method is overloaded for both cases.
+Since updates can be done in two different kinds, \textit{incremental} or \textit{full}, the update method is overloaded for both cases.
 The update requests are forwarded to the class \code{FileRepository}, which is used as the internal representation of a file.
 It of course contains the source code.
 However, this is not done directly as a string property, but wrapped in a class \code{PhysicalFile}.
@@ -585,7 +586,7 @@ The \code{PhysicalFile} class can then also take responsibility for applying fil
     \label{fig:worksapceAndRepo}
 \end{figure}
 
-Aside from the file content, each \code{FileRepository} will also contain \code{TranslationResults}.
+Aside from the file content, each \code{FileRepository} will also contain \code{TranslationResults}. \linebreak
 \code{TranslationResults} is a wrapper class for anything provided by the Dafny backend:
 \begin{itemize}
     \item Could the file be parsed?
@@ -603,41 +604,41 @@ Thus, all information about a file is accessible from within the file repository
 \subsubsection{DafnyAccess}
 Dafny Access it the package invoking the Dafny backend to obtain verification results.
 The core class in this package is the \code{DafnyTranslationUnit}.
-It was partially taken over from the pre-existing projects, but as part of this bachelor thesis it was refactored and simplified.\\
+It was partially taken over from the pre-existing project, but as part of this bachelor thesis it was refactored and simplified.\\
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=6cm]{implementation/DTUSeq.png}
-    \caption{\code{DafnyTranslationUnit} Sequence}
+    \caption{\code{DafnyTranslationUnit} Sequence Diagram}
     \label{fig:DTUSeq}
 \end{figure}
 
 In the constructor, the translation unit accepts a \code{PhysicalFile}.
-The class then offers a single public method \code{public TranslationResults Verify()}.
+The class then offers a single method \code{public TranslationResults Verify()}.
 Within the method, the following sequence of events as illustrated in figure \ref{fig:DTUSeq} occurs:
 
 \begin{enumerate}
     \item It is checked that the instance has never been used before.
-    This is, since the error reporter must be empty.
+    This is to ensure that all error reporters are empty.
     Otherwise, errors would be reported multiple times.
     \item Next, Dafny is configured.
     This includes the registration of the Dafny error reporter and setting any options to default.
-    The only non-default option is that the engine is supposed to generate a model file, which can later be used for CounterExample calculation.
-    The configuration is shown in \ref{lst:setupdafnyoptions}.
+    The only non-default option is that the engine is supposed to generate a model file, which can later be used for counter example extraction.
+    The configuration is shown in listing \ref{lst:setupdafnyoptions}.
     \item The Dafny parser is called.
     This step will report any syntax errors.
-    \item The Dafny Resolver is called, if parsing was successful.
+    \item The Dafny resolver is called, if parsing was successful.
     This step will do semantic checks, such as type checks.
     A \code{DafnyProgram} results upon success.
     \item If successful, the precompiled \code{DafnyProgram} will be split into \code{BoogiePrograms}.
-    \item The Boogie Execution Engine is invoked to perform logical correctness checks on the \code{BoogiePrograms}.
-    \item Any errors that were reported are collected, converted and provided in the field \code{\_diagnosticElements}
+    \item The Boogie execution engine is invoked to perform logical correctness checks on the \code{BoogiePrograms}.
+    \item Any errors that were reported are collected, converted and assembled in the field \code{\_diagnosticElements}
     \item All results are wrapped by the \code{TranslationResult} class, providing the diagnostics, the Dafny program and the boogie programs.
     Also, within the property \code{TranslationStatus}, it is remarked how far the verification and translation process succeeded.
 \end{enumerate}
 
 
-Note in the following snippet, that Dafny options are by directly calling Dafny's backend.
+Note that in the following snippet, Dafny options are directly calling Dafny's backend.
 \begin{lstlisting}[language=csharp, caption={Setting up Dafny Options}, captionpos=b, label={lst:setupdafnyoptions}]
     private void SetUpDafnyOptions()
     {
@@ -665,9 +666,10 @@ but are useful within the language server environment.\\
 \textbf{Config Initializer}\\
 This class is used prior to the server launch and initializes a few config settings.
 The settings are stored within the static class \code{Commons/LanguageServerconfig.cs}.
-The config initializer will first of all set hard coded default values to avoid any kind of null pointer exceptions.
-Afterwards, the file \\
-\code{Config/LanguageServerConfig.json} is parsed with Newtonsoft's Json.NET library \cite{jsondotnet}.
+The config initializer will first of all set hard coded default values.
+This is to avoid any kind of null pointer exceptions.
+Afterwards, the file \linebreak
+\code{Config/LanguageServerConfig.json} is parsed with Newtonsoft's Json.NET library \cite{jsondotnet}. \glsadd{json}
 Any available values will be written to the static configuration class.
 Unknown or illegal values will not be set and errors are added to an error reporter.
 Finally, the launch arguments are parsed, again overwriting the config settings if applicable or reporting errors otherwise.
@@ -735,7 +737,7 @@ The most important properties are:
     \item Link to the associated default class for quick access
 \end{itemize}
 
-The provided properties are supposed to facilitate working with the symbol tree.
+The provided properties are supposed to facilitate working with the symbol table.
 For example, if a symbol's definition cannot be found with regular methods,
 the property with the associated default class can be accessed to search the symbol there.
 No separate logic to find the default class is necessary.
@@ -764,12 +766,12 @@ method foo() {
 \end{lstlisting}
 
 The symbol \code{foo} profits by almost all properties.
-It can have children (the variable \code{x}), it has some parent, and it can be used elsewhere in the code.
+It can have children (the variable \code{x}), it has a parent, and it can be used elsewhere in the code.
 Since \code{foo} is a method declaration, the declaration property of the symbol does not make sense.
 In this case, it just points to itself.
 This way, features like \textit{GoToDefinition} will just jump to the same symbol, which is the expected behavior.
 
-The declaration of \code{x} in the second line will have many null values within the symbol information.
+The declaration of \code{x} in the second line will have many null values within the \code{SymbolInformation}.
 While the parent is \code{foo}, it can not have any children.
 Since it is a variable definition, it still can have usages though.
 
@@ -839,7 +841,7 @@ public override void Accept(Visitor v)
 \end{lstlisting}
 
 Note that the method is marked with the override keyword.
-This is the case, since every AST-Element is either a statement, a definition or a declaration, among others.
+This is the case since every AST-Element is either a statement, a definition or a declaration, among others. \glsadd{ast}
 A virtual \code{Accept} method was implemented for these top level classes, which uses a default implementation.
 In case a specific AST element got forgotten by us, it will just use the default implementation, which is shown in listing \ref{lst:defaultaccept}.
 
@@ -861,8 +863,8 @@ At the beginning this is the module the iteration was started with.
 When visiting a method, the current scope is always some kind of class that was visited before.
 
 The visitor will create a symbol for every element it is visiting.
-To do so, all the properties we have seen earlier need to be filled.
-The property \code{parent} can just be set with the scope the visitor has stored.
+To do so, all the properties we have seen earlier need to be populated.
+The property \code{Parent} can just be set with the scope the visitor has stored.
 Since the method itself will have its own body, the new scope will then be set to the method-symbol, which is just being created.
 All symbols that will be visited afterwards - which is anything inside the method - are then attached to the method.
 Once the method is done, \code{Leave()} is called, which will reset the scope to the parent scope for the next item to be visited.\\
@@ -910,16 +912,17 @@ The \code{Visit}-method thus gets reduced to listing \ref{lst:visitor2method}.
 \begin{lstlisting}[language=csharp, caption={Visiting a Method, Second Visitor}, captionpos=b, label={lst:visitor2method}]
 public override void Visit(Method o)
 {
-    var preDeclaredSymbol = FindDeclaration(o.Name, SurroundingScope, Kind.Method);
+    var preDeclaredSymbol = 
+        FindDeclaration(o.Name, SurroundingScope, Kind.Method);
     SetScope(preDeclaredSymbol);
 }
 \end{lstlisting}
 
 To find that pre-declared symbol, the symbol table navigator is invoked.
-It will just iterate from parent to parent and returns the first symbol, that is a declaration and matches the name.
-Challenges occurred when a symbol is defined in global scope or in a inherited base class.
+It will just iterate from parent to parent and returns the first symbol that is a declaration and matches the name.
+Challenges occurred when a symbol is defined in global scope or in an inherited base class.
 Both difficulties were resolved by adding separate checks for them.
-This is completely done by the \code{Navigator} component and not part of the visitor.
+This is completely done by the \code{Navigator} component and not part of the visitor.\\
 
 The second visitor will now also visit method bodies, since the \code{GoesDeep} property is set to true.
 The \code{Accept} method as seen in listing \ref{lst:visitoraccept} is no longer stopping, once the body is treated.
@@ -936,7 +939,7 @@ The following additional tasks have to be accomplished:
 \end{itemize}
 
 To find the declaration, the symbol table navigator is called again just as before.
-Once the declaration is known, it is trivial to set the according properties.
+Once the declaration is known, it is trivial to add a usage.
 
 \subsubsection{Symbol Table Navigator}
 To operate on the (partially) constructed symbol table, a separate component to navigate was created.
@@ -967,7 +970,7 @@ The navigator overcomes the following tree challenges:
     \item What symbol is at the current cursor position?
     \item What \textit{AutoCompletion} suggestions are indicated?
 \end{itemize}
-These challenges are discussed below. \\
+How these challenges were overcome, is discussed below. \\
 
 \textbf{Where is the definition of a symbol?}\\
 This challenge uses the bottom-up procedure.
@@ -985,7 +988,7 @@ whereby it must be declared anyway before usage.\\
 
 If the symbol cannot be found, the algorithm will search the default scope at the end as a last option to locate the symbol.
 Since the symbol tree is moved upwards, the process takes $O(log(n))$ time.
-It is executed for every occurring symbol, thus the building of the symbol table takes $O(n*log(n))$ time, while n denoted the amount of occurring symbols.\\
+It is executed for every occurring symbol, thus the building of the symbol table takes $O(n*log(n))$ time, while $n$ denotes the amount of occurring symbols.\\
 
 \begin{figure}[H]
     \centering
@@ -1000,11 +1003,11 @@ Starting from the root symbol, for each child it is checked if it wraps the posi
 If not, the symbol is ignored.
 But if so, iteration is recursively called on that child.
 Regarding figure \ref{fig:topDownPaintFTW}, imagine we hand the blue line as the cursor position.
-The algorithm will then decide, that the cursor position is within module M.
+The algorithm will then decide, that the cursor position is within module \code{M}.
 Afterwards, it will check all children of \code{M}.
 It will find out, that class \code{Z} is not surfacing the cursor position, and move to the next one.
-When checking on class \code{C}, wrapping is successful, thus the next iteration will be done within \code{C}.
-Finally, variable c will be returned as the best match.
+When checking class \code{C}, wrapping is successful, thus the next iteration will be done within \code{C}.
+Finally, variable \code{c} will be returned as the best match.
 Default namespaces and default classes had to be treated separately for this case.
 Since the tree is moved along a single branch, the runtime for this process is $O(log(n))$.\\
 
@@ -1015,7 +1018,7 @@ Since the tree is moved along a single branch, the runtime for this process is $
     \label{fig:topDownPaintFTW}
 \end{figure}
 
-\textbf{What \textit{AutoCompletion} suggestions are indicated?}\\
+\textbf{What AutoCompletion suggestions are indicated?}\\
 To build up autocompletion suggestions, all declarations available at a certain locations must be figured.
 First of all, the previous \code{TopDown} algorithm is used to find the current location.
 Then, all declarations in the current scope are requested, by using \code{BottomUp} again and requesting everything that is a declaration.
@@ -1056,9 +1059,9 @@ Figure \ref{fig:topDownWraps} shows the distinction between the three methods.
 \end{figure}
 
 \begin{itemize}
-    \item Green: wrapped by the identifier range.
-    \item Yellow: wrapped by the body range.
-    \item Red: wrapped by the entire symbol range.
+    \item Green: Wrapped by the identifier range.
+    \item Yellow: Wrapped by the body range.
+    \item Red: Wrapped by the entire symbol range.
 \end{itemize}
 
 \subsection{Features}
@@ -1068,24 +1071,24 @@ This is especially the case for \textit{Rename}, \textit{GoToDefinition} and \te
 An example was given while explaining the \code{Core}-package of the server implementation.
 These features are thus not described in detail any further, since they are nearly trivial.
 However, other features, especially \textit{AutoCompletion}, \textit{CodeLens} and the ones not depending on the symbol table involve a bit more complexity.
-In this chapter, these special cases are described.
+In this section, these special cases are described.
 
-\subsubsection{\textit{AutoCompletion}}
+\subsubsection{AutoCompletion}
 \label{section:implementation:core:completion}
 The automatic code completion is an essential feature of every IDE and is a great help for the developer to write code efficiently.
 Making good suggestions to the user is a complex matter. \\
 
 Through the new symbol table, it is easy for us to find symbols in the current scope.
-With the help of the "Symbol Table Navigator"
+With the help of the \code{SymbolTableNavigator},
 it is also possible to efficiently filter the proposals by conditions,
 which can be transferred as predicates. \\
 
-The main difficulty and thus the logical complexity of the \textit{AutoCompletion}
+The main difficulty and thus the complexity of \textit{AutoCompletion}
 is therefore no longer the actual collection of symbol suggestions,
 but the evaluation of what kind of suggestions the user wants in the current context
 and extracting a symbol as entry point for the symbol table navigator component. \\
 
-For our \textit{AutoCompletion}, we support three fundamentally different types of user desire.
+We support three fundamentally different types of user desires.
 To find out the user's desire, the following approach is taken.
 First, the cursor position is used to determine the current code position in the Dafny source file.
 Then, it is checked if there is a dot or "\code{new }" in front of the cursor position.
@@ -1110,10 +1113,12 @@ For example, if the user is typing in the method \code{myMethod}, the symbol for
 
 If a matching symbol is found, for example a class named \code{myClass}, all methods and fields defined inside \code{myClass}
 can be extracted using the symbols properties.
-These are now returned as \textit{AutoCompletion} suggestions. \\
+These are now returned as the final suggestions. \\
 
-For clarity, the described process is visualized for the following
-Dafny code example \ref{lst:myClassCompletionExampleUML} in the sequence diagram of figure \ref{fig:object_completion_diagram_dot}.
+For clarity, the described process is visualized in the following two figures.
+Listing \ref{lst:myClassCompletionExampleUML} shows a code example, which leads into the resolving sequence in figure \ref{fig:object_completion_diagram_dot}.
+
+%pagebreak hier? / am ende kucken
 
 \begin{lstlisting}[language=dafny, caption={Example Dafny Code - Cursor Position at Line 8}, captionpos=b, label={lst:myClassCompletionExampleUML}]
 class myClass {
@@ -1173,16 +1178,16 @@ Whenever a constructor or method is chosen as an \textit{AutoCompletion} suggest
 an opening and closing bracket is added to the text to be inserted. \\
 
 From certain IDE's such as XCode,
-you are used to seeing placeholders as shown in figure \ref{fig:xcode_completion} for the parameters and their types in \textit{AutoCompletion}
-when you select a method from the suggestions \cite{sa}.
+you are used to face placeholders for the parameters and their types \cite{sa}.
+An example of that functionality is shown in figure \ref{fig:xcode_completion}
 That is why we wanted to implement such a convenient feature for our \textit{AutoCompletion} as well.
-Unfortunately we had to realize that this feature is not yet supported natively by the VSCode API \cite{vscodeAPI}.
+Unfortunately, we had to realize that this feature is not yet supported natively by the VSCode API \cite{vscodeAPI}.
 Neither does the LSP support a standard for the explosive insertion of parameters \cite{lspspec}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/xcode}
-    \caption{\textit{AutoCompletion} in XCode}
+    \caption{AutoCompletion in XCode}
     \label{fig:xcode_completion}
 \end{figure}
 
@@ -1254,7 +1259,7 @@ The popup that opens when you click on the grey text
 with the reference counter is a client feature.
 It is offered by VSCode \cite{vscodeAPI}.
 Unfortunately, this is something that cannot be extracted completely to the server.
-The logic required within the client is trivial, though.
+The logic required is trivial, though.
 Only the function \code{VSCodeCommandStrings.ShowReferences},
 offered by VSCode, is called \cite{vscodeAPI}.
 The popup display is shown in figure \ref{fig:codelens_show_popup}. \\
@@ -1262,7 +1267,7 @@ The popup display is shown in figure \ref{fig:codelens_show_popup}. \\
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_opened}
-    \caption{\textit{CodeLens} shows Popup with Code Snippets}
+    \caption{CodeLens shows Popup with Code Snippets}
     \label{fig:codelens_show_popup}
 \end{figure}
 
@@ -1297,9 +1302,8 @@ The command's name is the function called at the client, when the grey text is c
 
 In addition, the \code{Command} is given the positions it should display inside the popup.  \\
 
-If the function \code{dafny.showReferences} is called in the client,
-the method \\
-\code{VSCodeCommandStrings.ShowReferences} from the VSCode API is called
+If the function \code{dafny.showReferences} is called,
+the method \code{VSCodeCommandStrings.ShowReferences} from the VSCode API is invoked
 and the arguments prepared in server are passed through. \\
 
 Because the whole logic for \textit{CodeLens} is in the server,
@@ -1366,10 +1370,10 @@ the Dafny backend was not \cite{sa}.\\
 
 .NET Core has native support for Linux and macOS.
 With .NET Framework, however, a Windows executable is generated upon compilation.
-Therefore, is is necessary to rely on Mono for Unix based operating systems.
+Therefore, is is necessary to rely on mono for Unix based operating systems.
 Mono allows to execute \code{.exe} files on said systems \cite{mono}. \glsadd{mono} \\
 
-Unfortunately, in the course of our thesis we discovered that the language server could not be started correctly with Mono.
+Unfortunately, in the course of our thesis we discovered that the language server could not be started correctly with mono.
 The problem already occurred when trying to start the OmniSharp language server component. \\
 
 We took several measures to get even more specific details about the problem, after we found the specific point of failure.
@@ -1378,7 +1382,7 @@ We took several measures to get even more specific details about the problem, af
     \item We have built a new try-catch around it - just in case. But the catch is not called because no exception was thrown.
     \item Because we use .NET Framework and not .NET Core, we could not debug step by step on macOS.
     \item Debugging the log output was not helpful since no log output was produced at all.
-    \item We tried to start a very simple language server - without the Dafny project - and could not execute it correctly with \code{msbuild}.
+    \item We tried to start a very simple language server - without the Dafny project - and could not execute it correctly with \code{msbuild}. \glsadd{msbuild}
     \item We tried different Mono versions: 6.6.0.166 (2019-08) and 6.8.0.105 (2020-02).
     \item We tested on macOS as well on Linux.
 \end{itemize}
@@ -1405,25 +1409,23 @@ To read how to write tests or why we worked with interfaces for dependency injec
 
 \subsubsection{Unit Tests}
 Since all our core components are programmed against interfaces, testing them is not that hard.
-One can simply create fake, mock or stub, implementing the interface, and use it for testing purposes.\\
+One can simply create a fake, mock or stub, implementing the interface, and use it for testing purposes.\\
 
 \textbf{Symbol Table Generation}\\
 To test the symbol table generation, dedicated Dafny files were written.
-The tests first call the \\
-\code{DafnaTranslationUnit} to create a \code{dafnyProgram}.
-The dafnyProgram is then handed to the \\
-\code{SymbolTableGenerator}.
+First, the \code{DafnaTranslationUnit} is called to create a \code{DafnyProgram}.
+The \code{DafnyProgram} is then handed to the \code{SymbolTableGenerator}.
 The output is - once more - converted into a string representation.
 This outcome is then compared a against an expectation file.\\
 
 Technically, since the \code{TranslationUnit} is invoked as well, the test is not completely isolated.
-One would have to serialize the dafnyProgram, and use that one as a test input.
+One would have to serialize the \code{DafnyProgram}, and use that one as a test input.
 However, to be able to quickly adjust the test file, this was not done.\\
 
-Another flaw of this test is, that the whole symbol table is tested at once.
+Another flaw of this test is that the whole symbol table is tested at once.
 There is not a single test that checks if symbol \code{X} gets used 5 times - and checks only that.
 The string representation contains information about every symbol of the whole code at once, and the whole code is tested.
-While this is not best practice, it allowed us for a much more efficient testing.
+While this is not best practice, it allowed for a very efficient testing.
 Even if a test fails, the string representation displays exactly why it failed, so there is not a big downside to this.\\
 
 An example expectation file of this test is shown below:
@@ -1457,10 +1459,11 @@ It is not exactly tested, if symbol \code{X} is used by symbol \code{Y}.
 Instead, just some counts are checked.
 However, by testing if the parent is correct, and by testing the children count, we can be confident that the parent-child relationship is correct.
 The same applies for the declaration-usage relation.
-You further note, that there is no information given about base classes, parameter lists or such.
+You further note that there is no information given about base classes, parameter lists or such.
 But items like these are indirectly tested.
-If the base-class would not not be attached properly,
-a symbols declaration would not be found, which could be seen in the string representation.\\
+If the base-class would not be attached properly,
+a symbols declaration would not be found.
+This would again be visible in the string representation.\\
 
 \textbf{Symbol Table Navigation}\\
 To test the navigator and manager component, a fake symbol class was created.
@@ -1472,11 +1475,13 @@ An example is shown in listing \ref{lst:botuptest}.
 \begin{lstlisting}[language=csharp, caption={Navigator Unit Test}, captionpos=b, label={lst:botuptest}]
 public void BottomUpFirstChild()
 {
-    SymbolInformationFake rootEntry = new SymbolInformationFake(1, 0, 1, 0, 5, 0, defaultFile, "Parent");
-    SymbolInformationFake mySymbol = new SymbolInformationFake(2, 0, 2, 0, 5, 0, defaultFile, "Child");
+    SymbolInformationFake rootEntry =
+        new SymbolInformationFake(1, 0, 1, 0, 5, 0, defaultFile, "Parent");
+    SymbolInformationFake mySymbol =
+        new SymbolInformationFake(2, 0, 2, 0, 5, 0, defaultFile, "Child");
     rootEntry.AddChild(mySymbol);
     mySymbol.SetParent(rootEntry);
-    Predicate<ISymbolInformation> filter = (s => s.Name.Equals("Child"));
+    Predicate<ISymbolInformation> filter =(s => s.Name.Equals("Child"));
     var symbol = nav.BottomUpFirst(mySymbol, filter);
     Assert.AreEqual(mySymbol, symbol);
 }
@@ -1496,25 +1501,29 @@ An example is shown in listing \ref{lst:renameUnit}.
 \begin{lstlisting}[language=csharp, caption={Core Provider Unit Test}, captionpos=b, label={lst:renameUnit}]
 public void ReservedWord()
 {
-    ISymbolTableManager manager = new FakeSymbolManager(returnsDeclaration: false, returnsNull: false);
-    var provider = new \textit{Rename}Provider(manager);
-    var result = provider.Get\textit{Rename}Changes("method", new Uri("file:///N:/u/l.l"), 2, 22);
+    ISymbolTableManager manager =
+        new FakeSymbolManager(returnsDeclaration: false, returnsNull: false);
+    var provider = new RenameProvider(manager);
+    var result = provider.GetRenameChanges("method",
+        new Uri("file:///N:/u/l.l"), 2, 22);
     Assert.IsTrue(provider.Outcome.Error, "error expected in rename-outcome");
     Assert.AreEqual("method" + DafnyLanguageServer.Resources.LoggingMessages.rename_reserved_word, provider.Outcome.Msg);
 }
 \end{lstlisting}
 
-\textbf{Core Provider not depending on the Symbol Table}\\
-The features Compile and CounterExample are the only ones not depending on the symbol table.
-These were already tested in a similar matter in the prototype.\\
+\textbf{Core Provider not Depending on the Symbol Table}\\
+The features \textit{Compile} and \textit{CounterExample} are the only ones not depending on the symbol table.
+These were already tested in the prototype.
+Their tests were adjusted to meet the new implementation.\\
 
-To test CounterExamples, a custom \code{model.bvd} file can be injected into the provider.
+To test \textit{CounterExample}, a custom \code{model.bvd} file can be injected into the provider.
 This way, predefined model files are analyzed instead of the model from the live Dafny code.\\
 
-To test compilation, a \code{.dfy} file is defined in the test method.
-The test will again call the translation unit, to create \code{TranslationResults}.
+To test \textit{Compile}, a \code{.dfy} file is defined in the test method.
+The test will again call the translation unit to create \code{TranslationResults}.
 Again, this is not optimal but practical.
-Out of the translation results, a file repository is created, which is then handed to provider.
+Out of the translation results, a file repository is created, which is then handed to the compilation provider.
+The final outcome can then be checked against an expectation.
 
 
 %%%%%%%%%%%%%INTEGRATIONM TEST
@@ -1523,7 +1532,7 @@ Out of the translation results, a file repository is created, which is then hand
 
 Unlike in the preceding semester thesis, integration tests were implemented using OmniSharp's language server client \cite{omnisharpClient}.
 Each test starts a language server and a language client, then they connect to each other.
-Now, the client can send supported requests, such as the request for CounterExamples.
+Now, the client can send supported requests, such as the request for \textit{CounterExample}.
 The result can be directly parsed into our \code{CounterExampleResults} data structure and be compared to the expectation.
 Thus, tests can be written easily and are very meaningful and highly relevant.\\
 
@@ -1537,7 +1546,7 @@ Every test file is provided as a static variable and can thus be easily referenc
 \begin{lstlisting}[language=csharp, caption={Test File Reference}, captionpos=b, label={lst:semiExpectedCodeThing}]
 public static readonly string cp_semiexpected = CreateTestfilePath("compile/semi_expected_error.dfy");
 \end{lstlisting}
-The class providing these references will also check if the test file actually exists, so that \code{FileNotFoundErrors} can be detected early.\\
+The class providing these references will also check if the test file actually exists, so that \linebreak \code{FileNotFoundErrors} can be detected early.\\
 
 \textbf{String Converters}\\
 Many tests return results in complex data structures, such as \code{CounterExampleResults}.
@@ -1591,9 +1600,9 @@ List<string> expectation = new List<string>()
 \end{lstlisting}
 
 This is much more convenient than creating a custom \code{CounterExample}, which could then be used for comparison with an \code{Equals}-method.
-By taking advantage of the method \\
+By taking advantage of the method \linebreak
 \code{CollectionAssert.AreEquivalent(expectation, actual)} from nUnit's test framework,
-the two lists can be easily compared against each other \cite{nunitCollectionAssert}. \\
+the two lists can be easily compared against each other \cite{nunitCollectionAssert}. \glsadd{nunit} \\
 
 \textbf{Test Architecture}\\
 Since every integration test starts the client and the server at first, as well as disposes them at the end,
@@ -1605,7 +1614,7 @@ and tear it down after the test has been completed.\\
 
 A second base class exists for each feature.
 For testing compilation, this class is named \code{CompileBase} as an example.
-It inherits from the \code{IntegrationTestBase} class and provides the member \code{CompilerResults},
+It inherits from the \code{IntegrationTestBase} class and provides the member \linebreak \code{CompilerResults},
 as well as two methods \code{RunCompilaton(string file, string[] args)} and \code{VerifyResults(string expectation)}.
 The implementation of \code{RunCompilation} is shown in listing \ref{lst:runIntegrationtest}.\\
 
@@ -1617,12 +1626,10 @@ protected void RunCompilation(string testFile, string[] args)
         FileToCompile = testFile,
         CompilationArguments = args
     };
-    Client.TextDocument.DidOpen(testFile, "dfy");
+    Client.TextDocument.DidOpen(testFile, Resources.ConfigurationStrings.DafnyFileEnding);
     compilerResults = Client.SendRequest<CompilerResults>(compileKeyword, compilerParams, CancellationSource.Token).Result;
 }
 \end{lstlisting}
-
- \intnote{dfy ist hier auch noch ein magic string}
 
 The test class itself inherits from its feature-specific base class.
 The tests itself are very simple.
@@ -1670,7 +1677,7 @@ we implemented were implemented as a VSCode Plugin user would expected them to b
 and which features were expected to be different in terms of display and triggering. \\
 
 The general usefulness would also be discussed and feedback for further improvements was collected.
-These improvements are discussed in this chapter.
+These improvements are discussed in this section.
 
 \subsubsection{Code Documentation for Classes and Methods}
 If you drive over symbols and the hover information is displayed,
@@ -1701,7 +1708,7 @@ By using markdown instead of plaintext, \textit{HoverInformation} could be impro
     \label{fig:hoverNowVsThen}
 \end{figure}
 
-\subsubsection{Automatic Triggering of \textit{AutoCompletion}}
+\subsubsection{Automatic Triggering of AutoCompletion
 If a dot is typed while typing, \textit{AutoCompletion} suggestions are automatically expected.
 You should not have to press \code{CTRL+Space} as trigger.
 This issue was anyway pending and was implemented shortly after the usability test.
@@ -1737,7 +1744,7 @@ The test person would have wished such a play button \cite{interview-remo}.
     \label{fig:runPython}
 \end{figure}
 
-It is possible to also add this icon for Dafny. If the button is clicked, a compile and run is triggered.
+It is possible to also add this icon for Dafny. If the button is clicked, \textit{CompileAndRun} is triggered.
 Similar to the UI elements for the Dafny status bar,
 a button can be created by the VSCode API \cite{vscodeAPI}.
 It can be assigned an icon and a click action.
