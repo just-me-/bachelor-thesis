@@ -424,6 +424,7 @@ either accept adjustments directly there, or he will be forwarded to \code{setti
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%SÖÖÖÖRVÖÖÖÖR%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Server}
 In this section, the server implementation is discussed.
 Just as in the chapter \nameref{chapter:design}, the server structure will be analyzed from top to bottom, starting with the \code{Main}-method and ending at the utility layer.
@@ -804,6 +805,7 @@ A second iteration is then started, using another visitor, which will ignore dec
 and take care of symbol usages.\\
 This way, symbols that are declared after the first usage can be found as well.\\
 
+\pagebreak
 \textbf{Visitors}\\
 As already mentioned, the whole symbol table generation is realized using the visitor pattern. \glsadd{visitor}
 For that, Dafny code had to be adjusted to offer a \code{Accept(Visitor v)} method.
@@ -1079,7 +1081,7 @@ In this section, these special cases are described.
 \subsubsection{AutoCompletion}
 \label{section:implementation:core:completion}
 The automatic code completion is an essential feature of every IDE and is a great help for the developer to write code efficiently.
-Making good suggestions to the user is a complex matter. \\
+Making good suggestions to the user is a complex matter.
 
 Through the new symbol table, it is easy for us to find symbols in the current scope.
 With the help of the \code{SymbolTableNavigator},
@@ -1726,6 +1728,7 @@ The issue is shown in figure \ref{fig:cleaner_error_msg}
     \label{fig:cleaner_error_msg}
 \end{figure}
 
+\pagebreak
 \subsubsection{Compile Improvements}
 Some plugins have a small green play icon in the upper right corner of the IDE for compilation,
 which can be pressed as shown in figure \ref{fig:runPython}.
@@ -1757,6 +1760,7 @@ This is illustrated in figure \ref{fig:long_compile_output}.
     \label{fig:long_compile_output}
 \end{figure}
 
+\pagebreak
 \subsection{Continuous Integration (CI)}
 Optimizing the CI process is an important part of our thesis.
 Since we expect that our language server as well as the Dafny client plugin will be further developed by other developers,
