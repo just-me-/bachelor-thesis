@@ -126,11 +126,13 @@ Completing the CI process had been somewhat delayed, but was then successfully f
 In this milestone, we took care to improve the existing features.
 Only features that are not related to the symbol table were dealt with.
 This included:
+\begin{multicols}{3}
 \begin{itemize}
     \item \textit{Compilation}
     \item \textit{CounterExample}
     \item \textit{Verification}
 \end{itemize}
+\end{multicols}
 
 Small improvements of the client were also done, such as a bug fix in the status bar.
 This milestone could be completed on time.\\
@@ -166,7 +168,7 @@ Instead, we started a bit earlier with writing the documentation.\\
 {\bf Conclusion}\\
 The conclusion was basically used to write the documentation and as a general buffer time.
 The buffer time was not necessary, since we respected our plan and showed enough courage to leave out some visitor functionality in order to be on time.
-The buffer could then be used to do some finalization work and prepare the presentation.\\
+The buffer could then be used to do some finalization work and prepare the presentation.
 
 \subsection{Effects of the COVID-19 Pandemic}
 The cooperation was only marginally affected by the Corona situation.
@@ -298,6 +300,7 @@ Thus our code was always automatically formatted uniformly. \\
 
 More detailed code metrics can be found in section \ref{section:results:metrics}.
 
+\pagebreak
 \subsubsection{Test Coverage}
 Since our integration tests are able to test all components of the language server
 and the client contains basically no logic,
@@ -316,8 +319,6 @@ Components that contain no important logic remain untested.
 For example, code fragments that call Dafny itself and only pass information were not specifically tested, since no advantage would be gained.
 Listing \ref{lst:nottested} shows another code fragment that pulls down test coverage.
 It is taken from the \code{DeclarationVisitor}.
-
-\pagebreak
 
 \begin{lstlisting}[language=typescript, caption={Untested Code}, captionpos=b, label={lst:nottested}]
 public override void Visit(ThisExpr e) {
