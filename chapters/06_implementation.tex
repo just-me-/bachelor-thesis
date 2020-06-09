@@ -79,7 +79,7 @@ and contains basically the plugin's "main logic".
 It is to start the Dafny language server and establish a connection,
 as well as basically initialize the plugin. This includes creating the UI management component and command registrations.
 
-If no local language server is available, the language server is downloaded from a server using the \linebreak 
+If no local language server is available, the language server is downloaded from a server using the \linebreak
 \code{LanguageServerInstaller} component.
 This component is only used inside the package, and is not exported to the outside,
 as it can be seen in the figure \ref{fig:dafnyLanguageServerStartup}.
@@ -1368,7 +1368,7 @@ In the preceding thesis, we had to switch from .NET Core to .NET Framework \cite
 The reason for this was that although OmniSharp was compatible with .NET Core,
 the Dafny backend was not \cite{sa}.\\
 
-.NET Core has native support for Linux and macOS.
+.NET Core has native support for Linux and macOS. 
 With .NET Framework, however, a Windows executable is generated upon compilation.
 Therefore, is is necessary to rely on mono for Unix based operating systems.
 Mono allows to execute \code{.exe} files on said systems \cite{mono}. \glsadd{mono} \\
@@ -1468,7 +1468,7 @@ This would again be visible in the string representation.\\
 \textbf{Symbol Table Navigation}\\
 To test the navigator and manager component, a fake symbol class was created.
 It allows to define the symbol position within the constructor.
-Afterwards, symbols can be attached to each other at will.
+Afterwards, symbols can be attached to each other.
 This way, the top-down and bottom-up algorithms could be tested.
 An example is shown in listing \ref{lst:botuptest}.
 
@@ -1670,7 +1670,7 @@ it is sometimes difficult to differentiate the results.
 
 Therefore we have designed a usability test and found a test person to perform this test \cite{interview-remo}.
 The test person, Remo Herzog, was chosen because he is programming in an environment based on VSCode
-and therefore is well integrated into the corresponding VSCode universe. \\
+and therefore he is well integrated into the corresponding VSCode universe. \\
 
 The goal of this test was primarily to find out if the features
 we implemented were implemented as a VSCode Plugin user would expected them to be,
