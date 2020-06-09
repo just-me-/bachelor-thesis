@@ -1,13 +1,13 @@
 \section{Implementation}
 \label{chapter:implementation}
-This chapter describes the implementation of the planned design.
+This chapter describes the realization of the planned design.
 First, the characteristics of the client are shown.
 Then, basic components of the server are described.
 The symbol table and its properties are treated as a separate section.
-The resulting features follow.
-This is followed by a discussion of platform independence followed by a section about automated testing.
-Results of our usability test and the resulting conclusions and improvements follow.
-This chapter is closed by the success achieved in terms of continuous integration.
+Then, interesting aspects about the implementation of the features themselves are presented.
+This is followed by a discussion about platform independence and a section about automated testing.
+The results of the usability test and the resulting conclusions and improvements are also contained in this chapter.
+Is closes by the achievements in terms of continuous integration.
 
 \subsection{Client}
 The implementation of the client could basically be done as intended.
@@ -65,14 +65,13 @@ The components shown in green are exported to the outside of the module and can 
 The other, orange components are only used within the module. \\
 
 For simplicity, constructors, private methods and private variables are omitted in the diagrams.
-Class implementations of interfaces only implement the methods specified in the interface as public.
-For this reason, their contents are not displayed for clarity. \\
+This is, since implementations of interfaces only implement the methods specified as public. \\
 
 In addition, there are two core modules, which were not considered in the design concept.
 The need for these modules only became apparent during the implementation phase.
 This concerns the isolation of VSCode components
 and the download of the Dafny language server.
-These two modules will be discussed separately in the following sections and not in this section. \\
+These two modules will be discussed separately in the following sections.\\
 
 \textbf{\code{dafnyLanguageServerStartup}}\\
 The main module \code{dafnyLanguageServerStartup} is used by the \code{extension.ts}
@@ -80,12 +79,12 @@ and contains basically the plugin's "main logic".
 It is to start the Dafny language server and establish a connection,
 as well as basically initialize the plugin. This includes creating the UI management component and command registrations.
 
-If no local language server is available, the language server is downloaded from a server \\
-using the \code{LanguageServerInstaller} component.
+If no local language server is available, the language server is downloaded from a server using the \linebreak 
+\code{LanguageServerInstaller} component.
 This component is only used inside the package, and is not exported to the outside,
-as can be seen in the figure \ref{fig:dafnyLanguageServerStartup}.
+as it can be seen in the figure \ref{fig:dafnyLanguageServerStartup}.
 This component can also be used to update the language server locally.
-Update means in this case to delete the local existing language server and download the latest version.
+Updating means to delete the local existing language server and download the latest version.
 For more details see section \ref{section:implementation:client:download}.
 
 \begin{figure}[H]
@@ -96,30 +95,30 @@ For more details see section \ref{section:implementation:client:download}.
 \end{figure}
 
 The logic of the main component \code{serverInitializer} itself was kept relatively small.
-To start the language server as a local process, two steps are basically required:\\
+To start the language server as a local process, two steps are required:\\
 
 First, basic options are set for the language server.
 These options are set in the \code{serverOptions} component. This component implements the \code{LanguageClient}
 of VSCode. "Client" is somewhat confusing in that sense, since this module is used to connect the language server; from client side.
 Among other things, the options are set with which command the server is started and which file types, which are opened in VSCode by the user of the plugin, should be transferred to the server. \\
 
-Secondly, \code{serverInitializer} registers a callback as the program entry point to the created \code{serverOptions} instance
-and then the language server is started with \code{this.languageServer.start()}.
+Second, \code{serverInitializer} registers a callback as the program entry point to the created \linebreak
+\code{serverOptions} instance and then the language server is started with \code{this.languageServer.start()}.
 To run the Dafny language server, an instance of \code{DafnyRunner} is created.
 This component is part of the \code{localExecution} package.\\
 
 \textbf{\code{ui}}\\
 This package is responsible for all visual representations.
-This includes the status bar information and the display of the CounterModel.
-Also it registers VSCode commands and context menu additions. \\
+This includes the status bar information and the display of the \code{CounterModel}.
+It also registers VSCode commands and context menu additions. \\
 
 \code{DafnyUiManager} is the basic UI entry point and manages the UI components.
 It creates the individual components and updates them specific events if necessary.
 This is the case, if the opened document is changed by the plugin user.\\
 
-Also a \code{disposeUi} function is also provided, which destroys the UI elements. This is for example
-on a Dafny language server restart the case. On restart all, UI components are rebuilt,
-so that a clean plugin restart is also performed in the client if one of the features should
+A \code{disposeUi} function is also provided, which destroys the UI elements. This is the case
+on a Dafny language server restart. On restart, all UI components are rebuilt, \glsadd{UI}
+so that a clean plugin restart is performed if one of the features should
 be frozen and does not response anymore in an extreme case.\\
 
 \begin{figure}[H]
@@ -131,12 +130,12 @@ be frozen and does not response anymore in an extreme case.\\
 
 The \code{Commands} package registers all commands that are offered to the user
 and links them to corresponding callback functions.
-These commands are available with the context menu
-and the available commands in the VSCode Command line, as shown in Figure \ref{fig:commands_shown}.
+These commands are available within the context menu
+and the available commands in the VSCode Command line, as shown in figure \ref{fig:commands_shown}.
 Individual dependencies are injected. These includes:
-\code{IDafnyRunner} to call compile and run as a callback as you can see for example in listing \ref{lst:compileAndRun}.
+\code{IDafnyRunner} to call compile and run as a callback as you can see in listing \ref{lst:compileAndRun}.
 Furthermore, \code{IDafnyUiManager} is injected
-in order to access the CounterModelProvider with the appropriate commands and to show or hide it.
+in order to access the \code{CounterModelProvider} with the appropriate commands and to show or hide it.
 
 \begin{lstlisting}[language=typescript, caption={Excerpt from \code{commands.ts}}, captionpos=b, label={lst:compileAndRun}]
 [..]
@@ -154,10 +153,10 @@ The following commands are registered:
     \item {\bf Compile with Custom Arguments} \textendash{} to pass a compilation request with user-specific
     compile parameters to the server.
     \item {\bf Compile and Run} \textendash{} after compiling the Dafny program is executed and the output is displayed.
-    \item {\bf Show CounterExample} \textendash{} displays the CounterExample for the currently opened Dafny file, if available.
-    \item {\bf Hide CounterExample} \textendash{} hides CounterExample for the current Dafny file.
-    \item {\bf Show References} \textendash{} with a click on a \textit{CodeLens} references,
-    the references are shown to the user via a popup window.
+    \item {\bf Show CounterExample} \textendash{} displays the counter example for the currently opened Dafny file, if available.
+    \item {\bf Hide CounterExample} \textendash{} hides counter example for the current Dafny file.
+    \item {\bf Show References} \textendash{} with a click on a \textit{CodeLens} reference,
+    the reference is shown to the user via a popup window.
 \end{itemize}
 
 \begin{figure}[H]
@@ -167,9 +166,9 @@ The following commands are registered:
     \label{fig:msg_example}
 \end{figure}
 
-The \code{Notifications} component is responsible for displaying messages received from the server to the user.
-There is an example shown in figure xxx.
-There are the following three types, each of which is displayed with a different color:
+The \code{Notifications} component is responsible for displaying messages received from the server.
+An example is shown in figure \ref{fig:commands_shown}.
+There are three message types, each of which is displayed in a different color:
 
 \begin{itemize}
     \item {\bf Error} \textendash{} is shown in red.
@@ -177,7 +176,7 @@ There are the following three types, each of which is displayed with a different
     \item {\bf Info} \textendash{} is shown in blue.
 \end{itemize}
 
-The logic of the display messages is provided directly by the VSCode API.
+The logic to display the messages is directly provided by the VSCode API.
 
 \begin{figure}[H]
     \centering
@@ -205,10 +204,10 @@ More about the logic of \textit{CodeLens} can be found in section \ref{section:i
     \label{fig:opened_codelens_exmpl}
 \end{figure}
 
-The \code{CounterModelProvider} component is used to display and hide CounterModels.
-This component also stores in which Dafny files a CounterModel should be displayed and in which not.
-Therefore, if the user changes the opened file in the workspace, the CounterModel is automatically hidden or shown.
-The CounterModule supports a dark and light mode as shown in figure \ref{fig:dark_light_mode_2}.
+The \code{CounterModelProvider} component is used to display and hide counter examples.
+This component also stores in which Dafny files a counter example should be displayed and in which not.
+Therefore, if the user changes the opened file in the workspace, the counter example is automatically hidden or shown.
+The module supports a dark and light mode as shown in figure \ref{fig:dark_light_mode_2}.
 This mode is automatically set accordingly,
 depending on whether VSCode is set to light or dark by the user.
 
@@ -219,23 +218,22 @@ depending on whether VSCode is set to light or dark by the user.
     \label{fig:dark_light_mode_2}
 \end{figure}
 
-Unlike the Compile feature, the \code{CounterModelProvider} creates a callback and passes it to the \\
+Unlike the \textit{Compile} feature, the \code{CounterModelProvider} creates a callback and passes it to the \linebreak
 \code{serverRequest} module.
 Therefore an update-call of the \code{CounterModelProvider} requires a transfer of the language server instance to instantiate a \code{RequestCounterExample}.
 This is for the following reason: Unlike the \code{StatusbarProvider} or the \code{CodeLensProvider},
-\code{CounterModelProvider} has an active influence on it,
-when a server request should be sent and when not.
-With the components for the status bar and \textit{CodeLens} react passively to an event.
+\code{CounterModelProvider} has an active influence on when exactly a request is sent.
+On the other hand, the components for the status bar and \textit{CodeLens} hand react passively to an event.
 
-In this way the \code{CounterModel} component can regulate the server requests.
-For reasons of efficiency, the implemented client-side display of CounterModels limits its
+This way the \code{CounterModel} component can regulate the server requests.
+For reasons of efficiency, the implemented client-side display of counter examples limits its
 server requests to a certain number per second.
 This means that even if a plugin user types very fast on the keyboard, a
 update requested by \code{CounterModelProvider} to the server is limited by default to two per second. \\
 
 The \code{StatusbarProvider} reacts to messages from the Dafny language server.
 It primarily displays the following information to the user as shown in figure \ref{fig:statusbar}:
-Whether the Dafny file is valid, if how many errors are present and the Dafny language server version.
+Whether the Dafny file is valid, how many errors are present and the Dafny language server version.
 
 \begin{figure}[H]
     \centering
@@ -245,15 +243,15 @@ Whether the Dafny file is valid, if how many errors are present and the Dafny la
 \end{figure}
 
 \textbf{\code{serverRequests}}\\
-This package is responsible for server requests which are not automatically handled by the VSCode.
-Specifically this concerns the LSP extensions for the compilation of Dafny programs and the CounterExample
-as shown in figure \ref{fig:serverRequests}.
+This package is responsible for server requests which are not automatically handled by VSCode.
+Specifically, this concerns the LSP extensions for the compilation of Dafny programs and showing counter examples
+as seen in figure \ref{fig:serverRequests}.
 
 Both components receive an instance of \code{LanguageClient} injected to gain access to the server.
 As explained for the component \code{RequestCounterExample},
-the CounterExample feature limits the server requests.
+the \textit{CounterExample} feature limits the server requests.
 Therefore only one instance of this component is generated and injected callbacks are used.
- is executed each time the user explicitly requests a compile.
+\textit{Compilation} is executed each time the user explicitly requests a compile.
 A new instance of \code{Compile} is created each time.
 Therefore, an asynchronous method is used for this component.
 
@@ -267,18 +265,17 @@ Therefore, an asynchronous method is used for this component.
 \textbf{\code{localExecution}}\\
 This package is used for the local execution of programs.
 For example to execute \code{.exe} files.
-For macOS and Linux these are executed using Mono.
+For macOS and Linux these are executed using mono. \glsadd{mono}
 This module takes care of the correct execution of compiled Dafny programs
 and of the Dafny language server, which is also an \code{.exe} file.\\
 
 \code{ExecutionCapabilities} check for supported capabilities.
-Under Windows \code{.exe} files can be simply executed.
-Under macOS and Linux the Mono version is checked and if necessary the user is asked to install mono. \\
+Under Windows, \code{.exe} files can be executed natively.
+Under macOS and Linux, the mono version is checked and if necessary the user is asked to install mono. \\
 
-The component \code{DafnyRunner}  executes compiled Dafny programs.
-It creates a corresponding terminal process
-for the program and shows the user the corresponding output.
-This component is used by \code{Compile}.
+The component \code{DafnyRunner} executes compiled Dafny programs.
+It creates a corresponding terminal process and launches the executable.
+This component is only used by \code{Compile}.
 Of course, programming is done against the respective interface, as shown in figure \ref{fig:localExecution}.
 
 \begin{figure}[H]
@@ -292,10 +289,10 @@ Of course, programming is done against the respective interface, as shown in fig
 Special TypeScript type extensions,
 as they are used for the return values of server requests
 that are not contained in the LSP, are defined in interfaces.
-This concerns the return types of compile and CounterExample as shown in figure \ref{fig:typeInterfaces}.
+This concerns the return types of \textit{Compile} and \textit{CounterExample} as shown in figure \ref{fig:typeInterfaces}.
 
 In principle, there is a type interface for the arguments and for the results for each own implemented LSP feature.
-Only for \textit{CodeLens} the types are somewhat more complex, which is why a different grouping was created for this interface.
+Only for \textit{CodeLens}, the types are somewhat more complex, which is why a different grouping was created for this interface.
 \code{ICodeLensReferences} is a file, which contains several interfaces and no own module.
 
 \begin{figure}[H]
@@ -308,10 +305,10 @@ Only for \textit{CodeLens} the types are somewhat more complex, which is why a d
 \textbf{\code{stringResources}}\\
 All string resources are stored in this module.
 They are logically grouped by usage area, as shown in figure \ref{fig:stringResources}.
-Contrary to the design, this module does not only contain UII messages displayed to the user as mentioned in section
-\ref{section:implementation:client:module_encapsulation},
-but is the central outsourcing of all strings that also have to do with configurations.
-For example which file extensions Dafny files have.
+Contrary to the design, this module does not only contain UI messages displayed to the user as mentioned in section \glsadd{UI}
+\ref{section:implementation:client:module_encapsulation}.
+Instead, it is responsible for the central outsourcing of all strings that also have to do with configurations.
+This is, for example, which file extension a Dafny file has.
 
 \begin{figure}[H]
     \centering
@@ -321,9 +318,9 @@ For example which file extensions Dafny files have.
 \end{figure}
 
 The structure consists of exported classes with static members. For simplicity, these members are not listed in the figure.
-In listing \ref{lst:stringResourcesExample} is shown an example.
+In listing \ref{lst:stringResourcesExample}, an example is shown.
 
-\begin{lstlisting}[language=typescript, caption={Excerpt from class \code{LanguageServerNotification}}, captionpos=b, label={lst:stringResourcesExample}]
+\begin{lstlisting}[language=typescript, caption={Excerpt from \code{LanguageServerNotification}}, captionpos=b, label={lst:stringResourcesExample}]
 export class LanguageServerNotification {
   public static Error: string = "ERROR";
   public static Warning: string = "WARNING";
@@ -337,11 +334,11 @@ For example, the UI components needed different graphical elements while console
 So the whole plugin had dependencies on the VSCode specific module kit,
 which could not be offered by other IDE's in the same way. \\
 
-Because we wanted to design our plugin for VSCode in a way that the migration for other plugins
-for other IDE's is as easy as possible, we wrote additional module \code{ideApi} as shown in figure \ref{fig:packageIdeApi}.
+Because we wanted to design the client in a way that the migration to other IDE's is as easy as possible,
+we wrote an additional module \code{ideApi} as shown in figure \ref{fig:packageIdeApi}.
 From this module the modules used from VSCode are exported with neutral names.
 All modules except \code{typeInterfaces} and \code{stringResources} use this module directly or indirectly.
-The idea here is that when migrating to another IDE, adapter components can be written in module \code{ideApi}
+The idea here is that when migrating to another IDE, adapter components can be written in \code{ideApi}
 for the VSCode modules used in a centralized way.
 
 \begin{figure}[H]
@@ -351,47 +348,46 @@ for the VSCode modules used in a centralized way.
     \label{fig:packageIdeApi}
 \end{figure}
 
-However, we have not already implemented our own adapter classes and interfaces in our refactoring.
+However, we have not yet implemented our own adapter classes and interfaces in our refactoring.
 This has the following reason:
 Through this encapsulation, developers ideally only need to make changes in a central location to migrate the plugin to another IDE.
-In the worst case, however, he will have to reimplement the entire client code.
-This means, it depends on the IDE for which a new Dafny plugin should be developed.
-It depends on the IDE for which a new Dafny plugin should be developed,
-and if TypeScript is supported by this IDE as plugin development or not.\\
+In the worst case, however, he/she will have to reimplement the entire client code.
+It depends on the IDE for which the plugin should be adapted,
+and whether TypeScript is supported by the IDE's plugin development or not.\\
 
-In our thesis we did not analyze with which other IDEs support which form of plugin development for language server connections.
-For example, for the plugin development for atom JavaScript \cite{plugin-atom} can be used,
-while for Eclipse mostly Java \cite{plugin-eclipse} is used.
+We did not analyze in detail in what languages plugins have to be developed for other editors.
+For example, for the plugin development of Atom, JavaScript \cite{plugin-atom} can be used,
+while for Eclipse, mostly Java \cite{plugin-eclipse} is used.
 
 \subsubsection{Download of the Dafny Language Server}
 \label{section:implementation:client:download}
 Since the original Dafny plugin included the language server (which was written in TypeScript) in the plugin itself,
-we assumed in the preceding semester thesis that we could integrate our new Dafny language server directly in the plugin too
-and deploy it in to the plugin marketplace. \\
+we assumed in the preceding semester thesis that we could integrate our new Dafny language server directly in the plugin, too
+and deploy it in to the VSCode marketplace. \\
 
 During the design phase we noticed that this would be an unpleasant solution.
 In the Dafny project - where our language server will be integrated - builds
 are created per operating system during releases \cite{dafny_lang_builds}.
 So we would have to install the builds for all platforms in our plugin,
 which would make little sense.
-Windows users would download macOS builds additionally and macOS the Windows version as shown in figure \ref{fig:dafnyReleaseVersions}.
+Windows users would download macOS builds, too and vice versa as shown in figure \ref{fig:dafnyReleaseVersions}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{implementation/dafnyReleaseVersions}
-    \caption{Dafny Release 2.3.0 Builds as Example}
+    \caption{Dafny Release 2.3.0 Builds}
     \label{fig:dafnyReleaseVersions}
 \end{figure}
 
-Furthermore, it would have been impossible for us to update client and server independently of each other in the future.
-Therefore the language server is now downloaded by the client.
+Furthermore, it would have been impossible for us to update client and server independently of each other.
+Therefore, the language server is now downloaded by the client.
 Each time the language server is started or restarted within the client,
 it checks whether the latest version is installed.
 If not, the local Dafny language version is removed and the latest version is downloaded. \\
 
-Therefore the original TypeScript code of the old language server,
-which had downloaded the Dafny client, was analyzed \cite{ts_dafny_installer}.
-From this we have implemented the core functionality in a clean interface: \\
+Therefore, the original TypeScript code of the old language server,
+which downloaded the Dafny client, was analyzed \cite{ts_dafny_installer}.
+From this, we have implemented the core functionality in a clean interface: \linebreak
 \code{ILanguageServerInstaller}.
 Since our language server is not yet integrated into the official build,
 we have implemented our own, temporary implementation of the downloader as \code{LanguageServerInstaller}.
@@ -399,13 +395,13 @@ As soon as our Dafny language server is integrated in the Dafny project,
 the component can easily be replaced, because the plugin components program against the interface.
 Minimal adjustments are required to replace the component. In some cases, more suitable names were chosen for methods in the interface.
 
-\subsubsection{Customizable Through Configuration}
+\subsubsection{Configurability}
 There are basically two gradations of configurations.
 First, there are the configurations for developers in the \code{stringResources} component.
-This includes for example Dafny file extensions and other configurations which are not to be changed directly by the user.
+This includes for example Dafny file extensions and other settings which are not to be changed directly by the user.
 
 Second, there are the user configurations, which can be changed by the plugin user via the settings of VSCode.
-In the figure \ref{fig:settings} the configurations offered to the user are listed.
+In figure \ref{fig:settings}, the configurations offered to the user are listed.
 There is an extract of the plugin description, which can be seen by users in the plugin marketplace.
 
 \begin{figure}[H]
