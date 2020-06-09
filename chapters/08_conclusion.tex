@@ -9,13 +9,13 @@ The features of the prototype could be improved significantly, and new, major fe
 
 In comparison to the initial solution, any pre-existing features were improved.
 \begin{itemize}
- \item Compilation will no longer start a dedicated Dafny process for compilation, but instead use the Dafny backend directly.
- \item The representation of counter examples is now much cleaner and easier to perceive.
- \item Verification will also show syntax errors, not only logical errors.
- \item Verification will now also show warnings.
- \item Verification will no longer just highlight single characters.
- \item CodeLens can now actively be used to preview symbol usages.
- \item AutoCompletion no longer performs simple pattern matching, but provides exact results.
+ \item \textit{Compilation} will no longer start a dedicated Dafny process for compilation, but instead use the Dafny backend directly.
+ \item The representation of \textit{CounterExamples} is now much cleaner and easier to perceive.
+ \item \textit{Verification} will also show syntax errors, not only logical errors.
+ \item \textit{Verification} will now also show warnings.
+ \item \textit{Verification} will no longer just highlight single characters.
+ \item \textit{CodeLens} can now actively be used to preview symbol usages.
+ \item \textit{AutoCompletion} no longer performs simple pattern matching, but provides exact results.
 \end{itemize}
 \textit{Rename} and \textit{HoverInformation} could newly be implemented due to the offerings of the symbol table.
 
@@ -44,7 +44,7 @@ The \code{DafnyServer} component, which originates from the pre-existing project
 The codebase of the project is well organized, split into components, uses interfaces where ever possible and has a nice maintainability.
 
 \subsection{Deployment}
-The plugin has been uploaded to the VSCode Marketplace and is available for public.
+The plugin has been uploaded to the VSCode marketplace and is available for public.
 This is a huge success for the project and makes us quite proud, since the result of our
 bachelor thesis is a product that actually gets used by other people.
 
@@ -114,14 +114,14 @@ Thus, a suitable extension point would be to implement support for other IDE's, 
 Within this bachelor thesis, the VSCode client was refactored completely and the code was cleaned up.
 Thus, it is even more lightweight than before and adaption for other IDE's would not cost much effort.
 Support for the native LSP features come out of the box.
-The client developer would just have to implement the language server connection establishment and provide support for the additional features, namely compile and CounterExample.
+The client developer would just have to implement the language server connection establishment and provide support for the additional features, namely \textit{Compile} and \textit{CounterExample}.
 
 \subsection{Further Achievements}
 At the beginning of the bachelor thesis, we were given a list of goals.
 The goals targeting the feature set, the symbol table or the architecture were already discussed.
 Also many minor goals were achieved:
 \begin{itemize}
-    \item LaTeX was used instead of Word.
+    \item LaTeX was used instead of Microsoft Word.
     \item Client and server are split into separate repositories.
     \item The language server was rebased multiple times to be on par with the newest Dafny upstream.
     \item No local paths occur in the code.

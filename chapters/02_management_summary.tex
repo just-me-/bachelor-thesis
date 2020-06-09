@@ -23,7 +23,7 @@ It regulates data exchange between an IDE and a so-called language server.
 This ensures a separation between the integrated development environment (IDE) and the actual programming language support of the language server. \glsadd{ide}
 With this standardized protocol, a language server can be accessed by different IDEs. \\
 
-A plugin for the IDE "Visual Studio Code" was implemented during this bachelor thesis. \glsadd{vs_code}
+A plugin for the IDE "Visual Studio Code" (VSCode) was implemented during this bachelor thesis. \glsadd{vs_code}
 Once a user writes Dafny code using the plugin, the code is then transferred to the language server.
 The language server is now responsible for analyzing the code and provide proper replies to the editor whenever the editor requests something.
 A request could, for example, be to show information about a variable.
@@ -127,7 +127,7 @@ but also gained much robustness compared to the prototype from our previous proj
 Alongside the improvements in features, many internal aspects were also improved.
 This benefits developers who want to extend the Dafny language server in the future.\\
 
-A component called Dafny translation unit was completely re-visited and simplified.
+A component called "Dafny translation unit" was completely re-visited and simplified.
 The component accesses any Dafny functionality.
 For example, instead of passing Dafny options as an array of strings, they are now set by
 directly accessing Dafny's config class.
@@ -149,14 +149,16 @@ This makes the adaption to other IDE's very simple.
 The server is now able to create a symbol table containing any information required for the langue analysis features.
 Pre-existing features and algorithms were improved to gain more reliability and a better user experience.
 
+\pagebreak
+
 \subsection{Outlook}
 While the quality of the features as well as the general code quality could be massively improved, the project is not in a final state.
 Functionality of the project could be improved even further.
 Ideas include:
 \begin{itemize}
-    \item Automatic generation of contracts
-    \item Debugging for Dafny
-    \item Create clients for other IDE's, which connect to our Dafny language server
+    \item Automatic generation of contracts.
+    \item Debugging for Dafny.
+    \item Create clients for other IDE's, which connect to our Dafny language server.
 \end{itemize}
 
 Alongside the widening of the feature range, it is necessary to complete the visitor.
@@ -164,5 +166,5 @@ The visitor is the component generating an internal symbol table within the lang
 Currently, only the most important Dafny language features are supported.
 For example, custom datatypes\footnote{for example \code{datatype Tree<T> = Empty | Node(left : Tree, root : T, right : Tree)}}, as used in formal programming languages, are not supported.\\
 
-Nevertheless, the plugin is of a nice quality and is ready for deployment into the VSCode market place, once multi-platform support is implemented.
+Nevertheless, the plugin is of a nice quality and is ready for deployment into the VSCode marketplace, once multi-platform support is implemented.
 Thus, students can work with it and make their first steps in the Dafny programming language using our plugin.

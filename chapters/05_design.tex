@@ -151,7 +151,7 @@ This section describes where and why the client still contains logic.\\
 
 {\bf Server Connection} \textendash{}
 Handling of the connection to the language server and sending API requests.
-In addition, the client has a simple logic that certain server requests (such as updating the CounterExample)
+In addition, the client has a simple logic that certain server requests (such as updating the \textit{CounterExample})
 are sent at most twice per second. \\
 
 {\bf Execute Compiled Dafny Files} \textendash{}
@@ -315,7 +315,8 @@ Since \code{TranslationResults} and \code{PhysicalFile} are used in multiple par
 Cyclic dependencies can be avoided this way.\\
 
 To request information about a file, or to update a file, a component \code{WorkspaceManager} will be created.
-It contains a dictionary, linking a file identity (as URI) to a \code{FileRepository}. \glsadd{uri}
+It contains a dictionary, linking a file identity (as URI, \textit{Uniform Resource Identifier})
+to a \code{FileRepository}. \glsadd{uri}
 It offers a method to update a file, but also to get information about a file.\\
 
 \begin{figure}[ht]
@@ -479,7 +480,7 @@ In the following, the design of the symbol table is described as well as it is b
 To provide the necessary information for features like \textit{Rename}, \textit{GoToDefinition} or \textit{AutoCompletion},
 the symbol table needs to be very versatile and it must be able to handle the following challenges:
 \begin{itemize}
-    \item Find the symbol at the cursor position
+    \item Find the symbol at the cursor position.
     \item Go to the declaration of a symbol for the \textit{GoToDefinition} feature.
     \item Find all occurrences of a symbol for the \textit{Rename} feature.
     \item Get all available symbols within a scope for the \textit{AutoCompletion} feature.

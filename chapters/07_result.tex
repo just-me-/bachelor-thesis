@@ -18,15 +18,15 @@ This chapter describes the results achieved and further prospects for each stake
 In this section, the achieved feature set of the project is described and critically reflected.
 The current version of the plugin supports the following functionality:
 \begin{enumerate}
-    \item SyntaxHighlighting
-    \item CodeVerification       %%?? italic? together? apart?
-    \item Compilation
-    \item CounterExample
-    \item HoverInformation
-    \item GoToDefinition
-    \item Rename
-    \item CodeLens
-    \item AutoCompletion
+    \item \textit{SyntaxHighlighting}
+    \item \textit{CodeVerification}
+    \item \textit{Compilation}
+    \item \textit{CounterExample}
+    \item \textit{HoverInformation}
+    \item \textit{GoToDefinition}
+    \item \textit{Rename}
+    \item \textit{CodeLens}
+    \item \textit{AutoCompletion}
 \end{enumerate}
 
 \subsubsection{Syntax Highlighting}
@@ -147,7 +147,8 @@ The expression \code{((- 23))} is therefore reformatted into \code{-23}, making 
     \label{fig:ce_beforeafter}
 \end{figure}
 
-Figure \ref{fig:ce_beforeafter} shows a comparison of the CounterExample feature between the initial state and at the end of the project.
+Figure \ref{fig:ce_beforeafter} shows a comparison of the
+\textit{CounterExample} feature between the initial state and at the end of the project.
 The representation is much cleaner and easier to immerse.
 Also note that more room is given so that is does not have a clumsy effect on the user's eye. \\
 
@@ -177,7 +178,7 @@ For example, in figure \ref{fig:hover} the user can actually find out, where his
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth/2]{results/hover.png}
-    \caption{HoverInformation Example}
+    \caption{\textit{HoverInformation} Example}
     \label{fig:hover}
 \end{figure}
 
@@ -204,7 +205,7 @@ if an error occurred or the requested symbol was already a declaration.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/goto.png}
-    \caption{GoToDefinition Error Reporting}
+    \caption{\textit{GoToDefinition} Error Reporting}
     \label{fig:goto}
 \end{figure}
 
@@ -256,7 +257,7 @@ but also dead code is lifted by a special text.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_show_numbers}
-    \caption{CodeLens Shows the Number of Uses}
+    \caption{\textit{CodeLens} Shows the Number of Uses}
     \label{fig:result_codelens_references}
 \end{figure}
 
@@ -271,7 +272,7 @@ because they no longer have to jump back and forth between files and they do not
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/codelens_opened}
-    \caption{CodeLens Shows References in Pop-up}
+    \caption{\textit{CodeLens} Shows References in Pop-up}
     \label{fig:result_codelens_references_popup}
 \end{figure}
 
@@ -339,7 +340,7 @@ as shown in listing \ref{lst:codelens_code_old}.
 Comments have been added to understand the code without context.
 The code has been simplified for illustration purposes.
 
-\begin{lstlisting}[language=csharp, caption={Example for CodeLens in the Prototype}, captionpos=b, label={lst:codelens_code_old}]
+\begin{lstlisting}[language=csharp, caption={Example for \textit{CodeLens} in the Prototype}, captionpos=b, label={lst:codelens_code_old}]
 // for each symbol in the current opened Dafny file...
 foreach (var symbol in fileSymboltable.GetFullList())
 {
@@ -362,7 +363,7 @@ foreach (var symbol in fileSymboltable.GetFullList())
 Newly this works via a property as a one-liner as shown in listing \ref{lst:codelens_code_new}.
 The symbol table simplifies the development enormously.
 
-\begin{lstlisting}[language=csharp, caption={Example for CodeLens With the new Symbol Table}, captionpos=b, label={lst:codelens_code_new}]
+\begin{lstlisting}[language=csharp, caption={Example for \textit{CodeLens} With the new Symbol Table}, captionpos=b, label={lst:codelens_code_new}]
 foreach (var symbol in _manager.GetAllSymbolDeclarations())
 {
   var symbolReferenceCounter = symbol.Usages.Count;
@@ -438,7 +439,7 @@ This minimizes the effort to migrate the plugin to other IDEs.
 
 
 \subsection{Deployment}
-The final plugin has been published to the Visual Studio Code Marketplace as a preview version \cite{our-dafny-plugin}.
+The final plugin has been published to the Visual Studio Code marketplace as a preview version \cite{our-dafny-plugin}.
 The installation is very easy and runs automatically.
 Any Windows user can install it \textendash{} try it out and leave feedback.\\
 
@@ -609,7 +610,7 @@ Thus, we decided to ignore these issues.
 For example, Sonar would like us to put all \code{Visit} methods next to each other, and also all \code{Leave} methods.
 However, when they belong to the same AST node, we prefer to keep the \code{Visit} and \code{Leave} of that AST-node together.
 
-To sonar report is shown in figure \ref{fig:sonarserver}.
+To Sonar report is shown in figure \ref{fig:sonarserver}.
 
 \begin{figure}[H]
     \centering
@@ -640,7 +641,7 @@ This may be surprising at first. But the following factors must be taken into ac
     The typeInterfaces directory is almost three times as large.
     \item Strings are stored centrally in the resource package.
     As a result, the package is now twice as large.
-    \item We added new configuration options such as dark and light mode support for \intnote{CounterExample}.
+    \item We added new configuration options such as dark and light mode support for \textit{CounterExample}.
     \item The size of the original server requests in \code{server}
     could even be reduced by almost 100 LOC in the new version \code{serverRequests}.
 \end{itemize}

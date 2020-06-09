@@ -207,7 +207,7 @@ The following skeleton code demonstrates how a custom request handler can be imp
 
 \pagebreak
 
-\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation for CounterExample}, captionpos=b, label={lst:lspcustomhandler}]
+\begin{lstlisting}[language=csharp, caption={LSP Handler Implementation for \textit{CounterExample}}, captionpos=b, label={lst:lspcustomhandler}]
 public class CounterExampleParams : IRequest<CounterExampleResults> { ... }
 public class CounterExampleResults { ... }
 
@@ -254,7 +254,7 @@ These include, for example:
 
 The plugin launches by calling the method \code{activate} within \code{extension.ts}.
 
-\begin{lstlisting}[language=typescript, caption={extension.ts}, captionpos=b, label={lst:extension-file}]
+\begin{lstlisting}[language=typescript, caption={\code{extension.ts}}, captionpos=b, label={lst:extension-file}]
 import * as vscode from 'vscode';
 
 // This method is called when the extension is activated.
@@ -268,7 +268,7 @@ The primary logic is handled by the Dafny language server.
 To communicate with the language server, the language server must first be started locally as a process by the plugin. \\
 
 In the prototype, it is assumed that the server is located in a specific directory relative to the client.
-Since the Dafny language server is not part of the plugin delivery to the VSCode Market Place,
+Since the Dafny language server is not part of the plugin delivery to the VSCode marketplace,
 this is an issue for the plugin release.
 An automated download of the newest release of the Dafny language server was missing.
 Therefore, a goal of this bachelor thesis was to perform an automated download of the Dafny language server to the local machine of the user.
@@ -457,7 +457,7 @@ In line 11, a nested scope is opened.
 Printing \code{a} at first will still yield the local variable.
 However, in the nested scope, we can redefine \code{a} again, shadowing the own local variable.
 Further calls of \code{a} will then return the boolean value.
-\code{this.a} will still yield 2, even inside the nested scope.\\
+\code{this.a} will still yield \code{2}, even inside the nested scope.\\
 
 This behaviour can be summarized with the following three rules:
 \begin{itemize}
@@ -510,7 +510,7 @@ The body itself consists of a list of statements.
 In the above example, there are two statements.
 The first one is an assignment.
 The assignment has again a left and a right side.
-The right hand side is a binary expression, with the +-operator in between two operands.
+The right hand side is a binary expression, with the \code{+}-operator in between two operands.
 The left operand is a name segment expression, and on the right hand side is a literal expression.
 The second statement inside the body is a simple print statement with only one item to print, the name segment expression \code{i}.
 While these are just three lines of code, the AST is already quite large compared to the code.\\
@@ -747,7 +747,7 @@ Just these simple rules increase the readability significantly.
 \end{figure}
 
 In the current public plugin an update was made to the grammar file \cite{syntax_update}.
-Among other things, new keywords are now recognized and visually marked, such as "expect".
+Among other things, new keywords are now recognized and visually marked, such as \code{expect}.
 This update will be applied to the Dafny grammar file for our plugin version as well.
 
 \subsubsection{Verification}
@@ -870,7 +870,7 @@ In figure \ref{fig:analysis_goto_1}, an example is shown.
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{analysis/analysis_goto_1}
-    \caption{Go to Definition via Context Menu}
+    \caption{\textit{GoToDefinition} via Context Menu}
     \label{fig:analysis_goto_1}
 \end{figure}
 
@@ -901,7 +901,7 @@ This should open a popup box in which the corresponding uses are shown.
 \begin{figure}[H]
     \centering
     \includegraphics[width=9cm]{analysis/analysis_codelens}
-    \caption{CodeLens Example}
+    \caption{\textit{CodeLens} Example}
     \label{fig:analysis_codelens}
 \end{figure}
 
