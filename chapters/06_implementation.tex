@@ -912,7 +912,7 @@ The \code{Visit}-method thus gets reduced to listing \ref{lst:visitor2method}.
 \begin{lstlisting}[language=csharp, caption={Visiting a Method, Second Visitor}, captionpos=b, label={lst:visitor2method}]
 public override void Visit(Method o)
 {
-    var preDeclaredSymbol = 
+    var preDeclaredSymbol =
         FindDeclaration(o.Name, SurroundingScope, Kind.Method);
     SetScope(preDeclaredSymbol);
 }
@@ -1368,7 +1368,7 @@ In the preceding thesis, we had to switch from .NET Core to .NET Framework \cite
 The reason for this was that although OmniSharp was compatible with .NET Core,
 the Dafny backend was not \cite{sa}.\\
 
-.NET Core has native support for Linux and macOS. 
+.NET Core has native support for Linux and macOS.
 With .NET Framework, however, a Windows executable is generated upon compilation.
 Therefore, it is necessary to rely on Mono for Unix based operating systems.
 Mono allows to execute \code{.exe} files on said systems \cite{mono}. \glsadd{mono} \\
@@ -1693,7 +1693,7 @@ For each of these symbols the correct position in the Dafny source code could be
 and with a regular expression found code documentation comments could be read out.
 The documentation text, read out by the pattern matching, can then be stored in the corresponding symbol as code documentation.
 This information can then be sent to the client via the LSP and displayed,
-for example in the case of \textit{AutoCompletion} or hover information,
+for example in the case of \textit{AutoCompletion} or \textit{HoverInformation},
 as a \code{documentation} element \cite{vscodeAPI}.
 
 \subsubsection{Cleaner Hover Information}
