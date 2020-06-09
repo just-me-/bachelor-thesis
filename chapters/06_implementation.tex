@@ -415,7 +415,16 @@ There is an extract of the plugin description, which can be seen by users in the
     \label{fig:settings}
 \end{figure}
 
-For example the colors of the displayed CounterExample can be changed or other compile arguments can be set for Dafny as default.
+For example the colors of the displayed \textit{CounterExample} can be changed or other compile arguments can be set for Dafny as default.
+To do this, the plugin user can simply open his settings in VSCode and
+either accept adjustments directly there, or he will be forwarded to \code{settings.json} as shown in figure \ref{fig:settings_vscode}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{implementation/settings_vscode}
+    \caption{Part of the Dafny Extension Configuration in VSCode}
+    \label{fig:settings_vscode}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -952,6 +961,8 @@ Remember that the data structure of the symbol table is basically a double linke
 
 Both options are implemented so that they can return a single, first match, or all symbols that match a criterion.
 To illustrate this, two examples are shown in figure \ref{fig:impl_symboltablenav}.
+On the left side, the system searches specifically from top to bottom for the symbol that best matches a position specification. On the right side, starting from one symbol, all symbols in the available scope are searched.
+
 With this type of tree inspection, the runtime is reduced, as it is no longer necessary to visit every symbol.
 
 The navigator overcomes the following tree challenges:
@@ -1214,6 +1225,19 @@ the field \code{CompletionItem} can contain additional details.
 Those details could hold the parameter list.
 This way, the user could be informed about them.\\
 
+\textbf{Suggestions for More Complex Types} \\
+As soon as the visitor supports more symbols, \textit{AutoCompletion} can also complete more complex data types.
+Especially for arrays.
+For example, it would be helpful if array objects were supported by \textit{AutoCompletion}.
+In the example shown in figure \ref{fig:array_support},
+the property \code{Length} would then have to be suggested for the array \code{a}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{implementation/array_support}
+    \caption{Missing Array Support}
+    \label{fig:array_support}
+\end{figure}
 
 \subsubsection{\textit{CodeLens}}
 \label{section:implementation:features:codelens}

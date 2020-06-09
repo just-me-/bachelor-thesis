@@ -279,12 +279,12 @@ Just like \textit{Rename}, the feature does not work for code that includes the 
 due to the missing global symbol table as described in section \ref{section:globalSymbolTable}.
 
 \subsubsection{Automatic Code Completion}
-Auto completion lists the available symbols in the current context on request.
+\textit{AutoCompletion} lists the available symbols in the current context on request.
 Compared to our previous thesis, we could significantly improve this function.
 Instead of displaying all found symbols in the opened file as before,
 we can now use the new symbol table to consider the current scope for suggestions. \\
 
-Our auto completion supports three basic types of proposals:
+Our \textit{AutoCompletion} supports three basic types of proposals:
 \begin{itemize}
     \item Completion after a dot was written.
     \item Completion after \code{new} was written.
