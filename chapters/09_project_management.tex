@@ -293,10 +293,16 @@ tests were written only for the Dafny language server.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{tmpPlaceHolderTodo}
+    \includegraphics[width=\textwidth]{coverage/overview}
     \caption{Language Server Test Coverage}
     \label{fig:test_coverage}
 \end{figure}
 
-How good test coverage is can be seen here: \ref{fig:test_coverage}
-\intnote{or is it results?}
+How good test coverage is can be seen in figure \ref{fig:test_coverage}.
+We have not achieved 100\% coverage in all components.
+This is due to the following reason:
+It was very important for us to test the business logic of our language server.
+For those classes with their own logic we have therefore set a test coverage of 100\%.
+However, components that call Dafny itself and only pass information,
+or interfaces to frameworks such as OmniSharp, have not been tested with our unit tests.
+Dafny and OmniSharp contain own tests about their own logic. Therefore we assume that they work accordingly. We have put our focus on testing logic implemented by us.
