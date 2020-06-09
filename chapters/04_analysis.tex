@@ -612,7 +612,7 @@ This component will be called \textit{symbol table} throughout this thesis and t
 \textit{Symbol tree} would consequently be a more accurate name.
 
 %%%%
-
+\pagebreak
 \subsection{Dafny Expression and Statement Types}
 \label{section:analysis_dafnyASTStuff}
 Dafny is a very versatile language.
@@ -622,17 +622,19 @@ The most important ones are discussed in this section.\\
 
 Dafny works with three major base classes in its AST.
 These are:
+\begin{multicols}{3}
 \begin{itemize}
     \item \code{Expression}
     \item \code{Statement}
     \item \code{Declaration}
 \end{itemize}
+\end{multicols}
 Besides these, some AST-nodes are isolated, such as \code{AssignmentRHS}, which is the right hand side of an assignment.
 \code{LocalVariable} is another example for a separated class, that does not extend any base class one would expect.
 Why this isolation of certain AST-nodes was made by Dafny could not be evaluated.
 Both items are technically expressions and could thus be subclasses of \code{Expression}.
 Figures \ref{fig:dafny_expr}, \ref{fig:dafny_stmt}, \ref{fig:dafny_decl} and \ref{fig:dafny_vars} follow the structure given by Dafny and present the AST-elements that were analyzed.
-These are also the nodes a dedicated \code{Accept} and \code{Visit}-method was implemented for.\\
+These are also the nodes a dedicated \code{Accept} and \code{Visit}-method was implemented for.
 
 Since most of them are self-explanatory, only chosen nodes are explained.\\
 

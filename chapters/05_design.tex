@@ -193,6 +193,7 @@ For each Dafny file in the workspace, a buffer stores whether the user wants to 
 This way the counter example is hidden when the user switches to another file
 and automatically shown again when switching back to the original Dafny file.
 
+\pagebreak
 \subsubsection{Types in TypeScript}
 As already mentioned in the previous sections, \code{any}-types were largely supplemented by dedicated type interfaces.
 This prevents type changes of variables as known in pure JavaScript.
@@ -284,13 +285,16 @@ By just creating a fake instance, the providers can very easily be tested using 
 \subsubsection{CustomDTOs}
 To provide the results of custom LSP requests, result wrapper classes had to be created.
 Since both, \code{Handlers} and \code{Providers} require these, they were extracted to a separate package.
-It just contains the wrapper classes for
+It just contains the wrapper classes for:
+
+\begin{multicols}{2}
 \begin{itemize}
     \item \code{CounterExampleResults}
     \item \code{CounterExampleParams}
     \item \code{CompilationResults}
     \item \code{CompilationParams}
 \end{itemize}
+\end{multicols}
 
 \subsubsection{Workspace Manager}
 A Dafny project consists out of multiple \code{.dfy} files.
@@ -471,7 +475,7 @@ This is shown in figure \ref{fig:workflow2}.
     \label{fig:workflow2}
 \end{figure}
 
-
+\pagebreak
 \subsection{Symbol Table}
 Since the symbol table is a core concept of this thesis, it will explained further in this section.
 In the following, the design of the symbol table is described as well as it is built up with the help of the visitor pattern.
