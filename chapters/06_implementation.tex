@@ -79,7 +79,7 @@ and contains basically the plugin's "main logic".
 It is to start the Dafny language server and establish a connection,
 as well as basically initialize the plugin. This includes creating the UI management component and command registrations.
 
-If no local language server is available, the language server is downloaded from a server using the \linebreak 
+If no local language server is available, the language server is downloaded from a server using the \linebreak
 \code{LanguageServerInstaller} component.
 This component is only used inside the package, and is not exported to the outside,
 as it can be seen in the figure \ref{fig:dafnyLanguageServerStartup}.
@@ -1366,7 +1366,7 @@ the Dafny backend was not \cite{sa}.\\
 
 .NET Core has native support for Linux and macOS.
 With .NET Framework, however, a Windows executable is generated upon compilation.
-Therefore, is is necessary to rely on Mono for Unix based operating systems.
+Therefore, it is necessary to rely on Mono for Unix based operating systems.
 Mono allows to execute \code{.exe} files on said systems \cite{mono}. \glsadd{mono} \\
 
 Unfortunately, in the course of our thesis we discovered that the language server could not be started correctly with Mono.
@@ -1459,13 +1459,13 @@ However, by testing if the parent is correct, and by testing the children count,
 The same applies for the declaration-usage relation.
 You further note, that there is no information given about base classes, parameter lists or such.
 But items like these are indirectly tested.
-If the base-class would not not be attached properly,
+If the base-class would not be attached properly,
 a symbols declaration would not be found, which could be seen in the string representation.\\
 
 \textbf{Symbol Table Navigation}\\
 To test the navigator and manager component, a fake symbol class was created.
 It allows to define the symbol position within the constructor.
-Afterwards, symbols can be attached to each other at will.
+Afterwards, symbols can be attached to each other.
 This way, the top-down and bottom-up algorithms could be tested.
 An example is shown in listing \ref{lst:botuptest}.
 
@@ -1663,7 +1663,7 @@ it is sometimes difficult to differentiate the results.
 
 Therefore we have designed a usability test and found a test person to perform this test \cite{interview-remo}.
 The test person, Remo Herzog, was chosen because he is programming in an environment based on VSCode
-and therefore is well integrated into the corresponding VSCode universe. \\
+and therefore he is well integrated into the corresponding VSCode universe. \\
 
 The goal of this test was primarily to find out if the features
 we implemented were implemented as a VSCode Plugin user would expected them to be,
@@ -1737,7 +1737,7 @@ The test person would have wished such a play button \cite{interview-remo}.
     \label{fig:runPython}
 \end{figure}
 
-It is possible to also add this icon for Dafny. If the button is clicked, a compile and run is triggered.
+It is possible to also add this icon for Dafny. If the button is clicked, a \textit{Compile and Run} is triggered.
 Similar to the UI elements for the Dafny status bar,
 a button can be created by the VSCode API \cite{vscodeAPI}.
 It can be assigned an icon and a click action.
