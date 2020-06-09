@@ -1,6 +1,6 @@
 \section{Results}
 \label{section:results}
-As described in our objectives, our work has three basic stakeholders. \\
+As described in the objectives, our work has three basic stakeholders. \\
 
 On the one hand, there are the students of the HSR who want to get familiar with Dafny.
 For these students, a useful plugin should be offered to make the development with Dafny easier. \\
@@ -9,24 +9,24 @@ On the other hand, there are the developers who want to extend the language serv
 This category also includes developers who want to integrate other IDE's by additional clients.\\
 
 Last but not least, anyone willing to program with Dafny may download the plugin from the VSCode marketplace.
-Since we wanted to make a contribution to the Dafny community with our work,
-it was always a big concern for us to achieve a quality level, so that it can be published.\\
+Since we wanted to make a contribution to the Dafny community with our project,
+it was always a major concern for us to achieve a quality level so that it can be published.\\
 
-This chapter describes the results achieved and further prospects for each target group.
+This chapter describes the results achieved and further prospects for each stakeholder.
 
 \subsection{Features for Dafny Developers}
 In this section, the achieved feature set of the project is described and critically reflected.
 The current version of the plugin supports the following functionality:
 \begin{enumerate}
-    \item Syntax Highlighting
-    \item Code Verification
+    \item SyntaxHighlighting
+    \item CodeVerification       %%?? italic? together? apart?
     \item Compilation
     \item CounterExample
-    \item Hover Information
-    \item \textit{GoToDefinition}
-    \item \textit{Rename}
-    \item \textit{CodeLens}
-    \item \textit{AutoCompletion}
+    \item HoverInformation
+    \item GoToDefinition
+    \item Rename
+    \item CodeLens
+    \item AutoCompletion
 \end{enumerate}
 
 \subsubsection{Syntax Highlighting}
@@ -45,7 +45,7 @@ The following screenshot shows how syntax highlighting looks inside Visual Studi
 \end{figure}
 
 As you can see, keywords like \textit{method}, \textit{returns}, \textit{requires} and \textit{ensures} are marked in purple.
-Types like int are printed in blue and comments become green.
+Types like \code{int} are printed in blue and comments become green.
 Symbols, such as classes and methods, are displayed in a brownish color.
 Just these simple rules increase the readability significantly.
 
@@ -61,7 +61,7 @@ At the start of the project, the feature held some major flaws.
 The code just invoked the \code{DafnyTranslationUnit}, taken over by the pre-existing project.\\
 
 Verification was reworked completely during this project.
-First of all, Dafny code itself was analyzed to get a better understanding of how Dafny compiles its code and how errors are reported.
+First of all, the Dafny implementation itself was analyzed to get a better understanding of how Dafny compiles its code and how errors are reported.
 Those errors could finally directly be extracted out of the Dafny error reporting engine.
 Thus, the user is now informed not only about logical errors, but also about syntax errors.
 Furthermore, warnings and information diagnostics are now also reported.
@@ -121,21 +121,21 @@ The current implementation improved that significantly, is now completely integr
 \end{figure}
 
 
-If the user chooses the option to \code{Compile And Run}, the actual launch of the executable takes quite a long time - up to about 20 seconds.
+If the user chooses the option to \textit{CompileAndRun}, the actual launch of the executable takes quite a long time - up to about 20 seconds.
 However, this delay is not related to the language server or the compilation process.
 If the executable is launched manually within another console outside of Visual Studio Code, it also takes long until the program starts.
 The effect just occurs the first time an executable is launched.
 The reason for that could not be investigated.
 
 \subsubsection{CounterExample}
-Providing CounterExamples was already possible in the prototype.
-A major flaw was that the representation of the CounterExample was quite complex and not intuitively readable.
-Thus, it was a goal to ease the CounterExample representation.\\
+Providing counter examples was already possible in the prototype.
+A major flaw was that the representation of the counter examples was quite complex and not intuitively readable.
+Thus, it was a goal to ease their representation.\\
 
 For this, the related \code{model.bvd} file was studied.
 It is quite a  cryptic file and getting a comprehensive understanding of it would be very complex.
 However, an \code{inital state} was located which seemed exactly that part of information, that the user is interested in.
-Thus, unlike previous in versions, only that \code{initial state} is considered in CounterExamples.
+Thus, unlike previous in versions, only that \code{initial state} is considered in counter examples.
 Furthermore, any unreadable representations such as \code{**myVar} or \code{TU!Val23} were omitted.
 To allow the user to catch the information at first sight, obsolete brackets are also removed, and the minus sign is directly moved to the number.
 The expression \code{((- 23))} is therefore reformatted into \code{-23}, making the term much more perceivable.
@@ -148,11 +148,11 @@ The expression \code{((- 23))} is therefore reformatted into \code{-23}, making 
 \end{figure}
 
 Figure \ref{fig:ce_beforeafter} shows a comparison of the CounterExample feature between the initial state and at the end of the project.
-The representation is much cleaner and easier to immerse. \intnote{todo dieses untere bild updaten. verification streicht neu alles an.}
+The representation is much cleaner and easier to immerse.
 Also note that more room is given so that is does not have a clumsy effect on the user's eye. \\
 
 This feature was also improved on the client side.
-The user has the option to configure the color scheme of the CounterExample representation, if he does not like the default colors.
+The user has the option to configure the color scheme of the counter example representation, if he does not like the default colors.
 The default colors are chosen with respect to the user's base color theme of VSCode (dark or light mode).
 As in figure \ref{fig:ce_beforeafter} the light theme is shown,
 the following figure \ref{fig:ce_dark} shows the dark mode colors.
@@ -164,15 +164,15 @@ the following figure \ref{fig:ce_dark} shows the dark mode colors.
     \label{fig:ce_dark}
 \end{figure}
 
-The CounterExample will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
-If the user switches between windows, the CounterExample state is buffered, so that once the user switches back to the original window, the CounterExample will be shown again.
+The counter example will correctly adjust if the user continues to work on the code and vanish, once the problem is resolved.
+If the user switches between windows, the visibility state is buffered, so that once the user switches back to the original window, the counter example will be shown again.
 
 \subsubsection{Hover Information}
-Hover Information displays a set of information, whenever the user hovers with the mouse cursor over a code symbol.
+\textit{HoverInformation} displays a set of information, whenever the user hovers with the mouse cursor over a code symbol.
 The feature itself was very simple to implement, since it receives all necessary information from the symbol table.
 It was additionally implemented as an exemplary feature, to show off how easy some LSP functionality can now be implemented using the new symbol table.
-Similar to hover information, other features like text highlighting can be added as well in the future, which is discussed in chapter \ref{section:conclusion}.
-Hover may not provide much useful information to the user, but it is still a nice gimmick.
+Similar to \textit{HoverInformation}, other features like text highlighting can be added as well in the future, which is discussed in chapter \ref{section:conclusion}.
+\textit{HoverInformation} may not provide much useful information to the user, but it is still a nice gimmick.
 For example, in figure \ref{fig:hover} the user can actually find out, where his \code{field} is declared if he is unsure.
 \begin{figure}[H]
     \centering
@@ -181,20 +181,20 @@ For example, in figure \ref{fig:hover} the user can actually find out, where his
     \label{fig:hover}
 \end{figure}
 
-\subsubsection{\textit{GoToDefinition}}
+\subsubsection{GoToDefinition}
 Compared to the prototype, \textit{GoToDefinition} has been significantly improved.
 Prior to this bachelor thesis, the feature just scanned all code for the first name-match and reported it as the definition.
 This did neither work if multiple symbols with the same name occurred, nor if the declaration was placed after the first usage in the code.
 Both cases are now handled well by the symbol table engine.\\
 
-Runtime could also be improved, since the symbol table generator scans for possible declarations scope by scope, and doesn't just iterate over all symbols.
+Runtime could also be improved, since the symbol table generator scans for possible declarations scope by scope, and  does not just iterate over all symbols.
 Last but not least, in the prototype, the cursor had to be at the beginning of a symbol to recognize the symbol at all.
 This major flaw has of course been overcome.
 The cursor can now be at any character within a symbol.\\
 
 Technically, the feature is misnamed.
-A better name would actually be GoToDeclaration, since it jumps to the symbol declaration, not definition.
-LSP would even offer a dedicated handler for this, \code{textDocument/declaration} \cite{lspspec}.
+A better name would actually be \textit{GoToDeclaration}, since it jumps to the symbol declaration, not definition.
+LSP would even offer a dedicated handler for this, \linebreak \code{textDocument/declaration} \cite{lspspec}.
 However, we kept the name to maintain the consistency of our work.
 But perhaps a rename would be appropriate.
 
@@ -204,7 +204,7 @@ if an error occurred or the requested symbol was already a declaration.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/goto.png}
-    \caption{\textit{GoToDefinition} Error Reporting}
+    \caption{GoToDefinition Error Reporting}
     \label{fig:goto}
 \end{figure}
 
@@ -213,7 +213,7 @@ If the targeted file is not opened, VSCode will just open it inside the workspac
 It is also possible to go to the definition of \code{this}-Expressions, which will just jump to the class definition.
 The feature works also across code that is not within a block statement, for example for expressions occurring inside an \code{ensures}-clause.
 
-\subsubsection{\textit{Rename}}
+\subsubsection{Rename}
 \textit{Rename} was newly added to the language server.
 It is a feature that could only be realized, since the symbol table provides all necessary information.
 If the user wants to execute a rename, all dependent symbols are deduced correctly as you see in figure \ref{fig:rename}.
@@ -221,7 +221,7 @@ If the user wants to execute a rename, all dependent symbols are deduced correct
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/rename.png}
-    \caption{\textit{Rename} of a Symbol}
+    \caption{Renaming of a Symbol}
     \label{fig:rename}
 \end{figure}
 
@@ -244,8 +244,8 @@ However, if a file gets included elsewhere, it does not know about it.
 This is, since no global symbol table is currently used for the entire workspace.
 This issue and possible solutions were described in section \ref{section:globalSymbolTable}.\\
 
-\subsubsection{\textit{CodeLens}}
-\textit{CodeLens} is an excellent way for the developer to see which classes and methods were used how often - and where.
+\subsubsection{CodeLens}
+\textit{CodeLens} is an excellent way for a developer to see which classes and methods were used how often - and where.
 In order to be able to assign the references reliably and
 also to consider the references across included files, the symbol table was necessary. \\
 
@@ -262,8 +262,8 @@ but also dead code is lifted by a special text.
 
 If the user clicks on one of the reference texts, a popup window opens,
 as figure \ref{fig:result_codelens_references_popup} shows.
-On the right hand side of the popup window all references found are listed.
-If the user clicks on the corresponding references, the corresponding code
+On the right hand side of the popup window all references are listed.
+If the user clicks on them, the corresponding code
 location in the right file opens on the left side - at the location within the popup.
 This is very convenient for developers,
 because they no longer have to jump back and forth between files and they do not have to scroll unnecessarily.
@@ -299,7 +299,7 @@ The three cases are shown in figure \ref{fig:result_completion}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/completion_allinone.png}
-    \caption{\textit{AutoCompletion}}
+    \caption{AutoCompletion}
     \label{fig:result_completion}
 \end{figure}
 
@@ -339,7 +339,7 @@ as shown in listing \ref{lst:codelens_code_old}.
 Comments have been added to understand the code without context.
 The code has been simplified for illustration purposes.
 
-\begin{lstlisting}[language=csharp, caption={Example for \textit{CodeLens} in the Prototype}, captionpos=b, label={lst:codelens_code_old}]
+\begin{lstlisting}[language=csharp, caption={Example for CodeLens in the Prototype}, captionpos=b, label={lst:codelens_code_old}]
 // for each symbol in the current opened Dafny file...
 foreach (var symbol in fileSymboltable.GetFullList())
 {
@@ -362,7 +362,7 @@ foreach (var symbol in fileSymboltable.GetFullList())
 Newly this works via a property as a one-liner as shown in listing \ref{lst:codelens_code_new}.
 The symbol table simplifies the development enormously.
 
-\begin{lstlisting}[language=csharp, caption={Example for \textit{CodeLens} With the new Symbol Table}, captionpos=b, label={lst:codelens_code_new}]
+\begin{lstlisting}[language=csharp, caption={Example for CodeLens With the new Symbol Table}, captionpos=b, label={lst:codelens_code_new}]
 foreach (var symbol in _manager.GetAllSymbolDeclarations())
 {
   var symbolReferenceCounter = symbol.Usages.Count;
@@ -411,7 +411,7 @@ Within the picture, dependencies to the \code{Utilities} layer are excluded for 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{dependency_diagram_server_final.png}
-    \caption{Server Package Dependencies, generated by Visual Studio}
+    \caption{Server Package Dependencies Generated by Visual Studio}
     \label{fig:dependency_graph_2}
 \end{figure}
 
@@ -437,7 +437,7 @@ We isolated the VSCode components in a separate module if possible.
 This minimizes the effort to migrate the plugin to other IDEs.
 
 
-\subsection{Publication of the Plugin}
+\subsection{Deployment}
 The final plugin has been published to the Visual Studio Code Marketplace as a preview version \cite{our-dafny-plugin}.
 The installation is very easy and runs automatically.
 Any Windows user can install it \textendash{} try it out and leave feedback.\\
@@ -481,7 +481,7 @@ Thanks to the interface, we can currently download the Dafny language server fro
 Once the pull request to Dafny is accepted, the download process can then be easily adjusted to download everything from Dafny directly.\\
 
 We decided on this simple variant in order to keep the effort for this temporary solution as low as possible.
-Alternatively, this process could have been automated with the GitLab CI using the GitLab API \cite{gitlab-api} to download the CI artifacts.
+Alternatively, this process could have been automated with the GitLab CI using the GitLab API \cite{gitlab-api} to download the CI artifacts. \glsadd{gitlab} \glsadd{ci}
 The artifacts could also be made available through the CI process as a static website with GitLab Pages \cite{gitlab-pages}.
 
 \subsubsection{Easy Installation}
@@ -504,7 +504,7 @@ In the marketplace we search for extensions for Dafny and find our plugin as sho
     \label{fig:install_search}
 \end{figure}
 
-Beside our plugin description \cite{our-dafny-plugin},
+Besides the plugin description \cite{our-dafny-plugin},
 which contains a description of the plugin and some example screenshots,
 the plugin store automatically lists an overview of all shortcuts and possible settings for the user,
 as shown in figure \ref{fig:supportedSettingsAndShortCutsOVerview}.
@@ -542,7 +542,7 @@ Within a method, code lines are generated, either containing
 The chance to create a variable or to create print statement is 90\%, thus the generated files will contain about 90\% variable name segments, that have to be resolved.
 This challenges the symbol table quite a bit.
 A tree is still grown due to the while-blocks, so not all symbols are within the same tree branch.
-Since the \code{textDocuemt/didOpen}, which triggers the symbol table instantiation, is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
+Since \code{textDocuemt/didOpen}, which triggers the symbol table instantiation, is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
 The test has shown the following results:
 
 \begin{itemize}
@@ -550,7 +550,7 @@ The test has shown the following results:
     \item 1000 LOC: 1200ms
     \item 10'000 LOC: 18'000ms
 \end{itemize}
-
+\glsadd{loc}
 A resulting trend line is shown in figure \ref{fig:trendline_1}.
 
 \begin{figure}[H]
@@ -560,9 +560,9 @@ A resulting trend line is shown in figure \ref{fig:trendline_1}.
     \label{fig:trendline_1}
 \end{figure}
 
-This scheme follows a $O(n*log(n))$ scheme, which was expected.
-While 18seconds seem quite high, consider that 10'000 lines of code is huge.
-When working on the \code{DafnyAST.cs} file, which also contains 10'000 LOC, even Visual Studio struggled.
+This distribution follows a $O(n*log(n))$ scheme, which was expected.
+While 18 seconds seem quite high, consider that 10'000 lines of code is huge.
+While we were working on the \code{DafnyAST.cs} file, which also contains 10'000 LOC, even Visual Studio struggled.
 Practical tests have shown that everyday usage of the plugin is pleasant.
 It generally reacts fast enough.
 All methods are \code{async}, so that the user is never blocked in his activity.
@@ -573,23 +573,21 @@ This chapter describes the most important metrics and quality measures for the s
 The results are also compared to the prototype.
 
 \subsubsection{Server}
-The language server consists of 4'000 lines of code. The following report is generated by Visual Studio.
+The language server consists of 5'000 lines of code. The following report is generated by Visual Studio.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{results/server_metric.png}
     \caption{Server Package Dependencies, generated by Visual Studio}
     \label{fig:dependency_graph}
 \end{figure}
-Note that \code{Resources} contains generated files and should not be counted.
-Sonar will report 4'000 LOC.
-
+Contrary to the Visual Studio report, Sonar will report 4'000 LOC.
 Compared to the prototype, this is an increase of about 200\%.
 Aside the increased functionality, this is mainly to explain by the extensive and repetitive code necessary for the visitor within the \code{SymbolTable} namespace.
 Just to create a single symbol, about 20 LOC are necessary as seen in chapter \ref{chapter:implementation}.\\
 
-For comparison: the original language server written in TypeScript had 3'100 LOC, rounded off \cite{sonar-old_ts_server}.
+For comparison: The original language server written in TypeScript contained 3'100 LOC, rounded off \cite{sonar-old_ts_server}.
 But this only includes the middle class; the middle class in the Dafny project is not included.
-The table shown in figure \ref{fig:old_ts_languageserver} shows the 10 largest components of the old language server. \\
+The table shown in figure \ref{fig:old_ts_languageserver} shows the ten largest components of the old language server. \\
 
 \begin{figure}[H]
     \centering
@@ -601,16 +599,17 @@ The table shown in figure \ref{fig:old_ts_languageserver} shows the 10 largest c
 Interesting is the comparison of the code base required for a feature like \textit{GoToDefinition}.
 The new \\
 \code{DefinitionsProvider} just uses 38 lines of code.
-However, only about 5 are used for the core logic, all others are just error handling and user messaging.
+However, only about five are used for the core logic, all others are just error handling and user messaging.
 This is a major improvement compared to the pre-existing project.
 
-The Sonar report for the server only detects about 15 issues.
+The Sonar report for the server only detects about fifteen issues.
 The security aspects were ensured to be no problem, since the server is running on a local machine.
-We did not want to remove the remaining smells.
-For example, Sonar would like us to put all \code{Visit} and all \code{Leave} methods next to each other.
-However, we prefer to have the \code{Visit} and \code{Leave} methods next to each other, when they belong to the same AST node.
+The remaining smells would lower the code quality.
+Thus, we decided to ignore these issues.
+For example, Sonar would like us to put all \code{Visit} methods next to each other, and also all \code{Leave} methods.
+However, when they belong to the same AST node, we prefer to keep the \code{Visit} and \code{Leave} of that AST-node together.
 
-To sonar report is shown in figure \ref{fig:sonarserver}
+To sonar report is shown in figure \ref{fig:sonarserver}.
 
 \begin{figure}[H]
     \centering
@@ -621,10 +620,10 @@ To sonar report is shown in figure \ref{fig:sonarserver}
 
 
 \subsubsection{Client}
-For the Client we have direct comparisons between the old plugin and the new plugin thanks to SonarCloud.
+In the client, a direct comparison between the pre-existing plugin and the new plugin can be made thanks to SonarCloud.
 
-Compared to the original rounded 900 LOC \cite{sonar-client_old} in the client part of the old plugin,
-the new server reaches rounded 1'400 LOC \cite{sonar-client_new}.
+Compared to the original ~900 LOC \cite{sonar-client_old} in the client part of the old plugin,
+the new plugin reaches ~1'400 LOC \cite{sonar-client_new}.
 The numbers are displayed in figure \ref{fig:loc_client_old_new}.
 
 \begin{figure}[H]
@@ -634,14 +633,14 @@ The numbers are displayed in figure \ref{fig:loc_client_old_new}.
     \label{fig:loc_client_old_new}
 \end{figure}
 
-This may be surprising at first sight. But the following factors must be taken into account:
+This may be surprising at first. But the following factors must be taken into account:
 
 \begin{itemize}
     \item The new client implements own interfaces and contains more code due to the encapsulations.
     The typeInterfaces directory is almost three times as large.
-    \item We stored string centrally in the string resources.
-    For example, the size of our string resource is almost twice as large.
-    \item We added new configuration options such as dark and light mode support for the CounterExample.
+    \item Strings are stored centrally in the resource package.
+    As a result, the package is now twice as large.
+    \item We added new configuration options such as dark and light mode support for \intnote{CounterExample}.
     \item The size of the original server requests in \code{server}
     could even be reduced by almost 100 LOC in the new version \code{serverRequests}.
 \end{itemize}
