@@ -52,8 +52,7 @@ Methods have been simplified and the number of parameters could be reduced signi
 Component identifiers have been renamed to be more understandable. \\
 
 However, it is now also noticeable that there are considerably more dependencies on \code{stringRessources}.
-While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.\\
-
+While in the previous version only the module \code{ui} used \code{stringResources}, it is now used by almost all other modules.
 This has the following reason: Up until this refactoring, the task of \code{stringResources} was to be a central collection of all user interface (UI) strings. \glsadd{UI}
 In the code review, it was decided that default values should no longer be set within the independent modules,
 but rather at a central location.
@@ -136,8 +135,6 @@ Individual dependencies are injected. These includes:
 \code{IDafnyRunner} to call compile and run as a callback as you can see in listing \ref{lst:compileAndRun}.
 Furthermore, \code{IDafnyUiManager} is injected
 in order to access the \code{CounterModelProvider} with the appropriate commands and to show or hide it.
-
-\pagebreak
 
 \begin{lstlisting}[language=typescript, caption={Excerpt from \code{commands.ts}}, captionpos=b, label={lst:compileAndRun}]
 [..]
@@ -706,23 +703,25 @@ A HashSet was used to provide fast access to the set.\\
 While this component is specifically used solely for the feature \textit{Rename},
 it was extracted to be also available at other spots if required for future features.
 
-
 \subsection{Symbol Table}
 This chapter describes the implementation of the symbol table.
 The symbol table was designed to handle four different tasks:
 
+\begin{multicols}{2}
 \begin{itemize}
     \item Providing Symbol Information
     \item Symbol Table Generation
     \item Symbol Table Navigation
     \item Symbol Table Management
 \end{itemize}
+\end{multicols}
 
 \subsubsection{Symbol Information}
 Obtaining information about a symbol was realized by a wrapper class.
 Logic was extracted from this class as far as possible to keep it short and concise.
 As we have seen in chapter \ref{chapter:design}, this class needs to contain a lot of properties.
 The most important properties are:
+\begin{multicols}{2}
 \begin{itemize}
     \item Name
     \item File
@@ -739,6 +738,7 @@ The most important properties are:
     \item The associated module
     \item Link to the associated default class for quick access
 \end{itemize}
+\end{multicols}
 
 The provided properties are supposed to facilitate working with the symbol table.
 For example, if a symbol's definition cannot be found with regular methods,
@@ -1120,8 +1120,6 @@ These are now returned as the final suggestions. \\
 
 For clarity, the described process is visualized in the following two figures.
 Listing \ref{lst:myClassCompletionExampleUML} shows a code example, which leads into the resolving sequence in figure \ref{fig:object_completion_diagram_dot}.
-
-\pagebreak
 
 \begin{lstlisting}[language=dafny, caption={Example Dafny Code - Cursor Position at Line 8}, captionpos=b, label={lst:myClassCompletionExampleUML}]
 class myClass {
@@ -1586,8 +1584,6 @@ public static string ToCustomString(this CounterExample ce)
 
 Comparison of the results and the expectation is now very simple.
 The expectation can just be written by hand as follows in listing \ref{lst:testexpectation}.
-
-\pagebreak
 
 \begin{lstlisting}[language=csharp, caption={Expectation}, captionpos=b, label={lst:testexpectation}]
 List<string> expectation = new List<string>()

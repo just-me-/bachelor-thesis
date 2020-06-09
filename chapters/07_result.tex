@@ -544,6 +544,8 @@ The chance to create a variable or to create print statement is 90\%, thus the g
 This challenges the symbol table quite a bit.
 A tree is still grown due to the while-blocks, so not all symbols are within the same tree branch.
 Since \code{textDocuemt/didOpen}, which triggers the symbol table instantiation, is not awaitable, a random LSP request was sent after the opening to wait until all actions are finished.
+
+\pagebreak
 The test has shown the following results:
 
 \begin{itemize}

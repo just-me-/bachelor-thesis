@@ -343,9 +343,8 @@ That is, in contracts or assert statements to prove logical correctness prior to
 It contains a single expression with a single return, but is also compiled and thus also available in regular context \cite{functionVSMethod}.
 \end{itemize}
 
-Listing \ref{lst:functionmethod} shows an example containing all three cases.
-
 \pagebreak
+Listing \ref{lst:functionmethod} shows an example containing all three cases.
 
 \begin{lstlisting}[language=dafny, caption={Function and Method Difference}, captionpos=b, label={lst:functionmethod}]
 function method minFunctionMethod(a:int, b:int) : int {
@@ -389,6 +388,7 @@ lemma ProvingMultiplication(c: int, m: int)
 {}
 \end{lstlisting}
 
+\pagebreak
 \subsubsection{Hiding}
 Hiding is when a derived class redefines a member variable of the base class.
 Dafny supports inheritance with traits.
@@ -420,7 +420,7 @@ This means that within each module, each method name is unique.
 Shadowing means that a class method redefines a variable that was already previously defined as a class member.
 This means that two variables with the same name exist.
 The local variable can be accessed via its name, but to access the class member,
-the keyword \code{this} needs to write in front of the variable name.\\
+the keyword \code{this} needs to write in front of the variable name.
 
 One can even go further and redefine a local variable in a nested block scope.
 Consider the following code snippet in listing \ref{lst:shadowing}.
